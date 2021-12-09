@@ -1,0 +1,52 @@
+@startuml
+
+actor User as U
+participant Wallet as W
+box Issuer
+participant "Server Metadata" as metadata
+participant "Nonce Endpoint" as init
+participant "Pushed Authorization Endpoint" as PAR
+participant "Authorization Endpoint" as AS
+participant "Token Endpoint" as T
+participant "Credential Endpoint" as P
+participant "Deferred Credential" as I
+end box
+autoactivate on
+hide footbox
+
+U -> W: interact
+note over W: Wallet discovers input material\nrequired to request issuance\nof a certain credential (Optional)
+
+W -> metadata: (OPTIONAL) get credential manifests
+return credential manifests
+
+W -> init: (OPTIONAL) get_presentation_nonce
+return p_nonce
+
+W -> W: (OPTIONAL) prepare presentations (bound to presentation_nonce)
+deactivate W
+
+W -> PAR: (OPTIONAL) authorize (claims [determines credential types], (opt) vp_token, ...)
+
+return request_uri
+
+W -> AS: authorize (claims [determines credential types], (opt) vp_token, ... OR request_uri)
+
+note over AS: Issuer will authenticate user or utilize credentials or assertions to identify user. \noptions: local login, callback to wallet (OIDC4VPs), federated login (via OpenID or SAML), ...
+
+AS -> W: (OPTIONAL) request credential presentations
+return vp_token
+
+return code
+
+W -> T: token (code, ...)
+return access_token, id_token(, c_nonce)
+
+W->P: credentials (access_token, type, did, proof)
+
+return credential or acceptance_token(, c_nonce)
+
+W->I: deferred credential request (acceptance_token)
+return credential
+
+@enduml
