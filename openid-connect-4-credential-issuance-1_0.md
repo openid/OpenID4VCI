@@ -389,7 +389,6 @@ The following request parameters are defined:
 * `credential_type`: CONDITIONAL. A JSON string denoting the type of the credential the wallet shall request. MUST be present if `manifest_id` is not present.
 * `manifest_id`: CONDITIONAL. A JSON String  refering to a credential manifests published by the credential issuer. MUST be present if `credential_type` is not present. 
 * `login_hint`: OPTIONAL. Hint about the login identifier the End-User might use to log in at the Credential Issuer. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `login_hint` parameter value.
-* `login_hint`: OPTIONAL. Hint about the login identifier the End-User might use to log in at the Credential Issuer. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `login_hint` parameter value.
 * `context`: OPTIONAL. String value created by the Credential Issuer and opaque to the wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `context` parameter value.  
 
 NOTE: the wallet MUST be able to process multiple occurences of the URL query parameters `credential_type` and/or `manifest_id`. 
