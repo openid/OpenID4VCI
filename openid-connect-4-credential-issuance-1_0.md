@@ -391,7 +391,8 @@ The following request parameters are defined:
 * `login_hint`: OPTIONAL. Hint about the login identifier the End-User might use to log in at the Credential Issuer. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `login_hint` parameter value.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value.  
 
-NOTE: the wallet MUST be able to process multiple occurences of the URL query parameters `credential_type` and/or `manifest_id`. 
+Note: the wallet MUST be able to process multiple occurences of the URL query parameters `credential_type` and/or `manifest_id`. 
+Note: The AS MUST ensure the release of any privacy-sensitive data is legally based (e.g. if passing an e-mail address in the `login_hint` parameter).
 
 The following is a non-normative example:
 
