@@ -389,7 +389,7 @@ The following request parameters are defined:
 * `credential_type`: CONDITIONAL. A JSON string denoting the type of the credential the wallet shall request. MUST be present if `manifest_id` is not present.
 * `manifest_id`: CONDITIONAL. A JSON String  refering to a credential manifests published by the credential issuer. MUST be present if `credential_type` is not present. 
 * `login_hint`: OPTIONAL. Hint about the login identifier the End-User might use to log in at the Credential Issuer. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `login_hint` parameter value.
-* `context`: OPTIONAL. String value created by the Credential Issuer and opaque to the wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `context` parameter value.  
+* `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value.  
 
 NOTE: the wallet MUST be able to process multiple occurences of the URL query parameters `credential_type` and/or `manifest_id`. 
 
@@ -480,7 +480,7 @@ This specification defines the following additional parameters:
 * `presentation_submission`: OPTIONAL. JSON object as defined in [@DIF.CredentialManifest]. This object refers to verifiable presentations required for the respective credential accoridng to the Credential Manifest and provided in an authorization request. All entries in the `descriptor_map` refer to verifiable presentations provided in the `vp_token` authorization request parameter.  
 * `wallet_issuer`: OPTIONAL. JSON String containing the wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@SIOPv2] to determine the wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
 * `user_hint`: OPTIONAL. JSON String containing an opaque user hint the wallet MAY use in sub-sequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
-* `context`: OPTIONAL. String value identifying a certain processing context at the credential issuer. A value for this parameter is typically passed in an issuance initation request from the issuer to the wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `context` value back to the credential issuer.  
+* `op_state`: OPTIONAL. String value identifying a certain processing context at the credential issuer. A value for this parameter is typically passed in an issuance initation request from the issuer to the wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `op_state` value back to the credential issuer.  
 
 Below is a non-normative example of an authorization request:
 ```
