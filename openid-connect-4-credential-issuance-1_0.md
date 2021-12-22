@@ -330,6 +330,8 @@ This specification defines the following new Client Metadata parameter for walle
 
 * `initiate_issuance_endpoint`: OPTIONAL. URL of the issuance initation endpoint of a wallet. 
 
+If the issuer is unable to perform discovery of the Issuance Initiation Endpoint URL, the following static URL is used: `openid_initiate_issuance:`.
+
 ## Server Metadata
 
 The server metadata [@!OpenID.Discovery] is extended to allow the RP to obtain information about the verifiable credentials an OP supports. This extension uses [@DIF.CredentialManifest]. 
@@ -402,6 +404,8 @@ The following is a non-normative example:
     &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
     &login_hint=max%40example%2Ecom
 ```
+
+The issuer MAY also render a QR code containing the request data in order to allow the user to scan the request using her wallet app. 
 
 ### Issuance Initiation Response
 
