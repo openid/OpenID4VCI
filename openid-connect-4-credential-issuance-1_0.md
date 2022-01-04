@@ -289,7 +289,7 @@ necessary since it can previously identify or even authenticate the user before 
 the issuer already has all necessary data in place and does not need to fetch any credential.
 
 The draft includes both approaches because there is no existing best practice. Given the lack of implementation
-experience, it seems to be better to leave implementer's the choice. If the  community, based on
+experience, it seems to be better to leave implementers the choice. If the community, based on
 implementation experience, gravitates towards one or the other approach, the draft could
 be simplified by removing one of the options.
 
