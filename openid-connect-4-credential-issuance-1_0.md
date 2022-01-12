@@ -389,9 +389,6 @@ The following request parameters are defined:
 * `login_hint`: OPTIONAL. Hint about the login identifier the End-User might use to log in at the Credential Issuer. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `login_hint` parameter value.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value.  
 
-Note: the wallet MUST be able to process multiple occurences of the URL query parameters `credential_type` and/or `manifest_id`. 
-Note: The AS MUST ensure the release of any privacy-sensitive data is legally based (e.g. if passing an e-mail address in the `login_hint` parameter).
-
 The following is a non-normative example:
 
 ```
@@ -402,6 +399,17 @@ The following is a non-normative example:
 ```
 
 The issuer MAY also render a QR code containing the request data in order to allow the user to scan the request using her wallet app. 
+
+The wallet MUST consider the parameter values in the initiation request as not trustworthy since the origin is not authenticated and the message 
+integrity is not protected. The Wallet MUST apply the same checks on the issuer that it would apply when the flow is started from the Wallet itself since the issuer is not trustworthy just because it sent the initiation request. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
+
+The wallet MUST NOT accept credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if
+the wallet would have started the flow. 
+
+The wallet MUST be able to process multiple occurences of the URL query parameters `credential_type` and/or `manifest_id`. Multiple occurences MUST be 
+treated as multiple values of the respective parameter.
+
+The AS MUST ensure the release of any privacy-sensitive data is legally based (e.g. if passing an e-mail address in the `login_hint` parameter).
 
 ### Issuance Initiation Response
 
@@ -481,7 +489,9 @@ This specification defines the following additional parameters:
 * `presentation_submission`: OPTIONAL. JSON object as defined in [@DIF.CredentialManifest]. This object refers to verifiable presentations required for the respective credential according to the Credential Manifest and provided in an authorization request. All entries in the `descriptor_map` refer to verifiable presentations provided in the `vp_token` authorization request parameter.
 * `wallet_issuer`: OPTIONAL. JSON String containing the wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@SIOPv2] to determine the wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
 * `user_hint`: OPTIONAL. JSON String containing an opaque user hint the wallet MAY use in sub-sequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
-* `op_state`: OPTIONAL. String value identifying a certain processing context at the credential issuer. A value for this parameter is typically passed in an issuance initation request from the issuer to the wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `op_state` value back to the credential issuer.  
+* `op_state`: OPTIONAL. String value identifying a certain processing context at the credential issuer. A value for this parameter is typically passed in an issuance initation request from the issuer to the wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `op_state` value back to the credential issuer. 
+
+Note: When processing the authorization request, the issuer MUST take into account that the `op_state` is not guaranteed to originate from this issuer. It could have been injected by an attacker. 
 
 Below is a non-normative example of an authorization request:
 ```
