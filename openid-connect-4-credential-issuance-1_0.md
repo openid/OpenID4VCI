@@ -208,8 +208,8 @@ The starting point is an interaction of the user with her wallet. The user might
 * have visited the web site of a Credential Issuer and wants to obtain a credential from that issuer. 
 
 (0) (OPTIONAL) The issuer sends a request to the wallet to initiate the issuance flow. This request contains information about the 
-credential(s) the holder wants to obtain from that issuer, e.g. in the form of credential manifest ids or credential types, and 
-further data, e.g. hints about the user.
+credential(s) the holder wants to obtain from that issuer, e.g., in the form of credential manifest IDs or credential types, and 
+further data, e.g., hints about the user.
 
 (1) (OPTIONAL) obtain credential manifest (as defined in [@DIF.CredentialManifest]) from the issuer with an information of which Verifiable Credentials the Issuer can issue, and optionally what kind of input from the user the Issuer requires to issue that credential.
 
@@ -308,7 +308,7 @@ This specification defines the new endpoints as well as additional parameters to
 
 There are the following new endpoints: 
 
-* Issuance Initiation Endpoint: an endpoint exposed by the wallet that allows an issuer to initiate the issuance flow
+* Issuance Initiation Endpoint: An endpoint exposed by the wallet that allows an issuer to initiate the issuance flow
 * Nonce Endpoint: this endpoint provides the RP with a nonce it will include in verifiable presentations sent to the authorization endpoint
 * Credential Endpoint: this is the OAuth-protected API to issue verifiable credentials
 * Deferred Credential Endpoint: this endpoint is used for deferred issuance of verifiable credentials 
@@ -409,7 +409,7 @@ the wallet would have started the flow.
 The wallet MUST be able to process multiple occurences of the URL query parameters `credential_type` and/or `manifest_id`. Multiple occurences MUST be 
 treated as multiple values of the respective parameter.
 
-The AS MUST ensure the release of any privacy-sensitive data is legally based (e.g. if passing an e-mail address in the `login_hint` parameter).
+The AS MUST ensure the release of any privacy-sensitive data is legally based (e.g., if passing an e-mail address in the `login_hint` parameter).
 
 ### Issuance Initiation Response
 
