@@ -209,7 +209,7 @@ The starting point is an interaction of the user with her wallet. The user might
 
 (0) (OPTIONAL) The issuer sends a request to the wallet to initiate the issuance flow. This request contains information about the 
 credential(s) the holder wants to obtain from that issuer, e.g., in the form of credential manifest IDs or credential types, and 
-further data, e.g., hints about the user.
+further data, e.g., hints about the user when the user is already logged in with the Issuer.
 
 (1) (OPTIONAL) obtain credential manifest (as defined in [@DIF.CredentialManifest]) from the issuer with an information of which Verifiable Credentials the Issuer can issue, and optionally what kind of input from the user the Issuer requires to issue that credential.
 
@@ -383,7 +383,7 @@ The issuer (or any other party wishing to kickstart an issuance into a certain w
 
 The following request parameters are defined: 
 
-* `issuer`: REQUIRED. The issuer URL of the credential issuer, the wallet is request to obtain one or more credentials from. 
+* `issuer`: REQUIRED. The issuer URL of the credential issuer, the wallet is requested to obtain one or more credentials from. 
 * `credential_type`: CONDITIONAL. A JSON string denoting the type of the credential the wallet shall request. MUST be present if `manifest_id` is not present.
 * `manifest_id`: CONDITIONAL. A JSON String  refering to a credential manifests published by the credential issuer. MUST be present if `credential_type` is not present. 
 * `login_hint`: OPTIONAL. Hint about the login identifier the End-User might use to log in at the Credential Issuer. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `login_hint` parameter value.
