@@ -146,7 +146,10 @@ The following figure shows the overall flow.
 +--------------+   +-----------+                                         +-------------+
 | User         |   |   Wallet  |                                         |   Issuer    |
 +--------------+   +-----------+                                         +-------------+
-        |                |                                                      |  
+        |                |             interact                                 |  
+        |---------------------------------------------------------------------->|
+        |                |          (0) initiate issuance                       |
+        |                |<-----------------------------------------------------|        
         |    interacts   |                                                      |
         |--------------->|                                                      |
         |                |  (1) [opt] obtain credential manifest                |
@@ -203,6 +206,10 @@ The starting point is an interaction of the user with her wallet. The user might
 
 * want to present a credential and found out there is no suitable credential present in her wallet or
 * have visited the web site of a Credential Issuer and wants to obtain a credential from that issuer. 
+
+(0) (OPTIONAL) The issuer sends a request to the wallet to initiate the issuance flow. This request contains information about the 
+credential(s) the holder wants to obtain from that issuer, e.g., in the form of credential manifest IDs or credential types, and 
+further data, e.g., hints about the user when the user is already logged in with the Issuer.
 
 (1) (OPTIONAL) obtain credential manifest (as defined in [@DIF.CredentialManifest]) from the issuer with an information of which Verifiable Credentials the Issuer can issue, and optionally what kind of input from the user the Issuer requires to issue that credential.
 
@@ -301,15 +308,25 @@ This specification defines the new endpoints as well as additional parameters to
 
 There are the following new endpoints: 
 
+* Issuance Initiation Endpoint: An endpoint exposed by the wallet that allows an issuer to initiate the issuance flow
 * Nonce Endpoint: this endpoint provides the RP with a nonce it will include in verifiable presentations sent to the authorization endpoint
 * Credential Endpoint: this is the OAuth-protected API to issue verifiable credentials
 * Deferred Credential Endpoint: this endpoint is used for deferred issuance of verifiable credentials 
 
 The following endpoints are extended:
 
+* Client Metadata: new metadata parameter is added to allow a wallet (acting as OpenID Connect RP) to publish its issuance initiation endpoint.  
 * Server Metadata: New metadata parameters are added to allow the RP to determine what types of verifiable credentials a particular OP is able to issue along with additional information about formats and prerequisites.
 * Authorization Endpoint: The `claims` parameter is extended to allow the RP to request authorization for issuance of one or more credentials. The authorization request is extended with parameters to convey verifiable presentations to the authorization process and further data to alternatively callback to the RP (acting as wallet) to request further verifiable credentials. These extensions can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
 * Token Endpoint: optional parameters are added to the token endpoint to provide the RP with a nonce to be used for proof of possession of key material in a subsequent request to the credential endpoint. 
+
+## Client Metadata 
+
+This specification defines the following new Client Metadata parameter for wallets acting as OpenID Connect RP:
+
+* `initiate_issuance_endpoint`: OPTIONAL. URL of the issuance initation endpoint of a wallet. 
+
+If the issuer is unable to perform discovery of the Issuance Initiation Endpoint URL, the following static URL is used: `openid_initiate_issuance:`.
 
 ## Server Metadata
 
@@ -354,6 +371,49 @@ The following example shows an OpenID Configuration containing an embedded crede
 ```
 
 Note: The RP MAY use other mechanisms to obtain information about the verifiable credentials that an OP can issue.
+
+## Issuance Initiation Endpoint
+
+This endpoint is used by an issuer in case it is already in an interaction with a user that wishes to initate a credential issuance. It is used to pass available 
+information relevant for the credential issuance to ensure a convenient and secure process. 
+
+### Issuance Initiation Request {#issuance_initiation_request}
+
+The issuer (or any other party wishing to kickstart an issuance into a certain wallet) sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL. 
+
+The following request parameters are defined: 
+
+* `issuer`: REQUIRED. The issuer URL of the credential issuer, the wallet is requested to obtain one or more credentials from. 
+* `credential_type`: CONDITIONAL. A JSON string denoting the type of the credential the wallet shall request. MUST be present if `manifest_id` is not present.
+* `manifest_id`: CONDITIONAL. A JSON String  refering to a credential manifests published by the credential issuer. MUST be present if `credential_type` is not present. 
+* `login_hint`: OPTIONAL. Hint about the login identifier the End-User might use to log in at the Credential Issuer. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `login_hint` parameter value.
+* `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value.  
+
+The following is a non-normative example:
+
+```
+  GET /initiate_issuance?
+    issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
+    &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
+    &login_hint=max%40example%2Ecom
+```
+
+The issuer MAY also render a QR code containing the request data in order to allow the user to scan the request using her wallet app. 
+
+The wallet MUST consider the parameter values in the initiation request as not trustworthy since the origin is not authenticated and the message 
+integrity is not protected. The Wallet MUST apply the same checks on the issuer that it would apply when the flow is started from the Wallet itself since the issuer is not trustworthy just because it sent the initiation request. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
+
+The wallet MUST NOT accept credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if
+the wallet would have started the flow. 
+
+The wallet MUST be able to process multiple occurences of the URL query parameters `credential_type` and/or `manifest_id`. Multiple occurences MUST be 
+treated as multiple values of the respective parameter.
+
+The AS MUST ensure the release of any privacy-sensitive data is legally based (e.g., if passing an e-mail address in the `login_hint` parameter).
+
+### Issuance Initiation Response
+
+The wallet is not supposed to create a response. UX control stays with the wallet after completion of the process. 
 
 ## Nonce Endpoint
 
@@ -422,10 +482,16 @@ The following claims are used in each object in the `credentials` property:
 * `type`: CONDITIONAL. A JSON string denoting the type of the requested credential. MUST be present if `manifest_id` is not present.
 * `manifest_id`: CONDITIONAL. JSON String referring to a credential manifest published by the credential issuer. MUST be present if `type` is not present.
 * `format`: OPTIONAL. A JSON string representing a format in which the credential is requested to be issued. Valid values defined by this specification are `jwt_vc` and `ldp_vc`. Profiles of this specification MAY define additional format values.
+
+This specification defines the following additional parameters:
+
 * `vp_token`: OPTIONAL. A parameter defined in [@OIDC4VP] used to convey required verifiable presentations. The verifiable presentations passed in this parameter MUST be bound to a `p_nonce` generated by the respective issuer from the Nonce Endpoint. 
 * `presentation_submission`: OPTIONAL. JSON object as defined in [@DIF.CredentialManifest]. This object refers to verifiable presentations required for the respective credential according to the Credential Manifest and provided in an authorization request. All entries in the `descriptor_map` refer to verifiable presentations provided in the `vp_token` authorization request parameter.
 * `wallet_issuer`: OPTIONAL. JSON String containing the wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@SIOPv2] to determine the wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
 * `user_hint`: OPTIONAL. JSON String containing an opaque user hint the wallet MAY use in sub-sequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
+* `op_state`: OPTIONAL. String value identifying a certain processing context at the credential issuer. A value for this parameter is typically passed in an issuance initation request from the issuer to the wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `op_state` value back to the credential issuer. 
+
+Note: When processing the authorization request, the issuer MUST take into account that the `op_state` is not guaranteed to originate from this issuer. It could have been injected by an attacker. 
 
 Below is a non-normative example of an authorization request:
 ```
@@ -943,6 +1009,7 @@ The technology described in this specification was made available from contribut
 
    -03
 
+   * added issuance initiation endpoint
    * Applied cleanups suggested by Mike Jones post adoption.
 
    -02
