@@ -436,7 +436,6 @@ Below is a non-normative example of a presentation nonce request using `client_s
     Host: server.example.com
     Content-Type: application/x-www-form-urlencoded
     Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
-    
 ```
 
 ### Presentation Nonce Response
