@@ -642,6 +642,8 @@ In addition to the response parameters defined in Section 3.1.3.3 of [@!OpenID.C
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
+Subject Identifier in the ID Token MUST be the End-User's identifier within the Issuer.
+
 Below is a non-normative example of a token response:
 ```
 HTTP/1.1 200 OK
