@@ -3,7 +3,6 @@
 actor User as U
 participant Wallet as W
 box Issuer
-participant "Issuer Site" as IS
 participant "Server Metadata" as metadata
 participant "Nonce Endpoint" as init
 participant "Pushed Authorization Endpoint" as PAR
@@ -14,8 +13,6 @@ participant "Deferred Credential" as I
 end box
 autoactivate on
 hide footbox
-
-IS -> W: Initiate Issuance (issuer, op_state, ...)
 
 U -> W: interact
 note over W: Wallet discovers input material\nrequired to request issuance\nof a certain credential (Optional)
@@ -37,18 +34,18 @@ W -> AS: authorize (claims [determines credential types], (opt) vp_token, ... OR
 
 note over AS: Issuer will authenticate user or utilize credentials or assertions to identify user. \noptions: local login, callback to wallet (OIDC4VPs), federated login (via OpenID or SAML), ...
 
+AS -> W: (OPTIONAL) request credential presentations
+return vp_token
+
 return code
 
 W -> T: token (code, ...)
 return access_token, id_token(, c_nonce)
 
-note over W: access token or user pin used for API authorization (allows headless issuance)
-W->P: credentials (access_token, user_pin, type, did, proof)
-note over W: better called issuance endpoint?
+W->P: credentials (access_token, type, did, proof)
 
 return credential or acceptance_token(, c_nonce)
 
-note over W: better called credential collection endpoint?
 W->I: deferred credential request (acceptance_token)
 return credential
 
