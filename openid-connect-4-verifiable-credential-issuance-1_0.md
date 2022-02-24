@@ -470,13 +470,53 @@ In addition to the required basic Authorization Request, this section also defin
 * how pushed authorization requests can be used to protect the authorization request payload and when the requests become large, and
 * an optional dynamic credential presentation request that may be used by the Issuer to dynamically request additional credentials after receiving an Authorization Request (see also (#present_input_credentials)).
  
-### Authorization Request
+### Credential Request
 
-Authentication Requests are made as defined in Section 3.1.2.1 of [@!OpenID.Core], except that it MUST include the `claims` parameter defined in section 5.5 of [@!OpenID.Core] with a new top-level element `credentials`.
+A Credential request builds upon the OpenID Connect Authentication request defined in section 3.1.2.1 of OpenID Connect core, which request that the End-User be authenticated by the Authorization Server but also granted access to the credential endpoint as defined in (##credential-endpoint).
+
+The simplest credential request is an ordinary OpenID Connect authentication request that makes use of one additional OAuth2.0 scope defined by the specification `openid_credential`.
+
+A non-normative example of a credential request.
+
+```
+HTTP/1.1 302 Found
+Location: https://server.example.com/authorize?
+  response_type=code
+  &scope=openid%20openid_credential
+  &client_id=s6BhdRkqt3
+  &state=af0ifjsldkj
+  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+```
+
+When a request of this nature is made, the `access_token` issued to the client authorizes it to access the credential endpoint to obtain ANY credential offered by the provider.
+
+#### Credential Type Specific Scope
+
+When the provider offers more than one credential, indicated through the metadata the provider publishes at their openid configuration endpoint. A client can scope their request to a single credential type by using the following syntax for the scope.
+
+```
+openid_credential:<credential-type>
+```
+
+A non-normative example of a credential request scoped to a specific credential type.
+
+```
+HTTP/1.1 302 Found
+Location: https://server.example.com/authorize?
+  response_type=code
+  &scope=openid%20openid_credential:healthCard
+  &client_id=s6BhdRkqt3
+  &state=af0ifjsldkj
+  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+```
+
+#### Using the "claims" Request Parameter
+
+As defined in section 5.5 of [@!OpenID.Core], the claims request object is extended by this specification with the introduction of a new top-level element `credentials` that implementations MAY choose to support, the value of the `credentials` element in the claims request object, if present, MUST be a JSON object that follows the following structure.
 
 * `credentials`: JSON array containing one or more objects specifying credentials the Client is requesting to be issued. It MAY optionally contain references to verifiable presentations provided as prerequisite for credential issuance.
 
-The following claims are used in each object in the `credentials` property:
+The following elements are used in each object in the `credentials` property:
 
 * `type`: CONDITIONAL. A JSON string denoting the type of the requested credential. MUST be present if `manifest_id` is not present.
 * `manifest_id`: CONDITIONAL. JSON String referring to a credential manifest published by the credential issuer. MUST be present if `type` is not present.
