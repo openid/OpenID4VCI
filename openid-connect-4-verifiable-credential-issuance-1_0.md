@@ -460,16 +460,6 @@ Note: Passing the `format` to the authorization request is informational and all
 
 Note: The `credential_application` element defined in [@DIF.CredentialManifest] is not required by this specification.
 
-#### Authorization Server Authenticates End-User using verifiable credentials
-
-The methods used by the Authorization Server to Authenticate the End-User are beyond the scope of this specification as defined in Section 3.1.2.3. of [@!OIDC.Core]. One such method might be the Client presenting verifiable credentials.
-
-The issuers MAY call back to the wallet to fetch verifiable credentials it needs as prerequisite to issuing the requested credentials. The decision of what credentials are requested may depend on the user identity determined in step 4.1. or on whether the obtained Credential Manifest includes `presentation_definition` and requires the Client to present certain credentials.
-
-From a protocol perspective, the issuers acts now as a verifier and sends a request as defined in OpenID Connect for Verifiable Presentations [@!OIDC4VP] to the wallet. The Client MUST have these credentials obtained prior to initiating a transaction with this Issuer.
-
-Performing issuance based on the credentials submitted by the Client provides the benefit of the Issuer being able to issue a credential without necessarily having to store information about that user.
-
 #### Pushed Authorization Request
 
 Use of Pushed Authorization Requests is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues due to large requests due to the query language or if message level encryption is used.
@@ -516,7 +506,9 @@ Below is a non-normative example of a `claims` parameter with `manifest_id` and 
 
 #### Dynamic Credential Request
 
-This step is OPTIONAL. After receiving an Authorization Request from the Client, the Issuer MAY use this step to obtain additional credentials from the End-User. The Issuer MUST utilize [@OIDC4VP] and [@SIOPv2] to dynamically request additional credentials.
+This step is OPTIONAL. After receiving an Authorization Request from the Client, the Issuer MAY use this step to obtain additional credentials from the End-User. 
+
+The Issuer MUST utilize [@OIDC4VP] and [@SIOPv2] to dynamically request additional credentials. From a protocol perspective, the Issuer acts now as a verifier and sends a presentation request to the wallet. The Client MUST have these credentials obtained prior to initiating a transaction with this Issuer. 
 
 This provides the benefit of the Issuer being able to adhere to the principle of data minimization, for example by including only minimum requirements in the Credential Manifest knowing that it can supplement additional information if needed.
 
