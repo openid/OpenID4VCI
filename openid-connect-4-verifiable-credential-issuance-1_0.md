@@ -736,11 +736,12 @@ where the JWT looks like this:
 }
 ```
 
-To conclude, the Client has three options to provide binding material for a requested credential:
+To conclude, the Client has the following options to provide binding material for a requested credential:
 
 1. provide `sub_jwk`
 1. provide `did`
-1. provide `proof` in addition to a `did`. When it is recommended to add `proof`, see Security Considerations section.
+1. provide `proof`
+1. provide `proof` along with `sub_jwk` or `did`.
 
 Below is a non-normative example of a credential request:
 
