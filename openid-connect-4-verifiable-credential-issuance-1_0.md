@@ -470,26 +470,26 @@ In addition to the required basic Authorization Request, this section also defin
 * how pushed authorization requests can be used to protect the authorization request payload and when the requests become large, and
 * an optional dynamic credential presentation request that may be used by the Issuer to dynamically request additional credentials after receiving an Authorization Request (see also (#present_input_credentials)).
  
-### Credential Request
+### Credential Authorization Request
 
-A Credential request builds upon the OpenID Connect Authentication request defined in section 3.1.2.1 of OpenID Connect core, which request that the End-User be authenticated by the Authorization Server but also granted access to the credential endpoint as defined in (##credential-endpoint).
+A credential authorization request builds upon the OpenID Connect Authentication request defined in section 3.1.2.1 of OpenID Connect core, which request that the End-User be authenticated by the Authorization Server but also granted access to the credential endpoint as defined in (##credential-endpoint).
 
-The simplest credential request is an ordinary OpenID Connect authentication request that makes use of one additional OAuth2.0 scope defined by the specification `openid_credential` along side some extended syntax of the claims request parameter as defined by section 5.5 of [@!OpenID.Core].
+There are two possible ways to make a credential authorization request, one makes use of the claims request parameter as defined by section 5.5 of [@!OpenID.Core] with a new top level element called `credential`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
 
-A non-normative example of a credential request.
+A non-normative example of a credential authorization request using the claims request object syntax.
 
 ```
 HTTP/1.1 302 Found
 Location: https://server.example.com/authorize?
   response_type=code
-  &scope=openid%20openid_credential
+  &scope=openid
   &client_id=s6BhdRkqt3
   &state=af0ifjsldkj
   &claims=%7B%22credential%...%2dp_vc%22%7D%7D%5D%7D%7D
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 ```
 
-A credential request that features the `openid_credential` scope MUST also feature the claims request parameter. Inside the decoded claims request object is the new top-level element defined by this specification `credentials` that MUST be present in an credential request featuring the `openid_credential`, the value of this `credentials` element in the claims request object, MUST be a JSON object that follows the following structure.
+A credential authorization request that features the claims request parameter MUST decoded to contain the new top-level element of `credentials` defined by this specification, the value of this `credentials` element MUST be a JSON object that conforms to the following structure.
 
 * `credentials`: JSON array containing one or more objects specifying credentials the Client is requesting to be issued. It MAY optionally contain references to verifiable presentations provided as prerequisite for credential issuance.
 
@@ -542,7 +542,7 @@ Note: Passing the `format` to the authorization request is informational and all
 
 Note: The `credential_application` element defined in [@DIF.CredentialManifest] is not required by this specification.
 
-#### Credential Request using Type Specific Scope
+#### Credential Authorization Request using Type Specific Scope
 
 An alternative credential request syntax to that defined in (#credential-request) involves using a different OAuth2 scope syntax defined by this specification below.
 
