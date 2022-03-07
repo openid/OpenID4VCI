@@ -470,11 +470,11 @@ In addition to the required basic Authorization Request, this section also defin
 * how pushed authorization requests can be used to protect the authorization request payload and when the requests become large, and
 * an optional dynamic credential presentation request that may be used by the Issuer to dynamically request additional credentials after receiving an Authorization Request (see also (#present_input_credentials)).
  
-### Credential Authorization Request
+### Credential Authorization Request {#credential-request}
 
-A credential authorization request builds upon the OpenID Connect Authentication request defined in section 3.1.2.1 of OpenID Connect core, which request that the End-User be authenticated by the Authorization Server but also granted access to the credential endpoint as defined in (##credential-endpoint).
+A credential authorization request builds upon the OpenID Connect Authentication request defined in section 3.1.2.1 of OpenID Connect core, which request that the End-User be authenticated by the Authorization Server but also granted access to the credential endpoint as defined in (#credential-endpoint).
 
-There are two possible ways to make a credential authorization request, one makes use of the claims request parameter as defined by section 5.5 of [@!OpenID.Core] with a new top level element called `credential`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
+There are two possible ways to make a credential authorization request, one makes use of the claims request parameter as defined by section 5.5 of [@!OpenID.Core] with a new top level element called `credentials`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
 
 A non-normative example of a credential authorization request using the claims request object syntax.
 
@@ -542,7 +542,7 @@ Note: Passing the `format` to the authorization request is informational and all
 
 Note: The `credential_application` element defined in [@DIF.CredentialManifest] is not required by this specification.
 
-#### Credential Authorization Request using Type Specific Scope
+#### Credential Authorization Request using Type Specific Scope {#credential-request-using-type-specific-scope}
 
 An alternative credential request syntax to that defined in (#credential-request) involves using an OAuth2 scope following the syntax defined below.
 
@@ -550,7 +550,7 @@ An alternative credential request syntax to that defined in (#credential-request
 openid_credential:<credential-type>
 ```
 
-The value of `<credential-type>` indicates the type of credential being requested, providers who do not understand the value of this scope in a request MUST ignore it entirely. The presence of a scope following this syntax in the request MUST be interpreted by the provider as a request for access to the credential endpoint as defined in (##credential-endpoint) for the specific credential type. Multiple occurrences of this scope MAY be present in a single request whereby each occurrence MUST be interpreted individually.
+The value of `<credential-type>` indicates the type of credential being requested, providers who do not understand the value of this scope in a request MUST ignore it entirely. The presence of a scope following this syntax in the request MUST be interpreted by the provider as a request for access to the credential endpoint as defined in (#credential-endpoint) for the specific credential type. Multiple occurrences of this scope MAY be present in a single request whereby each occurrence MUST be interpreted individually.
 
 A non-normative example of a credential request scoped to a specific credential type.
 
@@ -564,7 +564,7 @@ Location: https://server.example.com/authorize?
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 ```
 
-If both the `openid_credential` scope + claims request object and an instance of a `openid_credential:<credential-type>` scope are present in a single request the provider MUST interpret these individually. However, if both the scopes are requesting the same credential type then the provider MUST follow the request as given by the `openid_credential` + claims request object.
+If both the `claims` request object with `credentials` top-level element and an instance of a `openid_credential:<credential-type>` scope are present in a single request the provider MUST interpret these individually. However, if both the scopes are requesting the same credential type then the provider MUST follow the request as given by the `claims` request object.
 
 #### Obtaining Credentials required in Credential Manifest
 
