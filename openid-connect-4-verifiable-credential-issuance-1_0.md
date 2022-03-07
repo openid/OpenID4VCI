@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-4-verifiable-credential-issuance-1_0-03"
+value = "openid-connect-4-verifiable-credential-issuance-1_0-04"
 status = "standard"
 
 [[author]]
@@ -1048,6 +1048,10 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -04
+
+   * added support for requesting credential authorization with scopes 
 
    -03
 
