@@ -544,7 +544,7 @@ Note: The `credential_application` element defined in [@DIF.CredentialManifest] 
 
 #### Credential Authorization Request using Type Specific Scope
 
-An alternative credential request syntax to that defined in (#credential-request) involves using a different OAuth2 scope syntax defined by this specification below.
+An alternative credential request syntax to that defined in (#credential-request) involves using an OAuth2 scope following the syntax defined below.
 
 ```
 openid_credential:<credential-type>
