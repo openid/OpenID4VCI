@@ -730,7 +730,7 @@ where the JWT looks like this:
 }.
 {
   "iss": "s6BhdRkqt3",
-  "aud": "https:server.example.com",
+  "aud": "https://server.example.com",
   "iat": "2018-09-14T21:19:10Z",
   "nonce": "tZignsnFbp"
 }
