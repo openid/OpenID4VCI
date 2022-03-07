@@ -713,12 +713,15 @@ This specification defines the following values for `type`:
     * `iat`: REQUIRED. MUST contain the instant when the proof was created
     * `nonce`: REQUIRED. MUST contain a fresh nonce as provided by the issuer
 
-Below is a non-normative example of a `proof` parameter:
+Below is a non-normative example of a `proof` parameter (line breaks for display purposes only):
 
 ```json
 {
   "type": "jwt",
-  "jwt": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..l9d0YHjcFAH2H4dB9xlWFZQLUpixVCWJk0eOt4CXQe1NXKWZwmhmn9OQp6YxX0a2LffegtYESTCJEoGVXLqWAA"
+  "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
+  xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
+  0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
+  NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
 }
 ```
 
@@ -726,7 +729,9 @@ where the JWT looks like this:
 
 ```json
 {
-    "kid":"did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1"
+  "alg": "ES256",
+  "typ": "JWT",
+  "kid":"did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1"
 }.
 {
   "iss": "s6BhdRkqt3",
