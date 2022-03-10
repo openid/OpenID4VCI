@@ -632,6 +632,22 @@ The client can request issuance of a credential of a certain type multiple times
 
 If the access token is valid for requesting issuance of multiple credentials, it is at the client's discretion to decide the order in which to request issuance of multiple credentials requested in the Authorization Request.
 
+### Binding the Issued Credential to the Subject of that Credential {#credential-binding}
+
+Issued credential SHOULD be bound to the subject of that credential to allow the Verifier to verify possession of that credential during presentation. Binding might be cryptographic, or claim-based.
+
+For cryptographic binding, the Client has the following options to provide cryptographic binding material for a requested credential as defined in {#credential_request}:
+
+1. Provide only key material (`sub_jwk` or `did`)
+1. Provide only proof of control of the key material (`proof` without `sub_jwk` or `did`)
+1. Provide key material along with proof of control (`proof` with `sub_jwk` or `did`)
+
+For claim-based binding, no cryptographic binding material is provided. Instead, the issued credential includes user claims that can be used by the Verifier to verify possession of the credential by requesting presentation of existing forms of physical or digial identification that includes the same claims (e.g., a driver's license in person, or an online ID verification service).
+
+Note that some type of low assurance credentials such as coupons or tickets can be issued without either type of binding.
+
+For more details, see {#did-binding} in the Security Considerations Section.
+
 ### Credential Request {#credential_request}
 
 A Client makes a Credential Request by sending a HTTP POST request to the Credential Endpoint with the following parameters:
@@ -685,13 +701,6 @@ where the JWT looks like this:
   "nonce": "tZignsnFbp"
 }
 ```
-
-To conclude, the Client has the following options to provide binding material for a requested credential:
-
-1. provide `sub_jwk`
-1. provide `did`
-1. provide `proof`
-1. provide `proof` along with `sub_jwk` or `did`.
 
 Below is a non-normative example of a credential request:
 
@@ -795,9 +804,17 @@ The deferred credential response uses the `format` and `credential` parameters a
 
 # Security Considerations
 
-## Proving Control of a DID Presented as Binding Material
+## Providing only `did` as a cryptographic binding material {#did-binding}
 
-Some DID Methods do not require the End-User identified by a DID to also be a controller of a private key associated to a public key in a DID Document tied to that DID. In these cases, it is RECOMMENDED that in the Credential Request, the Client provides a signature using the private key tied to a DID in a `proof` claim, in addition to a `did` claim.
+Some DID Methods do not require the End-User identified by a DID to also be a controller of a private key associated to a public key in a DID Document tied to that DID. 
+
+In these cases, the Client can provide only `did` as a cryptographic binding material for a requested credential as defined in {#credential-binding}.
+
+## Providing only `proof` as a cryptographic binding material {#proof-binding}
+
+Some Issuers have the ability to bind the credential to the Holder without revealing the key material itself. For example, this can be done using BBS+ signatues with a blinded link secret, by generating a proof of knowledge of the link secret during presentation. This can also be done using secure enclave attestations from the Holder during issuance and presentation. 
+
+In these cases, the Client can provide only `proof` as a cryptographic binding material for a requested credential as defined in {#credential-binding}. 
 
 # Privacy Considerations
 
