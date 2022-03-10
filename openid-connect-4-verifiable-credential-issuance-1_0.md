@@ -1062,7 +1062,7 @@ TBD
 
 # Acknowledgements {#Acknowledgements}
 
-We would like to thank John Bradley, Alen Horvat, Michael B. Jones, and David Waite for their valuable contributions to this specification.
+We would like to thank David Chadwick, John Bradley, Alen Horvat, Michael B. Jones, and David Waite for their valuable contributions to this specification.
 
 # Notices
 
