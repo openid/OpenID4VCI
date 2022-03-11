@@ -70,6 +70,10 @@ W3C Verifiable Credential Objects
 
 Both verifiable credentials and verifiable presentations
 
+Holder
+
+Relying Party Application used by the End-user to request, receive, store credentials requested from the Issuer.
+
 Credential Manifests 
 
 A resource format that defines preconditional requirements, Issuer style preferences, and other facets User Agents utilize to help articulate and select the inputs necessary for processing and issuance of a specified credential (see [@DIF.CredentialManifest]).
@@ -634,7 +638,7 @@ If the access token is valid for requesting issuance of multiple credentials, it
 
 ### Binding the Issued Credential to the Subject of that Credential {#credential-binding}
 
-Issued credential SHOULD be bound to the subject of that credential to allow the Verifier to verify possession of that credential during presentation. Binding might be cryptographic, or claim-based.
+Issued credential SHOULD be either be cryptographically bound to the Holder of the credential, or bound to the Subject of the credential based on the claims included in that credential. This allows the Verifier to verify possession of that credential during presentation.
 
 For cryptographic binding, the Client has the following options to provide cryptographic binding material for a requested credential as defined in {#credential_request}:
 
