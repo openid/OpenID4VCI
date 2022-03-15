@@ -70,10 +70,6 @@ W3C Verifiable Credential Objects
 
 Both verifiable credentials and verifiable presentations
 
-Holder
-
-Relying Party Application used by the End-user to request, receive, store credentials requested from the Issuer.
-
 Credential Manifests 
 
 A resource format that defines preconditional requirements, Issuer style preferences, and other facets User Agents utilize to help articulate and select the inputs necessary for processing and issuance of a specified credential (see [@DIF.CredentialManifest]).
@@ -638,17 +634,13 @@ If the access token is valid for requesting issuance of multiple credentials, it
 
 ### Binding the Issued Credential to the Subject of that Credential {#credential-binding}
 
-Issued credential SHOULD be either be cryptographically bound to the Holder (Wallet) of the credential, or bound to the Subject of the credential based on the claims included in that credential. This allows the Verifier to verify possession of that credential during presentation.
+Issued credential SHOULD be either be cryptographically bound to the Holder (Wallet) of the credential. This allows the Verifier to verify possession of that credential during presentation. For non-cryptographic binding and credentials issued without any binding, see Implementations Considerations sections {#claim-based-binding} and {#no-binding}.
 
 For cryptographic binding, the Client has the following options to provide cryptographic binding material for a requested credential as defined in {#credential_request}:
 
 1. Provide only key material (`sub_jwk` or `did`)
 1. Provide only proof of control of the key material (`proof` without `sub_jwk` or `did`)
 1. Provide key material along with proof of control (`proof` with `sub_jwk` or `did`)
-
-For claim-based binding, no cryptographic binding material is provided. Instead, the issued credential includes user claims that can be used by the Verifier to verify possession of the credential by requesting presentation of existing forms of physical or digial identification that includes the same claims (e.g., a driver's license in person, or an online ID verification service).
-
-Note that some Issuers might choose issuing credentials without either cryptographic binding nor claim-based binding. One such use-case is low assurance credentials such as coupons or tickets. Another use-case is when the Issuer uses cryptographic schemes that can provide Holder binding without explicit cryptographic material being supplied by the Holder. For example, in the case of the BBS Signature Scheme, the issued credential itself is a secret and only derivation of a credential is presented to the Verifier. Effectively, credential is bound to the Issuer's signature on the credential, which becomes a shared secret transferred from the Issuer to the Holder.
 
 For more details, see {#did-binding} in the Security Considerations Section.
 
@@ -818,6 +810,22 @@ In these cases, the Client can provide only `did` as a cryptographic binding mat
 Some Issuers have the ability to bind the credential to the Holder without revealing the key material itself. For example, this can be done using BBS+ signatues with a blinded link secret, by generating a proof of knowledge of the link secret during presentation. This can also be done using secure enclave attestations from the Holder during issuance and presentation. 
 
 In these cases, the Client can provide only `proof` as a cryptographic binding material for a requested credential as defined in {#credential-binding}. 
+
+# Implementation Considerations
+
+## Claim-based Binding of the Credential to the Subject {#claim-based-binding}
+
+Credential not cryptographically bound to the Subject's identifier (see {#credential-binding}), should be bound to the Subject of the credential based on the claims included in that credential. 
+
+In claim-based binding, no cryptographic binding material is provided. Instead, the issued credential includes user claims that can be used by the Verifier to verify possession of the credential by requesting presentation of existing forms of physical or digial identification that includes the same claims (e.g., a driver's license in person, or an online ID verification service).
+
+## Binding of the Credential without Cryptographic Binding nor Claim-based Binding {#no-binding}
+
+Some Issuers might choose issuing credentials without either cryptographic binding nor claim-based binding. 
+
+One such use-case is low assurance credentials such as coupons or tickets. 
+
+Another use-case is when the Issuer uses cryptographic schemes that can provide Holder binding without explicit cryptographic material being supplied by the Holder. For example, in the case of the BBS Signature Scheme, the issued credential itself is a secret and only derivation of a credential is presented to the Verifier. Effectively, credential is bound to the Issuer's signature on the credential, which becomes a shared secret transferred from the Issuer to the Holder.
 
 # Privacy Considerations
 
