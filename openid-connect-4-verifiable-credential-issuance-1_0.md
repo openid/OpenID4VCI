@@ -799,17 +799,11 @@ The deferred credential response uses the `format` and `credential` parameters a
 
 # Security Considerations
 
-## Providing only `did` as a cryptographic binding material {#did-binding}
-
-Some DID Methods do not require the End-User identified by a DID to also be a controller of a private key associated to a public key in a DID Document tied to that DID. 
-
-In these cases, the Client can provide only `did` as a cryptographic binding material for a requested credential as defined in {#credential-binding}.
-
-## Providing only `proof` as a cryptographic binding material {#proof-binding}
+## Providing `proof` as a cryptographic binding material without the key material {#proof-binding}
 
 Some Issuers have the ability to bind the credential to the Holder without revealing the key material itself. For example, this can be done using BBS+ signatues with a blinded link secret, by generating a proof of knowledge of the link secret during presentation. This can also be done using secure enclave attestations from the Holder during issuance and presentation. 
 
-In these cases, the Client can provide only `proof` as a cryptographic binding material for a requested credential as defined in {#credential-binding}. 
+In these cases, the Client can provide only `proof` without `kid` or a `sub_jwk` as a cryptographic binding material for a requested credential as defined in {#credential-binding}. 
 
 # Implementation Considerations
 
