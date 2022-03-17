@@ -751,7 +751,7 @@ A Client makes a Credential Request by sending a HTTP POST request to the Creden
 * `format`: OPTIONAL. Format of the credential to be issued. If not present, the issuer will determine the credential 
 format based on the client's format default.
 * `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued credential shall be 
-bound to. The `proof` object MUST contain the following `proof_type`element which determines its structure:
+bound to. The `proof` object MUST contain the following `proof_type` element which determines its structure:
 
   * `proof_type`: REQUIRED. JSON String denoting the proof type. 
 
@@ -903,13 +903,13 @@ The deferred credential response uses the `format` and `credential` parameters a
 
 Some Issuers have the ability to bind the credential to the Holder without revealing the key material itself. For example, this can be done using BBS+ signatues with a blinded link secret, by generating a proof of knowledge of the link secret during presentation. This can also be done using secure enclave attestations from the Holder during issuance and presentation. 
 
-In these cases, the Client can provide only `proof` without `kid` or a `sub_jwk` as a cryptographic binding material for a requested credential as defined in {#credential-binding}. 
+In these cases, the Client can provide only `proof` without `kid` or a `sub_jwk` as a cryptographic binding material for a requested credential as defined in (#credential-binding). 
 
 # Implementation Considerations
 
 ## Claim-based Binding of the Credential to the Subject {#claim-based-binding}
 
-Credential not cryptographically bound to the Subject's identifier (see {#credential-binding}), should be bound to the Subject of the credential based on the claims included in that credential. 
+Credential not cryptographically bound to the Subject's identifier (see (#credential-binding)), should be bound to the Subject of the credential based on the claims included in that credential. 
 
 In claim-based binding, no cryptographic binding material is provided. Instead, the issued credential includes user claims that can be used by the Verifier to verify possession of the credential by requesting presentation of existing forms of physical or digial identification that includes the same claims (e.g., a driver's license in person, or an online ID verification service).
 
