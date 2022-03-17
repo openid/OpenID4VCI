@@ -787,7 +787,9 @@ The deferred credential response uses the `format` and `credential` parameters a
 
 # Pre-Authorized Code Flow
 
-This section specifies an additional flow to obtain an access token for credential issuance. It is intended to support scenarios where the user starts a process on an issuer's site that ultimately results in one or more credentials being issued to the user's wallet. In contrast to the flow specified in (#endpoints), this flows starts when the credentials are "ready" and need to "picked up". 
+This section specifies an additional flow to obtain an access token for credential issuance. It is intended to support scenarios where the user starts a process on an issuer's website that ultimately results in one or more credentials being issued to the user's wallet. In particular, the End-user may be accessing Issuer's website on a device different from the one with the wallet application. 
+
+In contrast to the flow specified in (#endpoints), this flows is initiated by the Issuer when the credentials are "ready" and need to "picked up" by the wallet application. The way in which the user provides to the Issuer information required for the issuance of a requested credential and the business processes conducted by the Issuer are out of scope of this specification.
 
 1. The issuer sends a initiate issuance request as described in (#issuance_initiation_request) with the the pre-authorized code and the credential type it is good for to the wallet and/or renders a QR code containing the initiate issuance request. The issuer MAY bind the code to a user PIN. The way in which the PIN is provided to or determined by the user is out of scope of this specification. 
 2. The wallet sends the pre-authorized code to the issuer's token endpoint. This request MUST contain an user PIN if requested by the issuer. 
