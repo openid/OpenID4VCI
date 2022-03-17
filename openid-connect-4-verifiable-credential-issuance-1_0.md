@@ -936,7 +936,7 @@ POST /token HTTP/1.1
   Host: server.example.com
   Content-Type: application/x-www-form-urlencoded
   Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
-  grant_type=pre-authorized_code
+  grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
   &code=SplxlOBeZQQYbYS6WxSbIA
   &user_pin=493536
 ```
