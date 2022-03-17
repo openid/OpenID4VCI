@@ -912,7 +912,16 @@ The following sections specify the extensions.
 These are the extension parameters defined for the pre-authorized code flow:
 
 * `pre-authorized_code`: REQUIRED. The code representing the authorization to obtain credentials of a certain type.
-* `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of an user PIN along with the token request.
+* `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of an user PIN along with the token request. Default is `false`.
+
+Below is a non-normative example of an initiate issuance request:
+```
+  GET /initiate_issuance?
+    issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
+    &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
+    &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
+    &user_pin_required=true
+```
 
 ## Extension parameters of token request
 
@@ -920,6 +929,17 @@ These are the extension parameters to the token request for the grant type `pre-
 
 * `pre-authorized_code`: REQUIRED. The code representing the authorization to obtain credentials of a certain type.
 * `user_pin`: OPTIONAL. String value containing a user PIN. 
+
+Below is a non-normative example of a token request:
+```
+POST /token HTTP/1.1
+  Host: server.example.com
+  Content-Type: application/x-www-form-urlencoded
+  Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+  grant_type=pre-authorized_code
+  &code=SplxlOBeZQQYbYS6WxSbIA
+  &user_pin=493536
+```
 
 ## Replay Prevention
 
