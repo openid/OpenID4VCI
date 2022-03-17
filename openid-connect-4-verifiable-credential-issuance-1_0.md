@@ -791,13 +791,15 @@ This section specifies an additional flow to obtain an access token for credenti
 
 In contrast to the flow specified in (#endpoints), this flows is initiated by the Issuer when the credentials are "ready" and need to "picked up" by the wallet application. The way in which the user provides to the Issuer information required for the issuance of a requested credential and the business processes conducted by the Issuer are out of scope of this specification.
 
-1. The issuer sends a initiate issuance request as described in (#issuance_initiation_request) with the the pre-authorized code and the credential type it is good for to the wallet and/or renders a QR code containing the initiate issuance request. The issuer MAY bind the code to a user PIN. The way in which the PIN is provided to or determined by the user is out of scope of this specification. 
-2. The wallet sends the pre-authorized code to the issuer's token endpoint. This request MUST contain an user PIN if requested by the issuer. 
+1. The issuer sends an issuance initiation request to the walle as described in (#issuance_initiation_request) with the pre-authorized code and the credential type the code is valid for. Issuer can also render a QR code containing the issuance initiation request. The issuer MAY bind the code to a user PIN. The way in which the PIN is provided to or determined by the user is out of scope of this specification. 
+2. The wallet sends the pre-authorized code to the issuer's Token Endpoint. This request MUST contain a user PIN if requested by the issuer. 
 3. The issuer responds with an access token good for credential issuance. 
-4. The wallet sends a credential issuance requests to the credential issuance endpoint.
-5. The issuer returns the requested credential. 
+4. The wallet sends a credential issuance request to the credential issuance endpoint as defined in (#credential_request).
+5. The issuer returns the requested credential as defined in (#credential_response). 
 
 Steps 1 and 2 constitute a new kind of flow that is implemented using additional parameters of the initiate issuance endpoint and a new OAuth grant type "urn:ietf:params:oauth:grant-type:pre-authorized_code". Steps 3 through 5 conform to the process specified in (#endpoints).
+
+Note that the pre-authorized code is sent to the Token Endpoint and not to the Authorization Endpoint of the Issuer.
 
 The following sections specify the extensions.
 
@@ -831,7 +833,7 @@ POST /token HTTP/1.1
   Content-Type: application/x-www-form-urlencoded
   Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
   grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
-  &code=SplxlOBeZQQYbYS6WxSbIA
+  &pre-authotized_code=SplxlOBeZQQYbYS6WxSbIA
   &user_pin=493536
 ```
 
@@ -842,6 +844,8 @@ The pre-authorized code flow by design does not bind the code to a certain devic
 * User PIN: the issuer might set up a PIN with the user (e.g. via text message or email), which needs to be presented in the token request
 * Callback to device where the transaction originated: the issuer on receiving the token request informs the user on the originating device that the process proceeds and asks for confirmation. The issuer will return an "authorization_pending" error code to the wallet and reaches out to the user on the other device to get confirmation. The wallet is required to call the token endpoint again to obtain the access token. If the user does not confirm, the token request is returned with the "access_denied" error code. This flow gives the user on the originating device more control over the issuance process. 
 * [TBD] Can FIDO keys be used to prevent replay?
+
+# Security Considerations
 
 ## Proving Control of a DID Presented as Binding Material
 
@@ -1027,11 +1031,12 @@ The technology described in this specification was made available from contribut
    -04
 
    * added support for requesting credential authorization with scopes 
+   * added support for pre-authorized code flow
 
    -03
 
    * added issuance initiation endpoint
-   * Applied cleanups suggested by Mike Jones post adoption.
+   * Applied cleanups suggested by Mike Jones post adoption
 
    -02
 
