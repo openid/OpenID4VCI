@@ -300,7 +300,7 @@ experience, it seems to be better to leave implementers the choice. If the commu
 implementation experience, gravitates towards one or the other approach, the draft could
 be simplified by removing one of the options.
 
-# Endpoints
+# Endpoints {#endpoints}
 
 ## Overview
 
@@ -893,6 +893,34 @@ Authorization: BEARER 8xLOxBtZp8
 
 The deferred credential response uses the `format` and `credential` parameters as defined in (#credential_response). 
 
+# Pre-Authorized Code Flow
+
+This section specifies an additional flow to obtain an access token for credential issuance. It is intended to support scenarios where the user starts a process on an issuer's site that ultimately results in one or more credentials being issued to the user's wallet. In contrast to the flow specified in (#endpoints), this flows starts when the credentials are "ready" and need to "picked up". 
+
+1. The issuer sends a initiate issuance request as described in (#issuance_initiation_request) with the the pre-authorized code and the credential type it is good for to the wallet and/or renders a QR code containing the initiate issuance request. The issuer MAY bind the code to a user PIN. The way in which the PIN is provided to or determined by the user is out of scope of this specification. 
+2. The wallet sends the pre-authorized code to the issuer's token endpoint. This request MUST contain an user PIN if requested by the issuer. 
+3. The issuer responds with an access token good for credential issuance. 
+4. The wallet sends a credential issuance requests to the credential issuance endpoint.
+5. The issuer returns the requested credential. 
+
+Steps 1 and 2 constitute a new kind of flow that is implemented using additional parameters of the initiate issuance endpoint and a new OAuth grant type "urn:ietf:params:oauth:grant-type:pre-authorized_code". Steps 3 through 5 conform to the process specified in (#endpoints).
+
+The following sections specify the extensions.
+
+## Extension parameters of initiate issuance request
+
+These are the extension parameters defined for the pre-authorized code flow:
+
+* `pre-authorized_code`: REQUIRED. The code representing the authorization to obtain credentials of a certain type.
+* `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of an user PIN along with the token request.
+
+## Extension parameters of token request
+
+These are the extension parameters to the token request for the grant type `pre-authorized_code`:
+
+* `pre-authorized_code`: REQUIRED. The code representing the authorization to obtain credentials of a certain type.
+* `user_pin`: OPTIONAL. String value containing a user PIN. 
+
 # Security Considerations
 
 ## Proving Control of a DID Presented as Binding Material
@@ -1058,7 +1086,7 @@ TBD
 
 # IANA Considerations
 
-TBD
+register "urn:ietf:params:oauth:grant-type:pre-authorized_code"
 
 # Acknowledgements {#Acknowledgements}
 
