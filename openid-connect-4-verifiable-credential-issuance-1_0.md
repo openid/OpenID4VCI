@@ -921,7 +921,13 @@ These are the extension parameters to the token request for the grant type `pre-
 * `pre-authorized_code`: REQUIRED. The code representing the authorization to obtain credentials of a certain type.
 * `user_pin`: OPTIONAL. String value containing a user PIN. 
 
-# Security Considerations
+## Replay Prevention
+
+The pre-authorized code flow by design does not bind the code to a certain device (as the authorization code flow does with PKCE). This means replay must be prevented using other means. The design facilitates the following options: 
+
+* User PIN: the issuer might set up a PIN with the user (e.g. via text message or email), which needs to be presented in the token request
+* Callback to device where the transaction originated: the issuer on receiving the token request informs the user on the originating device that the process proceeds and asks for confirmation. The issuer will return an "authorization_pending" error code to the wallet and reaches out to the user on the other device to get confirmation. The wallet is required to call the token endpoint again to obtain the access token. If the user does not confirm, the token request is returned with the "access_denied" error code. This flow gives the user on the originating device more control over the issuance process. 
+* [TBD] Can FIDO keys be used to prevent replay?
 
 ## Proving Control of a DID Presented as Binding Material
 
