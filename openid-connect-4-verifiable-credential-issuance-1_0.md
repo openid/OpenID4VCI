@@ -758,8 +758,8 @@ bound to. The `proof` object MUST contain the following `proof_type` element whi
 This specification defines the following values for `proof_type`:
 
 * `jwt`: objects of this type contain a single `jwt` element with a signed JWT as proof of possession. The JWT MUST contain the following elements:
-    * `kid`: REQUIRED. JWT header containing the key ID. If the credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the credential shall be bound to.
-    * `sub_jwk`: OPTIONAL. The key material the new credential shall be bound to. MUST NOT be present if `kid` is a DID.
+    * `kid`: CONDITIONAL. JWT header containing the key ID. If the credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the credential shall be bound to.
+    * `jwk`: CONDITIONAL. JWT header containing the key material the new credential shall be bound to. MUST NOT be present if `kid` is present.
     * `iss`: REQUIRED. MUST contain the client_id of the sender
     * `aud`: REQUIRED. MUST contain the issuer URL of credential issuer
     * `iat`: REQUIRED. MUST contain the instant when the proof was created
@@ -898,12 +898,6 @@ Authorization: BEARER 8xLOxBtZp8
 The deferred credential response uses the `format` and `credential` parameters as defined in (#credential_response). 
 
 # Security Considerations
-
-## Providing `proof` as a cryptographic binding material without the key material {#proof-binding}
-
-Some Issuers have the ability to bind the credential to the Holder without revealing the key material itself. For example, this can be done using BBS+ signatues with a blinded link secret, by generating a proof of knowledge of the link secret during presentation. This can also be done using secure enclave attestations from the Holder during issuance and presentation. 
-
-In these cases, the Client can provide only `proof` without `kid` or a `sub_jwk` as a cryptographic binding material for a requested credential as defined in (#credential-binding). 
 
 # Implementation Considerations
 
