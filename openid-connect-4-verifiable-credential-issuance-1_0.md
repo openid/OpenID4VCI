@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-4-verifiable-credential-issuance-1_0-03"
+value = "openid-connect-4-verifiable-credential-issuance-1_0-04"
 status = "standard"
 
 [[author]]
@@ -407,25 +407,34 @@ In addition to the required basic Authorization Request, this section also defin
 * how pushed authorization requests can be used to protect the authorization request payload and when the requests become large, and
 * an optional dynamic credential presentation request that may be used by the Issuer to dynamically request additional credentials after receiving an Authorization Request (see also (#present_input_credentials)).
  
-### Authorization Request
+### Credential Authorization Request {#credential-request}
 
-Authentication Requests are made as defined in Section 3.1.2.1 of [@!OpenID.Core], except that it MUST include the `claims` parameter defined in section 5.5 of [@!OpenID.Core] with a new top-level element `credentials`.
+A credential authorization request builds upon the OpenID Connect Authentication request defined in section 3.1.2.1 of OpenID Connect core, which request that the End-User be authenticated by the Authorization Server but also granted access to the credential endpoint as defined in (#credential-endpoint).
+
+There are two possible ways to make a credential authorization request, one makes use of the claims request parameter as defined by section 5.5 of [@!OpenID.Core] with a new top level element called `credentials`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
+
+A non-normative example of a credential authorization request using the claims request object syntax.
+
+```
+HTTP/1.1 302 Found
+Location: https://server.example.com/authorize?
+  response_type=code
+  &scope=openid
+  &client_id=s6BhdRkqt3
+  &state=af0ifjsldkj
+  &claims=%7B%22credential%...%2dp_vc%22%7D%7D%5D%7D%7D
+  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+```
+
+A credential authorization request that features the claims request parameter MUST decoded to contain the new top-level element of `credentials` defined by this specification, the value of this `credentials` element MUST be a JSON object that conforms to the following structure.
 
 * `credentials`: JSON array containing one or more objects specifying credentials the Client is requesting to be issued. It MAY optionally contain references to verifiable presentations provided as prerequisite for credential issuance.
 
-The following claims are used in each object in the `credentials` property:
+The following elements are used in each object in the `credentials` property:
 
 * `type`: CONDITIONAL. A JSON string denoting the type of the requested credential. MUST be present if `manifest_id` is not present.
 * `manifest_id`: CONDITIONAL. JSON String referring to a credential manifest published by the credential issuer. MUST be present if `type` is not present.
 * `format`: OPTIONAL. A JSON string representing a format in which the credential is requested to be issued. Valid values defined by this specification are `jwt_vc` and `ldp_vc`. Profiles of this specification MAY define additional format values.
-
-This specification defines the following additional parameters:
-
-* `wallet_issuer`: OPTIONAL. JSON String containing the wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@SIOPv2] to determine the wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
-* `user_hint`: OPTIONAL. JSON String containing an opaque user hint the wallet MAY use in sub-sequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
-* `op_state`: OPTIONAL. String value identifying a certain processing context at the credential issuer. A value for this parameter is typically passed in an issuance initation request from the issuer to the wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `op_state` value back to the credential issuer. 
-
-Note: When processing the authorization request, the issuer MUST take into account that the `op_state` is not guaranteed to originate from this issuer. It could have been injected by an attacker. 
 
 Below is a non-normative example of an authorization request:
 ```
@@ -459,6 +468,48 @@ Note: `type` and `format` are used when the Client has not pre-obtained a Creden
 Note: Passing the `format` to the authorization request is informational and allows the credential issuer to refuse early in case it does not support the requested format/credential combination. The client MAY request issuance of credentials in other formats as well later in the process at the credential endpoint.
 
 Note: The `credential_application` element defined in [@DIF.CredentialManifest] is not required by this specification.
+
+#### Credential Authorization Request using Type Specific Scope {#credential-request-using-type-specific-scope}
+
+An alternative credential request syntax to that defined in (#credential-request) involves using an OAuth2 scope following the syntax defined below.
+
+```
+openid_credential:<credential-type>
+```
+
+The value of `<credential-type>` indicates the type of credential being requested, providers who do not understand the value of this scope in a request MUST ignore it entirely. The presence of a scope following this syntax in the request MUST be interpreted by the provider as a request for access to the credential endpoint as defined in (#credential-endpoint) for the specific credential type. Multiple occurrences of this scope MAY be present in a single request whereby each occurrence MUST be interpreted individually.
+
+A non-normative example of a credential request scoped to a specific credential type.
+
+```
+HTTP/1.1 302 Found
+Location: https://server.example.com/authorize?
+  response_type=code
+  &scope=openid%20openid_credential:healthCard
+  &client_id=s6BhdRkqt3
+  &state=af0ifjsldkj
+  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+```
+
+If both the `claims` request object with `credentials` top-level element and an instance of a `openid_credential:<credential-type>` scope are present in a single request the provider MUST interpret these individually. However, if both the scopes are requesting the same credential type then the provider MUST follow the request as given by the `claims` request object.
+
+#### Additional Request Parameters
+
+This specification defines the following additional request parameters that can be supplied in any credential authorization request:
+
+* `vp_token`: OPTIONAL. A parameter defined in [@OIDC4VP] used to convey required verifiable presentations. The verifiable presentations passed in this parameter MUST be bound to a `p_nonce` generated by the respective issuer from the Nonce Endpoint. 
+* `presentation_submission`: OPTIONAL. JSON object as defined in [@DIF.CredentialManifest]. This object refers to verifiable presentations required for the respective credential according to the Credential Manifest and provided in an authorization request. All entries in the `descriptor_map` refer to verifiable presentations provided in the `vp_token` authorization request parameter.
+* `wallet_issuer`: OPTIONAL. JSON String containing the wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@SIOPv2] to determine the wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
+* `user_hint`: OPTIONAL. JSON String containing an opaque user hint the wallet MAY use in sub-sequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
+* `op_state`: OPTIONAL. String value identifying a certain processing context at the credential issuer. A value for this parameter is typically passed in an issuance initation request from the issuer to the wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `op_state` value back to the credential issuer. 
+
+Note: When processing the authorization request, the issuer MUST take into account that the `op_state` is not guaranteed to originate from this issuer. It could have been injected by an attacker. 
+
+#### Obtaining Credentials required in Credential Manifest
+
+This step is OPTIONAL. It is performed prior to the Authorization Request when the obtained Credential Manifest includes `presentation_definition` and requires the Client to present certain credentials in the authorization request in the `vp_token` parameter. The Client MUST obtain those credentials prior to initiating a transaction with this Issuer.
+
+Performing issuance based on the credentials submitted by the Client provides the benefit of the Issuer being able to issue a credential without necessarily having information about that user being stored in its database.
 
 #### Pushed Authorization Request
 
@@ -628,33 +679,56 @@ format based on the client's format default.
 * `sub_jwk`: OPTIONAL. The key material the new credential shall be bound to. MUST NOT be present if `did` is present.
 * `did`: OPTIONAL. The DID the credential shall be bound to. `sub_jwk` and `did` are mutually exclusive. MUST NOT be present if `sub_jwk` is present.
 * `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued credential shall be 
-bound to. The Client MAY provide this claim in addition to a `did` claim. At the minimum, the following parameters MUST be included. The `proof` structure depends on the proof type and other parameters MAY be included.
+bound to. The Client MAY provide this claim in addition to a `did` claim. The `proof` structure depends on the proof type as 
+identified by the `type` field.
 
   * `type`: REQUIRED. JSON String denoting the proof type.
-  * `verificationMethod` REQUIRED. Cryptographically resolvable identifier referencing a public key to verify the End-User's control over the associated private key. The base URI of this identifier MUST match the DID given in `did` parameter. It MAY contain relative path components, query parameters, and fragment identifiers.
-  * `jws` CONDITIONAL. A signature performed by a key that can be obtained by an identifier in verificationMethod.
 
-The `proof` element MUST incorporate a fresh nonce value generated by the credential issuer and the credential issuer's identifier (audience) to allow the credential issuer to detect replay. The way that data is incorporated depends on the proof type. In a Linked Data proof, for example, the nonce is included as the `challenge` element in the proof object and the issuer (the intended audience) is included as the `domain` element.
+The `proof` element MUST incorporate a fresh nonce value generated by the credential issuer and the credential issuer's identifier (audience) to allow the credential issuer to detect replay. The way that data is incorporated depends on the proof type. In a JWT, for example, the nonce is conveyd in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the nonce is included as the `challenge` element in the proof object and the issuer (the intended audience) is included as the `domain` element.
 
-The Client has three options to provide binding material for a requested credential:
+This specification defines the following values for `type`:
 
-1. provide `sub_jwk`
-1. provide `did`
-1. provide `proof` in addition to a `did`. When it is recommended to add `proof`, see Security Considerations section.
+* `jwt`: objects of this type contain a single `jwt` element with a signed JWT as proof of possession. The JWT MUST contain the following elements:
+    * `kid`: JWT header containing the key id - if the credential shall be bound to a DID, the `kid` refers to one of the keys of that particular DID as conveyed in the `did` parameter
+    * `iss`: REQUIRED. MUST contain the client_id of the sender
+    * `aud`: REQUIRED. MUST contain the issuer URL of credential issuer
+    * `iat`: REQUIRED. MUST contain the instant when the proof was created
+    * `nonce`: REQUIRED. MUST contain a fresh nonce as provided by the issuer
 
-Below is a non-normative example of a `proof` parameter:
+Below is a non-normative example of a `proof` parameter (line breaks for display purposes only):
 
 ```json
 {
-  "type": "RsaSignature2018",
-  "created": "2018-09-14T21:19:10Z",
-  "proofPurpose": "authentication",
-  "verificationMethod": "did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1",
-  "challenge": "2H4dB9xl-FZQL-pixV-WJk0eOt4CXQ-1NXKW",
-  "domain": "https://issuer.example.com",
-  "jws": "eyJhbGciOiJFZERTQSIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..l9d0YHjcFAH2H4dB9xlWFZQLUpixVCWJk0eOt4CXQe1NXKWZwmhmn9OQp6YxX0a2LffegtYESTCJEoGVXLqWAA",
+  "type": "jwt",
+  "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
+  xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
+  0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
+  NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
 }
 ```
+
+where the JWT looks like this:
+
+```json
+{
+  "alg": "ES256",
+  "typ": "JWT",
+  "kid":"did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1"
+}.
+{
+  "iss": "s6BhdRkqt3",
+  "aud": "https://server.example.com",
+  "iat": "2018-09-14T21:19:10Z",
+  "nonce": "tZignsnFbp"
+}
+```
+
+To conclude, the Client has the following options to provide binding material for a requested credential:
+
+1. provide `sub_jwk`
+1. provide `did`
+1. provide `proof`
+1. provide `proof` along with `sub_jwk` or `did`.
 
 Below is a non-normative example of a credential request:
 
@@ -925,7 +999,7 @@ TBD
 
 # Acknowledgements {#Acknowledgements}
 
-We would like to thank John Bradley, Alen Horvat, Michael B. Jones, and David Waite for their valuable contributions to this specification.
+We would like to thank David Chadwick, John Bradley, Alen Horvat, Michael B. Jones, and David Waite for their valuable contributions to this specification.
 
 # Notices
 
@@ -938,6 +1012,10 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -04
+
+   * added support for requesting credential authorization with scopes 
 
    -03
 
