@@ -26,6 +26,14 @@ organization="Microsoft"
     [author.address]
     email = "kristina.yasuda@microsoft.com"
 
+[[author]]
+initials="T."
+surname="Looker"
+fullname="Tobias Looker"
+organization="Mattr"
+    [author.address]
+    email = "tobias.looker@mattr.global"
+
 %%%
 
 .# Abstract
@@ -971,6 +979,8 @@ The technology described in this specification was made available from contribut
    -04
 
    * added support for requesting credential authorization with scopes 
+   * removed support to pass VPs in the authorization request
+   * reworked "proof" parameter definition and added "jwt" proof type
 
    -03
 
