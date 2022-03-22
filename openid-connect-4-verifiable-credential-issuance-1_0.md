@@ -787,7 +787,7 @@ The deferred credential response uses the `format` and `credential` parameters a
 
 # Pre-Authorized Code Flow
 
-This section specifies an additional flow to obtain an access token for credential issuance. It is intended to support scenarios where the user starts a process on an issuer's website that ultimately results in one or more credentials being issued to the user's wallet. In particular, the End-user may be accessing Issuer's website on a device different from the one with the wallet application. 
+This section specifies an additional flow to obtain an access token for credential issuance. It is intended to support scenarios where the user starts a process on an issuer's website that ultimately results in one or more credentials being issued to the user's wallet. The process on the issuer's website may include uploading documents and presenting verifiable credentials to the issuer. Moreover, the End-user may be accessing the issuer's website on a device different from the one with the wallet application so the credential issuance process needs to be transfered to another device where the user's wallet resides. 
 
 In contrast to the flow specified in (#endpoints), this flows is initiated by the Issuer when the credentials are "ready" and need to "picked up" by the wallet application. The way in which the user provides to the Issuer information required for the issuance of a requested credential and the business processes conducted by the Issuer are out of scope of this specification.
 
