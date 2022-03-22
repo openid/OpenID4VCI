@@ -843,7 +843,6 @@ The pre-authorized code flow by design does not bind the code to a certain devic
 
 * User PIN: the issuer might set up a PIN with the user (e.g. via text message or email), which needs to be presented in the token request
 * Callback to device where the transaction originated: the issuer on receiving the token request informs the user on the originating device that the process proceeds and asks for confirmation. The issuer will return an "authorization_pending" error code to the wallet and reaches out to the user on the other device to get confirmation. The wallet is required to call the token endpoint again to obtain the access token. If the user does not confirm, the token request is returned with the "access_denied" error code. This flow gives the user on the originating device more control over the issuance process. 
-* [TBD] Can FIDO keys be used to prevent replay?
 
 # Security Considerations
 
