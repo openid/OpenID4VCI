@@ -824,7 +824,7 @@ Below is a non-normative example of an initiate issuance request:
 These are the extension parameters to the token request for the grant type `pre-authorized_code`:
 
 * `pre-authorized_code`: REQUIRED. The code representing the authorization to obtain credentials of a certain type.
-* `user_pin`: OPTIONAL. String value containing a user PIN. 
+* `user_pin`: OPTIONAL. String value containing a user PIN. The string value MUST consist of at most 8 numeric characters (the numbers 0 - 9).
 
 Below is a non-normative example of a token request:
 ```
