@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-4-verifiable-credential-issuance-1_0-04"
+value = "openid-connect-4-verifiable-credential-issuance-1_0-05"
 status = "standard"
 
 [[author]]
@@ -25,6 +25,14 @@ fullname="Kristina Yasuda"
 organization="Microsoft"
     [author.address]
     email = "kristina.yasuda@microsoft.com"
+
+[[author]]
+initials="T."
+surname="Looker"
+fullname="Tobias Looker"
+organization="Mattr"
+    [author.address]
+    email = "tobias.looker@mattr.global"
 
 %%%
 
@@ -1027,10 +1035,15 @@ The technology described in this specification was made available from contribut
 
    [[ To be removed from the final specification ]]
 
+   -05
+
+   * added support for pre-authorized code flow
+
    -04
 
    * added support for requesting credential authorization with scopes 
-   * added support for pre-authorized code flow
+   * removed support to pass VPs in the authorization request
+   * reworked "proof" parameter definition and added "jwt" proof type
 
    -03
 
