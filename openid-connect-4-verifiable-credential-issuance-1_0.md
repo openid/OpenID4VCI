@@ -92,7 +92,7 @@ The user visits the administration office of her university to obtain a digital 
 
 ## Issuer-Initiated Credential Issuance (with Prerequisites)
 
-The user navigates to her university's webpage to obtain a digital diploma where she is asked to scan a QR Code to start the retrieval process. She scans the code with her smartphone, which automatically starts her wallet, where she is notified of the prerequisite to present her digital student card already stored in the wallet to receive a digital diploma (the verifiable credential). She consents, which causes the wallet to obtain and store the verifiable credential.
+The user navigates to her university's webpage to obtain a digital diploma where she is asked to scan a QR Code to start the retrieval process. She scans the code with her smartphone, which automatically starts her wallet, where she is notified of the prerequisite to enter a PIN code for security reasons. This code was sent as a text message to her smartphone in the meantime. She enters the PIN and confirms the credential issuance, which causes the wallet to obtain and store the verifiable credential.
 
 ## Deferred Credential Issuance
 
