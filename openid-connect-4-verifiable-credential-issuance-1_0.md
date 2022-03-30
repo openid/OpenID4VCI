@@ -651,15 +651,15 @@ A Client makes a Credential Request by sending a HTTP POST request to the Creden
 * `format`: OPTIONAL. Format of the credential to be issued. If not present, the issuer will determine the credential 
 format based on the client's format default.
 * `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued credential shall be 
-bound to. The `proof` object MUST contain the following `proof_type`element which determines its structure:
+bound to. The `proof` object MUST contain the following `proof_type` element which determines its structure:
 
   * `proof_type`: REQUIRED. JSON String denoting the proof type. 
 
 This specification defines the following values for `proof_type`:
 
 * `jwt`: objects of this type contain a single `jwt` element with a signed JWT as proof of possession. The JWT MUST contain the following elements:
-    * `kid`: REQUIRED. JWT header containing the key ID. If the credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the credential shall be bound to.
-    * `sub_jwk`: OPTIONAL. The key material the new credential shall be bound to. MUST NOT be present if `kid` is a DID.
+    * `kid`: CONDITIONAL. JWT header containing the key ID. If the credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the credential shall be bound to.
+    * `jwk`: CONDITIONAL. JWT header containing the key material the new credential shall be bound to. MUST NOT be present if `kid` is present.
     * `iss`: REQUIRED. MUST contain the client_id of the sender
     * `aud`: REQUIRED. MUST contain the issuer URL of credential issuer
     * `iat`: REQUIRED. MUST contain the instant when the proof was created
@@ -799,17 +799,11 @@ The deferred credential response uses the `format` and `credential` parameters a
 
 # Security Considerations
 
-## Providing `proof` as a cryptographic binding material without the key material {#proof-binding}
-
-Some Issuers have the ability to bind the credential to the Holder without revealing the key material itself. For example, this can be done using BBS+ signatues with a blinded link secret, by generating a proof of knowledge of the link secret during presentation. This can also be done using secure enclave attestations from the Holder during issuance and presentation. 
-
-In these cases, the Client can provide only `proof` without `kid` or a `sub_jwk` as a cryptographic binding material for a requested credential as defined in {#credential-binding}. 
-
 # Implementation Considerations
 
 ## Claim-based Binding of the Credential to the Subject {#claim-based-binding}
 
-Credential not cryptographically bound to the Subject's identifier (see {#credential-binding}), should be bound to the Subject of the credential based on the claims included in that credential. 
+Credential not cryptographically bound to the Subject's identifier (see (#credential-binding)), should be bound to the Subject of the credential based on the claims included in that credential. 
 
 In claim-based binding, no cryptographic binding material is provided. Instead, the issued credential includes user claims that can be used by the Verifier to verify possession of the credential by requesting presentation of existing forms of physical or digial identification that includes the same claims (e.g., a driver's license in person, or an online ID verification service).
 
