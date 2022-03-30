@@ -634,7 +634,7 @@ If the access token is valid for requesting issuance of multiple credentials, it
 
 ### Binding the Issued Credential to the Subject of that Credential {#credential-binding}
 
-Issued credential SHOULD be either be cryptographically bound to the Holder (Wallet) of the credential. This allows the Verifier to verify possession of that credential during presentation. For non-cryptographic binding and credentials issued without any binding, see Implementations Considerations sections {#claim-based-binding} and {#no-binding}.
+Issued credential SHOULD be cryptographically bound to the Holder (Wallet) of the credential. Cryptographic binding allows the Verifier to verify during presentation that the End-User presenting a credential is the same End-User to whom it was issued. For non-cryptographic type of binding and credentials issued without any binding, see Implementations Considerations sections {#claim-based-binding} and {#no-binding}.
 
 For cryptographic binding, the Client has the following options to provide cryptographic binding material for a requested credential as defined in {#credential_request}:
 
@@ -805,11 +805,11 @@ The deferred credential response uses the `format` and `credential` parameters a
 
 Credential not cryptographically bound to the Subject's identifier (see (#credential-binding)), should be bound to the Subject of the credential based on the claims included in that credential. 
 
-In claim-based binding, no cryptographic binding material is provided. Instead, the issued credential includes user claims that can be used by the Verifier to verify possession of the credential by requesting presentation of existing forms of physical or digial identification that includes the same claims (e.g., a driver's license in person, or an online ID verification service).
+In claim-based binding, no cryptographic binding material is provided. Instead, the issued credential includes user claims that can be used by the Verifier to verify possession of the credential by requesting presentation of existing forms of physical or digial identification that includes the same claims (e.g., a driver's license or other ID cards in person, or an online ID verification service).
 
 ## Binding of the Credential without Cryptographic Binding nor Claim-based Binding {#no-binding}
 
-Some Issuers might choose issuing credentials without either cryptographic binding nor claim-based binding. 
+Some Issuers might choose issuing bearer credentials without either cryptographic binding nor claim-based binding, because they are meant to be presented without proof of possession.
 
 One such use-case is low assurance credentials such as coupons or tickets. 
 
