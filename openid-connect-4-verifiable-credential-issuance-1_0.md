@@ -389,31 +389,6 @@ The wallet is not supposed to create a response. UX control stays with the walle
 
 The Authorization Endpoint is used in the same manner as defined in Section 3.1.2 of [@!OpenID.Core], with the exception of the differences specified in this section.
 
-In addition to the required basic Authorization Request, this section also defines how pushed authorization requests can be used to protect the authorization request payload and when the requests become large
- 
-### Credential Authorization Request {#credential-request}
-
-A credential authorization request builds upon the OpenID Connect Authentication request defined in section 3.1.2.1 of OpenID Connect core, which request that the End-User be authenticated by the Authorization Server but also granted access to the credential endpoint as defined in (#credential-endpoint).
-
-There are two possible ways to make a credential authorization request, one makes use of the claims request parameter as defined by section 5.5 of [@!OpenID.Core] with a new top level element called `credentials`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
-
-A non-normative example of a credential authorization request using the claims request object syntax.
-
-```
-HTTP/1.1 302 Found
-Location: https://server.example.com/authorize?
-  response_type=code
-  &scope=openid
-  &client_id=s6BhdRkqt3
-  &state=af0ifjsldkj
-  &claims=%7B%22credential%...%2dp_vc%22%7D%7D%5D%7D%7D
-  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-```
-
-## Authorization Endpoint
-
-The Authorization Endpoint is used in the same manner as defined in Section 3.1.2 of [@!OpenID.Core], with the exception of the differences specified in this section.
-
 In addition to the required basic Authorization Request, this section also defines
 
 * how pushed authorization requests can be used to protect the authorization request payload and when the requests become large, and
@@ -440,7 +415,7 @@ Location: https://server.example.com/authorize?
 
 A credential authorization request that features the claims request parameter MUST decoded to contain the new top-level element of `credentials` defined by this specification, the value of this `credentials` element MUST be a JSON object that conforms to the following structure.
 
-* `credentials`: JSON array containing one or more objects specifying credentials the Client is requesting to be issued. It MAY optionally contain references to verifiable presentations provided as prerequisite for credential issuance.
+* `credentials`: JSON array containing one or more objects specifying credentials the Client is requesting to be issued.
 
 The following elements are used in each object in the `credentials` property:
 
