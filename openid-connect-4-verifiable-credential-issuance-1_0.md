@@ -389,10 +389,7 @@ The wallet is not supposed to create a response. UX control stays with the walle
 
 The Authorization Endpoint is used in the same manner as defined in Section 3.1.2 of [@!OpenID.Core], with the exception of the differences specified in this section.
 
-In addition to the required basic Authorization Request, this section also defines
-
-* how pushed authorization requests can be used to protect the authorization request payload and when the requests become large, and
-* an optional dynamic credential presentation request that may be used by the Issuer to dynamically request additional credentials after receiving an Authorization Request (see also (#present_input_credentials)).
+In addition to the required basic Authorization Request, this section also defines how pushed authorization requests can be used to protect the authorization request payload and when the requests become large
  
 ### Credential Authorization Request {#credential-request}
 
