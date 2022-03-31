@@ -38,15 +38,15 @@ organization="Mattr"
 
 .# Abstract
 
-This specification defines an extension of OpenID Connect to allow holders to request issuance of verifiable credentials in addition to the standard OpenID Connect assertions.
+This specification defines an extension of OpenID Connect to allow requesting issuance of verifiable credentials in addition to the standard OpenID Connect assertions.
 
 {mainmatter}
 
 # Introduction
 
-This specification extends OpenID Connect with support for issuance of verifiable credentials, e.g., in the form of W3C Verifiable Credentials. This allows existing OpenID Connect OPs to extend their service and become credential issuers. It also allows new applications built using Verifiable Credentials to utilize OpenID Connect as integration and interoperability layer between credential holders and issuers.
+This specification extends OpenID Connect with support for issuance of verifiable credentials, e.g., in the form of W3C Verifiable Credentials. This allows existing OpenID Connect OPs to extend their service and become credential issuers. It also allows new applications built using Verifiable Credentials to utilize OpenID Connect as integration and interoperability layer.
 
-OpenID Connect is an obvious choice for this use case since it already allows Relying Parties to request identity assertions. Verifiable Credentials are very similar in that they allow an Issuer to assert End-User claims. In contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the credential type) and is bound to key material allowing the holder to prove the legitimate possession of the credential. This allows direct presentation of the credential without involvement of the credential issuer. This specification caters for those differences.
+OpenID Connect is an obvious choice for this use case since it already allows Relying Parties to request identity assertions. Verifiable Credentials are very similar in that they allow an Issuer to assert End-User claims. In contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the credential type) and is bound to key material allowing the End-User to prove the legitimate possession of the credential. This allows direct presentation of the credential without involvement of the credential issuer. This specification caters for those differences.
 
 # Terminology
 
@@ -82,11 +82,11 @@ Note: Map the Issuer terminology to the OpenID Connect's OP term
 
 # Use Cases
 
-## Holder-Initiated Credential Issuance
+## End-User Initiated Credential Issuance
 
 A user comes across an app where she needs to present a credential, e.g., a bank identity credential. She starts the presentation flow at this app and is sent to her wallet (e.g., via Self-Issued OpenID Provider v2 and OpenID Connect for Verifiable Presentations). The wallet determines the desired credential type(s) from the request and notifies the user that there is currently no matching credential in the wallet. The wallet now offers the user a list of suitable issuers, which might be based on an issuer list curated by the wallet publisher. The user picks one of those issuers and is sent to the issuer's user experience (web site or app). There the user authenticates and is asked for consent to issue the required credential into her wallet. She consents and is sent back to the wallet, where she is informed that a credential was successfully created and stored in the wallet.
 
-## Holder-Initiated Credential Issuance (with On-Demand Credential Presentation)
+## End-User Initiated Credential Issuance (with On-Demand Credential Presentation)
 
 A user comes across an app where she needs to present a credential, e.g., a university diploma. She starts the presentation flow at this app and is sent to her wallet (e.g., via Self-Issued OpenID Provider v2 and OpenID Connect for Verifiable Presentations). The wallet determines the desired credential type(s) from the request and notifies the user that there is currently no matching credential in the wallet. The wallet now offers the user a list of suitable issuers, which might be based on an issuer list curated by the wallet publisher. The user picks one of those issuers (her university). The user confirms and is sent to the issuer's user experience (web site or app). The user logs in to the university, which determines that the respective user account is not verified yet. The user is offered to either use a video chat for identification or to fetch a suitable identity credential from her wallet. The user decides to fetch the necessary credential from her wallet and is sent back. In the wallet, she picks a suitable credential and authorizes transfer to the university. The wallet sends her back to the university. Based on the bank identity credential, the university verifies her identity and looks up her data in its database. The university finds her diploma and offers to issue a verifiable credential. The user consents and is sent back to the wallet, where she is informed that a diploma verifiable credential was successfully created and stored in the wallet.
 
@@ -120,11 +120,11 @@ This section describes the requirements this specification aims to fulfill beyon
 * Support for deferred issuance of credentials
 * User authentication and identification
   * Issuer shall be able to dynamically obtain further data and be able to authenticate the user at their discretion
-  * Holder shall be able to pass existing credentials (as presentations) or identity assertions to the issuance flow
+  * Application used by the End-User shall be able to pass existing credentials (as presentations) or identity assertions to the issuance flow
     * Assisted flow (utilizing credential manifest)
     * Presentations/assertions must be protected against replay
 * It shall be possible to request standard OpenID Connect claims and credentials in the same flow (to implement wallet onboarding, see EBSI/ESSIF onboarding)
-* Support for Credential metadata (holder shall be able to determine the types of credentials an issuer is able to issue)
+* Support for Credential metadata (Application used by the End-User shall be able to determine the types of credentials an issuer is able to issue)
 * Ensure OP is authoritative for respective credential issuer (OP (OpenID Connect issuer URL) <-> Issuer ID (DID))
 * Incorporate/utilize existing specs
   * W3C VC HTTP API(?)
@@ -132,7 +132,7 @@ This section describes the requirements this specification aims to fulfill beyon
 
 # Overview 
 
-This specification defines following mechanisms to allow credential holders (acting as OpenID Connect Clients) to request credential issuers (acting as OpenID Connect OPs) to issue Verifiable Credentials via OpenID Connect:
+This specification defines following mechanisms to allow wallet applications used by the End-User (acting as OpenID Connect Clients) to request credential issuers (acting as OpenID Connect OPs) to issue Verifiable Credentials via OpenID Connect:
 
 * An optional mechanism to pre-obtain a Credential Manifest
 * An extended authorization request syntax that allows to request credential types to be issued
@@ -203,7 +203,7 @@ The starting point is an interaction of the user with her wallet. The user might
 * have visited the web site of a Credential Issuer and wants to obtain a credential from that issuer. 
 
 (1) (OPTIONAL) The issuer sends a request to the wallet to initiate the issuance flow. This request contains information about the 
-credential(s) the holder wants to obtain from that issuer, e.g., in the form of credential manifest IDs or credential types, and 
+credential(s) the End-User wants to obtain from that issuer, e.g., in the form of credential manifest IDs or credential types, and 
 further data, e.g., hints about the user when the user is already logged in with the Issuer.
 
 (2) (OPTIONAL) obtain credential manifest (as defined in [@DIF.CredentialManifest]) from the issuer with an information of which Verifiable Credentials the Issuer can issue, and optionally what kind of input from the user the Issuer requires to issue that credential.
@@ -632,9 +632,11 @@ The client can request issuance of a credential of a certain type multiple times
 
 If the access token is valid for requesting issuance of multiple credentials, it is at the client's discretion to decide the order in which to request issuance of multiple credentials requested in the Authorization Request.
 
-### Binding the Issued Credential to the Subject of that Credential {#credential-binding}
+### Binding the Issued Credential to the identifier of the End-User possessing that Credential {#credential-binding}
 
-Issued credential SHOULD be cryptographically bound to the Holder (Wallet) of the credential. Cryptographic binding allows the Verifier to verify during presentation that the End-User presenting a credential is the same End-User to whom it was issued. For non-cryptographic type of binding and credentials issued without any binding, see Implementations Considerations sections {#claim-based-binding} and {#no-binding}.
+Issued credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the credential. Cryptographic binding allows the Verifier to verify during presentation that the End-User presenting a credential is the same End-User to whom it was issued. For non-cryptographic type of binding and credentials issued without any binding, see Implementations Considerations sections {#claim-based-binding} and {#no-binding}. 
+
+Note that claims in the credential are usually about the End-User who possesses it, but can be about the other entity.
 
 For cryptographic binding, the Client has the following options to provide cryptographic binding material for a requested credential as defined in {#credential_request}:
 
@@ -801,9 +803,9 @@ The deferred credential response uses the `format` and `credential` parameters a
 
 # Implementation Considerations
 
-## Claim-based Binding of the Credential to the Subject {#claim-based-binding}
+## Claim-based Binding of the Credential to the End-User possessing the credential {#claim-based-binding}
 
-Credential not cryptographically bound to the Subject's identifier (see (#credential-binding)), should be bound to the Subject of the credential based on the claims included in that credential. 
+Credential not cryptographically bound to the identifier of the End-User possessing it (see (#credential-binding)), should be bound to the End-User possessing the credential based on the claims included in that credential. 
 
 In claim-based binding, no cryptographic binding material is provided. Instead, the issued credential includes user claims that can be used by the Verifier to verify possession of the credential by requesting presentation of existing forms of physical or digial identification that includes the same claims (e.g., a driver's license or other ID cards in person, or an online ID verification service).
 
@@ -813,7 +815,7 @@ Some Issuers might choose issuing bearer credentials without either cryptographi
 
 One such use-case is low assurance credentials such as coupons or tickets. 
 
-Another use-case is when the Issuer uses cryptographic schemes that can provide Holder binding without explicit cryptographic material being supplied by the Holder. For example, in the case of the BBS Signature Scheme, the issued credential itself is a secret and only derivation of a credential is presented to the Verifier. Effectively, credential is bound to the Issuer's signature on the credential, which becomes a shared secret transferred from the Issuer to the Holder.
+Another use-case is when the Issuer uses cryptographic schemes that can provide binding to the End-User possessing that credential without explicit cryptographic material being supplied by the application used by that End-User. For example, in the case of the BBS Signature Scheme, the issued credential itself is a secret and only derivation of a credential is presented to the Verifier. Effectively, credential is bound to the Issuer's signature on the credential, which becomes a shared secret transferred from the Issuer to the End-User.
 
 # Privacy Considerations
 
