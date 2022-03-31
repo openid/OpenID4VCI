@@ -292,45 +292,55 @@ If the issuer is unable to perform discovery of the Issuance Initiation Endpoint
 
 ## Server Metadata
 
-The server metadata [@!OpenID.Discovery] is extended to allow the RP to obtain information about the verifiable credentials an OP supports. This extension uses [@DIF.CredentialManifest]. 
+The OP metadata [@!OpenID.Discovery] is extended to allow the RP to obtain information about the credentials an OP supports the issuance of.
 
-This specification defines the following new Server Metadata parameter for this purpose:
+This specification defines the following new Server Metadata parameters for this purpose:
 
-* `credential_manifests`: OPTIONAL. A JSON array containing a list of Credential Manifests. This parameter enables Issuers to pass Credential Manifests in a single self-contained parameter.
-* `credential_manifest_uris`: OPTIONAL. A JSON array containing a list of URIs referencing resources each containing a Credential Manifest. This parameter enables Issuers to list Credential Manifests by reference, rather than by value. The scheme used MUST be https.
+* `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme MAY contain port, path and query parameter components.
 
-The following example shows an OpenID Configuration containing an embedded credential manifest.
+* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the credential type and the value is a JSON object conforming to the structure of the (#credential-metadata-object) which communicates the specifics around what the issuer supports for the given credential type.
+
+### Credential Metadata Object
+
+The following defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
+
+* `name`: REQUIRED. Display name for the credential.
+
+* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the credential and the value is a JSON object detailing the specifics about the support for the credential format.
+
+* `claims`: REQUIRED. A JSON object contain a list of key value pairs, where the key identifies the claim offered in the credential and the value is a JSON object detailing the specifics about the support for the claim. This specification defines the OPTIONAL property of `mandatory` who's value MUST be a boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `true`.
+
+The following example shows a non-normative example of the relevant entries in the OP metadata defined above
 
 ```
   HTTP/1.1 200 OK
   Content-Type: application/json
 
  {
-   "issuer":"https://server.example.com",
-   "authorization_endpoint":"https://server.example.com/connect/authorize",
-   "token_endpoint":"https://server.example.com/connect/token",
-   ...
-   "credential_manifests":[
-      {
-         "id":"WA-DL-CLASS-A",
-         "version":"0.1.0",
-         "issuer":{
-            "id":"did:example:123?linked-domains=3",
-            "name":"Washington State Government"
-          },
-         "output_descriptors":[
-            {
-               "schema":"http://washington-state-schemas.org/1.0.0/driver-license.json",
-               "id": "output descriptor 1"
-            }
-         ],
-         "presentation_definition":{}
-     }
-   ]
+  "credential_endpoint": "https://server.example.com/credential",
+  "credentials_supported": {
+    "university_degree" : {
+      "name": "University Credential",
+      "formats": {
+          "w3c_vc" : {
+            "binding_methods_supported": [ "did" ],
+            "proof_types_supported": [ "Ed25519Signature2018" ]
+          }
+      },
+      "claims": {
+          "given_name": {},
+          "last_name": {},
+          "degree": {},
+          "gpa": {
+            "mandatory": false
+          }
+      }
+    }
   }
+}
 ```
 
-Note: The RP MAY use other mechanisms to obtain information about the verifiable credentials that an OP can issue.
+Note: The RP MAY use other mechanisms to obtain information about the credentials that an OP can issue.
 
 ## Issuance Initiation Endpoint
 
@@ -400,9 +410,37 @@ Location: https://server.example.com/authorize?
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 ```
 
+## Authorization Endpoint
+
+The Authorization Endpoint is used in the same manner as defined in Section 3.1.2 of [@!OpenID.Core], with the exception of the differences specified in this section.
+
+In addition to the required basic Authorization Request, this section also defines
+
+* how pushed authorization requests can be used to protect the authorization request payload and when the requests become large, and
+* an optional dynamic credential presentation request that may be used by the Issuer to dynamically request additional credentials after receiving an Authorization Request (see also (#present_input_credentials)).
+ 
+### Credential Authorization Request {#credential-request}
+
+A credential authorization request builds upon the OpenID Connect Authentication request defined in section 3.1.2.1 of OpenID Connect core, which request that the End-User be authenticated by the Authorization Server but also granted access to the credential endpoint as defined in (#credential-endpoint).
+
+There are two possible ways to make a credential authorization request, one makes use of the claims request parameter as defined by section 5.5 of [@!OpenID.Core] with a new top level element called `credentials`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
+
+A non-normative example of a credential authorization request using the claims request object syntax.
+
+```
+HTTP/1.1 302 Found
+Location: https://server.example.com/authorize?
+  response_type=code
+  &scope=openid
+  &client_id=s6BhdRkqt3
+  &state=af0ifjsldkj
+  &claims=%7B%22credential%...%2dp_vc%22%7D%7D%5D%7D%7D
+  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+```
+
 A credential authorization request that features the claims request parameter MUST decoded to contain the new top-level element of `credentials` defined by this specification, the value of this `credentials` element MUST be a JSON object that conforms to the following structure.
 
-* `credentials`: JSON array containing one or more objects specifying credentials the Client is requesting to be issued.
+* `credentials`: JSON array containing one or more objects specifying credentials the Client is requesting to be issued. It MAY optionally contain references to verifiable presentations provided as prerequisite for credential issuance.
 
 The following elements are used in each object in the `credentials` property:
 
