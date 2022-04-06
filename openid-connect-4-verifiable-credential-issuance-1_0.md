@@ -853,12 +853,23 @@ POST /token HTTP/1.1
   &user_pin=493536
 ```
 
+## Extension to the token response {#pre-authz-token-response}
+
+The issuer MAY decide to interact with the end-user in the course of the token request processing, which might take some time. In such a case, the issuer SHOULD respond with the error `authorization_pending` and the new return parameter `interval`: 
+
+`interval`: OPTIONAL. The minimum amount of time in seconds that the client
+      SHOULD wait between polling requests to the token endpoint.  If no
+      value is provided, clients MUST use 5 as the default.
+
+`authorization_pending` The token request is still pending as the issuer is waiting for end user end user interaction to complete.  The client SHOULD 
+  repeat the token request. Before each new request, the client MUST wait at least the number of seconds specified by the "interval" response parameter.
+
 ## Replay Prevention
 
 The pre-authorized code flow by design does not bind the code to a certain device (as the authorization code flow does with PKCE). This means an attacker can obtain and replay the pre-authorized code at another device, e.g., the attacker can scan the QR code while it is displayed on the user’s screen, and thereby getting access to the credential. Such replay attacks must be prevented using other means. The design facilitates the following options: 
 
 * User PIN: the issuer might set up a PIN with the user (e.g. via text message or email), which needs to be presented in the token request
-* Callback to device where the transaction originated: the issuer on receiving the token request informs the user on the originating device that the process proceeds and asks for confirmation. The issuer will return an "authorization_pending" error code to the wallet and reaches out to the user on the other device to get confirmation. The wallet is required to call the token endpoint again to obtain the access token. If the user does not confirm, the token request is returned with the "access_denied" error code. This flow gives the user on the originating device more control over the issuance process. 
+* Callback to device where the transaction originated: the issuer on receiving the token request informs the user on the originating device that the process proceeds and asks for confirmation. The issuer will return an `authorization_pending` error code to the wallet (as described in (#pre-authz-token-response)) and reaches out to the user on the other device to get confirmation. The wallet is required to call the token endpoint again to obtain the access token. If the user does not confirm, the token request is returned with the `access_denied` error code. This flow gives the user on the originating device more control over the issuance process. 
 
 ## PIN Code Phishing
 
