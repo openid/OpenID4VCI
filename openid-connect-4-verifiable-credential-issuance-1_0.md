@@ -292,7 +292,7 @@ If the issuer is unable to perform discovery of the Issuance Initiation Endpoint
 
 ## Server Metadata
 
-The OP metadata [@!OpenID.Discovery] is extended to allow the RP to obtain information about the credentials an OP supports the issuance of.
+This section extends the OP metadata defined in [@!OpenID.Discovery] to allow the RP to obtain information about the credentials an OP is capable of issuing.
 
 This specification defines the following new Server Metadata parameters for this purpose:
 
