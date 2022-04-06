@@ -298,17 +298,34 @@ This specification defines the following new Server Metadata parameters for this
 
 * `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme MAY contain port, path and query parameter components.
 
-* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the credential type and the value is a JSON object conforming to the structure of the (#credential-metadata-object) which communicates the specifics around what the issuer supports for the given credential type.
+* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the credential type. The value can be a JSON object or a URL of a page that contains a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). It communicates the specifics of the credential type that the issuer support issuance of.
 
 ### Credential Metadata Object
 
 The following defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
 
-* `name`: REQUIRED. Display name for the credential.
+* `id`: REQUIRED. Identifier of a credential within a wallet.
 
-* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the credential and the value is a JSON object detailing the specifics about the support for the credential format.
+* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the credential and the value is a JSON object detailing the specifics about the support for the credential format. The following is a non-exhaustive list of parameters that MAY be included.
+    * `binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how 
+    * `proof_types_supported`: OPTIONAL. Array of case sensitive strings that identify  
 
-* `claims`: REQUIRED. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the credential and the value is a JSON object detailing the specifics about the support for the claim. This specification defines the OPTIONAL property of `mandatory` who's value MUST be a boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `true`.
+* `claims`: REQUIRED. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the credential and the value is a JSON object detailing the specifics about the support for the claim. The following is a non-exhaustive list of parameters that MAY be included.
+    * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `true`.
+    * `type`: OPTIONAL.
+    * `display`: OPTIONAL.
+
+* `input`: OPTIONAL. 
+
+* `display`: OPTIONAL. A JSON object containing information how to display a certain credential in a wallet. The following is a non-exhaustive list of parameters that MAY be included.
+    * `credential_name`: OPTIONAL. String value of how the Issuer wants the credential to be called when displayed in the wallet.
+    * `credential_issuer`: OPTIONAL. String value of how the Issuer wants the Issuer of the credential to be called when displayed in the wallet.
+    * `background_color`: OPTIONAL. String value of the color the Issuer wants to be used for background when credential is displayed in the wallet.
+    * `text_color`: OPTIONAL. String value of the color the Issuer wants to be used as for text in a displayed credential.
+    * `logo`: OPTIONAL. URL where the wallet can obtain a logo that Issuer wants to be used when credential is displayed in the wallet.
+        * `description`: 
+    * `language`: OPTIONAL. 
+    * `description`: OPTIONAL.
 
 The following example shows a non-normative example of the relevant entries in the OP metadata defined above
 
