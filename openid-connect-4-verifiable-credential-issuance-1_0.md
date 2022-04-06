@@ -799,10 +799,10 @@ This section specifies an additional flow to obtain an access token for credenti
 
 In contrast to the flow specified in (#endpoints), this flows is initiated by the Issuer when the credentials are "ready" and need to "picked up" by the wallet application. The way in which the user provides to the Issuer information required for the issuance of a requested credential and the business processes conducted by the Issuer are out of scope of this specification.
 
-1. The issuer sends an issuance initiation request to the wallet as described in (#issuance_initiation_request) with the pre-authorized code and the credential type the code is valid for. Issuer can also render a QR code containing the issuance initiation request. The issuer MAY bind the code to a user PIN. The way in which the PIN is provided to or determined by the user is out of scope of this specification. 
+1. The flow can be initiated in two different ways: Either the issuer sends an issuance initiation request to the wallet as described in (#issuance_initiation_request) with the pre-authorized code and the credential type the code is valid for as request parameters. Or the issuer renders a QR code containing the issuance initiation request with the previously mentined parameters. In this case, the user scans the QR code with her wallet on a different device in order to proceed. 
 2. The wallet sends the pre-authorized code to the issuer's Token Endpoint. This request MUST contain a user PIN if requested by the issuer. 
 3. The issuer responds with an access token good for credential issuance. 
-4. The wallet sends a credential issuance request to the credential issuance endpoint as defined in (#credential_request).
+4. The wallet sends a credential issuance request to the credential issuance endpoint as defined in (#credential_request) using the credential type as indicated in the first step from the issuer to the wallet.
 5. The issuer returns the requested credential as defined in (#credential_response). 
 
 Steps 1 and 2 constitute a new kind of flow that is implemented using additional parameters of the initiate issuance endpoint and a new OAuth grant type "urn:ietf:params:oauth:grant-type:pre-authorized_code". Steps 3 through 5 conform to the process specified in (#endpoints).
@@ -816,11 +816,19 @@ The following sections specify the extensions.
 These are the extension parameters defined for the pre-authorized code flow:
 
 * `pre-authorized_code`: REQUIRED. The code representing the authorization to obtain credentials of a certain type. This code MUST be short lived and single-use.
-* `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of an user PIN along with the token request. Default is `false`.
+* `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of an user PIN along with the token request. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. 
 
 Below is a non-normative example of an initiate issuance request:
 ```
   GET /initiate_issuance?
+    issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
+    &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
+    &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
+```
+
+The contents of a QR code could look like this:
+```
+openid_initiate_issuance://?
     issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
     &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
     &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
@@ -851,6 +859,11 @@ The pre-authorized code flow by design does not bind the code to a certain devic
 
 * User PIN: the issuer might set up a PIN with the user (e.g. via text message or email), which needs to be presented in the token request
 * Callback to device where the transaction originated: the issuer on receiving the token request informs the user on the originating device that the process proceeds and asks for confirmation. The issuer will return an "authorization_pending" error code to the wallet and reaches out to the user on the other device to get confirmation. The wallet is required to call the token endpoint again to obtain the access token. If the user does not confirm, the token request is returned with the "access_denied" error code. This flow gives the user on the originating device more control over the issuance process. 
+
+## PIN Code Phishing
+
+An attacker might leverage the user's trust into the wallet to phish PIN codes sent out by a different service. The attacker could setup an issuer site and in parallel to the issuance request trigger transmission of a PIN code to the user's phone, e.g. from a payment service. The user would then be asked to enter this PIN into the wallet and since the wallet sends this PIN to the token endpoint of the issuer (the attacker), the attacker would get access to the PIN code. 
+In order to cope with that issue, the wallet is RECOMMENDED to interact with trusted issuers only. In that case, the wallet would not process an initiate issuance request with an untrusted issuer URL. The wallet MAY also show to the user the endpoint or issuer it will be sending the PIN code and ask the user for confirmation. 
 
 # Security Considerations
 
