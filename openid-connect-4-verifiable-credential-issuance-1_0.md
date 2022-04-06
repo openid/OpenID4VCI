@@ -304,29 +304,36 @@ This specification defines the following new Server Metadata parameters for this
 
 The following defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
 
-* `id`: REQUIRED. Identifier of a credential within a wallet.
+* `name`: REQUIRED. String value of a display name for the credential.
 
-* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the credential and the value is a JSON object detailing the specifics about the support for the credential format. The following is a non-exhaustive list of parameters that MAY be included.
-    * `binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how 
-    * `proof_types_supported`: OPTIONAL. Array of case sensitive strings that identify  
+* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the credential. The value is a JSON object detailing the specifics about the support for the credential format with a following non-exhaustive list of parameters that MAY be included:
+  * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the credential is bound to the identifier of the End-User who possesses the credential as defined in (#credential-binding). A non-exhaustive list of valid values defined by this specification are `did`, `mso`, and `none`.
+  * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. 
 
-* `claims`: REQUIRED. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the credential and the value is a JSON object detailing the specifics about the support for the claim. The following is a non-exhaustive list of parameters that MAY be included.
-    * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `true`.
-    * `type`: OPTIONAL.
-    * `display`: OPTIONAL.
+* `claims`: REQUIRED. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the credential. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
+  * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `true`.
+  * `type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
+  * `display`: OPTIONAL. String value of a display name for the claim.
 
-* `input`: OPTIONAL. 
+* `display`: OPTIONAL. A JSON object containing information how to display a certain credential in a wallet. The following is a non-exhaustive list of parameters that MAY be included. Note that the display name of the credential and individual claim names are obtained from `name` and `claims.display` values.
+  * `credential_issuer`: OPTIONAL. String value of a display name for the credential issuer.
+  * `background_color`: OPTIONAL. String value of a background color of the credential.
+  * `text_color`: OPTIONAL. String value of a text color of the credential.
+  * `logo`: OPTIONAL. A JSON object with information about the logo of the credential issuer with a following non-exhaustive list of parameters that MAY be included:
+    * `url`: OPTIONAL. URL where the wallet can obtain a logo of the credential issuer.
+    * `alternative_text`: OPTIONAL. String value of an alternative text of a logo image.
+  * `language`: OPTIONAL. String value of a language of this diplay object. Multiple `diplay` object may be included for separate languages. 
+  * `description`: OPTIONAL. String value of a description of the credential.
 
-* `display`: OPTIONAL. A JSON object containing information how to display a certain credential in a wallet. The following is a non-exhaustive list of parameters that MAY be included.
-    * `credential_name`: OPTIONAL. String value of how the Issuer wants the credential to be called when displayed in the wallet.
-    * `credential_issuer`: OPTIONAL. String value of how the Issuer wants the Issuer of the credential to be called when displayed in the wallet.
-    * `background_color`: OPTIONAL. String value of the color the Issuer wants to be used for background when credential is displayed in the wallet.
-    * `text_color`: OPTIONAL. String value of the color the Issuer wants to be used as for text in a displayed credential.
-    * `logo`: OPTIONAL. URL where the wallet can obtain a logo that Issuer wants to be used when credential is displayed in the wallet.
-        * `description`: 
-    * `language`: OPTIONAL. 
-    * `description`: OPTIONAL.
-
+* `input`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the type of the input required from the user to request a credential and the value is a JSON object detailing the specifics of such input. The following is a non-exhaustive list of parameters that MAY be used for type of input:
+  * `vc`: OPTIONAL. Input type when another a W3C Verifiable Credential is required as an input to issue a credential.
+  * `user_input`: OPTIONAL. Input type when the user is requested to provide information to the Issuer that the Issuer may or may not verify.
+The following is a non-exhaustive list of parameters that MAY be used to detail the specifics of the input: 
+  * `presentation_definiton`: OPTIONAL. Defines specifics of a requested VC. MUST use the syntax as defined in DIF Presentation Exchange [@!DIF.PresentationExchange]. MUST be used only when input type is `vc`.
+  * `claims`: OPTIONAL. An array of objects of containing information about the claims required as an input. The following is a non-exhaustive list of parameters that MAY be used:
+    * `claim`: OPTIONAL. String value of a claim.
+    * `required`: OPTIONAL. Boolean if the claim is required or not. If omitted, the default value is `false`.
+   
 The following example shows a non-normative example of the relevant entries in the OP metadata defined above
 
 ```
@@ -349,8 +356,36 @@ The following example shows a non-normative example of the relevant entries in t
           "last_name": {},
           "degree": {},
           "gpa": {
-            "mandatory": false
+            "mandatory": false,
+            "type": "number",
+            "display": "GPA"
           }
+      },
+      "display": {
+          "credential_issuer": "Example University",
+          "background_color": "#12107c",
+          "text_color": "#FFFFFF",
+          "logo": {
+            "url": "https://exampleuniversity.com/public/logo.png",
+            "alternative_text": "a square logo of a university"
+          },
+          "language": "en"
+      },
+      "inputs": {
+        "vc": {
+          "presentation_definition": {}
+        }
+        "user_input": {
+          "claims": [
+            {
+              "claim": "first_name",
+              "required": "true"
+            },
+            {
+              "claim": "last_name"
+            }
+          ]
+        }
       }
     }
   }
