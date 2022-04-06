@@ -308,7 +308,7 @@ The following defines the structure of the object that appears as the value to t
 
 * `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the credential and the value is a JSON object detailing the specifics about the support for the credential format.
 
-* `claims`: REQUIRED. A JSON object contain a list of key value pairs, where the key identifies the claim offered in the credential and the value is a JSON object detailing the specifics about the support for the claim. This specification defines the OPTIONAL property of `mandatory` who's value MUST be a boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `true`.
+* `claims`: REQUIRED. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the credential and the value is a JSON object detailing the specifics about the support for the claim. This specification defines the OPTIONAL property of `mandatory` who's value MUST be a boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `true`.
 
 The following example shows a non-normative example of the relevant entries in the OP metadata defined above
 
@@ -322,7 +322,7 @@ The following example shows a non-normative example of the relevant entries in t
     "university_degree" : {
       "name": "University Credential",
       "formats": {
-          "w3c_vc" : {
+          "ldp_vc" : {
             "binding_methods_supported": [ "did" ],
             "proof_types_supported": [ "Ed25519Signature2018" ]
           }
