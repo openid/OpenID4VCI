@@ -306,7 +306,7 @@ The following defines the structure of the object that appears as the value to t
 
 * `name`: REQUIRED. String value of a display name for the credential.
 
-* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the credential. The value is a JSON object detailing the specifics about the support for the credential format with a following non-exhaustive list of parameters that MAY be included:
+* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the credential. A non-exhaustive list of valid values defined by this specification are `jwt_vc`, `ldp_vc` and `iso-mdl`. The value is a JSON object detailing the specifics about the support for the credential format with a following non-exhaustive list of parameters that MAY be included:
   * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the credential is bound to the identifier of the End-User who possesses the credential as defined in (#credential-binding). A non-exhaustive list of valid values defined by this specification are `did`, `mso`, and `none`.
   * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. 
 
