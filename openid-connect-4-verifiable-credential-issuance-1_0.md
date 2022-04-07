@@ -310,7 +310,10 @@ The following defines the structure of the object that appears as the value to t
   * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the credential is bound to the identifier of the End-User who possesses the credential as defined in (#credential-binding). A non-exhaustive list of valid values defined by this specification are `did`, `mso`, and `none`.
   * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. 
 
+* `types`: REQUIRED. Array of strings representing type of a credential. This value corresponds to `type` in W3C [@!VC_DATA] and a `doctype` in ISO/IEC 18013-5 (mobile Driving License).
+
 * `claims`: REQUIRED. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the credential. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
+  * `namespace`: OPTIONAL. String value of a namespace that the claim belongs to. Relevant for ISO/IEC 18013-5 (mobile Driving License) specification.
   * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `true`.
   * `type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
   * `display`: OPTIONAL. String value of a display name for the claim.
@@ -351,6 +354,7 @@ The following example shows a non-normative example of the relevant entries in t
             "proof_types_supported": [ "Ed25519Signature2018" ]
           }
       },
+      "types": [ "VerifiableCredential", "UniversityDegreeCredential" ],
       "claims": {
           "given_name": {},
           "last_name": {},
