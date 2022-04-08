@@ -38,15 +38,17 @@ organization="Mattr"
 
 .# Abstract
 
-This specification defines an extension of OpenID Connect to allow requesting issuance of verifiable credentials in addition to the standard OpenID Connect assertions.
+This specification defines an API and corresponding OAuth-based authorization mechanisms for issuance of verifiable credentials. This specification can be combined with OpenID Connect to obtain identity assertions along with verifiable credentials. 
 
 {mainmatter}
 
 # Introduction
 
-This specification extends OpenID Connect with support for issuance of verifiable credentials, e.g., in the form of W3C Verifiable Credentials. This allows existing OpenID Connect OPs to extend their service and become credential issuers. It also allows new applications built using Verifiable Credentials to utilize OpenID Connect as integration and interoperability layer.
+This specification defines an API and corresponding OAuth-based authorization mechanisms for issuance of verifiable credentials, e.g., in the form of W3C Verifiable Credentials. This allows existing OAuth deployments and OpenID Connect OPs to extend their service and become credential issuers. It also allows new applications built using Verifiable Credentials to utilize OAuth and OpenID Connect as integration and interoperability layer.
 
-OpenID Connect is an obvious choice for this use case since it already allows Relying Parties to request identity assertions. Verifiable Credentials are very similar in that they allow an Issuer to assert End-User claims. In contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the credential type) and is bound to key material allowing the End-User to prove the legitimate possession of the credential. This allows direct presentation of the credential without involvement of the credential issuer. This specification caters for those differences.
+OpenID Connect would be an obvious choice for this use case since it already allows Relying Parties to request identity assertions. However, early implementation experience suggests adoption is made easier if the base protocol focuses on credential issuance only without the need to assert, for example, stable `sub` values as required by [@OpenID.Core]. Thus the working group decided to base the protocol on OAuth. Applications can nevertheless be built using OpenID Connect and the credential issuance API as OpenID Connect is built on top of OAuth. 
+
+Verifiable Credentials are very similar to identity assertions in that they allow an Issuer to assert End-User claims. In contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the credential type) and is bound to key material allowing the End-User to prove the legitimate possession of the credential. This allows direct presentation of the credential without involvement of the credential issuer. This specification caters for those differences.
 
 # Terminology
 
