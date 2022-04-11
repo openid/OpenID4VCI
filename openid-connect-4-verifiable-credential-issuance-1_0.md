@@ -267,7 +267,7 @@ with step (6). One option would be to encode the data into a QR Code.
 
 ## Overview
 
-This specification defines new endpoints as well as additional parameters to existing OAuth endpoints required to implement the protocol outlined in the previous section. It also introduces a new authorization details type according to [@!I-D.ietf-oauth-rar] to convey the details about the credentials the wallet wants to obtain. Aspects not defined in this specification are expected to follow [@!RFC6749].
+This specification defines new endpoints as well as additional parameters to existing OAuth endpoints required to implement the protocol outlined in the previous section. It also introduces a new authorization details type according to [@!I-D.ietf-oauth-rar] to convey the details about the credentials the wallet wants to obtain. Aspects not defined in this specification are expected to follow [@!RFC6749]. it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks.
 
 There are the following new endpoints: 
 
@@ -380,15 +380,15 @@ The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] 
 
 In addition to the required basic Authorization Request, this section also defines how pushed authorization requests can be used to protect the authorization request payload and when the requests become large.
 
-### `authorization_details` Type
+### `authorization_details` Request Parameter {#authorization-details}
 
-Request parameter `authorization_type` defined in [@!I-D.ietf-oauth-rar] MUST be used to convey the details about the credentials the wallet wants to obtain. This specification introduces a new authorization details type `openid_credential`. This authorization details type contains the following elements:
+Request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-oauth-rar] MUST be used to convey the details about the credentials the wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
 
-* `type` REQUIRED. Determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
-* `credential_type`: CONDITIONAL. A JSON string denoting the type of the requested credential. MUST be present if `manifest_id` is not present.
+* `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
+* `credential_type`: CONDITIONAL. JSON string denoting the type of the requested credential. MUST be present if `manifest_id` is not present.
 * `manifest_id`: CONDITIONAL. JSON String referring to a credential manifest published by the credential issuer. MUST be present if `type` is not present.
-* `format`: OPTIONAL. A JSON string representing a format in which the credential is requested to be issued. Valid values defined by this specification are `jwt_vc` and `ldp_vc`. Profiles of this specification MAY define additional format values.
-* `locations` OPTIONAL. Predefined data field ([@!I-D.ietf-oauth-rar]) to identify the location of the resource server(s) allowing the AS to mint audience restricted access tokens. 
+* `format`: OPTIONAL. JSON string representing a format in which the credential is requested to be issued. Valid values defined by this specification are `jwt_vc` and `ldp_vc`. Profiles of this specification MAY define additional format values.
+* `locations`: OPTIONAL. An array of strings that allows a client to specify the location of the resource server(s) allowing the AS to mint audience restricted access tokens. This data field is predefined in Section 2.2 of ([@!I-D.ietf-oauth-rar]).
 
 Note: `credential_type` and `format` are used when the Client has not pre-obtained a Credential Manifest. `manifest_id` is used when the Client has pre-obtained a Credential Manifest. These two approaches MAY be combined in one request in different authorization details objects.
 
@@ -398,7 +398,7 @@ Note: Passing the `format` to the authorization request is informational and all
 
 [TBD: `locations` could enable a single authorization server to authorize access to different credential endpoints. Might be an architectural option we want to pursue.]
 
-The following shows an example authorization details object. 
+A non-normative example of an `authorization_details` object. 
 
 ```json=
 {
@@ -411,11 +411,11 @@ Note: applications MAY combine `openid_credential` with any other authorization 
  
 ### Credential Authorization Request {#credential-request}
 
-A credential authorization request is an OAuth Authorization request defined as defined in section 4.1.1 of [@!RFC6749], which request to grant access to the credential endpoint as defined in (#credential-endpoint). It also follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
+A credential authorization request is an OAuth Authorization request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the credential endpoint as defined in (#credential-endpoint). It also follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
-There are two possible ways to make a credential authorization request, one makes use of the `authorization_details` request parameter as defined in [@!I-D.ietf-oauth-rar] with one or more authorization details objects of type `openid_credential`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
+There are two possible ways to make a credential authorization request. One way is to use of the `authorization_details` request parameter as defined in (#authorization-details) with one or more authorization details objects of type `openid_credential`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
 
-A non-normative example of a credential authorization request using the `authorization_details` parameter.
+A non-normative example of a credential authorization request using the `authorization_details` parameter  (uses PKCE as defined in [@!RFC7636]) (with line wraps within values for display purposes only).
 
 ```
 HTTP/1.1 302 Found
@@ -431,7 +431,7 @@ Location: https://server.example.com/authorize?
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 ```
 
-This particiular example requests authorization to issue two different credentials:
+This particiular non-normative example requests authorization to issue two different credentials:
 
 ```json=
 [
@@ -447,7 +447,7 @@ This particiular example requests authorization to issue two different credentia
 ]
 ```
 
-This non-normative example shows a credential authorization request which is also a OpenID Connect authentication request.
+This non-normative example shows a credential authorization request which is also a OpenID Connect authentication request  (uses PKCE as defined in [@!RFC7636]).
 
 ```
 HTTP/1.1 302 Found
@@ -471,7 +471,7 @@ openid_credential:<credential-type>
 
 The value of `<credential-type>` indicates the type of credential being requested, providers who do not understand the value of this scope in a request MUST ignore it entirely. The presence of a scope following this syntax in the request MUST be interpreted by the provider as a request for access to the credential endpoint as defined in (#credential-endpoint) for the specific credential type. Multiple occurrences of this scope MAY be present in a single request whereby each occurrence MUST be interpreted individually.
 
-A non-normative example of a credential request scoped to a specific credential type.
+A non-normative example of a credential request scoped to a specific credential type (uses PKCE as defined in [@!RFC7636]).
 
 ```
 HTTP/1.1 302 Found
@@ -484,7 +484,7 @@ Location: https://server.example.com/authorize?
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 ```
 
-If both the `authorization_details` request parameter with objects of type `openid_credential`and an instance of a `openid_credential:<credential-type>` scope are present in a single request the provider MUST interpret these individually. However, if both the scopes are requesting the same credential type then the provider MUST follow the request as given by the authorization details object.
+If a scope `openid_credential:<credential-type>` and `authorization_details` request parameter containing object of type `openid_credential` are both present in a single request, the provider MUST interpret these individually. However, if both request the same credential type, than the Issuer MUST follow the request as given by the authorization details object.
 
 #### Additional Request Parameters
 
@@ -500,7 +500,7 @@ Note: When processing the authorization request, the issuer MUST take into accou
 
 Use of Pushed Authorization Requests is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues due to large requests due to the query language or if message level encryption is used.
 
-Below is a non-normative example of a Pushed Authorization Request:
+Below is a non-normative example of a Pushed Authorization Request  (uses PKCE as defined in [@!RFC7636]):
 
 ```
 POST /op/par HTTP/1.1
@@ -565,7 +565,7 @@ Location: https://client.example.net/cb?
 
 ## Token Endpoint
 
-The Token Endpoint issues an Access Token and, optionally, a Refresh Token in exchange for the authorization code obtained in a successful Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
+The Token Endpoint issues an Access Token and, optionally, a Refresh Token in exchange for the authorization code that client obtained in a successful Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
 ### Token Request
 
