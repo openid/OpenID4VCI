@@ -279,7 +279,7 @@ The following endpoints are extended:
 
 * Client Metadata: new metadata parameter is added to allow a wallet (acting as OpenID Connect RP) to publish its issuance initiation endpoint.
 * Server Metadata: New metadata parameters are added to allow the client to determine what types of verifiable credentials a particular OAuth 2.0 Authorization Server is able to issue along with additional information about formats and prerequisites.
-* Authorization Endpoint: A new authorization details type is defined in conveyed in the `authorization_details` parameter to allow the Clients to request authorization for issuance of one or more credentials. These extension can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
+* Authorization Endpoint: The `authorization_details` parameter is extended to allow clients to specify types of the credentials when requesting authorization for issuance. These extension can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
 * Token Endpoint: optional parameters are added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the credential endpoint. 
 
 ## Client Metadata 
@@ -376,17 +376,15 @@ The wallet is not supposed to create a response. UX control stays with the walle
 
 ## Authorization Endpoint
 
-The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] taking into account the 
-recommendations given in [@!I-D.ietf-oauth-security-topics] and utilizes [@!I-D.ietf-oauth-rar].
+The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics] and utilizes [@!I-D.ietf-oauth-rar].
 
-In addition to the required basic Authorization Request, this section also defines how pushed authorization requests can 
-be used to protect the authorization request payload and when the requests become large.
+In addition to the required basic Authorization Request, this section also defines how pushed authorization requests can be used to protect the authorization request payload and when the requests become large.
 
-### Authorization Details Type
+### `authorization_details` Type
 
-This specification introduces the authorization details type `openid_credential`. This authorization details type contains the following elements:
+Request parameter `authorization_type` defined in [@!I-D.ietf-oauth-rar] MUST be used to convey the details about the credentials the wallet wants to obtain. This specification introduces a new authorization details type `openid_credential`. This authorization details type contains the following elements:
 
-* `type` REQUIRED. Determines the authorization details type. Required by [@!I-D.ietf-oauth-rar] and set to `openid_credential` for the purpose of this specification.
+* `type` REQUIRED. Determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
 * `credential_type`: CONDITIONAL. A JSON string denoting the type of the requested credential. MUST be present if `manifest_id` is not present.
 * `manifest_id`: CONDITIONAL. JSON String referring to a credential manifest published by the credential issuer. MUST be present if `type` is not present.
 * `format`: OPTIONAL. A JSON string representing a format in which the credential is requested to be issued. Valid values defined by this specification are `jwt_vc` and `ldp_vc`. Profiles of this specification MAY define additional format values.
@@ -615,7 +613,7 @@ HTTP/1.1 200 OK
 
 ### Token Error Response
 
-If the Token Request is invalid or unauthorized, the Authorization Server constructs the error response as defined as in Section 5.2 of OAuth 2.0 [RFC6749].
+If the Token Request is invalid or unauthorized, the Authorization Server constructs the error response as defined as in Section 5.2 of OAuth 2.0 [@!RFC6749].
 
 The following is a non-normative example Token Error Response:
 
@@ -911,6 +909,16 @@ Another use-case is when the Issuer uses cryptographic schemes that can provide 
 TBD
 
 {backmatter}
+
+<reference anchor="RFC6749" target="https://datatracker.ietf.org/doc/html/rfc6749">
+  <front>
+    <title>The OAuth 2.0 Authorization Framework</title>
+    <author ullname="D. Hardt, Ed.">
+      <organization>Microsoft</organization>
+    </author>
+   <date month="October" year="2012"/>
+  </front>
+</reference>
 
 <reference anchor="VC_DATA" target="https://www.w3.org/TR/vc-data-model">
   <front>
