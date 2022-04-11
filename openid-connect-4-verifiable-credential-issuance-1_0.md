@@ -80,8 +80,6 @@ Deferred Credential Issuance
 
 Issuance of credentials not directly in the response to a credential issuance request, but following a period of time that can be used to perform certain offline business processes.
 
-Note: Map the Issuer terminology to the OpenID Connect's OP term
-
 # Use Cases
 
 ## End-User Initiated Credential Issuance
@@ -127,7 +125,7 @@ This section describes the requirements this specification aims to fulfill beyon
     * Presentations/assertions must be protected against replay
 * It shall be possible to request standard OpenID Connect claims and credentials in the same flow (to implement wallet onboarding, see EBSI/ESSIF onboarding)
 * Support for Credential metadata (Application used by the End-User shall be able to determine the types of credentials an issuer is able to issue)
-* Ensure OP is authoritative for respective credential issuer (OP (OpenID Connect issuer URL) <-> Issuer ID (DID))
+* Ensure OAuth 2.0 Authorization Server is authoritative for respective credential issuer (OP (OpenID Connect issuer URL) <-> Issuer ID (DID))
 * Incorporate/utilize existing specs
   * W3C VC HTTP API(?)
   * DIF Credential manifest(?)
@@ -280,9 +278,9 @@ There are the following new endpoints:
 The following endpoints are extended:
 
 * Client Metadata: new metadata parameter is added to allow a wallet (acting as OpenID Connect RP) to publish its issuance initiation endpoint.
-* Server Metadata: New metadata parameters are added to allow the RP to determine what types of verifiable credentials a particular OP is able to issue along with additional information about formats and prerequisites.
+* Server Metadata: New metadata parameters are added to allow the client to determine what types of verifiable credentials a particular OAuth 2.0 Authorization Server is able to issue along with additional information about formats and prerequisites.
 * Authorization Endpoint: A new authorization details type is defined in conveyed in the `authorization_details` parameter to allow the Clients to request authorization for issuance of one or more credentials. These extension can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
-* Token Endpoint: optional parameters are added to the token endpoint to provide the RP with a nonce to be used for proof of possession of key material in a subsequent request to the credential endpoint. 
+* Token Endpoint: optional parameters are added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the credential endpoint. 
 
 ## Client Metadata 
 
@@ -294,7 +292,7 @@ If the issuer is unable to perform discovery of the Issuance Initiation Endpoint
 
 ## Server Metadata
 
-The server metadata [@!OpenID.Discovery] is extended to allow the RP to obtain information about the verifiable credentials an Issuer supports. This extension uses [@DIF.CredentialManifest]. 
+The server metadata [@!OpenID.Discovery] is extended to allow the client to obtain information about the verifiable credentials an Issuer supports. This extension uses [@DIF.CredentialManifest]. 
 
 This specification defines the following new Server Metadata parameter for this purpose:
 
