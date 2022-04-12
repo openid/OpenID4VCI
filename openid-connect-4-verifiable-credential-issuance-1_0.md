@@ -277,14 +277,14 @@ There are the following new endpoints:
 
 The following endpoints are extended:
 
-* Client Metadata: new metadata parameter is added to allow a wallet (acting as OpenID Connect RP) to publish its issuance initiation endpoint.
+* Client Metadata: new metadata parameter is added to allow a wallet (acting as OAuth client) to publish its issuance initiation endpoint.
 * Server Metadata: New metadata parameters are added to allow the client to determine what types of verifiable credentials a particular OAuth 2.0 Authorization Server is able to issue along with additional information about formats and prerequisites.
 * Authorization Endpoint: The `authorization_details` parameter is extended to allow clients to specify types of the credentials when requesting authorization for issuance. These extension can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
 * Token Endpoint: optional parameters are added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the credential endpoint. 
 
 ## Client Metadata 
 
-This specification defines the following new Client Metadata parameter for wallets acting as OpenID Connect RP:
+This specification defines the following new Client Metadata parameter in addition to [@!RFC7591] for wallets acting as OAuth client:
 
 * `initiate_issuance_endpoint`: OPTIONAL. URL of the issuance initation endpoint of a wallet. 
 
