@@ -354,7 +354,7 @@ The following is a non-normative example:
   GET /initiate_issuance?
     issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
     &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
-    &login_hint=max%40example%2Ecom
+    &op_state=eyJhbGciOiJSU0Et...FYUaBy
 ```
 
 The issuer MAY also render a QR code containing the request data in order to allow the user to scan the request using her wallet app. 
