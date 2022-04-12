@@ -292,7 +292,7 @@ If the issuer is unable to perform discovery of the Issuance Initiation Endpoint
 
 ## Server Metadata
 
-The server metadata [@!OpenID.Discovery] is extended to allow the client to obtain information about the verifiable credentials an Issuer supports. This extension uses [@DIF.CredentialManifest]. 
+The server metadata [@!RFC8414] is extended to allow the client to obtain information about the verifiable credentials an Issuer supports. This extension uses [@DIF.CredentialManifest]. 
 
 This specification defines the following new Server Metadata parameter for this purpose:
 
@@ -490,7 +490,7 @@ If a scope `openid_credential:<credential-type>` and `authorization_details` req
 
 This specification defines the following additional request parameters that can be supplied in any credential authorization request:
 
-* `wallet_issuer`: OPTIONAL. JSON String containing the wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@SIOPv2] to determine the wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
+* `wallet_issuer`: OPTIONAL. JSON String containing the wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@!SIOPv2] to determine the wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
 * `user_hint`: OPTIONAL. JSON String containing an opaque user hint the wallet MAY use in sub-sequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
 * `op_state`: OPTIONAL. String value identifying a certain processing context at the credential issuer. A value for this parameter is typically passed in an issuance initation request from the issuer to the wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `op_state` value back to the credential issuer. 
 
@@ -529,13 +529,13 @@ Below is a non-normative example of a `authorization_details` parameter with `ma
 
 This step is OPTIONAL. After receiving an Authorization Request from the Client, the Issuer MAY use this step to obtain additional credentials from the End-User. 
 
-The Issuer MUST utilize [@OIDC4VP] and [@SIOPv2] to dynamically request additional credentials. From a protocol perspective, the Issuer acts now as a verifier and sends a presentation request to the wallet. The Client MUST have these credentials obtained prior to initiating a transaction with this Issuer. 
+The Issuer MUST utilize [@OIDC4VP] and [@!SIOPv2] to dynamically request additional credentials. From a protocol perspective, the Issuer acts now as a verifier and sends a presentation request to the wallet. The Client MUST have these credentials obtained prior to initiating a transaction with this Issuer. 
 
 This provides the benefit of the Issuer being able to adhere to the principle of data minimization, for example by including only minimum requirements in the Credential Manifest knowing that it can supplement additional information if needed.
 
 To enable dynamic callbacks of the issuer to the end-user's wallet, the wallet MAY provide additional parameters `wallet_issuer` and `user_hint` defined in the Authorization Request section of this specification.
 
-For non-normative examples of request and response, see section 11.6 in [@!OIDC4VP].
+For non-normative examples of request and response, see section 11.6 in [@OIDC4VP].
 
 Note to the editors: need to sort out credential issuer's client_id with wallet and potentially add example with `wallet_issuer` and `user_hint` 
 
@@ -1035,41 +1035,6 @@ TBD
        <date day="17" month="December" year="2021"/>
       </front>
 </reference>
-
-<reference anchor="OpenID.Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
-  <front>
-    <title>OpenID Connect Discovery 1.0 incorporating errata set 1</title>
-    <author initials="N." surname="Sakimura" fullname="Nat Sakimura">
-      <organization>NRI</organization>
-    </author>
-    <author initials="J." surname="Bradley" fullname="John Bradley">
-      <organization>Ping Identity</organization>
-    </author>
-    <author initials="B." surname="de Medeiros" fullname="Breno de Medeiros">
-      <organization>Google</organization>
-    </author>
-    <author initials="E." surname="Jay" fullname="Edmund Jay">
-      <organization> Illumila </organization>
-    </author>
-   <date day="8" month="Nov" year="2014"/>
-  </front>
-</reference>
-
-<reference anchor="OpenID.Registration" target="https://openid.net/specs/openid-connect-registration-1_0.html">
-        <front>
-          <title>OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1</title>
-          <author fullname="Nat Sakimura">
-            <organization>NRI</organization>
-          </author>
-          <author fullname="John Bradley">
-            <organization>Ping Identity</organization>
-          </author>
-          <author fullname="Michael B. Jones">
-            <organization>Microsoft</organization>
-          </author>
-          <date day="8" month="Nov" year="2014"/>
-        </front>
- </reference>
 
 # IANA Considerations
 
