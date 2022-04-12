@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-4-verifiable-credential-issuance-1_0-04"
+value = "openid-connect-4-verifiable-credential-issuance-1_0-05"
 status = "standard"
 
 [[author]]
