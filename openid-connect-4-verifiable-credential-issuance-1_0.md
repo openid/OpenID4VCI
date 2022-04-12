@@ -1049,6 +1049,7 @@ The technology described in this specification was made available from contribut
    -05
 
    * added support for pre-authorized code flow
+   * changed base protocol to OAuth
 
    -04
 
