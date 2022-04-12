@@ -910,16 +910,6 @@ TBD
 
 {backmatter}
 
-<reference anchor="RFC6749" target="https://datatracker.ietf.org/doc/html/rfc6749">
-  <front>
-    <title>The OAuth 2.0 Authorization Framework</title>
-    <author ullname="D. Hardt, Ed.">
-      <organization>Microsoft</organization>
-    </author>
-   <date month="October" year="2012"/>
-  </front>
-</reference>
-
 <reference anchor="VC_DATA" target="https://www.w3.org/TR/vc-data-model">
   <front>
     <title>Verifiable Credentials Data Model 1.0</title>
