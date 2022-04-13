@@ -277,14 +277,14 @@ There are the following new endpoints:
 
 The following endpoints are extended:
 
-* Client Metadata: new metadata parameter is added to allow a wallet (acting as OpenID Connect RP) to publish its issuance initiation endpoint.
+* Client Metadata: new metadata parameter is added to allow a wallet (acting as OAuth client) to publish its issuance initiation endpoint.
 * Server Metadata: New metadata parameters are added to allow the client to determine what types of verifiable credentials a particular OAuth 2.0 Authorization Server is able to issue along with additional information about formats and prerequisites.
 * Authorization Endpoint: The `authorization_details` parameter is extended to allow clients to specify types of the credentials when requesting authorization for issuance. These extension can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
 * Token Endpoint: optional parameters are added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the credential endpoint. 
 
 ## Client Metadata 
 
-This specification defines the following new Client Metadata parameter for wallets acting as OpenID Connect RP:
+This specification defines the following new Client Metadata parameter in addition to [@!RFC7591] for wallets acting as OAuth client:
 
 * `initiate_issuance_endpoint`: OPTIONAL. URL of the issuance initation endpoint of a wallet. 
 
@@ -292,7 +292,7 @@ If the issuer is unable to perform discovery of the Issuance Initiation Endpoint
 
 ## Server Metadata
 
-The server metadata [@!OpenID.Discovery] is extended to allow the client to obtain information about the verifiable credentials an Issuer supports. This extension uses [@DIF.CredentialManifest]. 
+The server metadata [@!RFC8414] is extended to allow the client to obtain information about the verifiable credentials an Issuer supports. This extension uses [@DIF.CredentialManifest]. 
 
 This specification defines the following new Server Metadata parameter for this purpose:
 
@@ -354,7 +354,7 @@ The following is a non-normative example:
   GET /initiate_issuance?
     issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
     &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
-    &login_hint=max%40example%2Ecom
+    &op_state=eyJhbGciOiJSU0Et...FYUaBy
 ```
 
 The issuer MAY also render a QR code containing the request data in order to allow the user to scan the request using her wallet app. 
@@ -490,7 +490,7 @@ If a scope `openid_credential:<credential-type>` and `authorization_details` req
 
 This specification defines the following additional request parameters that can be supplied in any credential authorization request:
 
-* `wallet_issuer`: OPTIONAL. JSON String containing the wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@SIOPv2] to determine the wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
+* `wallet_issuer`: OPTIONAL. JSON String containing the wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@!SIOPv2] to determine the wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
 * `user_hint`: OPTIONAL. JSON String containing an opaque user hint the wallet MAY use in sub-sequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
 * `op_state`: OPTIONAL. String value identifying a certain processing context at the credential issuer. A value for this parameter is typically passed in an issuance initation request from the issuer to the wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `op_state` value back to the credential issuer. 
 
@@ -529,13 +529,13 @@ Below is a non-normative example of a `authorization_details` parameter with `ma
 
 This step is OPTIONAL. After receiving an Authorization Request from the Client, the Issuer MAY use this step to obtain additional credentials from the End-User. 
 
-The Issuer MUST utilize [@OIDC4VP] and [@SIOPv2] to dynamically request additional credentials. From a protocol perspective, the Issuer acts now as a verifier and sends a presentation request to the wallet. The Client MUST have these credentials obtained prior to initiating a transaction with this Issuer. 
+The Issuer MUST utilize [@OIDC4VP] and [@!SIOPv2] to dynamically request additional credentials. From a protocol perspective, the Issuer acts now as a verifier and sends a presentation request to the wallet. The Client MUST have these credentials obtained prior to initiating a transaction with this Issuer. 
 
 This provides the benefit of the Issuer being able to adhere to the principle of data minimization, for example by including only minimum requirements in the Credential Manifest knowing that it can supplement additional information if needed.
 
 To enable dynamic callbacks of the issuer to the end-user's wallet, the wallet MAY provide additional parameters `wallet_issuer` and `user_hint` defined in the Authorization Request section of this specification.
 
-For non-normative examples of request and response, see section 11.6 in [@!OIDC4VP].
+For non-normative examples of request and response, see section 11.6 in [@OIDC4VP].
 
 Note to the editors: need to sort out credential issuer's client_id with wallet and potentially add example with `wallet_issuer` and `user_hint` 
 
@@ -911,16 +911,6 @@ TBD
 
 {backmatter}
 
-<reference anchor="RFC6749" target="https://datatracker.ietf.org/doc/html/rfc6749">
-  <front>
-    <title>The OAuth 2.0 Authorization Framework</title>
-    <author ullname="D. Hardt, Ed.">
-      <organization>Microsoft</organization>
-    </author>
-   <date month="October" year="2012"/>
-  </front>
-</reference>
-
 <reference anchor="VC_DATA" target="https://www.w3.org/TR/vc-data-model">
   <front>
     <title>Verifiable Credentials Data Model 1.0</title>
@@ -1037,41 +1027,6 @@ TBD
       </front>
 </reference>
 
-<reference anchor="OpenID.Discovery" target="https://openid.net/specs/openid-connect-discovery-1_0.html">
-  <front>
-    <title>OpenID Connect Discovery 1.0 incorporating errata set 1</title>
-    <author initials="N." surname="Sakimura" fullname="Nat Sakimura">
-      <organization>NRI</organization>
-    </author>
-    <author initials="J." surname="Bradley" fullname="John Bradley">
-      <organization>Ping Identity</organization>
-    </author>
-    <author initials="B." surname="de Medeiros" fullname="Breno de Medeiros">
-      <organization>Google</organization>
-    </author>
-    <author initials="E." surname="Jay" fullname="Edmund Jay">
-      <organization> Illumila </organization>
-    </author>
-   <date day="8" month="Nov" year="2014"/>
-  </front>
-</reference>
-
-<reference anchor="OpenID.Registration" target="https://openid.net/specs/openid-connect-registration-1_0.html">
-        <front>
-          <title>OpenID Connect Dynamic Client Registration 1.0 incorporating errata set 1</title>
-          <author fullname="Nat Sakimura">
-            <organization>NRI</organization>
-          </author>
-          <author fullname="John Bradley">
-            <organization>Ping Identity</organization>
-          </author>
-          <author fullname="Michael B. Jones">
-            <organization>Microsoft</organization>
-          </author>
-          <date day="8" month="Nov" year="2014"/>
-        </front>
- </reference>
-
 # IANA Considerations
 
 register "urn:ietf:params:oauth:grant-type:pre-authorized_code"
@@ -1095,6 +1050,7 @@ The technology described in this specification was made available from contribut
    -05
 
    * added support for pre-authorized code flow
+   * changed base protocol to OAuth
 
    -04
 
