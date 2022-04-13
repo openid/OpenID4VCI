@@ -543,7 +543,8 @@ Note to the editors: need to sort out credential issuer's client_id with wallet 
 
 Authentication Responses MUST be made as defined in [@!RFC6749].
 
-Below is a non-normative example of
+Below is a non-normative example of a successful Authentication Response:
+
 ```
 HTTP/1.1 302 Found
   Location: https://wallet.example.org/cb?
@@ -569,7 +570,7 @@ The Token Endpoint issues an Access Token and, optionally, a Refresh Token in ex
 
 ### Token Request
 
-Upon receiving a successful Authentication Request, a Token Request is made as defined in [@!RFC6749].
+Upon receiving a successful Authentication Response, a Token Request is made as defined in Section 4.1.3 of [@!RFC6749].
 
 Below is a non-normative example of a token request:
 ```
