@@ -327,15 +327,6 @@ The following defines the structure of the object that appears as the value to t
     * `alternative_text`: OPTIONAL. String value of an alternative text of a logo image.
   * `language`: OPTIONAL. String value of a language of this diplay object. Multiple `diplay` object may be included for separate languages. 
   * `description`: OPTIONAL. String value of a description of the credential.
-
-* `input`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the type of the input required from the user to request a credential and the value is a JSON object detailing the specifics of such input. The following is a non-exhaustive list of parameters that MAY be used for type of input:
-  * `vc`: OPTIONAL. Input type when another a W3C Verifiable Credential is required as an input to issue a credential.
-  * `user_input`: OPTIONAL. Input type when the user is requested to provide information to the Issuer that the Issuer may or may not verify.
-The following is a non-exhaustive list of parameters that MAY be used to detail the specifics of the input: 
-  * `presentation_definiton`: OPTIONAL. Defines specifics of a requested VC. MUST use the syntax as defined in DIF Presentation Exchange [@!DIF.PresentationExchange]. MUST be used only when input type is `vc`.
-  * `claims`: OPTIONAL. An array of objects of containing information about the claims required as an input. The following is a non-exhaustive list of parameters that MAY be used:
-    * `claim`: OPTIONAL. String value of a claim.
-    * `required`: OPTIONAL. Boolean if the claim is required or not. If omitted, the default value is `false`.
    
 The following example shows a non-normative example of the relevant entries in the OP metadata defined above
 
@@ -374,22 +365,6 @@ The following example shows a non-normative example of the relevant entries in t
             "alternative_text": "a square logo of a university"
           },
           "language": "en"
-      },
-      "inputs": {
-        "vc": {
-          "presentation_definition": {}
-        }
-        "user_input": {
-          "claims": [
-            {
-              "claim": "first_name",
-              "required": "true"
-            },
-            {
-              "claim": "last_name"
-            }
-          ]
-        }
       }
     }
   }
