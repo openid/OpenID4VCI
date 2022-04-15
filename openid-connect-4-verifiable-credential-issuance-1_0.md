@@ -662,6 +662,7 @@ This specification defines the following values for `proof_type`:
 * `jwt`: objects of this type contain a single `jwt` element with a signed JWT as proof of possession. The JWT MUST contain the following elements:
     * `kid`: CONDITIONAL. JWT header containing the key ID. If the credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the credential shall be bound to.
     * `jwk`: CONDITIONAL. JWT header containing the key material the new credential shall be bound to. MUST NOT be present if `kid` is present.
+    * `x5c`: CONDITIONAL. JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey key attestation certificates along with the proof of possession. 
     * `iss`: REQUIRED. MUST contain the client_id of the sender
     * `aud`: REQUIRED. MUST contain the issuer URL of credential issuer
     * `iat`: REQUIRED. MUST contain the instant when the proof was created
@@ -690,6 +691,31 @@ where the JWT looks like this:
   "alg": "ES256",
   "typ": "JWT",
   "kid":"did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1"
+}.
+{
+  "iss": "s6BhdRkqt3",
+  "aud": "https://server.example.com",
+  "iat": "2018-09-14T21:19:10Z",
+  "nonce": "tZignsnFbp"
+}
+```
+
+Here is another example JWT not only proofing possession of a private key but also providing key attestation data for that key:
+
+```json
+{
+  "typ": "JWT",
+  "alg": "ES256",
+  "jwk": {
+    "kty": "EC",
+    "d": "NZBrwP2lUTafoNQz4cZ3Oj_2DhLQJLBJ1jU6dorNaRw",
+    "use": "sig",
+    "crv": "P-256",
+    "x": "KKPk9RPnvIJ4hAErkatIoFRLyKIew6hjFRSso1_CJsI",
+    "y": "ad7ogH6jRt8YbGFF95Aoi6P-Q8bVtx9Tf4-_Jaf-cas",
+    "alg": "ES256"
+  },
+  "x5c":[<Key Attestation Certificate Chain>]
 }.
 {
   "iss": "s6BhdRkqt3",
@@ -883,6 +909,22 @@ An attacker might leverage the credential issuance process and the user's trust 
 In order to cope with that issue, the wallet is RECOMMENDED to interact with trusted issuers only. In that case, the wallet would not process an initiate issuance request with an untrusted issuer URL. The wallet MAY also show to the user the endpoint or issuer it will be sending the PIN code and ask the user for confirmation.
 
 # Security Considerations
+
+## Trust between Wallet and Issuer
+
+Credential Issuers often want to know what wallet they are issuing credentials to and how private keys are managed for the following reasons:
+
+* The issuer may wants to ensure that private keys are properly protected from exfiltration and replay in order to prevent an adversary from impersonating the legitimate credential holder by presenting her credential.
+* The issuer may also want ensure that the application managing the credentials adheres to certain policies and, potentially, was audited and approved under a certain regulatory and/or commercial scheme. 
+
+There are a couple of mechanisms that can be utilized to fulfill those objectives:
+
+**Key attestation** is a mechanisms where the device or security element in a device asserts the key management policy to the application creating and using this key. The Android Operating System, for example, provides apps with a certificate including a certificate chain asserting that a particular key is managed, for example, by an hardware security module [ref]. The wallet can provide this data along with the proof of possession in the credential request (see (#credential_request) for an example) to allow the issuer to validate the key management policy. . This indeed requires the issuer to rely on the trust anchor of the certificate chain and the respective key management policy. Another variant of this concept is the use of a Qualified Electronic Signature as defined by the eIDAS regulation [ref]. This signatures won't reveal the concrete properties of the associated private key to the issuer. However, due to the regulatory regime of eIDAS the issuer can deduce that the signing service manages the private keys according to this regime and fulfills very high security requirements. As another example, FIDO2 allows RPs to obtain an attestation along with the public key from a FIDO authenticator. That implicitly asserts the key management policy since the assertion is bound to a certain authenticator model and its key management capabilities. 
+[add key management policy issuer metadata]
+
+**App Attestation**: Key attestation, however, does not establish trust in the application storing the credential and producing presentation of that credential. That requires some kind of authentication of the particular wallet. App attestation as provided by mobile operating systems, e.g. iOS's DeviceCheck [TBD: Android Safetynet as well?], allows a server system to ensure it is communicating to a legitimate instance of its app. Those mechanisms cannot directly be used to crypthographically assert the authenticity of a wallet app to an issuer, but it allows a wallet implementation to validate its own internal integrity as basis to establish trust between the wallet and the issuer utilizing client authentication.  
+
+**Client authentication** allows a wallet to authenticate towards an issuer. In order to securely authenticate, the wallet needs to utilize a backend component managing the key material and processing the secure communication with the credential issuer. If the wallet manages its keys on the user's device, it must use key and/or app attestation to ensure its internal integrity.The issuer may establish trust with the wallet based on its own auditing or a trusted 3rd party attestation of the conformance of the wallet to a certain policy.   
 
 # Implementation Considerations
 
