@@ -698,7 +698,7 @@ where the JWT looks like this:
 }
 ```
 
-Here is another example JWT not only proofing possession of a private key but also providing key attestation data for that key:
+Here is another example JWT not only proving possession of a private key but also providing key attestation data for that key:
 
 ```json
 {
@@ -706,7 +706,6 @@ Here is another example JWT not only proofing possession of a private key but al
   "alg": "ES256",
   "jwk": {
     "kty": "EC",
-    "d": "NZBrwP2lUTafoNQz4cZ3Oj_2DhLQJLBJ1jU6dorNaRw",
     "use": "sig",
     "crv": "P-256",
     "x": "KKPk9RPnvIJ4hAErkatIoFRLyKIew6hjFRSso1_CJsI",
@@ -915,15 +914,15 @@ Credential Issuers often want to know what wallet they are issuing credentials t
 * The issuer may wants to ensure that private keys are properly protected from exfiltration and replay in order to prevent an adversary from impersonating the legitimate credential holder by presenting her credential.
 * The issuer may also want to ensure that the wallet managing the credentials adheres to certain policies and, potentially, was audited and approved under a certain regulatory and/or commercial scheme. 
 
-There are a couple of mechanisms that can be utilized to fulfill those objectives:
+These mechanisms can be utilized to fulfill those objectives:
 
-**Key attestation** is a mechanisms where the device or security element in a device asserts the key management policy to the application creating and using this key. The Android Operating System, for example, provides apps with a certificate including a certificate chain asserting that a particular key is managed, for example, by an hardware security module [ref]. The wallet can provide this data along with the proof of possession in the credential request (see (#credential_request) for an example) to allow the issuer to validate the key management policy. This indeed requires the issuer to rely on the trust anchor of the certificate chain and the respective key management policy. Another variant of this concept is the use of a Qualified Electronic Signature as defined by the eIDAS regulation [ref]. This signatures won't reveal the concrete properties of the associated private key to the issuer. However, due to the regulatory regime of eIDAS the issuer can deduce that the signing service manages the private keys according to this regime and fulfills very high security requirements. As another example, FIDO2 allows RPs to obtain an attestation along with the public key from a FIDO authenticator. That implicitly asserts the key management policy since the assertion is bound to a certain authenticator model and its key management capabilities. 
+**Key attestation** is a mechanism where the device or security element in a device asserts the key management policy to the application creating and using this key. The Android Operating System, for example, provides apps with a certificate including a certificate chain asserting that a particular key is managed, for example, by an hardware security module [ref]. The wallet can provide this data along with the proof of possession in the credential request (see (#credential_request) for an example) to allow the issuer to validate the key management policy. This indeed requires the issuer to rely on the trust anchor of the certificate chain and the respective key management policy. Another variant of this concept is the use of a Qualified Electronic Signature as defined by the eIDAS regulation [ref]. This signatures won't reveal the concrete properties of the associated private key to the issuer. However, due to the regulatory regime of eIDAS the issuer can deduce that the signing service manages the private keys according to this regime and fulfills very high security requirements. As another example, FIDO2 allows RPs to obtain an attestation along with the public key from a FIDO authenticator. That implicitly asserts the key management policy since the assertion is bound to a certain authenticator model and its key management capabilities. 
 
 [add key management policy issuer metadata]
 
 **App Attestation**: Key attestation, however, does not establish trust in the application storing the credential and producing presentation of that credential. App attestation as provided by mobile operating systems, e.g. iOS's DeviceCheck [TBD: Android Safetynet as well?], allows a server system to ensure it is communicating to a legitimate instance of its app. Those mechanisms cannot directly be used to crypthographically assert the authenticity of a wallet app to an issuer, but they allows a wallet implementation to validate its own internal integrity as basis to establish trust between the wallet and the issuer utilizing client authentication.  
 
-**Client authentication** allows a wallet to authenticate towards an issuer. In order to securely authenticate, the wallet needs to utilize a backend component managing the key material and processing the secure communication with the credential issuer. If the wallet manages its keys on the user's device, it must use key and/or app attestation to ensure its internal integrity.  The issuer may establish trust with the wallet based on its own auditing or a trusted 3rd party attestation of the conformance of the wallet to a certain policy.   
+**Client authentication** allows a wallet to authenticate with an issuer. In order to securely authenticate, the wallet needs to utilize a backend component managing the key material and processing the secure communication with the credential issuer. If the wallet manages its keys on the user's device, it must use key and/or app attestation to ensure its internal integrity.  The issuer may establish trust with the wallet based on its own auditing or a trusted 3rd party attestation of the conformance of the wallet to a certain policy.   
 
 # Implementation Considerations
 
