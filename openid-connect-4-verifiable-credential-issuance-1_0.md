@@ -300,25 +300,12 @@ This specification defines the following new Server Metadata parameters for this
 
 * `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the credential type. The value can be a JSON object or a URL of a page that contains a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). It communicates the specifics of the credential type that the issuer support issuance of.
 
-### Credential Metadata Object
+### Credential Metadata Object 
 
-The following defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
-
-* `name`: REQUIRED. String value of a display name for the credential.
-
-* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the credential. A non-exhaustive list of valid values defined by this specification are `jwt_vc`, `ldp_vc` and `iso-mdl`. The value is a JSON object detailing the specifics about the support for the credential format with a following non-exhaustive list of parameters that MAY be included:
-  * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the credential is bound to the identifier of the End-User who possesses the credential as defined in (#credential-binding). A non-exhaustive list of valid values defined by this specification are `did`, `mso`, and `none`.
-  * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. 
-
-* `types`: REQUIRED. Array of strings representing type of a credential. This value corresponds to `type` in W3C [@!VC_DATA] and a `doctype` in ISO/IEC 18013-5 (mobile Driving License).
-
-* `claims`: REQUIRED. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the credential. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
-  * `namespace`: OPTIONAL. String value of a namespace that the claim belongs to. Relevant for ISO/IEC 18013-5 (mobile Driving License) specification.
-  * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `true`.
-  * `type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
-  * `display`: OPTIONAL. String value of a display name for the claim.
+This section defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
 
 * `display`: OPTIONAL. A JSON object containing information how to display a certain credential in a wallet. The following is a non-exhaustive list of parameters that MAY be included. Note that the display name of the credential and individual claim names are obtained from `name` and `claims.display` values.
+  * `name`: REQUIRED. String value of a display name for the credential.
   * `credential_issuer`: OPTIONAL. String value of a display name for the credential issuer.
   * `background_color`: OPTIONAL. String value of a background color of the credential.
   * `text_color`: OPTIONAL. String value of a text color of the credential.
@@ -327,6 +314,21 @@ The following defines the structure of the object that appears as the value to t
     * `alternative_text`: OPTIONAL. String value of an alternative text of a logo image.
   * `language`: OPTIONAL. String value of a language of this diplay object. Multiple `diplay` object may be included for separate languages. 
   * `description`: OPTIONAL. String value of a description of the credential.
+
+* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the credential. Below is a non-exhaustive list of valid key values defined by this specification
+  * Claim Format Designations defined in [@!DIF.PresentationExchange], such as `jwt_vc` and `ldp_vc`
+  * `mdl_iso`: defined in this specification to express a mobile driving licence (mDL) credential compliant to a data model and data sets defined in ISO/IEC 18013-5:2021 specification. 
+The value in a key value pair is a JSON object detailing the specifics about the support for the credential format with a following non-exhaustive list of parameters that MAY be included:
+  * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the credential is bound to the identifier of the End-User who possesses the credential as defined in (#credential-binding). A non-exhaustive list of valid values defined by this specification are `did`, `mso`, and `none`.
+  * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptosuites for credentials in `jwt_vc` format should use algorithm names defined in [IANA JOSE Algorithms Registry](https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms). Cryptosuites for credentials in `ldp_vc` format should use signature suites names defined in [Linked Data Cryptographic Suite Registry](https://w3c-ccg.github.io/ld-cryptosuite-registry/).
+
+* `types`: REQUIRED. Array of strings representing type of a credential. This value corresponds to `type` in W3C [@!VC_DATA] and a `doctype` in ISO/IEC 18013-5 (mobile Driving License).
+
+* `claims`: REQUIRED. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the credential. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
+  * `namespace`: OPTIONAL. String value of a namespace that the claim belongs to. Relevant for ISO/IEC 18013-5 (mobile Driving License) specification.
+  * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
+  * `type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
+  * `display`: OPTIONAL. String value of a display name for the claim.
    
 The following example shows a non-normative example of the relevant entries in the OP metadata defined above
 
@@ -338,7 +340,17 @@ The following example shows a non-normative example of the relevant entries in t
   "credential_endpoint": "https://server.example.com/credential",
   "credentials_supported": {
     "university_degree" : {
-      "name": "University Credential",
+      "display": {
+          "name": "University Credential",
+          "credential_issuer": "Example University",
+          "background_color": "#12107c",
+          "text_color": "#FFFFFF",
+          "logo": {
+            "url": "https://exampleuniversity.com/public/logo.png",
+            "alternative_text": "a square logo of a university"
+          },
+          "language": "en"
+      },
       "formats": {
           "ldp_vc" : {
             "binding_methods_supported": [ "did" ],
@@ -355,16 +367,6 @@ The following example shows a non-normative example of the relevant entries in t
             "type": "number",
             "display": "GPA"
           }
-      },
-      "display": {
-          "credential_issuer": "Example University",
-          "background_color": "#12107c",
-          "text_color": "#FFFFFF",
-          "logo": {
-            "url": "https://exampleuniversity.com/public/logo.png",
-            "alternative_text": "a square logo of a university"
-          },
-          "language": "en"
       }
     }
   }
