@@ -426,7 +426,7 @@ Location: https://server.example.com/authorize?
   &code_challenge_method=S256
   &authorization_details=%5B%7B%22type%22:%22openid_credential%22,%22credential_type
   %22:%22https://did.example.org/healthCard%22,%22format%22:%22ldp_vc%22%7D,%7B%22ty
-  pe%22:%22openid_credential%22,%22credential_type%22:%22https://did.exmaple.org/mDL
+  pe%22:%22openid_credential%22,%22credential_type%22:%22https://did.example.org/mDL
   %22%7D%5D
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 ```
@@ -442,7 +442,7 @@ This particiular non-normative example requests authorization to issue two diffe
    },
    {
       "type":"openid_credential",
-      "credential_type":"https://did.exmaple.org/mDL"
+      "credential_type":"https://did.example.org/mDL"
    }
 ]
 ```
