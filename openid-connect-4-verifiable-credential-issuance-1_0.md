@@ -659,8 +659,8 @@ This specification defines the following values for `proof_type`:
 
 * `jwt`: objects of this type contain a single `jwt` element with a signed JWT as proof of possession. The JWT MUST contain the following elements:
     * `kid`: CONDITIONAL. JWT header containing the key ID. If the credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the credential shall be bound to.
-    * `jwk`: CONDITIONAL. JWT header containing the key material the new credential shall be bound to. MUST NOT be present if `kid` is present.
-    * `x5c`: CONDITIONAL. JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey key attestation certificates along with the proof of possession. 
+    * `jwk`: CONDITIONAL. JWT header containing the key material the new credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
+    * `x5c`: CONDITIONAL. JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties.
     * `iss`: REQUIRED. MUST contain the client_id of the sender
     * `aud`: REQUIRED. MUST contain the issuer URL of credential issuer
     * `iat`: REQUIRED. MUST contain the instant when the proof was created
@@ -704,15 +704,7 @@ Here is another example JWT not only proving possession of a private key but als
 {
   "typ": "JWT",
   "alg": "ES256",
-  "jwk": {
-    "kty": "EC",
-    "use": "sig",
-    "crv": "P-256",
-    "x": "KKPk9RPnvIJ4hAErkatIoFRLyKIew6hjFRSso1_CJsI",
-    "y": "ad7ogH6jRt8YbGFF95Aoi6P-Q8bVtx9Tf4-_Jaf-cas",
-    "alg": "ES256"
-  },
-  "x5c":[<Key Attestation Certificate Chain>]
+  "x5c":[<actual key + certificate chain for attestation>]
 }.
 {
   "iss": "s6BhdRkqt3",
