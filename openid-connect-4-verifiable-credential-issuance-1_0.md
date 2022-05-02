@@ -1,13 +1,13 @@
 %%%
-title = "OpenID Connect for Verifiable Credential Issuance"
-abbrev = "openid-connect-4-vc-issuance"
+title = "OpenID for Credential Issuance"
+abbrev = "openid-for-credential-issuance"
 ipr = "none"
 workgroup = "OpenID Connect"
 keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-connect-4-verifiable-credential-issuance-1_0-05"
+value = "openid-for-credential-issuance-1_0-06"
 status = "standard"
 
 [[author]]
@@ -1046,6 +1046,10 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -06
+
+   * renamed specification to reflect OAuth being a base protocol
 
    -05
 
