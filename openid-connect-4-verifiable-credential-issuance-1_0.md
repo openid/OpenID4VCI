@@ -704,7 +704,7 @@ Here is another example JWT not only proving possession of a private key but als
 {
   "typ": "JWT",
   "alg": "ES256",
-  "x5c":[<actual key + certificate chain for attestation>]
+  "x5c":[<key certificate + certificate chain for attestation>]
 }.
 {
   "iss": "s6BhdRkqt3",
