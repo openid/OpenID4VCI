@@ -330,7 +330,9 @@ The value in a key value pair is a JSON object detailing the specifics about the
   * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
   * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
   * `display`: OPTIONAL. String value of a display name for the claim.
-   
+
+It is dependent on the credential format, where the requested claims will appear.
+
 The following example shows a non-normative example of the relevant entries in the OP metadata defined above
 
 ```
