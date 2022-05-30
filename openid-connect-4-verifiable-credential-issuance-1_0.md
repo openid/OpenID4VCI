@@ -298,36 +298,37 @@ This specification defines the following new Server Metadata parameters for this
 
 * `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme MAY contain port, path and query parameter components.
 
-* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the credential type. The value can be a JSON object or a URL of a page that contains a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). It communicates the specifics of the credential type that the issuer support issuance of.
+* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a globally unique string serving as an abstract identifier of the credential. The value can be a JSON object or a URL of a page that contains a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). It communicates the specifics of the credential that the issuer support issuance of.
 
-### Credential Metadata Object 
+### Credential Metadata Object {#credential-metadata-object}
 
 This section defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
 
-* `display`: OPTIONAL. A JSON object containing information how to display a certain credential in a wallet. The following is a non-exhaustive list of parameters that MAY be included. Note that the display name of the credential and individual claim names are obtained from `name` and `claims.display` values.
+* `display`: OPTIONAL. An array of objects containing information how to display a certain credential in a wallet in each language. The following is a non-exhaustive list of parameters that MAY be included. Note that the display name of the credential is obtained from `display.name` and individual claim names from `claims.display` values.
   * `name`: REQUIRED. String value of a display name for the credential.
+  * `language`: OPTIONAL. String value that identifies language of this diplay object. Multiple `diplay` objects may be included for separate languages. There MUST be only one object with the same language identifier
   * `credential_issuer`: OPTIONAL. String value of a display name for the credential issuer.
   * `background_color`: OPTIONAL. String value of a background color of the credential.
   * `text_color`: OPTIONAL. String value of a text color of the credential.
   * `logo`: OPTIONAL. A JSON object with information about the logo of the credential issuer with a following non-exhaustive list of parameters that MAY be included:
     * `url`: OPTIONAL. URL where the wallet can obtain a logo of the credential issuer.
     * `alternative_text`: OPTIONAL. String value of an alternative text of a logo image.
-  * `language`: OPTIONAL. String value of a language of this diplay object. Multiple `diplay` object may be included for separate languages. 
   * `description`: OPTIONAL. String value of a description of the credential.
 
 * `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the credential. Below is a non-exhaustive list of valid key values defined by this specification
   * Claim Format Designations defined in [@!DIF.PresentationExchange], such as `jwt_vc` and `ldp_vc`
   * `mdl_iso`: defined in this specification to express a mobile driving licence (mDL) credential compliant to a data model and data sets defined in ISO/IEC 18013-5:2021 specification. 
+  * `ac_vc`: defined in this specificaiton to express an AnonCreds credential format defined as part of the Hyperledger Indy project [Hyperledger.Indy].
+
 The value in a key value pair is a JSON object detailing the specifics about the support for the credential format with a following non-exhaustive list of parameters that MAY be included:
+  * `types`: REQUIRED. Array of strings representing a format specific type of a credential. This value corresponds to `type` in W3C [@!VC_DATA] and a `doctype` in ISO/IEC 18013-5 (mobile Driving License).
   * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the credential is bound to the identifier of the End-User who possesses the credential as defined in (#credential-binding). A non-exhaustive list of valid values defined by this specification are `did`, `mso`, and `none`.
   * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptosuites for credentials in `jwt_vc` format should use algorithm names defined in [IANA JOSE Algorithms Registry](https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms). Cryptosuites for credentials in `ldp_vc` format should use signature suites names defined in [Linked Data Cryptographic Suite Registry](https://w3c-ccg.github.io/ld-cryptosuite-registry/).
-
-* `types`: REQUIRED. Array of strings representing type of a credential. This value corresponds to `type` in W3C [@!VC_DATA] and a `doctype` in ISO/IEC 18013-5 (mobile Driving License).
 
 * `claims`: REQUIRED. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the credential. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
   * `namespace`: OPTIONAL. String value of a namespace that the claim belongs to. Relevant for ISO/IEC 18013-5 (mobile Driving License) specification.
   * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
-  * `type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
+  * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
   * `display`: OPTIONAL. String value of a display name for the claim.
    
 The following example shows a non-normative example of the relevant entries in the OP metadata defined above
@@ -339,8 +340,9 @@ The following example shows a non-normative example of the relevant entries in t
  {
   "credential_endpoint": "https://server.example.com/credential",
   "credentials_supported": {
-    "university_degree" : {
-      "display": {
+    "546b92be-ac23-47cd-a97c-2d1a1736aedf" : {
+      "display": [
+        {
           "name": "University Credential",
           "credential_issuer": "Example University",
           "background_color": "#12107c",
@@ -350,21 +352,22 @@ The following example shows a non-normative example of the relevant entries in t
             "alternative_text": "a square logo of a university"
           },
           "language": "en"
-      },
+        }
+      ],
       "formats": {
-          "ldp_vc" : {
-            "binding_methods_supported": [ "did" ],
-            "proof_types_supported": [ "Ed25519Signature2018" ]
-          }
+        "ldp_vc": {
+          "types": [ "VerifiableCredential", "UniversityDegreeCredential" ],
+          "binding_methods_supported": [ "did" ],
+          "proof_types_supported": [ "Ed25519Signature2018" ]
+        }
       },
-      "types": [ "VerifiableCredential", "UniversityDegreeCredential" ],
       "claims": {
           "given_name": {},
           "last_name": {},
           "degree": {},
           "gpa": {
             "mandatory": false,
-            "type": "number",
+            "value_type": "number",
             "display": "GPA"
           }
       }
