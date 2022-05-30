@@ -526,7 +526,7 @@ Location: https://server.example.com/authorize?
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 ```
 
-If a scope `openid_credential:<credential-type>` and `authorization_details` request parameter containing object of type `openid_credential` are both present in a single request, the provider MUST interpret these individually. However, if both request the same credential type, than the Issuer MUST follow the request as given by the authorization details object.
+If a scope `openid_credential:<credential-type>` and the `authorization_details` request parameter containing objects of type `openid_credential` are both present in a single request, the provider MUST interpret these individually. However, if both request the same credential type, than the Issuer MUST follow the request as given by the authorization details object.
 
 #### Additional Request Parameters
 
