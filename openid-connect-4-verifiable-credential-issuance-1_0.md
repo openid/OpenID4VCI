@@ -731,6 +731,19 @@ The following claims are used in the Credential Response:
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
+
+This specification defines whether the issued credential needs to be encoded when returned in the `credential` claim in the Credential Response based on the credential format and the signature scheme as expressed in the following table:
+
+| Credential Format Identifier | Signature Scheme | Need for encoding when including  |
+|:------|:-----|:------------|
+|JWT-VC| Credential conformant to the W3C Verifiable Credentials Data Model and signed as a JWS | MUST be a JSON string that is the base64url encoded representation of the issued credential |
+|LDP-VC| Credential conformant to the W3C Verifiable Credentials Data Model and signed with Data Integrity Proofs | MUST NOT be encoded |
+|ac_vc| Credential conformant to the AnonCreds format as defined in the Hyperledger Indy project and signed using CL-signature scheme | MUST NOT be encoded |
+|mdl_iso_cbor| Credential conformant to the ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, encoded as CBOR and signed as a COSE message | MUST be a JSON string that is the base64url encoded representation of the issued credential |
+|mdl_iso_json| Credential conformant to the ISO/IEC 18013-5:2021 mDL data model, encoded as JSON and signed as JWS | MUST be a JSON string that is the base64url encoded representation of the issued credential |
+
+Note that this table might be superceded by a registry in another standards organization in the future. Meanwhile, for interoperability, implementers MUST follow the requirements defined in the table above.
+
 Below is a non-normative example of a credential response in a synchronous flow:
 
 ```
