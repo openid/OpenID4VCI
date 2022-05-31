@@ -1,0 +1,17 @@
+@startuml
+participant User as u
+participant "User Agent" as w
+participant "Wallet" as b
+participant Issuer as i
+
+u -> w : get credential
+w -> b : start credential issuance : authz url
+w --> i : authorize
+i --> w : authorize response (code)
+w --> b : authorize response (code)
+b -> i : token (code, client_id, ...): access_token, c_nonce
+note right: wallet authenticates with issuer\nissuer may check wallet against trust registry
+b -> b : gen key : key, key_attestation
+b -> b : create proof of posssion
+b -> i : issue credential (type, format, proof): credential
+@enduml
