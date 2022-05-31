@@ -726,21 +726,21 @@ Credential Response can be Synchronous or Deferred. The Issuer may be able to im
 The following claims are used in the Credential Response:
 
 * `format`: REQUIRED. JSON string denoting the credential's format
-* `credential`: OPTIONAL. MUST be present when `acceptance_token` is not returned. Whether and how the returned credential is encoded depends on the credential format.
+* `credential`: OPTIONAL. Contains issued credential. MUST be present when `acceptance_token` is not returned. MAY be a base64urlencoded JSON string or a JSON object, depending on the credential format. See the table below for the format specific encoding requirements.
 * `acceptance_token`: OPTIONAL. A JSON string containing a token subsequently used to obtain a credential. MUST be present when `credential` is not returned.
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
 
-This specification defines whether the issued credential needs to be encoded when returned in the `credential` claim in the Credential Response based on the credential format and the signature scheme as expressed in the following table:
+The following table defines how issued credential MUST be returned in the `credential` claim in the Credential Response based on the credential format and the signature scheme. Note that this specification does not require any additional encoding when credential format already requires encoding:
 
-| Credential Format Identifier | Signature Scheme | Need for encoding when including  |
+| Credential Format Identifier | Signature Scheme | Need for encoding when returning in the Credential Response  |
 |:------|:-----|:------------|
-|JWT-VC| Credential conformant to the W3C Verifiable Credentials Data Model and signed as a JWS | MUST be a JSON string that is the base64url encoded representation of the issued credential |
-|LDP-VC| Credential conformant to the W3C Verifiable Credentials Data Model and signed with Data Integrity Proofs | MUST NOT be encoded |
-|ac_vc| Credential conformant to the AnonCreds format as defined in the Hyperledger Indy project and signed using CL-signature scheme | MUST NOT be encoded |
+|JWT-VC| Credential conformant to the W3C Verifiable Credentials Data Model and signed as a JWS | MUST be a JSON string when compact serialisation is used. MUST be a JSON object when JSON serialisation is used. Already base64url encoded JWT-VC MUST NOT be re-encoded. |
+|LDP-VC| Credential conformant to the W3C Verifiable Credentials Data Model and signed with Data Integrity Proofs | MUST be a JSON object. MUST NOT be re-encoded. |
+|ac_vc| Credential conformant to the AnonCreds format as defined in the Hyperledger Indy project and signed using CL-signature scheme | MUST be a JSON object. MUST NOT be re-encoded. |
 |mdl_iso_cbor| Credential conformant to the ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, encoded as CBOR and signed as a COSE message | MUST be a JSON string that is the base64url encoded representation of the issued credential |
-|mdl_iso_json| Credential conformant to the ISO/IEC 18013-5:2021 mDL data model, encoded as JSON and signed as JWS | MUST be a JSON string that is the base64url encoded representation of the issued credential |
+|mdl_iso_json| Credential conformant to the ISO/IEC 18013-5:2021 mDL data model, encoded as JSON and signed as JWS | MUST be a JSON string when compact serialisation is used. MUST be a JSON object when JSON serialisation is used. Already base64url encoded mdl_idso_json MUST NOT be re-encoded. |
 
 Note that this table might be superceded by a registry in another standards organization in the future. Meanwhile, for interoperability, implementers MUST follow the requirements defined in the table above.
 
