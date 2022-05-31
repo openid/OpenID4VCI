@@ -1,6 +1,6 @@
 @startuml
 participant User as u
-participant Wallet as w
+participant "Wallet Frontend" as w
 participant "Wallet Backend" as b
 participant Issuer as i
 
