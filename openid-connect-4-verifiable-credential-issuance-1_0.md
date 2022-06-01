@@ -918,6 +918,12 @@ Directly using key and/or app attestation to proof certain capabilities towards 
 
 The approach recommended by this specification is that the issuer relies on the OAuth client authentication to establish trust in the wallet and leaves it to the wallet to ensure its internal integrity using app and key attestation (if required). This establishes a clean separation between the different hemispheres and a uniform interface irrespectively of the wallet's architecture (e.g. native vs web wallet). Client authentication can be performed with credentials registered with the issuer or with assertions issued to the wallet by a 3rd party the issuer trusts for the purpose of client authentication.  
 
+## Credential Lifecycle Management 
+
+The issuer is supposed to be responsible for the lifecycle of its credentials. This means the issuer will invalidate credentials if it deems appropriate, e.g. if it detects fraudulent behavior.
+
+The wallet is supposed to detect signs of fraudulant behavior related to the credential management in the wallet (e.g. device rooting) and to act upon such signals. Options include credential revocation at the issuer and/or invalidation of the key material used for cryptograpic holder binding.  
+
 # Implementation Considerations
 
 ## Claim-based Binding of the Credential to the End-User possessing the credential {#claim-based-binding}
