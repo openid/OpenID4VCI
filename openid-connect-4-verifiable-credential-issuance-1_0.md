@@ -916,7 +916,7 @@ The following mechanisms in concert can be utilized to fulfill those objectives:
 
 Directly using key and/or app attestation to proof certain capabilities towards an issuer is an obvious option. However, this at least requires platform mechanisms that issue signed assertions that 3rd parties can evaluate, which is not always the case (e.g. iOS's DeviceCheck). Also, such an approach creates dependencies on platform specific mechanisms, trust anchors, and platform specific identifiers (e.g. Android `apkPackageName`) and it reveals information about the internal design of a wallet app. Implementers should take that consequences into account. 
 
-The approach recommended by this specification is that the issuer may rely on the client authentication of the wallet and leaves it to the wallet to ensure its internal integrity using app and key attestation. This establishes a clean separation between the different hemispheres and a uniform interface irrespectively of the wallet's architecture (e.g. native vs web wallet).  
+The approach recommended by this specification is that the issuer relies on the OAuth client authentication to establish trust in the wallet and leaves it to the wallet to ensure its internal integrity using app and key attestation (if required). This establishes a clean separation between the different hemispheres and a uniform interface irrespectively of the wallet's architecture (e.g. native vs web wallet). Client authentication can be performed with credentials registered with the issuer or with assertions issued to the wallet by a 3rd party the issuer trusts for the purpose of client authentication.  
 
 # Implementation Considerations
 
