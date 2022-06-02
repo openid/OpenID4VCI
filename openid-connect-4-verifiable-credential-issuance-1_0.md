@@ -298,7 +298,7 @@ This specification defines the following new Server Metadata parameters for this
 
 * `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme MAY contain port, path and query parameter components.
 
-* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a globally unique string serving as an abstract identifier of the credential. The value can be a JSON object or a URL of a page that contains a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). It communicates the specifics of the credential that the issuer support issuance of.
+* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string serving as an abstract identifier of the credential. This identifier is RECOMMENDED to be collision resistant - it can be globally unique, but does not have to be when naming conflicts are unlikely to arise in a given use case. The value MAY be a JSON object or a URL of a page that contains a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). It communicates the specifics of the credential that the issuer support issuance of.
 
 ### Credential Metadata Object {#credential-metadata-object}
 
@@ -342,7 +342,7 @@ The following example shows a non-normative example of the relevant entries in t
  {
   "credential_endpoint": "https://server.example.com/credential",
   "credentials_supported": {
-    "546b92be-ac23-47cd-a97c-2d1a1736aedf" : {
+    "university_degree" : {
       "display": [
         {
           "name": "University Credential",
