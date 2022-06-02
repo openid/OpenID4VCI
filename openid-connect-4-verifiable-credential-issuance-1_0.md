@@ -732,7 +732,7 @@ The following claims are used in the Credential Response:
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
 
-The following table defines how issued credential MUST be returned in the `credential` claim in the Credential Response based on the credential format and the signature scheme. Note that this specification does not require any additional encoding when credential format already requires encoding:
+The following table defines how issued credential MUST be returned in the `credential` claim in the Credential Response based on the credential format and the signature scheme. This specification does not require any additional encoding when credential format already requires encoding.
 
 | Credential Format Identifier | Signature Scheme | Need for encoding when returning in the Credential Response  |
 |:------|:-----|:------------|
@@ -741,6 +741,8 @@ The following table defines how issued credential MUST be returned in the `crede
 |ac_vc| Credential conformant to the AnonCreds format as defined in the Hyperledger Indy project and signed using CL-signature scheme | MUST be a JSON object. MUST NOT be re-encoded. |
 |mdl_iso_cbor| Credential conformant to the ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, encoded as CBOR and signed as a COSE message | MUST be a JSON string that is the base64url encoded representation of the issued credential |
 |mdl_iso_json| Credential conformant to the ISO/IEC 18013-5:2021 mDL data model, encoded as JSON and signed as JWS | MUST be a JSON string when compact serialisation is used. MUST be a JSON object when JSON serialisation is used. Already base64url encoded mdl_idso_json MUST NOT be re-encoded. |
+
+Credential formats expressed as binary formats MUST be base64url encoded and returned as a JSON string.
 
 Note that this table might be superceded by a registry in another standards organization in the future. Meanwhile, for interoperability, implementers MUST follow the requirements defined in the table above.
 
