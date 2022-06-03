@@ -736,15 +736,15 @@ The following table defines how issued credential MUST be returned in the `crede
 
 | Credential Format Identifier | Signature Scheme | Need for encoding when returning in the Credential Response  |
 |:------|:-----|:------------|
-|JWT-VC| Credential conformant to the W3C Verifiable Credentials Data Model and signed as a JWS | MUST be a JSON string when compact serialisation is used. MUST be a JSON object when JSON serialisation is used. Already base64url encoded JWT-VC MUST NOT be re-encoded. |
+|JWT-VC| Credential conformant to the W3C Verifiable Credentials Data Model and signed as a JWS | MUST be a JSON string when compact serialisation is used. MUST be a JSON object when JSON serialisation is used. JWT-VCs are already a sequence of base64url-encoded values separated by period characters and MUST NOT be re-encoded. |
 |LDP-VC| Credential conformant to the W3C Verifiable Credentials Data Model and signed with Data Integrity Proofs | MUST be a JSON object. MUST NOT be re-encoded. |
 |ac_vc| Credential conformant to the AnonCreds format as defined in the Hyperledger Indy project and signed using CL-signature scheme | MUST be a JSON object. MUST NOT be re-encoded. |
-|mdl_iso_cbor| Credential conformant to the ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, encoded as CBOR and signed as a COSE message | MUST be a JSON string that is the base64url encoded representation of the issued credential |
-|mdl_iso_json| Credential conformant to the ISO/IEC 18013-5:2021 mDL data model, encoded as JSON and signed as JWS | MUST be a JSON string when compact serialisation is used. MUST be a JSON object when JSON serialisation is used. Already base64url encoded mdl_idso_json MUST NOT be re-encoded. |
+|mdl_iso_cbor| Credential conformant to the ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, encoded as CBOR and signed as a COSE message | MUST be a JSON string that is the base64url-encoded representation of the issued credential |
+|mdl_iso_json| Credential conformant to the ISO/IEC 18013-5:2021 mDL data model, encoded as JSON and signed as JWS | MUST be a JSON string when compact serialisation is used. MUST be a JSON object when JSON serialisation is used. JWSs are already a sequence of base64url-encoded values separated by period characters and MUST NOT be re-encoded. |
 
-Credential formats expressed as binary formats MUST be base64url encoded and returned as a JSON string.
+Credential formats expressed as binary formats MUST be base64url-encoded and returned as a JSON string.
 
-Note that this table might be superceded by a registry in another standards organization in the future. Meanwhile, for interoperability, implementers MUST follow the requirements defined in the table above.
+Note that this table might be superceded by a registry in the future. Meanwhile, for interoperability, implementers MUST follow the requirements defined in the table above.
 
 Below is a non-normative example of a credential response in a synchronous flow:
 
