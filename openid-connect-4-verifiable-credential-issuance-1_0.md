@@ -330,7 +330,7 @@ The value in a key value pair is a JSON object detailing the specifics about the
   * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
   * `namespace`: OPTIONAL. String value of a namespace that the claim belongs to. Relevant for ISO/IEC 18013-5 (mobile Driving License) specification.
   * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
-  * `multilingual`: OPTIONAL. An array of objects containing claim names display metadata in multiple languages in which the wallet might display a claim. Below is a non-exhaustive list of valid parameters that MAY be included:
+  * `multilingual`: OPTIONAL. An array of objects containing claim names display metadata in multiple languages in which the wallet might display a claim other than the one used in the key. Below is a non-exhaustive list of valid parameters that MAY be included:
     * `name`: OPTIONAL. String value of a display name for the claim.
     * `locale`: OPTIONAL. String value that identifies language of this object. Multiple `multilingual` objects may be included for separate languages. There MUST be only one object with the same language identifier.
 
@@ -346,19 +346,20 @@ The following example shows a non-normative example of the relevant entries in t
   "credential_endpoint": "https://server.example.com/credential",
   "credentials_supported": {
     "university_degree" : {
-      "display": [
-        {
-          "name": "University Credential",
-          "credential_issuer": "Example University",
-          "background_color": "#12107c",
-          "text_color": "#FFFFFF",
-          "logo": {
-            "url": "https://exampleuniversity.com/public/logo.png",
-            "alternative_text": "a square logo of a university"
-          },
-          "language": "en"
-        }
-      ],
+      "display": {
+        "background_color": "#12107c",
+        "text_color": "#FFFFFF",
+        "display": [
+          {
+            "name": "University Credential",
+            "locale": "en_us"
+            "credential_issuer": "Example University",
+            "logo": {
+              "url": "https://exampleuniversity.com/public/logo.png",
+              "alternative_text": "a square logo of a university"
+          }
+        ]
+      },
       "formats": {
         "ldp_vc": {
           "types": [ "VerifiableCredential", "UniversityDegreeCredential" ],
@@ -367,14 +368,30 @@ The following example shows a non-normative example of the relevant entries in t
         }
       },
       "claims": {
-          "given_name": {},
-          "last_name": {},
-          "degree": {},
-          "gpa": {
-            "mandatory": false,
-            "value_type": "number",
-            "display": "GPA"
-          }
+        "given_name": {
+          "mandatory": false,
+          "multilingual": [
+              {
+              `name`: `Given Name`,
+              `locale`: `en_us`
+            },
+            {
+              `name`: `名前`,
+              `locale`: `jp_ja`
+            }
+          ]  
+        },
+        "last_name": {},
+        "degree": {},
+        "gpa": {
+          "mandatory": false,
+          "value_type": "number",
+            "multilingual": [
+              {
+              `name`: `GPA`,
+              }
+          ]
+        }
       }
     }
   }
