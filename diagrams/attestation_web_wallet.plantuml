@@ -1,10 +1,8 @@
 @startuml
-participant User as u
 participant "User Agent" as w
 participant "Wallet" as b
 participant Issuer as i
 
-u -> w : get credential
 w -> b : start credential issuance : authz url
 w --> i : authorize
 i --> w : authorize response (code)
