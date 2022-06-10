@@ -346,20 +346,28 @@ The following example shows a non-normative example of the relevant entries in t
   "credential_endpoint": "https://server.example.com/credential",
   "credentials_supported": {
     "university_degree" : {
-      "display": {
-        "background_color": "#12107c",
-        "text_color": "#FFFFFF",
-        "display": [
-          {
-            "name": "University Credential",
-            "locale": "en_us"
-            "credential_issuer": "Example University",
-            "logo": {
-              "url": "https://exampleuniversity.com/public/logo.png",
-              "alternative_text": "a square logo of a university"
-          }
-        ]
-      },
+      "display": [
+        {
+          "background_color": "#12107c",
+          "text_color": "#FFFFFF",
+          "name": "University Credential",
+          "locale": "en_us"
+          "credential_issuer": "Example University",
+          "logo": {
+            "url": "https://exampleuniversity.com/public/logo.png",
+            "alternative_text": "a square logo of a university"
+        },
+        {
+          "background_color": "#12107c",
+          "text_color": "#FFFFFF",
+          "name": "在籍証明書",
+          "locale": "jp_ja"
+          "credential_issuer": "サンプル大学",
+          "logo": {
+            "url": "https://exampleuniversity.com/public/logo.png",
+            "alternative_text": "大学のロゴ"
+        }
+      ],
       "formats": {
         "ldp_vc": {
           "types": [ "VerifiableCredential", "UniversityDegreeCredential" ],
