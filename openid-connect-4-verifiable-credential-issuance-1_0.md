@@ -726,7 +726,7 @@ Credential Response can be Synchronous or Deferred. The Issuer may be able to im
 The following claims are used in the Credential Response:
 
 * `format`: REQUIRED. JSON string denoting the credential's format
-* `credential`: OPTIONAL. Contains issued credential. MUST be present when `acceptance_token` is not returned. MAY be a base64url-encoded JSON string or a JSON object, depending on the credential format. See the table below for the format specific encoding requirements.
+* `credential`: OPTIONAL. Contains issued credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the credential format. See the table below for the format specific encoding requirements.
 * `acceptance_token`: OPTIONAL. A JSON string containing a token subsequently used to obtain a credential. MUST be present when `credential` is not returned.
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
