@@ -298,16 +298,22 @@ This specification defines the following new Server Metadata parameters for this
 
 * `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
 
-* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string serving as an abstract identifier of the credential. This identifier is RECOMMENDED to be collision resistant - it can be globally unique, but does not have to be when naming conflicts are unlikely to arise in a given use case. The value MAY be a JSON object or a URL of a page that contains a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). It communicates the specifics of the credential that the issuer supports issuance of.
+One of the following parameters MUST be used to communicates the specifics of the credential that the issuer supports issuance of:
+* `credentials_supported`: CONDITIONAL. A JSON object containing a list of key value pairs, where the key is a string serving as an abstract identifier of the credential. This identifier is RECOMMENDED to be collision resistant - it can be globally unique, but does not have to be when naming conflicts are unlikely to arise in a given use case. The value is a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). MUST be present when `credentials_supported_uri` is not present.
+* `credentials_supported_uri`: CONDITIONAL. Used to the retrieve the `credentials_supported` object from the resource at the specified URL, rather than being passed by value. MUST be present when `credentials_supported` is not present.
+
+* `credential_issuer`: OPTIONAL. A JSON object containing display properties for the credential issuer.
+  * `display`: OPTIONAL. An array of objects, where each object contains display properties of a credential issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
+    * `name`: OPTIONAL. String value of a display name for the credential issuer.
+    * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier
 
 ### Credential Metadata Object {#credential-metadata-object}
 
 This section defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
 
-* `display`: OPTIONAL. An array of objects containing information how to display a certain credential in a wallet in each language. The following is a non-exhaustive list of parameters that MAY be included. Note that the display name of the credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
+* `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain credential for a certain language. The following is a non-exhaustive list of parameters that MAY be included. Note that the display name of the credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
   * `name`: REQUIRED. String value of a display name for the credential.
-  * `locale`: OPTIONAL. String value that identifies language of this diplay object represented as language tag values defined in BCP47 [@!RFC5646]. Multiple `diplay` objects may be included for separate languages. There MUST be only one object with the same language identifier.
-  * `credential_issuer`: OPTIONAL. String value of a display name for the credential issuer.
+  * `locale`: OPTIONAL. String value that identifies language of this display object represented as language tag values defined in BCP47 [@!RFC5646]. Multiple `display` objects may be included for separate languages. There MUST be only one object with the same language identifier.
   * `logo`: OPTIONAL. A JSON object with information about the logo of the credential issuer with a following non-exhaustive list of parameters that MAY be included:
     * `url`: OPTIONAL. URL where the wallet can obtain a logo of the credential issuer.
     * `alt_text`: OPTIONAL. String value of an alternative text of a logo image.
@@ -329,9 +335,9 @@ The value in a key value pair is a JSON object detailing the specifics about the
   * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
   * `namespace`: OPTIONAL. String value of a namespace that the claim belongs to. Relevant for ISO/IEC 18013-5 (mobile Driving License) specification.
   * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
-  * `display`: OPTIONAL. An array of objects containing claim names display metadata in multiple languages in which the wallet might display a claim other than the one used in the key. Below is a non-exhaustive list of valid parameters that MAY be included:
+  * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
     * `name`: OPTIONAL. String value of a display name for the claim.
-    * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. Multiple `multilingual` objects may be included for separate languages. There MUST be only one object with the same language identifier.
+    * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier.
 
 It is dependent on the credential format where the requested claims will appear.
 
@@ -349,7 +355,6 @@ The following example shows a non-normative example of the relevant entries in t
         {
           "name": "University Credential",
           "locale": "en-US",
-          "credential_issuer": "Example University",
           "logo": {
             "url": "https://exampleuniversity.com/public/logo.png",
             "alternative_text": "a square logo of a university"
@@ -360,7 +365,6 @@ The following example shows a non-normative example of the relevant entries in t
         {
           "name": "在籍証明書",
           "locale": "jp-JA",
-          "credential_issuer": "サンプル大学",
           "logo": {
             "url": "https://exampleuniversity.com/public/logo.png",
             "alternative_text": "大学のロゴ"
@@ -402,6 +406,18 @@ The following example shows a non-normative example of the relevant entries in t
           ]
         }
       }
+    },
+    "credential_issuer": {
+      "display": [
+        {
+          `name`: `Example University`,
+          `locale`: `en-US`
+        },
+        {
+          `name`: `サンプル大学`,
+          `locale`: `jp-JA`
+        }
+      ]  
     }
   }
 ```
