@@ -314,7 +314,7 @@ This section defines the structure of the object that appears as the value to th
 * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain credential for a certain language. The following is a non-exhaustive list of parameters that MAY be included. Note that the display name of the credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
   * `name`: REQUIRED. String value of a display name for the credential.
   * `locale`: OPTIONAL. String value that identifies language of this display object represented as language tag values defined in BCP47 [@!RFC5646]. Multiple `display` objects may be included for separate languages. There MUST be only one object with the same language identifier.
-  * `logo`: OPTIONAL. A JSON object with information about the logo of the credential issuer with a following non-exhaustive list of parameters that MAY be included:
+  * `logo`: OPTIONAL. A JSON object with information about the logo of the credential with a following non-exhaustive list of parameters that MAY be included:
     * `url`: OPTIONAL. URL where the wallet can obtain a logo of the credential issuer.
     * `alt_text`: OPTIONAL. String value of an alternative text of a logo image.
   * `description`: OPTIONAL. String value of a description of the credential.
