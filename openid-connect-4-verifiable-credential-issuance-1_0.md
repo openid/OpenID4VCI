@@ -304,17 +304,16 @@ This specification defines the following new Server Metadata parameters for this
 
 This section defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
 
-* `display`: OPTIONAL. An object containing information how to display a certain credential in a wallet. The following is a non-exhaustive list of parameters that MAY be included. Note that the display name of the credential is obtained from `display.name` and individual claim names from `claims.multilingual.name` values.
+* `display`: OPTIONAL. An array of objects containing information how to display a certain credential in a wallet in each language. The following is a non-exhaustive list of parameters that MAY be included. Note that the display name of the credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
+  * `name`: REQUIRED. String value of a display name for the credential.
+  * `locale`: OPTIONAL. String value that identifies language of this diplay object. Multiple `diplay` objects may be included for separate languages. There MUST be only one object with the same language identifier.
+  * `credential_issuer`: OPTIONAL. String value of a display name for the credential issuer.
+  * `logo`: OPTIONAL. A JSON object with information about the logo of the credential issuer with a following non-exhaustive list of parameters that MAY be included:
+    * `url`: OPTIONAL. URL where the wallet can obtain a logo of the credential issuer.
+    * `alt_text`: OPTIONAL. String value of an alternative text of a logo image.
+  * `description`: OPTIONAL. String value of a description of the credential.
   * `background_color`: OPTIONAL. String value of a background color of the credential.
   * `text_color`: OPTIONAL. String value of a text color of the credential.
-  * `multilingual`: REQUIRED. An array of objects containing credential display metadata in multiple languages in which the wallet might display a credential. Below is a non-exhaustive list of valid parameters that MAY be included:
-    * `name`: REQUIRED. String value of a display name for the credential.
-    * `locale`: OPTIONAL. String value that identifies language of this diplay object. Multiple `diplay` objects may be included for separate languages. There MUST be only one object with the same language identifier.
-    * `credential_issuer`: OPTIONAL. String value of a display name for the credential issuer.
-    * `logo`: OPTIONAL. A JSON object with information about the logo of the credential issuer with a following non-exhaustive list of parameters that MAY be included:
-      * `url`: OPTIONAL. URL where the wallet can obtain a logo of the credential issuer.
-      * `alt_text`: OPTIONAL. String value of an alternative text of a logo image.
-    * `description`: OPTIONAL. String value of a description of the credential.
 
 * `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the credential. Below is a non-exhaustive list of valid key values defined by this specification:
   * Claim Format Designations defined in [@!DIF.PresentationExchange], such as `jwt_vc` and `ldp_vc`
@@ -330,7 +329,7 @@ The value in a key value pair is a JSON object detailing the specifics about the
   * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
   * `namespace`: OPTIONAL. String value of a namespace that the claim belongs to. Relevant for ISO/IEC 18013-5 (mobile Driving License) specification.
   * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
-  * `multilingual`: OPTIONAL. An array of objects containing claim names display metadata in multiple languages in which the wallet might display a claim other than the one used in the key. Below is a non-exhaustive list of valid parameters that MAY be included:
+  * `display`: OPTIONAL. An array of objects containing claim names display metadata in multiple languages in which the wallet might display a claim other than the one used in the key. Below is a non-exhaustive list of valid parameters that MAY be included:
     * `name`: OPTIONAL. String value of a display name for the claim.
     * `locale`: OPTIONAL. String value that identifies language of this object. Multiple `multilingual` objects may be included for separate languages. There MUST be only one object with the same language identifier.
 
@@ -348,24 +347,26 @@ The following example shows a non-normative example of the relevant entries in t
     "university_degree" : {
       "display": [
         {
-          "background_color": "#12107c",
-          "text_color": "#FFFFFF",
           "name": "University Credential",
-          "locale": "en_us"
+          "locale": "en_us",
           "credential_issuer": "Example University",
           "logo": {
             "url": "https://exampleuniversity.com/public/logo.png",
             "alternative_text": "a square logo of a university"
+          },
+          "background_color": "#12107c",
+          "text_color": "#FFFFFF"
         },
         {
-          "background_color": "#12107c",
-          "text_color": "#FFFFFF",
           "name": "在籍証明書",
-          "locale": "jp_ja"
+          "locale": "jp_ja",
           "credential_issuer": "サンプル大学",
           "logo": {
             "url": "https://exampleuniversity.com/public/logo.png",
             "alternative_text": "大学のロゴ"
+          },
+          "background_color": "#12107c",
+          "text_color": "#FFFFFF"
         }
       ],
       "formats": {
@@ -378,7 +379,7 @@ The following example shows a non-normative example of the relevant entries in t
       "claims": {
         "given_name": {
           "mandatory": false,
-          "multilingual": [
+          "display": [
               {
               `name`: `Given Name`,
               `locale`: `en_us`
@@ -394,9 +395,9 @@ The following example shows a non-normative example of the relevant entries in t
         "gpa": {
           "mandatory": false,
           "value_type": "number",
-            "multilingual": [
+            "display": [
               {
-              `name`: `GPA`,
+              `name`: `GPA`
               }
           ]
         }
