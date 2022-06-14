@@ -296,7 +296,7 @@ This section extends the server metadata [@!RFC8414] to allow the RP to obtain i
 
 This specification defines the following new Server Metadata parameters for this purpose:
 
-* `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme MAY contain port, path and query parameter components.
+* `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
 
 * `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string serving as an abstract identifier of the credential. This identifier is RECOMMENDED to be collision resistant - it can be globally unique, but does not have to be when naming conflicts are unlikely to arise in a given use case. The value MAY be a JSON object or a URL of a page that contains a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). It communicates the specifics of the credential that the issuer supports issuance of.
 
@@ -306,14 +306,14 @@ This section defines the structure of the object that appears as the value to th
 
 * `display`: OPTIONAL. An array of objects containing information how to display a certain credential in a wallet in each language. The following is a non-exhaustive list of parameters that MAY be included. Note that the display name of the credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
   * `name`: REQUIRED. String value of a display name for the credential.
-  * `locale`: OPTIONAL. String value that identifies language of this diplay object. Multiple `diplay` objects may be included for separate languages. There MUST be only one object with the same language identifier.
+  * `locale`: OPTIONAL. String value that identifies language of this diplay object represented as language tag values defined in BCP47 [@!RFC5646]. Multiple `diplay` objects may be included for separate languages. There MUST be only one object with the same language identifier.
   * `credential_issuer`: OPTIONAL. String value of a display name for the credential issuer.
   * `logo`: OPTIONAL. A JSON object with information about the logo of the credential issuer with a following non-exhaustive list of parameters that MAY be included:
     * `url`: OPTIONAL. URL where the wallet can obtain a logo of the credential issuer.
     * `alt_text`: OPTIONAL. String value of an alternative text of a logo image.
   * `description`: OPTIONAL. String value of a description of the credential.
-  * `background_color`: OPTIONAL. String value of a background color of the credential.
-  * `text_color`: OPTIONAL. String value of a text color of the credential.
+  * `background_color`: OPTIONAL. String value of a background color of the credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
+  * `text_color`: OPTIONAL. String value of a text color of the credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
 
 * `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the credential. Below is a non-exhaustive list of valid key values defined by this specification:
   * Claim Format Designations defined in [@!DIF.PresentationExchange], such as `jwt_vc` and `ldp_vc`
@@ -331,9 +331,9 @@ The value in a key value pair is a JSON object detailing the specifics about the
   * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
   * `display`: OPTIONAL. An array of objects containing claim names display metadata in multiple languages in which the wallet might display a claim other than the one used in the key. Below is a non-exhaustive list of valid parameters that MAY be included:
     * `name`: OPTIONAL. String value of a display name for the claim.
-    * `locale`: OPTIONAL. String value that identifies language of this object. Multiple `multilingual` objects may be included for separate languages. There MUST be only one object with the same language identifier.
+    * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. Multiple `multilingual` objects may be included for separate languages. There MUST be only one object with the same language identifier.
 
-It is dependent on the credential format, where the requested claims will appear.
+It is dependent on the credential format where the requested claims will appear.
 
 The following example shows a non-normative example of the relevant entries in the OP metadata defined above
 
@@ -348,7 +348,7 @@ The following example shows a non-normative example of the relevant entries in t
       "display": [
         {
           "name": "University Credential",
-          "locale": "en_us",
+          "locale": "en-US",
           "credential_issuer": "Example University",
           "logo": {
             "url": "https://exampleuniversity.com/public/logo.png",
@@ -359,7 +359,7 @@ The following example shows a non-normative example of the relevant entries in t
         },
         {
           "name": "在籍証明書",
-          "locale": "jp_ja",
+          "locale": "jp-JA",
           "credential_issuer": "サンプル大学",
           "logo": {
             "url": "https://exampleuniversity.com/public/logo.png",
@@ -382,11 +382,11 @@ The following example shows a non-normative example of the relevant entries in t
           "display": [
               {
               `name`: `Given Name`,
-              `locale`: `en_us`
+              `locale`: `en-US`
             },
             {
               `name`: `名前`,
-              `locale`: `jp_ja`
+              `locale`: `jp-JA`
             }
           ]  
         },
