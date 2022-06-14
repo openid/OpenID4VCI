@@ -298,9 +298,8 @@ This specification defines the following new Server Metadata parameters for this
 
 * `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
 
-One of the following parameters MUST be used to communicates the specifics of the credential that the issuer supports issuance of:
-* `credentials_supported`: CONDITIONAL. A JSON object containing a list of key value pairs, where the key is a string serving as an abstract identifier of the credential. This identifier is RECOMMENDED to be collision resistant - it can be globally unique, but does not have to be when naming conflicts are unlikely to arise in a given use case. The value is a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). MUST be present when `credentials_supported_uri` is not present.
-* `credentials_supported_uri`: CONDITIONAL. Used to the retrieve the `credentials_supported` object from the resource at the specified URL, rather than being passed by value. MUST be present when `credentials_supported` is not present.
+The following parameter MUST be used to communicates the specifics of the credential that the issuer supports issuance of:
+* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string serving as an abstract identifier of the credential. This identifier is RECOMMENDED to be collision resistant - it can be globally unique, but does not have to be when naming conflicts are unlikely to arise in a given use case. The value is a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). 
 
 * `credential_issuer`: OPTIONAL. A JSON object containing display properties for the credential issuer.
   * `display`: OPTIONAL. An array of objects, where each object contains display properties of a credential issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
