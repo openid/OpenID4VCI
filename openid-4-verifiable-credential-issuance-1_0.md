@@ -1197,6 +1197,12 @@ The technology described in this specification was made available from contribut
 
    [[ To be removed from the final specification ]]
 
+   -07
+
+   * added issuer metadata
+   * made credential response more flexible regarding credential encoding 
+   * changed file name to match specification name
+
    -06
 
    * renamed specification to reflect OAuth being a base protocol
