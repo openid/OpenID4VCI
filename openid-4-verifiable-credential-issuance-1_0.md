@@ -1155,6 +1155,22 @@ TBD
         </front>
 </reference>
 
+<reference anchor="CSS-Color" target="https://www.w3.org/TR/css-color-3">
+      <front>
+        <title>CSS Color Module Level 3</title>
+        <author initials="T." surname="Çelik" fullname="Tantek Çelik">
+         <organization>Mozilla Corporation</organization>
+        </author>
+        <author initials="C." surname="Lilley" fullname="Chris Lilley">
+          <organization>W3C</organization>
+        </author>
+        <author initials="D." surname="Baron" fullname="L. David Baron">
+          <organization>W3C Invited Expert</organization>
+       </author>
+       <date day="18" month="January" year="2022"/>
+      </front>
+</reference>
+
 <reference anchor="OIDC4VP" target="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">
       <front>
         <title>OpenID Connect for Verifiable Presentations</title>
