@@ -5,7 +5,7 @@ participant "Wallet Backend" as b
 participant Issuer as i
 
 u -> i : get credential
-i -> w : get your credential (pre-authz-code, credential_type, expected_key_types)
+i --> w : get your credential (pre-authz-code, credential_type, expected_key_types)
 w -> b : get nonce (for app attestation)
 b -> w : nonce
 w -> w : obtain app attestation (nonce)
@@ -14,14 +14,9 @@ b -> b : check app_attestation
 b -> i : token (pre-authz-code, pin, client_id, ...)
 note left: wallet authenticates with issuer as OAuth Client (public key based)\nissuer may check wallet against trust registry
 i -> b : access_token, c_nonce
-b -> b : generate tx_token for access_token
-b -> w: tx_token, c_nonce
+b -> w: access_token, c_nonce
 w -> w : gen key : key, key_attestation
 w -> w : create proof of posssion (c_nonce)
-w -> b : request credential (tx_token, credential_type, format, proof, key_attestation)
-b -> b : map tx_token to access_token
-b -> b : check key_attestation
-b -> i : issue credential (access_token, credential_type, format, proof, key_policy)
-i -> b : credential
-b -> w : credential
+w -> i : issue credential (access_token, credential_type, format, proof, key_policy)
+i -> w : credential
 @enduml
