@@ -1,13 +1,13 @@
 %%%
-title = "OpenID for Verifiable Credentials Issuance"
-abbrev = "openid-4-verifiable-credentials-issuance"
+title = "OpenID for Verifiable Credential Issuance"
+abbrev = "openid-4-verifiable-credential-issuance"
 ipr = "none"
 workgroup = "OpenID Connect"
 keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credentials-issuance-1_0-06"
+value = "openid-4-verifiable-credential-issuance-1_0-06"
 status = "standard"
 
 [[author]]
@@ -1171,9 +1171,9 @@ TBD
       </front>
 </reference>
 
-<reference anchor="OIDC4VP" target="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">
+<reference anchor="OIDC4VP" target="https://openid.net/specs/openid-4-verifiable-presentations-1_0.html">
       <front>
-        <title>OpenID Connect for Verifiable Presentations</title>
+        <title>OpenID for Verifiable Presentations</title>
         <author initials="O." surname="Terbu" fullname="Oliver Terbu">
          <organization>ConsenSys Mesh</organization>
         </author>
@@ -1189,7 +1189,7 @@ TBD
         <author initials="T." surname="Looker" fullname="Tobias Looker">
           <organization>Mattr</organization>
         </author>
-       <date day="17" month="December" year="2021"/>
+       <date day="20" month="June" year="2022"/>
       </front>
 </reference>
 
@@ -1218,7 +1218,7 @@ The technology described in this specification was made available from contribut
    * added issuer metadata
    * made credential response more flexible regarding credential encoding 
    * changed file name to match specification name
-   * renamed specification to reflect OAuth being a base protocol
+   * renamed specification to reflect OAuth being the base protocol
 
    -05
 
