@@ -151,6 +151,8 @@ The following figure shows the overall flow for use-case 3.1 End-User Initiated 
 
 ToDo: Add a diagram with only mandatory features.
 
+ToDo: Wallet -> wallet/app ?
+
 !---
 ~~~ ascii-art
 +--------------+   +-----------+                                         +-------------+
@@ -217,25 +219,24 @@ The starting point is an interaction of the user with her wallet. The user might
 credential(s) the End-User wants to obtain from that issuer, e.g., in the form of credential manifest IDs or credential types, and 
 further data, e.g., hints about the user when the user is already logged in with the Issuer.
 
-(2) (OPTIONAL) obtain credential manifest (as defined in [@DIF.CredentialManifest]) from the issuer with an information of which Verifiable Credentials the Issuer can issue, and optionally what kind of input from the user the Issuer requires to issue that credential.
+(2) (OPTIONAL) Request issuer metadata with an information of which verifiable credentials the Issuer can issue, and optionally what kind of input from the user the Issuer requires to issue that credential.
 
 Note: The wallet MAY also obtain the information about the credential issuer's capabilities using other means, which is out of scope of this specification. 
 
-(4) In this step, the wallet sends an authorization request to the issuer. This request determines
-the types of verifiable credentials the wallet (on behalf of the user) wants to obtain.
+(4) In this step, the wallet sends an authorization request to the issuer. This request defines specific verifiable credentials the wallet is requesting on behalf of the user.
 
 The wallet SHOULD use a pushed authorization request (see [@!RFC9126]) to first send the payload of 
-the authorization request to the issuer and subsequently use the `request_uri` returned by the issuer in the authorization
-request. This ensures integrity and confidentiality of the request data and prevents any issues raised by URL length restrictions 
+the authorization request to the issuer and subsequently use the `request_uri` returned by the issuer in the pushed authorization
+response. This ensures integrity and confidentiality of the request data and prevents any issues raised by URL length restrictions 
 regarding the authorization request URL.
 
 Note: Signed and encrypted request objects would also ensure integrity and confidentiality. However, this approach would further
 increase the URL size, which might decrease robustness of the process. 
 
-The issuer takes over user interface control at this point and interacts with the user. The implementation of 
+(4.1)  The issuer takes over user interface control at this point and interacts with the user. The implementation of 
 this step is at the discretion of the issuer.  
 
-(4.1)  The issuer will typically authenticate the user in the first step of this process. For this purpose,
+The issuer will typically authenticate the user in the first step of this process. For this purpose,
 the issuer might use a local or federated login, potentially informed by an `id_token_hint` (see [@OpenID.Core]).
 
 (4.2) (OPTIONAL) The issuers MAY call back to the wallet to fetch verifiable credentials it needs as
@@ -254,7 +255,7 @@ appropriate credentials and consents.
 
 (5) The issuer responds with an authorization code to the wallet. 
 
-(6) The wallet exchanges the authorization code for an Access Token and an ID Token.
+(6) The wallet exchanges the authorization code for an Access Token.
 
 (7) This Access Token is used to request the issuance of the actual credentials. The types of credentials the 
 wallet can request is limited to the types approved in the authorization request in (5). The credential request 
@@ -267,12 +268,14 @@ The Issuer will either directly respond with the credentials or issue an Accepta
 is used by the wallet to poll for completion of the issuance process. 
 
 (8) (OPTIONAL) The wallet polls the issuer to obtain the credentials previously requested in 
-step (6). The issuer either responds with the credentials or HTTP status code "202" indicating 
+step (6). The issuer either responds with the credentials, HTTP status code "202", or some other form of a failure response indicating 
 that the issuance is not completed yet. 
 
 Note: If the issuer just wants to offer the user to retrieve a pre-existing credential, it can
 encode the parameter set of step (6) in a suitable representation and allow the wallet to start 
 with step (6). One option would be to encode the data into a QR Code.
+
+ToDo: turn this note into a separate sequence diagram.
 
 # Endpoints {#endpoints}
 
@@ -280,10 +283,12 @@ with step (6). One option would be to encode the data into a QR Code.
 
 This specification defines new endpoints as well as additional parameters to existing OAuth 2.0 endpoints required to implement the protocol outlined in the previous section. It also introduces a new authorization details type according to [@!I-D.ietf-OAuth 2.0-rar] to convey the details about the credentials the wallet wants to obtain. Aspects not defined in this specification are expected to follow [@!RFC6749]. it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks.
 
+ToDo: introduce RAR before this authorization endpoint description.
+
 There are the following new endpoints: 
 
 * Issuance Initiation Endpoint: An endpoint exposed by the wallet that allows an issuer to initiate the issuance flow
-* Credential Endpoint: this is the OAuth 2.0-protected API to issue verifiable credentials
+* Credential Endpoint: this is an OAuth 2.0-protected API used to issue verifiable credentials
 * Deferred Credential Endpoint: this endpoint is used for deferred issuance of verifiable credentials 
 
 The following endpoints are extended:
@@ -299,7 +304,7 @@ This specification defines the following new Client Metadata parameter in additi
 
 * `initiate_issuance_endpoint`: OPTIONAL. URL of the issuance initation endpoint of a wallet. 
 
-If the issuer is unable to perform discovery of the Issuance Initiation Endpoint URL, the following static URL is used: `openid_initiate_issuance:`.
+If the issuer is unable to perform discovery of the Issuance Initiation Endpoint URL, the following claimed URL is used: `openid_initiate_issuance:`.
 
 ## Server Metadata
 
@@ -441,7 +446,7 @@ information relevant for the credential issuance to ensure a convenient and secu
 
 ### Issuance Initiation Request {#issuance_initiation_request}
 
-The issuer (or any other party wishing to kickstart an issuance into a certain wallet) sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL. 
+The issuer (or any other party wishing to kickstart an issuance into a wallet) sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL.
 
 The following request parameters are defined: 
 
@@ -470,7 +475,7 @@ the wallet would have started the flow.
 The wallet MUST be able to process multiple occurences of the URL query parameters `credential_type` and/or `manifest_id`. Multiple occurences MUST be 
 treated as multiple values of the respective parameter.
 
-The AS MUST ensure the release of any privacy-sensitive data is legally based (e.g., if passing an e-mail address in the `login_hint` parameter).
+The Issuer MUST ensure the release of any privacy-sensitive data is legally based (e.g., if passing an e-mail address in the `login_hint` parameter).
 
 ### Issuance Initiation Response
 
@@ -549,7 +554,7 @@ This particiular non-normative example requests authorization to issue two diffe
 ]
 ```
 
-This non-normative example shows a credential authorization request which is also a OpenID Connect authentication request  (uses PKCE as defined in [@!RFC7636]).
+A non-normative example below shows a credential authorization request which is also an OAuth 2.0 authorization request (uses PKCE as defined in [@!RFC7636]) and includes a truncated `authorization_request` parameter.
 
 ```
 HTTP/1.1 302 Found
