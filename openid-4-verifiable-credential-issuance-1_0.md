@@ -68,10 +68,6 @@ Verified Presentation (VP)
 
 A verifiable presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain data that is synthesized from, but do not contain, the original verifiable credentials (for example, zero-knowledge proofs) (see [@VC_DATA]).
 
-W3C Verifiable Credential Objects
-
-Both verifiable credentials and verifiable presentations
-
 Deferred Credential Issuance
 
 Issuance of credentials not directly in the response to a credential issuance request, but following a period of time that can be used to perform certain offline business processes.
@@ -135,7 +131,7 @@ ToDo: Two diagrams
 This specification defines the following mechanisms to allow wallet applications (acting as OAuth and Credential Issuance API clients) used by the End-User to request credential issuers (acting as OAuth Authorization Servers and Credential Issuance API providers) to issue Verifiable Credentials via the Credential Issuance API:
 
 * An optional mechanism to pre-obtain a Credential Manifest
-* An extended authorization request syntax that allows to request credential types to be issued
+* An extended Authorization Request syntax that allows to request credential types to be issued
 * Ability to bind an issued credential to a proof submitted by the Client
 * A newly defined Credential Endpoint from which credentials can be issued one at a time
 * A mechanism that allows issuance of multiple credentials of same or different type  (`c_nonce`)
@@ -148,48 +144,36 @@ The following figure shows the overall flow.
 +--------------+   +-----------+                                         +-------------+
 | User         |   |   Wallet  |                                         |   Issuer    |
 +--------------+   +-----------+                                         +-------------+
-        |                |             interact                                 |  
+        |                |             interacts                                |  
         |---------------------------------------------------------------------->|
-        |                |          (1) initiate issuance                       |
+        |                |      (1) Initiate Issuance Request                   |
         |                |<-----------------------------------------------------|        
         |    interacts   |                                                      |
         |--------------->|                                                      |
-        |                |  (2) [opt] obtain credential manifest                |
-        |                |----------------------------------------------------->|
-        |                |              credential manifest                     |
-        |                |<-----------------------------------------------------|
-        |                |                                                      |
-        |                |  (4) authorization req (claims, [opt] input, etc. )  |
+        |                |  (2) Authorization Request                           |
+        |                |      (type(s) of credentials to be issued)           |
         |                |----------------------------------------------------->|
         |                |                                                      |
-        |     (4.1) User Login                                                  |
+        |   User Authentication / Consent                                       |
         |                |                                                      |
-        |                |  (4.2) [opt] request additional VCs (OIDC4VP)        |
-        |                |<-----------------------------------------------------| 
-        |                |                                                      |
-    (4.2.1) [opt] User selects credentials                                      |
-        |                |                                                      |
-        |                |  (4.2.2) VCs in Verifiable Presentations             |
-        |                |----------------------------------------------------->| 
-        |                |                                                      |
-        |   (4.3) User consents to credential issuance                          |
-        |                |                                                      |
-        |                |  (5) authorization res (code)                        |
+        |                |      Authorization Response (code)                   |
         |                |<-----------------------------------------------------|
         |                |                                                      |
-        |                |  (6) token req (code)                                |
+        |                |  (3) Token Request (code)                            |
         |                |----------------------------------------------------->| 
-        |                |      access_token, id_token                          |
+        |                |      Token Response (access_token)                   |
         |                |<-----------------------------------------------------|    
         |                |                                                      |
-        |                |  (7) credential req (access_token, proofs, ...)      |
+        |                |  (4) Credential Request (access_token, proof(s))     |
         |                |----------------------------------------------------->| 
-        |                |      credential req (credentials OR acceptance_token)|
+        |                |      Credential Request                              |
+        |                |      (credential(s) OR acceptance_token)             |
         |                |<-----------------------------------------------------|   
         |                |                                                      |
-        |                |  (8) [opt] poll_credentials (acceptance_token)       |
+        |                |      Deferred Credential Request                     |
+        |                |      (access_token, acceptance_token)                |
         |                |----------------------------------------------------->| 
-        |                |      credentials OR not_ready_yet                    |
+        |                |      Deferred Credential Response (credential(s))    |
         |                |<-----------------------------------------------------|          
 ~~~
 !---
@@ -210,13 +194,13 @@ further data, e.g., hints about the user when the user is already logged in with
 
 Note: The wallet MAY also obtain the information about the credential issuer's capabilities using other means, which is out of scope of this specification. 
 
-(4) In this step, the wallet sends an authorization request to the issuer. This request determines
+(4) In this step, the wallet sends an Authorization Request to the issuer. This request determines
 the types of verifiable credentials the wallet (on behalf of the user) wants to obtain.
 
-The wallet SHOULD use a pushed authorization request (see [@!RFC9126]) to first send the payload of 
-the authorization request to the issuer and subsequently use the `request_uri` returned by the issuer in the authorization
+The wallet SHOULD use a pushed Authorization Request (see [@!RFC9126]) to first send the payload of 
+the Authorization Request to the issuer and subsequently use the `request_uri` returned by the issuer in the authorization
 request. This ensures integrity and confidentiality of the request data and prevents any issues raised by URL length restrictions 
-regarding the authorization request URL.
+regarding the Authorization Request URL.
 
 Note: Signed and encrypted request objects would also ensure integrity and confidentiality. However, this approach would further
 increase the URL size, which might decrease robustness of the process. 
@@ -246,7 +230,7 @@ appropriate credentials and consents.
 (6) The wallet exchanges the authorization code for an Access Token and an ID Token.
 
 (7) This Access Token is used to request the issuance of the actual credentials. The types of credentials the 
-wallet can request is limited to the types approved in the authorization request in (5). The credential request 
+wallet can request is limited to the types approved in the Authorization Request in (5). The Credential Request 
 passes the key material the respective credential shall be bound to. If required by the issuer, the wallet also passes a 
 proof of possession for the key material. This proof of possession uses the SHA-256 hash of the Access Token
 as cryptographic nonce. This ensures replay protection of the proofs. The format of key material and proof of
@@ -288,6 +272,592 @@ The following endpoints are extended:
 * Server Metadata: New metadata parameters are added to allow the client to determine what types of verifiable credentials a particular OAuth 2.0 Authorization Server is able to issue along with additional information about formats and prerequisites.
 * Authorization Endpoint: The `authorization_details` parameter is extended to allow clients to specify types of the credentials when requesting authorization for issuance. These extension can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
 * Token Endpoint: optional parameters are added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the credential endpoint. 
+
+## Issuance Initiation Endpoint
+
+This endpoint is used by an issuer in case it is already in an interaction with a user that wishes to initate a credential issuance. It is used to pass available 
+information relevant for the credential issuance to ensure a convenient and secure process. 
+
+### Issuance Initiation Request {#issuance_initiation_request}
+
+The issuer (or any other party wishing to kickstart an issuance into a certain wallet) sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL. 
+
+The following request parameters are defined: 
+
+* `issuer`: REQUIRED. The issuer URL of the credential issuer, the wallet is requested to obtain one or more credentials from. 
+* `credential_type`: REQUIRED. A JSON string denoting the type of the credential the wallet shall request. MUST be present if `manifest_id` is not present.
+* `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value.  
+
+The following is a non-normative example:
+
+```
+  GET /initiate_issuance?
+    issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
+    &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
+    &op_state=eyJhbGciOiJSU0Et...FYUaBy
+```
+
+The issuer MAY also render a QR code containing the request data in order to allow the user to scan the request using her wallet app. 
+
+The wallet MUST consider the parameter values in the initiation request as not trustworthy since the origin is not authenticated and the message 
+integrity is not protected. The Wallet MUST apply the same checks on the issuer that it would apply when the flow is started from the Wallet itself since the issuer is not trustworthy just because it sent the initiation request. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
+
+The wallet MUST NOT accept credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if
+the wallet would have started the flow. 
+
+The wallet MUST be able to process multiple occurences of the URL query parameters `credential_type` and/or `manifest_id`. Multiple occurences MUST be 
+treated as multiple values of the respective parameter.
+
+The AS MUST ensure the release of any privacy-sensitive data is legally based (e.g., if passing an e-mail address in the `login_hint` parameter).
+
+### Issuance Initiation Response
+
+The wallet is not supposed to create a response. UX control stays with the wallet after completion of the process. 
+
+## Authorization Endpoint
+
+The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics] and utilizes [@!I-D.ietf-oauth-rar].
+
+In addition to the required basic Authorization Request, this section also defines how pushed Authorization Requests can be used to protect the Authorization Request payload and when the requests become large.
+
+### `authorization_details` Request Parameter {#authorization-details}
+
+Request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-oauth-rar] MUST be used to convey the details about the credentials the wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
+
+* `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
+* `credential_type`: CONDITIONAL. JSON string denoting the type of the requested credential. MUST be present if `manifest_id` is not present.
+* `manifest_id`: CONDITIONAL. JSON String referring to a credential manifest published by the credential issuer. MUST be present if `type` is not present.
+* `format`: OPTIONAL. JSON string representing a format in which the credential is requested to be issued. Valid values are defined in the table in Section 6.7.3. and include `jwt_vp` and `ldp_vp`. Formats identifiers not in the table, MAY be defined by the profiles of this specification.
+* `locations`: OPTIONAL. An array of strings that allows a client to specify the location of the resource server(s) allowing the AS to mint audience restricted access tokens. This data field is predefined in Section 2.2 of ([@!I-D.ietf-oauth-rar]).
+
+Note: `credential_type` and `format` are used when the Client has not pre-obtained a Credential Manifest. `manifest_id` is used when the Client has pre-obtained a Credential Manifest. These two approaches MAY be combined in one request in different authorization details objects.
+
+Note: The `credential_application` element defined in [@DIF.CredentialManifest] is not required by this specification.
+
+Note: Passing the `format` to the Authorization Request is informational and allows the credential issuer to refuse early in case it does not support the requested format/credential combination. The client MAY request issuance of credentials in other formats as well later in the process at the credential endpoint.
+
+[TBD: `locations` could enable a single authorization server to authorize access to different credential endpoints. Might be an architectural option we want to pursue.]
+
+A non-normative example of an `authorization_details` object. 
+
+```json=
+{
+   "type":"openid_credential",
+   "credential_type":"https://did.example.org/healthCard",
+   "format":"ldp_vc"
+}
+```
+Note: applications MAY combine `openid_credential` with any other authorization details type in an Authorization Request.
+ 
+### Credential Authorization Request {#credential-request}
+
+A credential Authorization Request is an OAuth Authorization Request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the credential endpoint as defined in (#credential-endpoint). It also follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
+
+There are two possible ways to make a credential Authorization Request. One way is to use of the `authorization_details` request parameter as defined in (#authorization-details) with one or more authorization details objects of type `openid_credential`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
+
+A non-normative example of a credential Authorization Request using the `authorization_details` parameter  (uses PKCE as defined in [@!RFC7636]) (with line wraps within values for display purposes only).
+
+```
+HTTP/1.1 302 Found
+Location: https://server.example.com/authorize?
+  response_type=code
+  &client_id=s6BhdRkqt3
+  &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
+  &code_challenge_method=S256
+  &authorization_details=%5B%7B%22type%22:%22openid_credential%22,%22credential_type
+  %22:%22https://did.example.org/healthCard%22,%22format%22:%22ldp_vc%22%7D,%7B%22ty
+  pe%22:%22openid_credential%22,%22credential_type%22:%22https://did.example.org/mDL
+  %22%7D%5D
+  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+```
+
+This particiular non-normative example requests authorization to issue two different credentials:
+
+```json=
+[
+   {
+      "type":"openid_credential",
+      "credential_type":"https://did.example.org/healthCard",
+      "format":"ldp_vc"
+   },
+   {
+      "type":"openid_credential",
+      "credential_type":"https://did.example.org/mDL"
+   }
+]
+```
+
+This non-normative example shows a credential Authorization Request which is also a OpenID Connect authentication request  (uses PKCE as defined in [@!RFC7636]).
+
+```
+HTTP/1.1 302 Found
+Location: https://server.example.com/authorize?
+  response_type=code
+  &client_id=s6BhdRkqt3
+  &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
+  &code_challenge_method=S256
+  &scope=openid%20email
+  &authorization_details=%5B%7B%22type%22:%22openid_credential%...7D%5D
+  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+```
+
+#### Credential Authorization Request using Type Specific Scope {#credential-request-using-type-specific-scope}
+
+An alternative Credential Request syntax to that defined in (#credential-request) involves using an OAuth2 scope following the syntax defined below.
+
+```
+openid_credential:<credential-type>
+```
+
+The value of `<credential-type>` indicates the type of credential being requested, providers who do not understand the value of this scope in a request MUST ignore it entirely. The presence of a scope following this syntax in the request MUST be interpreted by the provider as a request for access to the credential endpoint as defined in (#credential-endpoint) for the specific credential type. Multiple occurrences of this scope MAY be present in a single request whereby each occurrence MUST be interpreted individually.
+
+A non-normative example of a Credential Request scoped to a specific credential type (uses PKCE as defined in [@!RFC7636]).
+
+```
+HTTP/1.1 302 Found
+Location: https://server.example.com/authorize?
+  response_type=code
+  &scope=openid_credential:healthCard
+  &client_id=s6BhdRkqt3
+  &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
+  &code_challenge_method=S256
+  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+```
+
+If a scope `openid_credential:<credential-type>` and the `authorization_details` request parameter containing objects of type `openid_credential` are both present in a single request, the provider MUST interpret these individually. However, if both request the same credential type, than the Issuer MUST follow the request as given by the authorization details object.
+
+#### Additional Request Parameters
+
+This specification defines the following additional request parameters that can be supplied in any credential Authorization Request:
+
+* `wallet_issuer`: OPTIONAL. JSON String containing the wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@!SIOPv2] to determine the wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
+* `user_hint`: OPTIONAL. JSON String containing an opaque user hint the wallet MAY use in sub-sequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
+* `op_state`: OPTIONAL. String value identifying a certain processing context at the credential issuer. A value for this parameter is typically passed in an issuance initation request from the issuer to the wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `op_state` value back to the credential issuer. 
+
+Note: When processing the Authorization Request, the issuer MUST take into account that the `op_state` is not guaranteed to originate from this issuer. It could have been injected by an attacker. 
+
+#### Pushed Authorization Request
+
+Use of Pushed Authorization Requests is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues due to large requests due to the query language or if message level encryption is used.
+
+Below is a non-normative example of a Pushed Authorization Request  (uses PKCE as defined in [@!RFC7636]):
+
+```
+POST /op/par HTTP/1.1
+    Host: as.example.com
+    Content-Type: application/x-www-form-urlencoded
+
+    &response_type=code
+    &client_id=CLIENT1234
+    &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
+    &code_challenge_method=S256
+    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &authorization_details=...
+```
+
+Below is a non-normative example of a `authorization_details` parameter with `manifest_id`:
+
+```json=
+{
+   "type":"openid_credential",
+   "manifest_id":"WA-DL-CLASS-A",
+   "format":"jwt_vc"
+}
+```
+
+#### Dynamic Credential Request
+
+This step is OPTIONAL. After receiving an Authorization Request from the Client, the Issuer MAY use this step to obtain additional credentials from the End-User. 
+
+The Issuer MUST utilize [@OIDC4VP] and [@!SIOPv2] to dynamically request additional credentials. From a protocol perspective, the Issuer acts now as a verifier and sends a presentation request to the wallet. The Client MUST have these credentials obtained prior to initiating a transaction with this Issuer. 
+
+This provides the benefit of the Issuer being able to adhere to the principle of data minimization, for example by including only minimum requirements in the Credential Manifest knowing that it can supplement additional information if needed.
+
+To enable dynamic callbacks of the issuer to the end-user's wallet, the wallet MAY provide additional parameters `wallet_issuer` and `user_hint` defined in the Authorization Request section of this specification.
+
+For non-normative examples of request and response, see section 11.6 in [@OIDC4VP].
+
+Note to the editors: need to sort out credential issuer's client_id with wallet and potentially add example with `wallet_issuer` and `user_hint` 
+
+### Successful Authorization Response
+
+Authentication Responses MUST be made as defined in [@!RFC6749].
+
+Below is a non-normative example of a successful Authentication Response:
+
+```
+HTTP/1.1 302 Found
+  Location: https://wallet.example.org/cb?
+    code=SplxlOBeZQQYbYS6WxSbIA
+```
+
+### Authentication Error Response
+
+Authentication Error Response MUST be made as defined in [@!RFC6749].
+
+The following is a non-normative example of an unsuccessful Token Response.
+
+```json=
+HTTP/1.1 302 Found
+Location: https://client.example.net/cb?
+    error=invalid_request
+    &error_description=Unsupported%20response_type%20value
+```
+
+## Token Endpoint
+
+The Token Endpoint issues an Access Token and, optionally, a Refresh Token in exchange for the authorization code that client obtained in a successful Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
+
+### Token Request
+
+Upon receiving a successful Authentication Response, a Token Request is made as defined in Section 4.1.3 of [@!RFC6749].
+
+Below is a non-normative example of a Token Request:
+```
+POST /token HTTP/1.1
+  Host: server.example.com
+  Content-Type: application/x-www-form-urlencoded
+  Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+  grant_type=authorization_code
+  &code=SplxlOBeZQQYbYS6WxSbIA
+  &code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
+  &redirect_uri=https%3A%2F%2Fwallet.example.org%2Fcb
+  
+```
+
+### Successful Token Response
+
+Token Requests are made as defined in [@!RFC6749].
+
+In addition to the response parameters defined in [@!RFC6749], the AS MAY return the following parameters:
+
+* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a credential (see (#credential_request)).
+* `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
+
+Note: Subject Identifier in the ID Token is the End-User's identifier.
+
+Below is a non-normative example of a Token Response:
+```
+HTTP/1.1 200 OK
+  Content-Type: application/json
+  Cache-Control: no-store
+  Pragma: no-cache
+
+  {
+    "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ",
+    "token_type": "bearer",
+    "expires_in": 86400,
+    "c_nonce": "tZignsnFbp",
+    "c_nonce_expires_in": 86400
+  }
+```
+
+### Token Error Response
+
+If the Token Request is invalid or unauthorized, the Authorization Server constructs the error response as defined as in Section 5.2 of OAuth 2.0 [@!RFC6749].
+
+The following is a non-normative example Token Error Response:
+
+```json=
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Cache-Control: no-store
+Pragma: no-cache
+{
+   "error": "invalid_request"
+}
+```
+
+## Credential Endpoint
+
+The Credential Endpoint issues a credential as approved by the End-User upon presentation of a valid Access Token representing this approval. 
+
+Communication with the Credential Endpoint MUST utilize TLS. 
+
+The client can request issuance of a credential of a certain type multiple times, e.g., to associate the credential with different DIDs/public keys or to refresh a certain credential.
+
+If the access token is valid for requesting issuance of multiple credentials, it is at the client's discretion to decide the order in which to request issuance of multiple credentials requested in the Authorization Request.
+
+### Binding the Issued Credential to the identifier of the End-User possessing that Credential {#credential-binding}
+
+Issued credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the credential. Cryptographic binding allows the Verifier to verify during presentation that the End-User presenting a credential is the same End-User to whom it was issued. For non-cryptographic type of binding and credentials issued without any binding, see Implementations Considerations sections (#claim-based-binding) and (#no-binding). 
+
+Note that claims in the credential are usually about the End-User who possesses it, but can be about the other entity.
+
+For cryptographic binding, the Client has the following options to provide cryptographic binding material for a requested credential as defined in (#credential_request):
+
+1. Provide proof of control alongside key material (`proof` that includes `sub_jwk` or `did`)
+1. Provide only proof of control without the key material (`proof` that does not include `sub_jwk` or `did`)
+
+### Credential Request {#credential_request}
+
+A Client makes a Credential Request by sending a HTTP POST request to the Credential Endpoint with the following parameters:
+
+* `type`: REQUIRED. Type of credential being requested. It corresponds to a `schema` property in a Credential Manifest obtained in a setup phase.
+* `format`: OPTIONAL. Format of the credential to be issued. If not present, the issuer will determine the credential 
+format based on the client's format default.
+* `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued credential shall be 
+bound to. The `proof` object MUST contain the following `proof_type` element which determines its structure:
+
+  * `proof_type`: REQUIRED. JSON String denoting the proof type. 
+
+This specification defines the following values for `proof_type`:
+
+* `jwt`: objects of this type contain a single `jwt` element with a signed JWT as proof of possession. The JWT MUST contain the following elements:
+    * `kid`: CONDITIONAL. JWT header containing the key ID. If the credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the credential shall be bound to.
+    * `jwk`: CONDITIONAL. JWT header containing the key material the new credential shall be bound to. 
+    * `x5c`: CONDITIONAL. JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties.
+    * `iss`: REQUIRED. MUST contain the client_id of the sender
+    * `aud`: REQUIRED. MUST contain the issuer URL of credential issuer
+    * `iat`: REQUIRED. MUST contain the instant when the proof was created
+    * `nonce`: REQUIRED. MUST contain a fresh nonce as provided by the issuer
+
+Note: if both `jwk` and `x5c` are present, the represented signing key MUST be the same in both. 
+
+The `proof` element MUST incorporate a fresh nonce value generated by the credential issuer and the credential issuer's identifier (audience) to allow the credential issuer to detect replay. The way that data is incorporated depends on the proof type. In a JWT, for example, the nonce is conveyd in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the nonce is included as the `challenge` element in the proof object and the issuer (the intended audience) is included as the `domain` element.
+
+The Issuer MUST validate that the `proof` is actually signed by a key identified in `kid` parameter.
+
+Below is a non-normative example of a `proof` parameter (line breaks for display purposes only):
+
+```json
+{
+  "proof_type": "jwt",
+  "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
+  xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
+  0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
+  NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
+}
+```
+
+where the JWT looks like this:
+
+```json
+{
+  "alg": "ES256",
+  "typ": "JWT",
+  "kid":"did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1"
+}.
+{
+  "iss": "s6BhdRkqt3",
+  "aud": "https://server.example.com",
+  "iat": "2018-09-14T21:19:10Z",
+  "nonce": "tZignsnFbp"
+}
+```
+
+Here is another example JWT not only proving possession of a private key but also providing key attestation data for that key:
+
+```json
+{
+  "typ": "JWT",
+  "alg": "ES256",
+  "x5c":[<key certificate + certificate chain for attestation>]
+}.
+{
+  "iss": "s6BhdRkqt3",
+  "aud": "https://server.example.com",
+  "iat": "2018-09-14T21:19:10Z",
+  "nonce": "tZignsnFbp"
+}
+```
+
+Below is a non-normative example of a Credential Request:
+
+```
+POST /credential HTTP/1.1
+Host: server.example.com
+Content-Type: application/x-www-form-urlencoded
+Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard
+format=ldp%5Fvc
+did=did%3Aexample%3Aebfeb1f712ebc6f1c276e12ec21
+proof=%7B%22type%22:%22...-ace0-9c5210e16c32%22%7D
+```
+
+### Credential Response {#credential_response}
+
+Credential Response can be Synchronous or Deferred. The Issuer may be able to immediately issue a requested credential and send it to the Client. In other cases, the Issuer may not be able to immediately issue a requested credential and would want to send a token to the Client to be used later to receive a credential when it is ready.
+
+The following claims are used in the Credential Response:
+
+* `format`: REQUIRED. JSON string denoting the credential's format
+* `credential`: OPTIONAL. Contains issued credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the credential format. See the table below for the format specific encoding requirements.
+* `acceptance_token`: OPTIONAL. A JSON string containing a token subsequently used to obtain a credential. MUST be present when `credential` is not returned.
+* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a credential (see (#credential_request)).
+* `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
+
+
+The following table defines how issued credential MUST be returned in the `credential` claim in the Credential Response based on the credential format and the signature scheme. This specification does not require any additional encoding when credential format is already represented as a JSON object or a JSON string.
+
+| Credential Signature Format | Credential Format Identifier | Signature Scheme | Need for encoding when returning in the Credential Response  |
+|:------|:-----|:-----|:------------|
+|JWS Compact Serialization | `jwt_vc`, `mdl_iso_json` | Credential conformant to the W3C Verifiable Credentials Data Model, or ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, and signed as a JWS Compact Serialization. | MUST be a JSON string. Credential is already a sequence of base64url-encoded values separated by period characters and MUST NOT be re-encoded. |
+|JWS JSON Serialization | `jwt_vc`, `mdl_iso_json`| Credential conformant to the W3C Verifiable Credentials Data Model, or ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, and signed as a JWS JSON Serialization. | MUST be a JSON object. MUST NOT be re-encoded. |
+|Data Integrity | `ldp_vc` | Credential conformant to the W3C Verifiable Credentials Data Model and signed with Data Integrity Proofs. | MUST be a JSON object. MUST NOT be re-encoded. |
+| CL-Signatures |`ac_vc` | Credential conformant to the AnonCreds format as defined in the Hyperledger Indy project and signed using CL-signature scheme. | MUST be a JSON object. MUST NOT be re-encoded. |
+| COSE |`mdl_iso_cbor`| Credential conformant to the ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, encoded as CBOR and signed as a COSE message. | MUST be a JSON string that is the base64url-encoded representation of the issued credential |
+
+Credential formats expressed as binary formats MUST be base64url-encoded and returned as a JSON string.
+
+Note that this table might be superceded by a registry in the future. Meanwhile, for interoperability, implementers MUST follow the requirements defined in the table above.
+
+Below is a non-normative example of a Credential Response in a synchronous flow:
+
+```
+HTTP/1.1 200 OK
+  Content-Type: application/json
+  Cache-Control: no-store
+  Pragma: no-cache
+
+{
+  "format": "jwt_vc"
+  "credential" : "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
+  "c_nonce": "fGFF7UkhLa",
+  "c_nonce_expires_in": 86400  
+}
+```
+
+Below is a non-normative example of a Credential Response in a deferred flow:
+
+```
+HTTP/1.1 200 OK
+  Content-Type: application/json
+  Cache-Control: no-store
+  Pragma: no-cache
+
+{
+  "acceptance_token": "8xLOxBtZp8",
+  "c_nonce": "wlbQc6pCJp",
+  "c_nonce_expires_in": 86400  
+}
+```
+
+Note: Consider using CIBA Ping/Push callback. Another option would be the Client providing `client_notification_token` to the Issuer, so that the issuer sends a Credential Response upon successfully receiving a Credential Request and then no need for the client to bring an acceptance token, the Issuer will send the credential once it is issued in a response that includes `client_notification_token`.
+
+### Credential Issuer-Provided Nonce
+
+Upon receiving a Credential Request, the credential issuer MAY require the client to send a proof of possession of the key material it wants a credential to be bound to. This proof MUST incorporate a nonce generated by the credential issuer. The credential issuer will provide the client with a nonce in an error response to any Credential Request not including such a proof or including an invalid proof. 
+
+Below is a non-normative example of a Credential Response when the Issuer requires a `proof` upon receiving a Credential Request:
+
+```
+HTTP/1.1 400 Bad Request
+  Content-Type: application/json
+  Cache-Control: no-store
+  Pragma: no-cache
+
+{
+  "error": "invalid_or_missing_proof"
+  "error_description":
+       "Credential issuer requires proof element in Credential Request"
+  "c_nonce": "8YE9hCnyV2",
+  "c_nonce_expires_in": 86400  
+}
+```
+
+## Deferred Credential Endpoint
+
+This endpoint is used to issue a credential previously requested at the credential endpoint in case the Issuer was not able to immediately issue this credential. 
+
+### Deferred Credential Request
+
+This is a HTTP POST request, which accepts an acceptance token as only parameter. The acceptance token MUST be sent as access token in the HTTP header as shown in the following example.
+
+```
+POST /credential_deferred HTTP/1.1
+Host: server.example.com
+Content-Type: application/x-www-form-urlencoded
+Authorization: BEARER 8xLOxBtZp8
+
+```
+
+### Deferred Credential Response
+
+The deferred Credential Response uses the `format` and `credential` parameters as defined in (#credential_response). 
+
+# Pre-Authorized Code Flow
+
+This section specifies an additional flow to obtain an access token for credential issuance. It is intended to support scenarios where the user starts a process on an issuer's website that ultimately results in one or more credentials being issued to the user's wallet. The process on the issuer's website may include uploading documents and presenting verifiable credentials to the issuer. Moreover, the End-user may be accessing the issuer's website on a device different from the one with the wallet application so the credential issuance process needs to be transfered to another device where the user's wallet resides. 
+
+In contrast to the flow specified in (#endpoints), this flows is initiated by the Issuer when the credentials are "ready" and need to be "picked up" by the wallet application. How the user provides information required for the issuance of a requested credential to the Issuer and the business processes conducted by the Issuer to issue a credential are out of scope of this specification.
+
+1. To initiate the flow, the Issuer needs to communicates to the wallet two parameters: the pre-authorized code and the credential type the code is valid for. The Issuer can send them in two different ways. Either the issuer sends them in an issuance initiation request to the Issuance Initiation Endpoint of the wallet as described in (#issuance_initiation_request). Or the issuer renders a QR code containing the issuance initiation request with these parameters. In this case, the user scans the QR code with her wallet on a different device in order to proceed. 
+1. When initiating the flow, the Issuer also indicates if the PIN is required. If it is, sends PIN to the wallet using a channel different from an issuance initiation request.
+1. The wallet sends the pre-authorized code to the issuer's Token Endpoint. This request MUST contain a user PIN if requested by the issuer. 
+1. The issuer responds with an access token valid for credential issuance. 
+1. The wallet sends a credential issuance request to the credential endpoint as defined in (#credential_request) using the credential type as indicated in the first step from the issuer to the wallet.
+1. The issuer returns the requested credential as defined in (#credential_response). 
+
+Steps 1 through 3 constitute a new kind of pre-authorized code flow that is implemented using an additional initiate issuance endpoint and a new OAuth grant type "urn:ietf:params:oauth:grant-type:pre-authorized_code". Steps 4 through 6 conform to the process specified in (#endpoints).
+
+Note that the pre-authorized code is sent to the Token Endpoint and not to the Authorization Endpoint of the Issuer.
+
+The following sections specify the extensions of a pre-authorized code flow.
+
+## Extension Parameters for Initiate Issuance Request
+
+These are the extension parameters defined for the pre-authorized code flow:
+
+* `pre-authorized_code`: REQUIRED. The code representing the issuer's authorization for the wallet to obtain credentials of a certain type. This code MUST be short lived and single-use.
+* `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of a user PIN along with the Token Request. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. 
+
+Below is a non-normative example of an initiate issuance request:
+```
+  GET /initiate_issuance?
+    issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
+    &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
+    &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
+```
+
+The contents of a QR code could look like this:
+```
+openid_initiate_issuance://?
+    issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
+    &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
+    &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
+    &user_pin_required=true
+```
+
+## Extension Parameters for Token Request
+
+These are the extension parameters to the Token Request for the grant type `pre-authorized_code`:
+
+* `pre-authorized_code`: REQUIRED. The code representing the authorization to obtain credentials of a certain type. 
+* `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Initiate Issuance Request. The string value MUST consist of maximum 8 numeric characters (the numbers 0 - 9).
+
+Below is a non-normative example of a Token Request:
+```
+POST /token HTTP/1.1
+  Host: server.example.com
+  Content-Type: application/x-www-form-urlencoded
+  Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+  grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
+  &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
+  &user_pin=493536
+```
+
+## Extension to the Token Response {#pre-authz-token-response}
+
+Upon receiving `pre-authorized_code`, the issuer MAY decide to interact with the end-user in the course of the Token Request processing, which might take some time. In such a case, the issuer SHOULD respond with the error `authorization_pending` and the new return parameter `interval`: 
+
+* `authorization_pending`: OPTIONAL. JSON Boolean. The Token Request is still pending as the issuer is waiting for end user end user interaction to complete.  The client SHOULD repeat the Token Request. Before each new request, the client MUST wait at least the number of seconds specified by the "interval" response parameter. ToDo: clarify boolean.
+* `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the token endpoint.  If no value is provided, clients MUST use 5 as the default.
+
+## Replay Prevention
+
+The pre-authorized code flow is vulnerable to the replay of the pre-authorized code, because by design it is not bound to a certain device (as the authorization code flow does with PKCE). This means an attacker can replay at another device the pre-authorized code meant for a victime, e.g., the attacker can scan the QR code while it is displayed on the victim’s screen, and thereby getg access to the credential. Such replay attacks must be prevented using other means. The design facilitates the following options: 
+
+* User PIN: the issuer might set up a PIN with the user (e.g. via text message or email), which needs to be presented in the Token Request.
+* Callback to device where the transaction originated: upon receiving the Token Request, the issuer asks the user to confirm the originating device (device that displayed the QR code) that the issuer may proceed with the credential issuance process. While the issuer reaches out to the user on the other device to get confirmation, the issuer returns an `authorization_pending` error code to the wallet (as described in (#pre-authz-token-response)). The wallet is required to call the token endpoint again to obtain the access token. If the user does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the user on the originating device more control over the issuance process.
+
+## PIN Code Phishing
+
+An attacker might leverage the credential issuance process and the user's trust into the wallet to phish PIN codes sent out by a different service that grant attacker access to services other than credential issuance. The attacker could setup a credential issuer site and in parallel to the issuance request trigger transmission of a PIN code to the user's phone from a service other than credential issuance, e.g. from a payment service. The user would then be asked to enter this PIN into the wallet and since the wallet sends this PIN to the token endpoint of the issuer (the attacker), the attacker would get access to the PIN code, and access to that other service. 
+
+In order to cope with that issue, the wallet is RECOMMENDED to interact with trusted issuers only. In that case, the wallet would not process an Initiate Issuance Request with an untrusted issuer URL. The wallet MAY also show to the user the endpoint or issuer it will be sending the PIN code and ask the user for confirmation.
 
 ## Client Metadata 
 
@@ -430,592 +1000,6 @@ The following example shows a non-normative example of the relevant entries in t
 
 Note: The Client MAY use other mechanisms to obtain information about the verifiable credentials that an Issuer can issue.
 
-## Issuance Initiation Endpoint
-
-This endpoint is used by an issuer in case it is already in an interaction with a user that wishes to initate a credential issuance. It is used to pass available 
-information relevant for the credential issuance to ensure a convenient and secure process. 
-
-### Issuance Initiation Request {#issuance_initiation_request}
-
-The issuer (or any other party wishing to kickstart an issuance into a certain wallet) sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL. 
-
-The following request parameters are defined: 
-
-* `issuer`: REQUIRED. The issuer URL of the credential issuer, the wallet is requested to obtain one or more credentials from. 
-* `credential_type`: REQUIRED. A JSON string denoting the type of the credential the wallet shall request. MUST be present if `manifest_id` is not present.
-* `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value.  
-
-The following is a non-normative example:
-
-```
-  GET /initiate_issuance?
-    issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
-    &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
-    &op_state=eyJhbGciOiJSU0Et...FYUaBy
-```
-
-The issuer MAY also render a QR code containing the request data in order to allow the user to scan the request using her wallet app. 
-
-The wallet MUST consider the parameter values in the initiation request as not trustworthy since the origin is not authenticated and the message 
-integrity is not protected. The Wallet MUST apply the same checks on the issuer that it would apply when the flow is started from the Wallet itself since the issuer is not trustworthy just because it sent the initiation request. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
-
-The wallet MUST NOT accept credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if
-the wallet would have started the flow. 
-
-The wallet MUST be able to process multiple occurences of the URL query parameters `credential_type` and/or `manifest_id`. Multiple occurences MUST be 
-treated as multiple values of the respective parameter.
-
-The AS MUST ensure the release of any privacy-sensitive data is legally based (e.g., if passing an e-mail address in the `login_hint` parameter).
-
-### Issuance Initiation Response
-
-The wallet is not supposed to create a response. UX control stays with the wallet after completion of the process. 
-
-## Authorization Endpoint
-
-The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics] and utilizes [@!I-D.ietf-oauth-rar].
-
-In addition to the required basic Authorization Request, this section also defines how pushed authorization requests can be used to protect the authorization request payload and when the requests become large.
-
-### `authorization_details` Request Parameter {#authorization-details}
-
-Request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-oauth-rar] MUST be used to convey the details about the credentials the wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
-
-* `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
-* `credential_type`: CONDITIONAL. JSON string denoting the type of the requested credential. MUST be present if `manifest_id` is not present.
-* `manifest_id`: CONDITIONAL. JSON String referring to a credential manifest published by the credential issuer. MUST be present if `type` is not present.
-* `format`: OPTIONAL. JSON string representing a format in which the credential is requested to be issued. Valid values are defined in the table in Section 6.7.3. and include `jwt_vp` and `ldp_vp`. Formats identifiers not in the table, MAY be defined by the profiles of this specification.
-* `locations`: OPTIONAL. An array of strings that allows a client to specify the location of the resource server(s) allowing the AS to mint audience restricted access tokens. This data field is predefined in Section 2.2 of ([@!I-D.ietf-oauth-rar]).
-
-Note: `credential_type` and `format` are used when the Client has not pre-obtained a Credential Manifest. `manifest_id` is used when the Client has pre-obtained a Credential Manifest. These two approaches MAY be combined in one request in different authorization details objects.
-
-Note: The `credential_application` element defined in [@DIF.CredentialManifest] is not required by this specification.
-
-Note: Passing the `format` to the authorization request is informational and allows the credential issuer to refuse early in case it does not support the requested format/credential combination. The client MAY request issuance of credentials in other formats as well later in the process at the credential endpoint.
-
-[TBD: `locations` could enable a single authorization server to authorize access to different credential endpoints. Might be an architectural option we want to pursue.]
-
-A non-normative example of an `authorization_details` object. 
-
-```json=
-{
-   "type":"openid_credential",
-   "credential_type":"https://did.example.org/healthCard",
-   "format":"ldp_vc"
-}
-```
-Note: applications MAY combine `openid_credential` with any other authorization details type in an authorization request.
- 
-### Credential Authorization Request {#credential-request}
-
-A credential authorization request is an OAuth Authorization request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the credential endpoint as defined in (#credential-endpoint). It also follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
-
-There are two possible ways to make a credential authorization request. One way is to use of the `authorization_details` request parameter as defined in (#authorization-details) with one or more authorization details objects of type `openid_credential`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
-
-A non-normative example of a credential authorization request using the `authorization_details` parameter  (uses PKCE as defined in [@!RFC7636]) (with line wraps within values for display purposes only).
-
-```
-HTTP/1.1 302 Found
-Location: https://server.example.com/authorize?
-  response_type=code
-  &client_id=s6BhdRkqt3
-  &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
-  &code_challenge_method=S256
-  &authorization_details=%5B%7B%22type%22:%22openid_credential%22,%22credential_type
-  %22:%22https://did.example.org/healthCard%22,%22format%22:%22ldp_vc%22%7D,%7B%22ty
-  pe%22:%22openid_credential%22,%22credential_type%22:%22https://did.example.org/mDL
-  %22%7D%5D
-  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-```
-
-This particiular non-normative example requests authorization to issue two different credentials:
-
-```json=
-[
-   {
-      "type":"openid_credential",
-      "credential_type":"https://did.example.org/healthCard",
-      "format":"ldp_vc"
-   },
-   {
-      "type":"openid_credential",
-      "credential_type":"https://did.example.org/mDL"
-   }
-]
-```
-
-This non-normative example shows a credential authorization request which is also a OpenID Connect authentication request  (uses PKCE as defined in [@!RFC7636]).
-
-```
-HTTP/1.1 302 Found
-Location: https://server.example.com/authorize?
-  response_type=code
-  &client_id=s6BhdRkqt3
-  &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
-  &code_challenge_method=S256
-  &scope=openid%20email
-  &authorization_details=%5B%7B%22type%22:%22openid_credential%...7D%5D
-  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-```
-
-#### Credential Authorization Request using Type Specific Scope {#credential-request-using-type-specific-scope}
-
-An alternative credential request syntax to that defined in (#credential-request) involves using an OAuth2 scope following the syntax defined below.
-
-```
-openid_credential:<credential-type>
-```
-
-The value of `<credential-type>` indicates the type of credential being requested, providers who do not understand the value of this scope in a request MUST ignore it entirely. The presence of a scope following this syntax in the request MUST be interpreted by the provider as a request for access to the credential endpoint as defined in (#credential-endpoint) for the specific credential type. Multiple occurrences of this scope MAY be present in a single request whereby each occurrence MUST be interpreted individually.
-
-A non-normative example of a credential request scoped to a specific credential type (uses PKCE as defined in [@!RFC7636]).
-
-```
-HTTP/1.1 302 Found
-Location: https://server.example.com/authorize?
-  response_type=code
-  &scope=openid_credential:healthCard
-  &client_id=s6BhdRkqt3
-  &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
-  &code_challenge_method=S256
-  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-```
-
-If a scope `openid_credential:<credential-type>` and the `authorization_details` request parameter containing objects of type `openid_credential` are both present in a single request, the provider MUST interpret these individually. However, if both request the same credential type, than the Issuer MUST follow the request as given by the authorization details object.
-
-#### Additional Request Parameters
-
-This specification defines the following additional request parameters that can be supplied in any credential authorization request:
-
-* `wallet_issuer`: OPTIONAL. JSON String containing the wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@!SIOPv2] to determine the wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
-* `user_hint`: OPTIONAL. JSON String containing an opaque user hint the wallet MAY use in sub-sequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
-* `op_state`: OPTIONAL. String value identifying a certain processing context at the credential issuer. A value for this parameter is typically passed in an issuance initation request from the issuer to the wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `op_state` value back to the credential issuer. 
-
-Note: When processing the authorization request, the issuer MUST take into account that the `op_state` is not guaranteed to originate from this issuer. It could have been injected by an attacker. 
-
-#### Pushed Authorization Request
-
-Use of Pushed Authorization Requests is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues due to large requests due to the query language or if message level encryption is used.
-
-Below is a non-normative example of a Pushed Authorization Request  (uses PKCE as defined in [@!RFC7636]):
-
-```
-POST /op/par HTTP/1.1
-    Host: as.example.com
-    Content-Type: application/x-www-form-urlencoded
-
-    &response_type=code
-    &client_id=CLIENT1234
-    &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
-    &code_challenge_method=S256
-    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-    &authorization_details=...
-```
-
-Below is a non-normative example of a `authorization_details` parameter with `manifest_id`:
-
-```json=
-{
-   "type":"openid_credential",
-   "manifest_id":"WA-DL-CLASS-A",
-   "format":"jwt_vc"
-}
-```
-
-#### Dynamic Credential Request
-
-This step is OPTIONAL. After receiving an Authorization Request from the Client, the Issuer MAY use this step to obtain additional credentials from the End-User. 
-
-The Issuer MUST utilize [@OIDC4VP] and [@!SIOPv2] to dynamically request additional credentials. From a protocol perspective, the Issuer acts now as a verifier and sends a presentation request to the wallet. The Client MUST have these credentials obtained prior to initiating a transaction with this Issuer. 
-
-This provides the benefit of the Issuer being able to adhere to the principle of data minimization, for example by including only minimum requirements in the Credential Manifest knowing that it can supplement additional information if needed.
-
-To enable dynamic callbacks of the issuer to the end-user's wallet, the wallet MAY provide additional parameters `wallet_issuer` and `user_hint` defined in the Authorization Request section of this specification.
-
-For non-normative examples of request and response, see section 11.6 in [@OIDC4VP].
-
-Note to the editors: need to sort out credential issuer's client_id with wallet and potentially add example with `wallet_issuer` and `user_hint` 
-
-### Successful Authorization Response
-
-Authentication Responses MUST be made as defined in [@!RFC6749].
-
-Below is a non-normative example of a successful Authentication Response:
-
-```
-HTTP/1.1 302 Found
-  Location: https://wallet.example.org/cb?
-    code=SplxlOBeZQQYbYS6WxSbIA
-```
-
-### Authentication Error Response
-
-Authentication Error Response MUST be made as defined in [@!RFC6749].
-
-The following is a non-normative example of an unsuccessful token response.
-
-```json=
-HTTP/1.1 302 Found
-Location: https://client.example.net/cb?
-    error=invalid_request
-    &error_description=Unsupported%20response_type%20value
-```
-
-## Token Endpoint
-
-The Token Endpoint issues an Access Token and, optionally, a Refresh Token in exchange for the authorization code that client obtained in a successful Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
-
-### Token Request
-
-Upon receiving a successful Authentication Response, a Token Request is made as defined in Section 4.1.3 of [@!RFC6749].
-
-Below is a non-normative example of a token request:
-```
-POST /token HTTP/1.1
-  Host: server.example.com
-  Content-Type: application/x-www-form-urlencoded
-  Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
-  grant_type=authorization_code
-  &code=SplxlOBeZQQYbYS6WxSbIA
-  &code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
-  &redirect_uri=https%3A%2F%2Fwallet.example.org%2Fcb
-  
-```
-
-### Successful Token Response
-
-Token Requests are made as defined in [@!RFC6749].
-
-In addition to the response parameters defined in [@!RFC6749], the AS MAY return the following parameters:
-
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a credential (see (#credential_request)).
-* `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
-
-Note: Subject Identifier in the ID Token is the End-User's identifier.
-
-Below is a non-normative example of a token response:
-```
-HTTP/1.1 200 OK
-  Content-Type: application/json
-  Cache-Control: no-store
-  Pragma: no-cache
-
-  {
-    "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ",
-    "token_type": "bearer",
-    "expires_in": 86400,
-    "c_nonce": "tZignsnFbp",
-    "c_nonce_expires_in": 86400
-  }
-```
-
-### Token Error Response
-
-If the Token Request is invalid or unauthorized, the Authorization Server constructs the error response as defined as in Section 5.2 of OAuth 2.0 [@!RFC6749].
-
-The following is a non-normative example Token Error Response:
-
-```json=
-HTTP/1.1 400 Bad Request
-Content-Type: application/json
-Cache-Control: no-store
-Pragma: no-cache
-{
-   "error": "invalid_request"
-}
-```
-
-## Credential Endpoint
-
-The Credential Endpoint issues a credential as approved by the End-User upon presentation of a valid Access Token representing this approval. 
-
-Communication with the Credential Endpoint MUST utilize TLS. 
-
-The client can request issuance of a credential of a certain type multiple times, e.g., to associate the credential with different DIDs/public keys or to refresh a certain credential.
-
-If the access token is valid for requesting issuance of multiple credentials, it is at the client's discretion to decide the order in which to request issuance of multiple credentials requested in the Authorization Request.
-
-### Binding the Issued Credential to the identifier of the End-User possessing that Credential {#credential-binding}
-
-Issued credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the credential. Cryptographic binding allows the Verifier to verify during presentation that the End-User presenting a credential is the same End-User to whom it was issued. For non-cryptographic type of binding and credentials issued without any binding, see Implementations Considerations sections (#claim-based-binding) and (#no-binding). 
-
-Note that claims in the credential are usually about the End-User who possesses it, but can be about the other entity.
-
-For cryptographic binding, the Client has the following options to provide cryptographic binding material for a requested credential as defined in (#credential_request):
-
-1. Provide proof of control alongside key material (`proof` that includes `sub_jwk` or `did`)
-1. Provide only proof of control without the key material (`proof` that does not include `sub_jwk` or `did`)
-
-### Credential Request {#credential_request}
-
-A Client makes a Credential Request by sending a HTTP POST request to the Credential Endpoint with the following parameters:
-
-* `type`: REQUIRED. Type of credential being requested. It corresponds to a `schema` property in a Credential Manifest obtained in a setup phase.
-* `format`: OPTIONAL. Format of the credential to be issued. If not present, the issuer will determine the credential 
-format based on the client's format default.
-* `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued credential shall be 
-bound to. The `proof` object MUST contain the following `proof_type` element which determines its structure:
-
-  * `proof_type`: REQUIRED. JSON String denoting the proof type. 
-
-This specification defines the following values for `proof_type`:
-
-* `jwt`: objects of this type contain a single `jwt` element with a signed JWT as proof of possession. The JWT MUST contain the following elements:
-    * `kid`: CONDITIONAL. JWT header containing the key ID. If the credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the credential shall be bound to.
-    * `jwk`: CONDITIONAL. JWT header containing the key material the new credential shall be bound to. 
-    * `x5c`: CONDITIONAL. JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties.
-    * `iss`: REQUIRED. MUST contain the client_id of the sender
-    * `aud`: REQUIRED. MUST contain the issuer URL of credential issuer
-    * `iat`: REQUIRED. MUST contain the instant when the proof was created
-    * `nonce`: REQUIRED. MUST contain a fresh nonce as provided by the issuer
-
-Note: if both `jwk` and `x5c` are present, the represented signing key MUST be the same in both. 
-
-The `proof` element MUST incorporate a fresh nonce value generated by the credential issuer and the credential issuer's identifier (audience) to allow the credential issuer to detect replay. The way that data is incorporated depends on the proof type. In a JWT, for example, the nonce is conveyd in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the nonce is included as the `challenge` element in the proof object and the issuer (the intended audience) is included as the `domain` element.
-
-The Issuer MUST validate that the `proof` is actually signed by a key identified in `kid` parameter.
-
-Below is a non-normative example of a `proof` parameter (line breaks for display purposes only):
-
-```json
-{
-  "proof_type": "jwt",
-  "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
-  xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
-  0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
-  NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
-}
-```
-
-where the JWT looks like this:
-
-```json
-{
-  "alg": "ES256",
-  "typ": "JWT",
-  "kid":"did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1"
-}.
-{
-  "iss": "s6BhdRkqt3",
-  "aud": "https://server.example.com",
-  "iat": "2018-09-14T21:19:10Z",
-  "nonce": "tZignsnFbp"
-}
-```
-
-Here is another example JWT not only proving possession of a private key but also providing key attestation data for that key:
-
-```json
-{
-  "typ": "JWT",
-  "alg": "ES256",
-  "x5c":[<key certificate + certificate chain for attestation>]
-}.
-{
-  "iss": "s6BhdRkqt3",
-  "aud": "https://server.example.com",
-  "iat": "2018-09-14T21:19:10Z",
-  "nonce": "tZignsnFbp"
-}
-```
-
-Below is a non-normative example of a credential request:
-
-```
-POST /credential HTTP/1.1
-Host: server.example.com
-Content-Type: application/x-www-form-urlencoded
-Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
-
-type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard
-format=ldp%5Fvc
-did=did%3Aexample%3Aebfeb1f712ebc6f1c276e12ec21
-proof=%7B%22type%22:%22...-ace0-9c5210e16c32%22%7D
-```
-
-### Credential Response {#credential_response}
-
-Credential Response can be Synchronous or Deferred. The Issuer may be able to immediately issue a requested credential and send it to the Client. In other cases, the Issuer may not be able to immediately issue a requested credential and would want to send a token to the Client to be used later to receive a credential when it is ready.
-
-The following claims are used in the Credential Response:
-
-* `format`: REQUIRED. JSON string denoting the credential's format
-* `credential`: OPTIONAL. Contains issued credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the credential format. See the table below for the format specific encoding requirements.
-* `acceptance_token`: OPTIONAL. A JSON string containing a token subsequently used to obtain a credential. MUST be present when `credential` is not returned.
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a credential (see (#credential_request)).
-* `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
-
-
-The following table defines how issued credential MUST be returned in the `credential` claim in the Credential Response based on the credential format and the signature scheme. This specification does not require any additional encoding when credential format is already represented as a JSON object or a JSON string.
-
-| Credential Signature Format | Credential Format Identifier | Signature Scheme | Need for encoding when returning in the Credential Response  |
-|:------|:-----|:-----|:------------|
-|JWS Compact Serialization | `jwt_vc`, `mdl_iso_json` | Credential conformant to the W3C Verifiable Credentials Data Model, or ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, and signed as a JWS Compact Serialization. | MUST be a JSON string. Credential is already a sequence of base64url-encoded values separated by period characters and MUST NOT be re-encoded. |
-|JWS JSON Serialization | `jwt_vc`, `mdl_iso_json`| Credential conformant to the W3C Verifiable Credentials Data Model, or ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, and signed as a JWS JSON Serialization. | MUST be a JSON object. MUST NOT be re-encoded. |
-|Data Integrity | `ldp_vc` | Credential conformant to the W3C Verifiable Credentials Data Model and signed with Data Integrity Proofs. | MUST be a JSON object. MUST NOT be re-encoded. |
-| CL-Signatures |`ac_vc` | Credential conformant to the AnonCreds format as defined in the Hyperledger Indy project and signed using CL-signature scheme. | MUST be a JSON object. MUST NOT be re-encoded. |
-| COSE |`mdl_iso_cbor`| Credential conformant to the ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, encoded as CBOR and signed as a COSE message. | MUST be a JSON string that is the base64url-encoded representation of the issued credential |
-
-Credential formats expressed as binary formats MUST be base64url-encoded and returned as a JSON string.
-
-Note that this table might be superceded by a registry in the future. Meanwhile, for interoperability, implementers MUST follow the requirements defined in the table above.
-
-Below is a non-normative example of a credential response in a synchronous flow:
-
-```
-HTTP/1.1 200 OK
-  Content-Type: application/json
-  Cache-Control: no-store
-  Pragma: no-cache
-
-{
-  "format": "jwt_vc"
-  "credential" : "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
-  "c_nonce": "fGFF7UkhLa",
-  "c_nonce_expires_in": 86400  
-}
-```
-
-Below is a non-normative example of a credential response in a deferred flow:
-
-```
-HTTP/1.1 200 OK
-  Content-Type: application/json
-  Cache-Control: no-store
-  Pragma: no-cache
-
-{
-  "acceptance_token": "8xLOxBtZp8",
-  "c_nonce": "wlbQc6pCJp",
-  "c_nonce_expires_in": 86400  
-}
-```
-
-Note: Consider using CIBA Ping/Push callback. Another option would be the Client providing `client_notification_token` to the Issuer, so that the issuer sends a Credential response upon successfully receiving a Credential request and then no need for the client to bring an acceptance token, the Issuer will send the credential once it is issued in a response that includes `client_notification_token`.
-
-### Credential Issuer-Provided Nonce
-
-Upon receiving a Credential Request, the credential issuer MAY require the client to send a proof of possession of the key material it wants a credential to be bound to. This proof MUST incorporate a nonce generated by the credential issuer. The credential issuer will provide the client with a nonce in an error response to any credential request not including such a proof or including an invalid proof. 
-
-Below is a non-normative example of a Credential Response when the Issuer requires a `proof` upon receiving a Credential Request:
-
-```
-HTTP/1.1 400 Bad Request
-  Content-Type: application/json
-  Cache-Control: no-store
-  Pragma: no-cache
-
-{
-  "error": "invalid_or_missing_proof"
-  "error_description":
-       "Credential issuer requires proof element in credential request"
-  "c_nonce": "8YE9hCnyV2",
-  "c_nonce_expires_in": 86400  
-}
-```
-
-## Deferred Credential Endpoint
-
-This endpoint is used to issue a credential previously requested at the credential endpoint in case the Issuer was not able to immediately issue this credential. 
-
-### Deferred Credential Request
-
-This is a HTTP POST request, which accepts an acceptance token as only parameter. The acceptance token MUST be sent as access token in the HTTP header as shown in the following example.
-
-```
-POST /credential_deferred HTTP/1.1
-Host: server.example.com
-Content-Type: application/x-www-form-urlencoded
-Authorization: BEARER 8xLOxBtZp8
-
-```
-
-### Deferred Credential Response
-
-The deferred credential response uses the `format` and `credential` parameters as defined in (#credential_response). 
-
-# Pre-Authorized Code Flow
-
-This section specifies an additional flow to obtain an access token for credential issuance. It is intended to support scenarios where the user starts a process on an issuer's website that ultimately results in one or more credentials being issued to the user's wallet. The process on the issuer's website may include uploading documents and presenting verifiable credentials to the issuer. Moreover, the End-user may be accessing the issuer's website on a device different from the one with the wallet application so the credential issuance process needs to be transfered to another device where the user's wallet resides. 
-
-In contrast to the flow specified in (#endpoints), this flows is initiated by the Issuer when the credentials are "ready" and need to be "picked up" by the wallet application. How the user provides information required for the issuance of a requested credential to the Issuer and the business processes conducted by the Issuer to issue a credential are out of scope of this specification.
-
-1. To initiate the flow, the Issuer needs to communicates to the wallet two parameters: the pre-authorized code and the credential type the code is valid for. The Issuer can send them in two different ways. Either the issuer sends them in an issuance initiation request to the Issuance Initiation Endpoint of the wallet as described in (#issuance_initiation_request). Or the issuer renders a QR code containing the issuance initiation request with these parameters. In this case, the user scans the QR code with her wallet on a different device in order to proceed. 
-1. When initiating the flow, the Issuer also indicates if the PIN is required. If it is, sends PIN to the wallet using a channel different from an issuance initiation request.
-1. The wallet sends the pre-authorized code to the issuer's Token Endpoint. This request MUST contain a user PIN if requested by the issuer. 
-1. The issuer responds with an access token valid for credential issuance. 
-1. The wallet sends a credential issuance request to the credential endpoint as defined in (#credential_request) using the credential type as indicated in the first step from the issuer to the wallet.
-1. The issuer returns the requested credential as defined in (#credential_response). 
-
-Steps 1 through 3 constitute a new kind of pre-authorized code flow that is implemented using an additional initiate issuance endpoint and a new OAuth grant type "urn:ietf:params:oauth:grant-type:pre-authorized_code". Steps 4 through 6 conform to the process specified in (#endpoints).
-
-Note that the pre-authorized code is sent to the Token Endpoint and not to the Authorization Endpoint of the Issuer.
-
-The following sections specify the extensions of a pre-authorized code flow.
-
-## Extension Parameters for Initiate Issuance Request
-
-These are the extension parameters defined for the pre-authorized code flow:
-
-* `pre-authorized_code`: REQUIRED. The code representing the issuer's authorization for the wallet to obtain credentials of a certain type. This code MUST be short lived and single-use.
-* `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of a user PIN along with the token request. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. 
-
-Below is a non-normative example of an initiate issuance request:
-```
-  GET /initiate_issuance?
-    issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
-    &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
-    &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
-```
-
-The contents of a QR code could look like this:
-```
-openid_initiate_issuance://?
-    issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
-    &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
-    &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
-    &user_pin_required=true
-```
-
-## Extension Parameters for Token Request
-
-These are the extension parameters to the token request for the grant type `pre-authorized_code`:
-
-* `pre-authorized_code`: REQUIRED. The code representing the authorization to obtain credentials of a certain type. 
-* `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Initiate Issuance Request. The string value MUST consist of maximum 8 numeric characters (the numbers 0 - 9).
-
-Below is a non-normative example of a token request:
-```
-POST /token HTTP/1.1
-  Host: server.example.com
-  Content-Type: application/x-www-form-urlencoded
-  Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
-
-  grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
-  &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
-  &user_pin=493536
-```
-
-## Extension to the token response {#pre-authz-token-response}
-
-Upon receiving `pre-authorized_code`, the issuer MAY decide to interact with the end-user in the course of the token request processing, which might take some time. In such a case, the issuer SHOULD respond with the error `authorization_pending` and the new return parameter `interval`: 
-
-* `authorization_pending`: OPTIONAL. JSON Boolean. The token request is still pending as the issuer is waiting for end user end user interaction to complete.  The client SHOULD repeat the token request. Before each new request, the client MUST wait at least the number of seconds specified by the "interval" response parameter. ToDo: clarify boolean.
-* `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the token endpoint.  If no value is provided, clients MUST use 5 as the default.
-
-## Replay Prevention
-
-The pre-authorized code flow is vulnerable to the replay of the pre-authorized code, because by design it is not bound to a certain device (as the authorization code flow does with PKCE). This means an attacker can replay at another device the pre-authorized code meant for a victime, e.g., the attacker can scan the QR code while it is displayed on the victim’s screen, and thereby getg access to the credential. Such replay attacks must be prevented using other means. The design facilitates the following options: 
-
-* User PIN: the issuer might set up a PIN with the user (e.g. via text message or email), which needs to be presented in the token request.
-* Callback to device where the transaction originated: upon receiving the token request, the issuer asks the user to confirm the originating device (device that displayed the QR code) that the issuer may proceed with the credential issuance process. While the issuer reaches out to the user on the other device to get confirmation, the issuer returns an `authorization_pending` error code to the wallet (as described in (#pre-authz-token-response)). The wallet is required to call the token endpoint again to obtain the access token. If the user does not confirm, the token request is returned with the `access_denied` error code. This flow gives the user on the originating device more control over the issuance process.
-
-## PIN Code Phishing
-
-An attacker might leverage the credential issuance process and the user's trust into the wallet to phish PIN codes sent out by a different service that grant attacker access to services other than credential issuance. The attacker could setup a credential issuer site and in parallel to the issuance request trigger transmission of a PIN code to the user's phone from a service other than credential issuance, e.g. from a payment service. The user would then be asked to enter this PIN into the wallet and since the wallet sends this PIN to the token endpoint of the issuer (the attacker), the attacker would get access to the PIN code, and access to that other service. 
-
-In order to cope with that issue, the wallet is RECOMMENDED to interact with trusted issuers only. In that case, the wallet would not process an initiate issuance request with an untrusted issuer URL. The wallet MAY also show to the user the endpoint or issuer it will be sending the PIN code and ask the user for confirmation.
-
 # Security Considerations
 
 ## Trust between Wallet and Issuer
@@ -1027,7 +1011,7 @@ Credential Issuers often want to know what wallet they are issuing credentials t
 
 The following mechanisms in concert can be utilized to fulfill those objectives:
 
-**Key attestation** is a mechanism where the device or security element in a device asserts the key management policy to the application creating and using this key. The Android Operating System, for example, provides apps with a certificate including a certificate chain asserting that a particular key is managed, for example, by an hardware security module [ref]. The wallet can provide this data along with the proof of possession in the credential request (see (#credential_request) for an example) to allow the issuer to validate the key management policy. This indeed requires the issuer to rely on the trust anchor of the certificate chain and the respective key management policy. Another variant of this concept is the use of a Qualified Electronic Signature as defined by the eIDAS regulation [ref]. This signatures won't reveal the concrete properties of the associated private key to the issuer. However, due to the regulatory regime of eIDAS the issuer can deduce that the signing service manages the private keys according to this regime and fulfills very high security requirements. As another example, FIDO2 allows RPs to obtain an attestation along with the public key from a FIDO authenticator. That implicitly asserts the key management policy since the assertion is bound to a certain authenticator model and its key management capabilities. 
+**Key attestation** is a mechanism where the device or security element in a device asserts the key management policy to the application creating and using this key. The Android Operating System, for example, provides apps with a certificate including a certificate chain asserting that a particular key is managed, for example, by an hardware security module [ref]. The wallet can provide this data along with the proof of possession in the Credential Request (see (#credential_request) for an example) to allow the issuer to validate the key management policy. This indeed requires the issuer to rely on the trust anchor of the certificate chain and the respective key management policy. Another variant of this concept is the use of a Qualified Electronic Signature as defined by the eIDAS regulation [ref]. This signatures won't reveal the concrete properties of the associated private key to the issuer. However, due to the regulatory regime of eIDAS the issuer can deduce that the signing service manages the private keys according to this regime and fulfills very high security requirements. As another example, FIDO2 allows RPs to obtain an attestation along with the public key from a FIDO authenticator. That implicitly asserts the key management policy since the assertion is bound to a certain authenticator model and its key management capabilities. 
 
 **App Attestation**: Key attestation, however, does not establish trust in the application storing the credential and producing presentation of that credential. App attestation as provided by mobile operating systems, e.g. iOS's DeviceCheck or Android's Safetynet, allows a server system to ensure it is communicating to a legitimate instance of its genuine app. Those mechanisms can be utilized to validate the internal integrity of the wallet (as a whole).  
 
@@ -1222,7 +1206,7 @@ The technology described in this specification was made available from contribut
    -06
 
    * added issuer metadata
-   * made credential response more flexible regarding credential encoding 
+   * made Credential Response more flexible regarding credential encoding 
    * changed file name to match specification name
    * renamed specification to reflect OAuth being the base protocol
 
@@ -1234,7 +1218,7 @@ The technology described in this specification was made available from contribut
    -04
 
    * added support for requesting credential authorization with scopes 
-   * removed support to pass VPs in the authorization request
+   * removed support to pass VPs in the Authorization Request
    * reworked "proof" parameter definition and added "jwt" proof type
 
    -03
