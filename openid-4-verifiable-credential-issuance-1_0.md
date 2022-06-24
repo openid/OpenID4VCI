@@ -72,15 +72,11 @@ W3C Verifiable Credential Objects
 
 Both verifiable credentials and verifiable presentations
 
-Credential Manifests 
-
-A resource format that defines preconditional requirements, Issuer style preferences, and other facets User Agents utilize to help articulate and select the inputs necessary for processing and issuance of a specified credential (see [@DIF.CredentialManifest]).
-
 Deferred Credential Issuance
 
 Issuance of credentials not directly in the response to a credential issuance request, but following a period of time that can be used to perform certain offline business processes.
 
-# Use Cases
+# Use Cases (Kristina to play with words to make it clear what is highlighted - separate PR)
 
 ## End-User Initiated Credential Issuance
 
@@ -106,7 +102,10 @@ The user navigates to her university's webpage to obtain a digital diploma where
 
 The user wants to obtain a digital criminal record certificate. She starts the journey in her wallet and is sent to the issuer service of the responsible government authority. She logs in with her eID and requests the issuance of the certificate. She is notified that the issuance of the certificate will take a couple of days due to necessary background checks by the authority. She confirms and is sent back to the wallet. The wallet shows a hint in the credential list indicating that issuance of the digital criminal record certificate is under way. A few days later, she receives a notification from her wallet app telling her that the certificate was successfully issued. She opens her wallet, where she is asked after startup whether she wants to download the certificate. She confirms and the new credential is retrieved and stored in her wallet.
 
-# Requirements
+## new use-case for pre-authorized code
+
+# Overview
+ToDo: Requirements -> turn into an Overview section (descibes a solution)
 
 This section describes the requirements this specification aims to fulfill beyond the use cases described above. 
 
@@ -126,11 +125,12 @@ This section describes the requirements this specification aims to fulfill beyon
 * It shall be possible to request standard OpenID Connect claims and credentials in the same flow (to implement wallet onboarding, see EBSI/ESSIF onboarding)
 * Support for Credential metadata (Application used by the End-User shall be able to determine the types of credentials an issuer is able to issue)
 * Ensure OAuth 2.0 Authorization Server is authoritative for respective credential issuer (OP (OpenID Connect issuer URL) <-> Issuer ID (DID))
-* Incorporate/utilize existing specs
-  * W3C VC HTTP API(?)
-  * DIF Credential manifest(?)
 
-# Overview 
+## Sequence Diagram
+
+One abstract diagram + recipe which endpoint which flow would use referencing use-cases and endpoints (front and backward referencing)
+
+ToDo: Two diagrams
 
 This specification defines the following mechanisms to allow wallet applications (acting as OAuth and Credential Issuance API clients) used by the End-User to request credential issuers (acting as OAuth Authorization Servers and Credential Issuance API providers) to issue Verifiable Credentials via the Credential Issuance API:
 
@@ -264,6 +264,13 @@ encode the parameter set of step (6) in a suitable representation and allow the 
 with step (6). One option would be to encode the data into a QR Code.
 
 # Endpoints {#endpoints}
+
+- per endpoint, not per flow.
+  - Make clear in the overvire that there is a need for the issuer to communicate to the wallet
+- move metadata to the end
+- deferred credential endpoint
+  another PR - same access token, add acceptance token in body; deleting DCE; add parameters in the credential endpoint req/res
+  another PR - section on refresh; 
 
 ## Overview
 
@@ -435,8 +442,7 @@ The issuer (or any other party wishing to kickstart an issuance into a certain w
 The following request parameters are defined: 
 
 * `issuer`: REQUIRED. The issuer URL of the credential issuer, the wallet is requested to obtain one or more credentials from. 
-* `credential_type`: CONDITIONAL. A JSON string denoting the type of the credential the wallet shall request. MUST be present if `manifest_id` is not present.
-* `manifest_id`: CONDITIONAL. A JSON String  refering to a credential manifests published by the credential issuer. MUST be present if `credential_type` is not present. 
+* `credential_type`: REQUIRED. A JSON string denoting the type of the credential the wallet shall request. MUST be present if `manifest_id` is not present.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value.  
 
 The following is a non-normative example:
@@ -994,7 +1000,7 @@ POST /token HTTP/1.1
 
 Upon receiving `pre-authorized_code`, the issuer MAY decide to interact with the end-user in the course of the token request processing, which might take some time. In such a case, the issuer SHOULD respond with the error `authorization_pending` and the new return parameter `interval`: 
 
-* `authorization_pending`: OPTIONAL. The token request is still pending as the issuer is waiting for end user end user interaction to complete.  The client SHOULD repeat the token request. Before each new request, the client MUST wait at least the number of seconds specified by the "interval" response parameter.
+* `authorization_pending`: OPTIONAL. JSON Boolean. The token request is still pending as the issuer is waiting for end user end user interaction to complete.  The client SHOULD repeat the token request. Before each new request, the client MUST wait at least the number of seconds specified by the "interval" response parameter. ToDo: clarify boolean.
 * `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the token endpoint.  If no value is provided, clients MUST use 5 as the default.
 
 ## Replay Prevention
