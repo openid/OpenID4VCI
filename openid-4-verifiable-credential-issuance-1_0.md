@@ -1,13 +1,13 @@
 %%%
-title = "OpenID for Verifiable Credentials Issuance"
-abbrev = "openid-4-verifiable-credentials-issuance"
+title = "OpenID for Verifiable Credential Issuance"
+abbrev = "openid-4-verifiable-credential-issuance"
 ipr = "none"
 workgroup = "OpenID Connect"
 keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credentials-issuance-1_0-06"
+value = "openid-4-verifiable-credential-issuance-1_0-06"
 status = "standard"
 
 [[author]]
@@ -292,41 +292,132 @@ If the issuer is unable to perform discovery of the Issuance Initiation Endpoint
 
 ## Server Metadata
 
-The server metadata [@!RFC8414] is extended to allow the client to obtain information about the verifiable credentials an Issuer supports. This extension uses [@DIF.CredentialManifest]. 
+This section extends the server metadata [@!RFC8414] to allow the RP to obtain information about the credentials an OP is capable of issuing.
 
-This specification defines the following new Server Metadata parameter for this purpose:
+This specification defines the following new Server Metadata parameters for this purpose:
 
-* `credential_manifests`: OPTIONAL. A JSON array containing a list of Credential Manifests. This parameter enables Issuers to pass Credential Manifests in a single self-contained parameter.
-* `credential_manifest_uris`: OPTIONAL. A JSON array containing a list of URIs referencing resources each containing a Credential Manifest. This parameter enables Issuers to list Credential Manifests by reference, rather than by value. The scheme used MUST be https.
+* `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
 
-The following example shows an OpenID Configuration containing an embedded credential manifest.
+The following parameter MUST be used to communicates the specifics of the credential that the issuer supports issuance of:
+* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string serving as an abstract identifier of the credential. This identifier is RECOMMENDED to be collision resistant - it can be globally unique, but does not have to be when naming conflicts are unlikely to arise in a given use case. The value is a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). 
+
+* `credential_issuer`: OPTIONAL. A JSON object containing display properties for the credential issuer.
+  * `display`: OPTIONAL. An array of objects, where each object contains display properties of a credential issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
+    * `name`: OPTIONAL. String value of a display name for the credential issuer.
+    * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier
+
+### Credential Metadata Object {#credential-metadata-object}
+
+This section defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
+
+* `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain credential for a certain language. The following is a non-exhaustive list of parameters that MAY be included. Note that the display name of the credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
+  * `name`: REQUIRED. String value of a display name for the credential.
+  * `locale`: OPTIONAL. String value that identifies language of this display object represented as language tag values defined in BCP47 [@!RFC5646]. Multiple `display` objects may be included for separate languages. There MUST be only one object with the same language identifier.
+  * `logo`: OPTIONAL. A JSON object with information about the logo of the credential with a following non-exhaustive list of parameters that MAY be included:
+    * `url`: OPTIONAL. URL where the wallet can obtain a logo of the credential issuer.
+    * `alt_text`: OPTIONAL. String value of an alternative text of a logo image.
+  * `description`: OPTIONAL. String value of a description of the credential.
+  * `background_color`: OPTIONAL. String value of a background color of the credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
+  * `text_color`: OPTIONAL. String value of a text color of the credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
+
+* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the credential. Below is a non-exhaustive list of valid key values defined by this specification:
+  * Claim Format Designations defined in [@!DIF.PresentationExchange], such as `jwt_vc` and `ldp_vc`
+  * `mdl_iso`: defined in this specification to express a mobile driving licence (mDL) credential compliant to a data model and data sets defined in ISO/IEC 18013-5:2021 specification. 
+  * `ac_vc`: defined in this specificaiton to express an AnonCreds credential format defined as part of the Hyperledger Indy project [Hyperledger.Indy].
+
+The value in a key value pair is a JSON object detailing the specifics about the support for the credential format with a following non-exhaustive list of parameters that MAY be included:
+  * `types`: REQUIRED. Array of strings representing a format specific type of a credential. This value corresponds to `type` in W3C [@!VC_DATA] and a `doctype` in ISO/IEC 18013-5 (mobile Driving License).
+  * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the credential is bound to the identifier of the End-User who possesses the credential as defined in (#credential-binding). A non-exhaustive list of valid values defined by this specification are `did`, `mso`, and `none`.
+  * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptosuites for credentials in `jwt_vc` format should use algorithm names defined in [IANA JOSE Algorithms Registry](https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms). Cryptosuites for credentials in `ldp_vc` format should use signature suites names defined in [Linked Data Cryptographic Suite Registry](https://w3c-ccg.github.io/ld-cryptosuite-registry/).
+
+* `claims`: REQUIRED. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the credential. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
+  * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
+  * `namespace`: OPTIONAL. String value of a namespace that the claim belongs to. Relevant for ISO/IEC 18013-5 (mobile Driving License) specification.
+  * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
+  * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
+    * `name`: OPTIONAL. String value of a display name for the claim.
+    * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier.
+
+It is dependent on the credential format where the requested claims will appear.
+
+The following example shows a non-normative example of the relevant entries in the OP metadata defined above
 
 ```
   HTTP/1.1 200 OK
   Content-Type: application/json
 
  {
-   "issuer":"https://server.example.com",
-   "authorization_endpoint":"https://server.example.com/connect/authorize",
-   "token_endpoint":"https://server.example.com/connect/token",
-   ...
-   "credential_manifests":[
-      {
-         "id":"WA-DL-CLASS-A",
-         "version":"0.1.0",
-         "issuer":{
-            "id":"did:example:123?linked-domains=3",
-            "name":"Washington State Government"
+  "credential_endpoint": "https://server.example.com/credential",
+  "credentials_supported": {
+    "university_degree" : {
+      "display": [
+        {
+          "name": "University Credential",
+          "locale": "en-US",
+          "logo": {
+            "url": "https://exampleuniversity.com/public/logo.png",
+            "alternative_text": "a square logo of a university"
           },
-         "output_descriptors":[
+          "background_color": "#12107c",
+          "text_color": "#FFFFFF"
+        },
+        {
+          "name": "在籍証明書",
+          "locale": "jp-JA",
+          "logo": {
+            "url": "https://exampleuniversity.com/public/logo.png",
+            "alternative_text": "大学のロゴ"
+          },
+          "background_color": "#12107c",
+          "text_color": "#FFFFFF"
+        }
+      ],
+      "formats": {
+        "ldp_vc": {
+          "types": [ "VerifiableCredential", "UniversityDegreeCredential" ],
+          "binding_methods_supported": [ "did" ],
+          "proof_types_supported": [ "Ed25519Signature2018" ]
+        }
+      },
+      "claims": {
+        "given_name": {
+          "mandatory": false,
+          "display": [
+              {
+              `name`: `Given Name`,
+              `locale`: `en-US`
+            },
             {
-               "schema":"http://washington-state-schemas.org/1.0.0/driver-license.json",
-               "id": "output descriptor 1"
+              `name`: `名前`,
+              `locale`: `jp-JA`
             }
-         ],
-         "presentation_definition":{}
-     }
-   ]
+          ]  
+        },
+        "last_name": {},
+        "degree": {},
+        "gpa": {
+          "mandatory": false,
+          "value_type": "number",
+            "display": [
+              {
+              `name`: `GPA`
+              }
+          ]
+        }
+      }
+    },
+    "credential_issuer": {
+      "display": [
+        {
+          `name`: `Example University`,
+          `locale`: `en-US`
+        },
+        {
+          `name`: `サンプル大学`,
+          `locale`: `jp-JA`
+        }
+      ]  
+    }
   }
 ```
 
@@ -387,7 +478,7 @@ Request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-oauth
 * `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
 * `credential_type`: CONDITIONAL. JSON string denoting the type of the requested credential. MUST be present if `manifest_id` is not present.
 * `manifest_id`: CONDITIONAL. JSON String referring to a credential manifest published by the credential issuer. MUST be present if `type` is not present.
-* `format`: OPTIONAL. JSON string representing a format in which the credential is requested to be issued. Valid values defined by this specification are `jwt_vc` and `ldp_vc`. Profiles of this specification MAY define additional format values.
+* `format`: OPTIONAL. JSON string representing a format in which the credential is requested to be issued. Valid values are defined in the table in Section 6.7.3. and include `jwt_vp` and `ldp_vp`. Formats identifiers not in the table, MAY be defined by the profiles of this specification.
 * `locations`: OPTIONAL. An array of strings that allows a client to specify the location of the resource server(s) allowing the AS to mint audience restricted access tokens. This data field is predefined in Section 2.2 of ([@!I-D.ietf-oauth-rar]).
 
 Note: `credential_type` and `format` are used when the Client has not pre-obtained a Credential Manifest. `manifest_id` is used when the Client has pre-obtained a Credential Manifest. These two approaches MAY be combined in one request in different authorization details objects.
@@ -753,11 +844,11 @@ The following table defines how issued credential MUST be returned in the `crede
 
 | Credential Signature Format | Credential Format Identifier | Signature Scheme | Need for encoding when returning in the Credential Response  |
 |:------|:-----|:-----|:------------|
-|JWS Compact Serialization | jwt_vc, mdl_iso_json | Credential conformant to the W3C Verifiable Credentials Data Model, or ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, and signed as a JWS Compact Serialization. | MUST be a JSON string. Credential is already a sequence of base64url-encoded values separated by period characters and MUST NOT be re-encoded. |
-|JWS JSON Serialization | jwt_vc, mdl_iso_json | Credential conformant to the W3C Verifiable Credentials Data Model, or ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, and signed as a JWS JSON Serialization. | MUST be a JSON object. MUST NOT be re-encoded. |
-|Data Integrity | ldp_vc | Credential conformant to the W3C Verifiable Credentials Data Model and signed with Data Integrity Proofs. | MUST be a JSON object. MUST NOT be re-encoded. |
-| CL-Signatures |ac_vc | Credential conformant to the AnonCreds format as defined in the Hyperledger Indy project and signed using CL-signature scheme. | MUST be a JSON object. MUST NOT be re-encoded. |
-| COSE |mdl_iso_cbor| Credential conformant to the ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, encoded as CBOR and signed as a COSE message. | MUST be a JSON string that is the base64url-encoded representation of the issued credential |
+|JWS Compact Serialization | `jwt_vc`, `mdl_iso_json` | Credential conformant to the W3C Verifiable Credentials Data Model, or ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, and signed as a JWS Compact Serialization. | MUST be a JSON string. Credential is already a sequence of base64url-encoded values separated by period characters and MUST NOT be re-encoded. |
+|JWS JSON Serialization | `jwt_vc`, `mdl_iso_json`| Credential conformant to the W3C Verifiable Credentials Data Model, or ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, and signed as a JWS JSON Serialization. | MUST be a JSON object. MUST NOT be re-encoded. |
+|Data Integrity | `ldp_vc` | Credential conformant to the W3C Verifiable Credentials Data Model and signed with Data Integrity Proofs. | MUST be a JSON object. MUST NOT be re-encoded. |
+| CL-Signatures |`ac_vc` | Credential conformant to the AnonCreds format as defined in the Hyperledger Indy project and signed using CL-signature scheme. | MUST be a JSON object. MUST NOT be re-encoded. |
+| COSE |`mdl_iso_cbor`| Credential conformant to the ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, encoded as CBOR and signed as a COSE message. | MUST be a JSON string that is the base64url-encoded representation of the issued credential |
 
 Credential formats expressed as binary formats MUST be base64url-encoded and returned as a JSON string.
 
@@ -1064,9 +1155,25 @@ TBD
         </front>
 </reference>
 
-<reference anchor="OIDC4VP" target="https://openid.net/specs/openid-connect-4-verifiable-presentations-1_0.html">
+<reference anchor="CSS-Color" target="https://www.w3.org/TR/css-color-3">
       <front>
-        <title>OpenID Connect for Verifiable Presentations</title>
+        <title>CSS Color Module Level 3</title>
+        <author initials="T." surname="Çelik" fullname="Tantek Çelik">
+         <organization>Mozilla Corporation</organization>
+        </author>
+        <author initials="C." surname="Lilley" fullname="Chris Lilley">
+          <organization>W3C</organization>
+        </author>
+        <author initials="D." surname="Baron" fullname="L. David Baron">
+          <organization>W3C Invited Expert</organization>
+       </author>
+       <date day="18" month="January" year="2022"/>
+      </front>
+</reference>
+
+<reference anchor="OIDC4VP" target="https://openid.net/specs/openid-4-verifiable-presentations-1_0.html">
+      <front>
+        <title>OpenID for Verifiable Presentations</title>
         <author initials="O." surname="Terbu" fullname="Oliver Terbu">
          <organization>ConsenSys Mesh</organization>
         </author>
@@ -1082,7 +1189,7 @@ TBD
         <author initials="T." surname="Looker" fullname="Tobias Looker">
           <organization>Mattr</organization>
         </author>
-       <date day="17" month="December" year="2021"/>
+       <date day="20" month="June" year="2022"/>
       </front>
 </reference>
 
@@ -1108,7 +1215,10 @@ The technology described in this specification was made available from contribut
 
    -06
 
-   * renamed specification to reflect OAuth being a base protocol
+   * added issuer metadata
+   * made credential response more flexible regarding credential encoding 
+   * changed file name to match specification name
+   * renamed specification to reflect OAuth being the base protocol
 
    -05
 
