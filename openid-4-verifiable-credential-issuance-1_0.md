@@ -89,27 +89,27 @@ ToDo: define Client
 
 # Use Cases
 
-This is a non-exhaustive list of sample use-cases.
+This is a non-exhaustive list of sample use cases.
 
-## End-User Initiated Credential Issuance
+## End-User Initiated Credential Issuance {#use-case-1}
 
 A user comes across an app where she needs to present a credential, e.g., a bank identity credential. She starts the presentation flow at this app and is sent to her wallet (e.g., via Self-Issued OpenID Provider v2 and OpenID Connect for Verifiable Presentations). The wallet determines the desired credential type(s) from the request and notifies the user that there is currently no matching credential in the wallet. The wallet now offers the user a list of suitable issuers, which might be based on an issuer list curated by the wallet publisher. The user picks one of those issuers and is sent to the issuer's user experience (web site or app). There the user authenticates and is asked for consent to issue the required credential into her wallet. She consents and is sent back to the wallet, where she is informed that a credential was successfully created and stored in the wallet.
 
-## End-User Initiated Credential Issuance (with On-Demand Credential Presentation)
+## End-User Initiated Credential Issuance (with On-Demand Credential Presentation) {#use-case-2}
 
 A user comes across an app where she needs to present a credential, e.g., a university diploma. She starts the presentation flow at this app and is sent to her wallet (e.g., via Self-Issued OpenID Provider v2 and OpenID Connect for Verifiable Presentations). The wallet determines the desired credential type(s) from the request and notifies the user that there is currently no matching credential in the wallet. The wallet now offers the user a list of suitable issuers, which might be based on an issuer list curated by the wallet publisher. The user picks one of those issuers (her university). The user confirms and is sent to the issuer's user experience (web site or app). The user logs in to the university, which determines that the respective user account is not verified yet. The user is offered to either use a video chat for identification or to fetch a suitable identity credential from her wallet. The user decides to fetch the necessary credential from her wallet and is sent back. In the wallet, she picks a suitable credential and authorizes transfer to the university. The wallet sends her back to the university. Based on the bank identity credential, the university verifies her identity and looks up her data in its database. The university finds her diploma and offers to issue a verifiable credential. The user consents and is sent back to the wallet, where she is informed that a diploma verifiable credential was successfully created and stored in the wallet.
 
-## Issuer-Initiated Credential Issuance
+## Issuer-Initiated Credential Issuance {#use-case-3}
 
 The user browses her university's home page, searching for a way to obtain a digital diploma. She finds the respective page, which shows a link "request your digital diploma". She clicks on this link and is being sent to her digital wallet. The wallet notifies her that an issuer offered to issue a diploma credential. She confirms this inquiry and is being sent to the university's credential issuance service. She logs in with her university login and is being asked to consent to the creation of a digital diploma. She confirms and is sent back to her wallet. There, she is notified of the successful creation of the digital diploma.
 
 Note: deleted "Issuer-Initiated Credential Issuance (Cross-Device / Credential Retrieval Only)". add to an example above that this can be both same device and cross device.
 
-## Issuer-Initiated Credential Issuance (with information pre-submitted by the End-User)
+## Issuer-Initiated Credential Issuance (with information pre-submitted by the End-User) {#use-case-4}
 
 The user navigates to her university's webpage to obtain a digital diploma where she is asked to scan a QR Code to start the retrieval process. She scans the code with her smartphone, which automatically starts her wallet, where she is notified of the prerequisite to enter a PIN code for security reasons. This code was sent as a text message to her smartphone in the meantime. She enters the PIN and confirms the credential issuance, which causes the wallet to obtain and store the verifiable credential.
 
-## Deferred Credential Issuance
+## Deferred Credential Issuance {#use-case-5}
 
 The user wants to obtain a digital criminal record certificate. She starts the journey in her wallet and is sent to the issuer service of the responsible government authority. She logs in with her eID and requests the issuance of the certificate. She is notified that the issuance of the certificate will take a couple of days due to necessary background checks by the authority. She confirms and is sent back to the wallet. The wallet shows a hint in the credential list indicating that issuance of the digital criminal record certificate is under way. A few days later, she receives a notification from her wallet app telling her that the certificate was successfully issued. She opens her wallet, where she is asked after startup whether she wants to download the certificate. She confirms and the new credential is retrieved and stored in her wallet.
 
@@ -137,7 +137,7 @@ This section describes the requirements this specification aims to fulfill beyon
 
 # Overview 
 
-This specification defines the following mechanisms to allow wallet applications (acting as OAuth 2.0 and Credential Endpoint Clients) used by the End-User to request credential issuers (acting as OAuth 2.0 Authorization Servers and Credential ENdpoint providers) to issue Verifiable Credentials via the Credential Endpoint:
+This specification defines the following mechanisms to allow wallet applications (acting as OAuth 2.0 and Credential Endpoint Clients) used by the End-User to request credential issuers (acting as OAuth 2.0 Authorization Servers and Credential Endpoint providers) to issue Verifiable Credentials via the Credential Endpoint:
 
 * A newly defined Credential Endpoint from which credentials can be issued one at a time
 * Ability to bind an issued credential to a proof submitted by the Client
@@ -148,9 +148,9 @@ This specification defines the following mechanisms to allow wallet applications
 
 ToDo: replace Client with the Wallet.
 
-The following figure shows the overall flow for use-case 3.1 End-User Initiated Issuance which represents the complete specification.
+The following figure shows the overall flow for (#use-case-1) End-User Initiated Issuance which represents the complete specification.
 
-ToDo: Add a diagram with only mandatory features.
+ToDo: Add a diagram with only mandatory features -> in the larger revision PR.
 
 ToDo: Wallet -> wallet/app ?
 
@@ -211,8 +211,8 @@ This flow is based on OAuth 2.0 and the code grant type. Use with other grant ty
 
 The starting point is an interaction of the user with her wallet. The user might, for example,
 
-* want to present a credential and found out there is no suitable credential present in her wallet as in use-case 3.1, 3.2 and 3.5 or
-* have visited the web site of a Credential Issuer and wants to obtain a credential from that issuer as in use-case 3.3,3.4 and 3.5.
+* want to present a credential and found out there is no suitable credential present in her wallet as in (#use-case-1), (#use-case-2) and (#use-case-5) or
+* have visited the web site of a Credential Issuer and wants to obtain a credential from that issuer as in use case (#use-case-3), (#use-case-4) and (#use-case-5).
 
 (0) (OPTIONAL) ToDo: User interacts with the Issuer.
 
@@ -282,7 +282,7 @@ ToDo: turn this note into a separate sequence diagram.
 
 ## Overview
 
-This specification defines new endpoints as well as additional parameters to existing OAuth 2.0 endpoints required to implement the protocol outlined in the previous section. It also introduces a new authorization details type according to [@!I-D.ietf-OAuth 2.0-rar] to convey the details about the credentials the wallet wants to obtain. Aspects not defined in this specification are expected to follow [@!RFC6749]. it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks.
+This specification defines new endpoints as well as additional parameters to existing OAuth 2.0 endpoints required to implement the protocol outlined in the previous section. It also introduces a new authorization details type according to [@!I-D.ietf-oauth-rar] to convey the details about the credentials the wallet wants to obtain. Aspects not defined in this specification are expected to follow [@!RFC6749]. it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks.
 
 ToDo: introduce RAR before this authorization endpoint description.
 
@@ -452,7 +452,7 @@ The issuer (or any other party wishing to kickstart an issuance into a wallet) s
 The following request parameters are defined: 
 
 * `issuer`: REQUIRED. The issuer URL of the credential issuer, the wallet is requested to obtain one or more credentials from. 
-* `credential_type`: REQUIRED. A JSON string denoting the type of the credential the wallet shall request. MUST be present if `manifest_id` is not present.
+* `credential_type`: REQUIRED. A JSON string denoting the type of the credential the wallet is requesting.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value.  
 
 The following is a non-normative example:
@@ -483,19 +483,19 @@ The wallet is not supposed to create a response. UX control stays with the walle
 
 ## Authorization Endpoint
 
-The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] taking into account the recommendations given in [@!I-D.ietf-OAuth 2.0-security-topics] and utilizes [@!I-D.ietf-OAuth 2.0-rar].
+The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics] and utilizes [@!I-D.ietf-oauth-rar].
 
 In addition to the required basic Authorization Request, this section also defines how pushed authorization requests can be used to protect the authorization request payload and when the requests become large.
 
 ### `authorization_details` Request Parameter {#authorization-details}
 
-Request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-OAuth 2.0-rar] MUST be used to convey the details about the credentials the wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
+Request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-oauth-rar] MUST be used to convey the details about the credentials the wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
 
 * `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
 * `credential_type`: CONDITIONAL. JSON string denoting the type of the requested credential. MUST be present if `manifest_id` is not present.
 * `manifest_id`: CONDITIONAL. JSON String referring to a credential manifest published by the credential issuer. MUST be present if `type` is not present.
 * `format`: OPTIONAL. JSON string representing a format in which the credential is requested to be issued. Valid values are defined in the table in Section 6.7.3. and include `jwt_vp` and `ldp_vp`. Formats identifiers not in the table, MAY be defined by the profiles of this specification.
-* `locations`: OPTIONAL. An array of strings that allows a client to specify the location of the resource server(s) allowing the AS to mint audience restricted access tokens. This data field is predefined in Section 2.2 of ([@!I-D.ietf-OAuth 2.0-rar]).
+* `locations`: OPTIONAL. An array of strings that allows a client to specify the location of the resource server(s) allowing the AS to mint audience restricted access tokens. This data field is predefined in Section 2.2 of ([@!I-D.ietf-oauth-rar]).
 
 Note: `credential_type` and `format` are used when the Client has not pre-obtained a Credential Manifest. `manifest_id` is used when the Client has pre-obtained a Credential Manifest. These two approaches MAY be combined in one request in different authorization details objects.
 
@@ -518,7 +518,7 @@ Note: applications MAY combine `openid_credential` with any other authorization 
  
 ### Credential Authorization Request {#credential-request}
 
-A credential authorization request is an OAuth 2.0 Authorization request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the credential endpoint as defined in (#credential-endpoint). It also follows the recommendations given in [@!I-D.ietf-OAuth 2.0-security-topics].
+A credential authorization request is an OAuth 2.0 Authorization request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the credential endpoint as defined in (#credential-endpoint). It also follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
 There are two possible ways to make a credential authorization request. One way is to use of the `authorization_details` request parameter as defined in (#authorization-details) with one or more authorization details objects of type `openid_credential`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
 
@@ -570,7 +570,7 @@ Location: https://server.example.com/authorize?
 
 #### Credential Authorization Request using Type Specific Scope {#credential-request-using-type-specific-scope}
 
-An alternative credential request syntax to that defined in (#credential-request) involves using an OAuth 2.02 scope following the syntax defined below.
+An alternative credential request syntax to that defined in (#credential-request) involves using an OAuth 2.0 scope following the syntax defined below.
 
 ```
 openid_credential:<credential-type>
@@ -673,7 +673,7 @@ Location: https://client.example.net/cb?
 
 ## Token Endpoint
 
-The Token Endpoint issues an Access Token and, optionally, a Refresh Token and an ID Token in exchange for the authorization code that client obtained in a successful Credential Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-OAuth 2.0-security-topics].
+The Token Endpoint issues an Access Token and, optionally, a Refresh Token and an ID Token in exchange for the authorization code that client obtained in a successful Credential Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
 ### Token Request
 
@@ -770,7 +770,7 @@ bound to. The `proof` object MUST contain the following `proof_type` element whi
 
 This specification defines the following values for `proof_type`:
 
-* `jwt`: objects of this type contain a single `jwt` element with a JWS [] as proof of possession. The JWT MUST contain the following elements:
+* `jwt`: objects of this type contain a single `jwt` element with a JWS [@!7515] as proof of possession. The JWT MUST contain the following elements:
     * `kid`: CONDITIONAL. JWT header containing the key ID. If the credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
     * `jwk`: CONDITIONAL. JWT header containing the key material the new credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
     * `x5c`: CONDITIONAL. JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
@@ -961,7 +961,7 @@ ToDo: include a sequence diagram
 1. The wallet sends a credential issuance request to the credential endpoint as defined in (#credential_request) using the credential type as indicated in the first step from the issuer to the wallet.
 1. The issuer returns the requested credential as defined in (#credential_response). 
 
-Steps 1 through 3 constitute a new kind of pre-authorized code flow that is implemented using an additional initiate issuance endpoint and a new OAuth 2.0 grant type "urn:ietf:params:OAuth 2.0:grant-type:pre-authorized_code". Steps 4 through 6 conform to the process specified in (#endpoints).
+Steps 1 through 3 constitute a new kind of pre-authorized code flow that is implemented using an additional initiate issuance endpoint and a new OAuth 2.0 grant type "urn:ietf:params:oauth:grant-type:pre-authorized_code". Steps 4 through 6 conform to the process specified in (#endpoints).
 
 Note that the pre-authorized code is sent to the Token Endpoint and not to the Authorization Endpoint of the Issuer.
 
@@ -1005,7 +1005,7 @@ POST /token HTTP/1.1
   Content-Type: application/x-www-form-urlencoded
   Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
-  grant_type=urn:ietf:params:OAuth 2.0:grant-type:pre-authorized_code
+  grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
   &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
   &user_pin=493536
 ```
@@ -1071,9 +1071,9 @@ In claim-based binding, no cryptographic binding material is provided. Instead, 
 
 Some Issuers might choose issuing bearer credentials without either cryptographic binding nor claim-based binding, because they are meant to be presented without proof of possession.
 
-One such use-case is low assurance credentials such as coupons or tickets. 
+One such use case is low assurance credentials such as coupons or tickets. 
 
-Another use-case is when the Issuer uses cryptographic schemes that can provide binding to the End-User possessing that credential without explicit cryptographic material being supplied by the application used by that End-User. For example, in the case of the BBS Signature Scheme, the issued credential itself is a secret and only derivation of a credential is presented to the Verifier. Effectively, credential is bound to the Issuer's signature on the credential, which becomes a shared secret transferred from the Issuer to the End-User.
+Another use case is when the Issuer uses cryptographic schemes that can provide binding to the End-User possessing that credential without explicit cryptographic material being supplied by the application used by that End-User. For example, in the case of the BBS Signature Scheme, the issued credential itself is a secret and only derivation of a credential is presented to the Verifier. Effectively, credential is bound to the Issuer's signature on the credential, which becomes a shared secret transferred from the Issuer to the End-User.
 
 # Privacy Considerations
 
@@ -1215,7 +1215,7 @@ TBD
 
 # IANA Considerations
 
-register "urn:ietf:params:OAuth 2.0:grant-type:pre-authorized_code"
+register "urn:ietf:params:oauth:grant-type:pre-authorized_code"
 
 # Acknowledgements {#Acknowledgements}
 
