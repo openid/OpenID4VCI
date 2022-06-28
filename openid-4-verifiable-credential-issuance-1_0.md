@@ -76,7 +76,7 @@ Wallet
 
 Entity that receives, stores, presents, and manages credentials and key material of the End-User. There is no single deployment model of a wallet: credentials and keys can both be stored/managed locally by the end-user, or by using a remote self-hosted service, or a remote third party service.
 
-ToDo: define Client
+ToDo: define relationship between Client and the Wallet
 
 # Use Cases
 
@@ -107,6 +107,7 @@ The user wants to obtain a digital criminal record certificate. She starts the j
 ## new use-case for pre-authorized code
 
 # Overview
+
 ToDo: Requirements -> turn into an Overview section (descibes a solution)
 ToDo: notification from the wallet is weird. should be from the issuer. make clear this part is not standardized and under the discretion of an issuer/implementation.
 
@@ -180,7 +181,7 @@ ToDo: Wallet -> wallet/app ?
         |                |                                                      |
         |                |  (4) Credential Request (access_token, proof(s))     |
         |                |----------------------------------------------------->| 
-        |                |      Credential Request                              |
+        |                |      Credential Response                             |
         |                |      (credential(s) OR acceptance_token)             |
         |                |<-----------------------------------------------------|   
         |                |                                                      |
@@ -328,12 +329,12 @@ The issuer (or any other party wishing to kickstart an issuance into a wallet) s
 The following request parameters are defined: 
 
 * `issuer`: REQUIRED. The issuer URL of the credential issuer, the wallet is requested to obtain one or more credentials from. 
-* `credential_type`: REQUIRED. A JSON string denoting the type of the credential the wallet shall request. MUST be present if `manifest_id` is not present.
+* `credential_type`: REQUIRED. A JSON string denoting the type of the credential the wallet shall request.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value.
 * `pre-authorized_code`: CONDITIONAL. The code representing the issuer's authorization for the wallet to obtain credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
 * `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
 
-The following is a non-normative example of an initiate issuance request in an authorization code flow:
+Below is a non-normative example of an initiate issuance request in an authorization code flow:
 
 ```
   GET /initiate_issuance?
@@ -364,7 +365,7 @@ Below is a non-normative example of an initiate issuance request in a pre-author
     &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
 ```
 
-Below is a non-normative example of the contents of a QR code:
+Below is a non-normative example of the Initiate Issuance Request displayed by the Issuer as a QR code:
 
 ```
 openid_initiate_issuance://?
@@ -389,8 +390,7 @@ In addition to the required basic Authorization Request, this section also defin
 Request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-oauth-rar] MUST be used to convey the details about the credentials the wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
 
 * `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
-* `credential_type`: CONDITIONAL. JSON string denoting the type of the requested credential. MUST be present if `manifest_id` is not present.
-* `manifest_id`: CONDITIONAL. JSON String referring to a credential manifest published by the credential issuer. MUST be present if `type` is not present.
+* `credential_type`: REQUIRED. JSON string denoting the type of the requested credential.
 * `format`: OPTIONAL. JSON string representing a format in which the credential is requested to be issued. Valid values are defined in the table in Section 6.7.3. and include `jwt_vp` and `ldp_vp`. Formats identifiers not in the table, MAY be defined by the profiles of this specification.
 * `locations`: OPTIONAL. An array of strings that allows a client to specify the location of the resource server(s) allowing the AS to mint audience restricted access tokens. This data field is predefined in Section 2.2 of ([@!I-D.ietf-oauth-rar]).
 
@@ -473,9 +473,9 @@ An alternative credential request syntax to that defined in (#credential-request
 openid_credential:<credential-type>
 ```
 
-The value of `<credential-type>` indicates the type of credential being requested, providers who do not understand the value of this scope in a request MUST ignore it entirely. The presence of a scope following this syntax in the request MUST be interpreted by the provider as a request for access to the credential endpoint as defined in (#credential-endpoint) for the specific credential type. Multiple occurrences of this scope MAY be present in a single request whereby each occurrence MUST be interpreted individually.
+The value of `<credential-type>` indicates the type of credential being requested, providers who do not understand the value of this scope in a request MUST ignore it entirely. The presence of a scope following this syntax in the request MUST be interpreted by the provider as a request for access to the credential endpoint as defined in (#credential-endpoint) for the specific credential type. Multiple scope parameters MAY be present in a single request whereby each occurrence MUST be interpreted individually.
 
-A non-normative example of a Credential Request scoped to a specific credential type (uses PKCE as defined in [@!RFC7636]).
+Below is a non-normative example of a Credential Authorization Request scoped to a specific credential type (uses PKCE as defined in [@!RFC7636]).
 
 ```
 HTTP/1.1 302 Found
@@ -559,7 +559,7 @@ HTTP/1.1 302 Found
 
 Credential Authorization Error Response MUST be made as defined in [@!RFC6749].
 
-The following is a non-normative example of an unsuccessful credential authorization response.
+Below is a non-normative example of an unsuccessful credential authorization response.
 
 ```json=
 HTTP/1.1 302 Found
@@ -645,7 +645,7 @@ HTTP/1.1 200 OK
 
 If the Token Request is invalid or unauthorized, the Authorization Server constructs the error response as defined as in Section 5.2 of OAuth 2.0 [@!RFC6749].
 
-The following is a non-normative example Token Error Response:
+Below is a non-normative example Token Error Response:
 
 ```json=
 HTTP/1.1 400 Bad Request
@@ -896,7 +896,7 @@ The following parameter MUST be used to communicates the specifics of the creden
 
 This section defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
 
-* `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain credential for a certain language. The following is a non-exhaustive list of parameters that MAY be included. Note that the display name of the credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
+* `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included. Note that the display name of the credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
   * `name`: REQUIRED. String value of a display name for the credential.
   * `locale`: OPTIONAL. String value that identifies language of this display object represented as language tag values defined in BCP47 [@!RFC5646]. Multiple `display` objects may be included for separate languages. There MUST be only one object with the same language identifier.
   * `logo`: OPTIONAL. A JSON object with information about the logo of the credential with a following non-exhaustive list of parameters that MAY be included:
