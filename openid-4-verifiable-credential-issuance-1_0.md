@@ -305,7 +305,7 @@ This specification defines the following new Client Metadata parameter in additi
 
 * `initiate_issuance_endpoint`: OPTIONAL. URL of the issuance initation endpoint of a wallet. 
 
-If the issuer is unable to perform discovery of the Issuance Initiation Endpoint URL, the following claimed URL is used: `openid_initiate_issuance:`.
+If the issuer is unable to perform discovery of the Issuance Initiation Endpoint URL, the following claimed URL is used: `openid-initiate-issuance:`.
 
 ## Server Metadata
 
@@ -984,7 +984,7 @@ Below is a non-normative example of an initiate issuance request:
 
 The contents of a QR code could look like this:
 ```
-openid_initiate_issuance://?
+openid-initiate-issuance://?
     issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
     &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
     &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
