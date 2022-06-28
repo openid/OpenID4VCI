@@ -1,0 +1,23 @@
+@startuml
+participant User as u
+participant "Wallet Frontend" as w
+participant "Wallet Backend" as b
+participant Issuer as i
+
+u -> i : get credential
+i --> w : get your credential (pre-authz-code, credential_type, expected_key_policies, issuer)
+w -> b : get nonce (for app attestation)
+b -> w : nonce
+w -> w : obtain app attestation (nonce)
+w -> b : exchange code (pre-authz-code, pin, app attestation, issuer)
+b -> i : get issuer metadata
+b -> b : check app_attestation
+b -> i : token (pre-authz-code, pin, client_id, ...)
+note left: wallet authenticates with issuer as OAuth Client (public key based)\nissuer may check wallet against trust registry
+i -> b : access_token, c_nonce
+b -> w: access_token, c_nonce
+w -> w : gen key : key, key_attestation
+w -> w : create proof of posssion (c_nonce)
+w -> i : issue credential (access_token, credential_type, format, proof, key_policy)
+i -> w : credential
+@enduml
