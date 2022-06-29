@@ -82,13 +82,19 @@ ToDo: define relationship between Client and the Wallet
 
 This is a non-exhaustive list of sample use cases.
 
-## End-User Initiated Credential Issuance {#use-case-1}
+## Issuance during Presentation - End-User Initiated {#use-case-1}
 
-A user comes across an app where she needs to present a credential, e.g., a bank identity credential. She starts the presentation flow at this app and is sent to her wallet (e.g., via Self-Issued OpenID Provider v2 and OpenID Connect for Verifiable Presentations). The wallet determines the desired credential type(s) from the request and notifies the user that there is currently no matching credential in the wallet. The wallet now offers the user a list of suitable issuers, which might be based on an issuer list curated by the wallet publisher. The user picks one of those issuers and is sent to the issuer's user experience (web site or app). There the user authenticates and is asked for consent to issue the required credential into her wallet. She consents and is sent back to the wallet, where she is informed that a credential was successfully created and stored in the wallet.
+A user comes across a verifier app that is requesting the user to present a credential, e.g., a driving license. The wallet determines the requested credential type(s) from the credential presentation request and notifies the user that there is currently no matching credential in the wallet. The wallet determines an issuer capable of issuing a lacking credential and upon user consent sends the user to the issuer's user experience (web site or app). Upon being authenticated and providing consent to issue the credential into her wallet, the user is sent back to the wallet. The wallet informs the user credential was successfully issued into the wallet and is ready to be presented to the verifier app that originally requested presentation of that credential.
 
-## End-User Initiated Credential Issuance (with On-Demand Credential Presentation) {#use-case-2}
+## Issuance during Presentation - End-User Initiated (requires presentation of additional credentials during issuance) {#use-case-2}
 
-A user comes across an app where she needs to present a credential, e.g., a university diploma. She starts the presentation flow at this app and is sent to her wallet (e.g., via Self-Issued OpenID Provider v2 and OpenID Connect for Verifiable Presentations). The wallet determines the desired credential type(s) from the request and notifies the user that there is currently no matching credential in the wallet. The wallet now offers the user a list of suitable issuers, which might be based on an issuer list curated by the wallet publisher. The user picks one of those issuers (her university). The user confirms and is sent to the issuer's user experience (web site or app). The user logs in to the university, which determines that the respective user account is not verified yet. The user is offered to either use a video chat for identification or to fetch a suitable identity credential from her wallet. The user decides to fetch the necessary credential from her wallet and is sent back. In the wallet, she picks a suitable credential and authorizes transfer to the university. The wallet sends her back to the university. Based on the bank identity credential, the university verifies her identity and looks up her data in its database. The university finds her diploma and offers to issue a verifiable credential. The user consents and is sent back to the wallet, where she is informed that a diploma verifiable credential was successfully created and stored in the wallet.
+A user comes across a verifier app that is requesting the user to present a credential, e.g., a university diploma. The wallet determines the requested credential type(s) from the credential presentation request and notifies the user that there is currently no matching credential in the wallet. The wallet than offers the user a list of issuers, which might be based on an issuer list curated by the wallet provider. The user picks the university she graduated from and is sent to that university's user experience (web site or app).  
+
+The user logs in to the university, who determines that the respective user account is not verified yet. Among multiple identification options, the user chooses to present identity credential from her wallet. The user is sent back to the wallet where she consents to sharing requested credential(s) to the university. The user is sent back to the university user experience. Based on the presented credential, the university complete user verification, looks up user data in its database and offers to issue a diploma as a verifiable credential. 
+
+Upon providing consent, the user is sent back to the wallet. The wallet informs the user credential was successfully issued into the wallet and is ready to be presented to the verifier app that originally requested presentation of that credential.
+
+ToDo: Suggest we remove this example - I am worried it is overcomplicated and might scare people away..
 
 ## Issuer-Initiated Credential Issuance {#use-case-3}
 
@@ -379,7 +385,7 @@ openid_initiate_issuance://?
 
 The wallet is not supposed to create a response. UX control stays with the wallet after completion of the process. 
 
-## Authorization Endpoint
+## Credential Authorization Endpoint
 
 The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics] and utilizes [@!I-D.ietf-oauth-rar].
 
@@ -696,10 +702,10 @@ This specification defines the following values for `proof_type`:
     * `kid`: CONDITIONAL. JWT header containing the key ID. If the credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
     * `jwk`: CONDITIONAL. JWT header containing the key material the new credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
     * `x5c`: CONDITIONAL. JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
-    * `iss`: REQUIRED. MUST contain the client_id of the sender
-    * `aud`: REQUIRED. MUST contain the issuer URL of credential issuer
-    * `iat`: REQUIRED. MUST contain the instant when the proof was created
-    * `nonce`: REQUIRED. MUST contain a fresh nonce as provided by the issuer
+    * `iss`: REQUIRED. MUST contain the client_id of the sender.
+    * `aud`: REQUIRED. MUST contain the issuer URL of credential issuer.
+    * `iat`: REQUIRED. MUST contain the instant when the proof was created.
+    * `nonce`: REQUIRED. MUST contain a fresh nonce as provided by the issuer.
 
 Note: if both `jwk` and `x5c` are present, the represented signing key MUST be the same in both. 
 
