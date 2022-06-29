@@ -106,34 +106,35 @@ The user is starting a job at a new employer. An employer has requested the user
 
 ## Deferred Credential Issuance - Wallet Initiated {#use-case-5}
 
-The user wants to obtain a digital criminal record certificate. She starts the journey in her Wallet and is sent to the issuer service of the responsible government authority. She logs in with her eID and requests the issuance of the certificate. She is notified that the issuance of the certificate will take a couple of days due to necessary background checks by the authority. She confirms and is sent back to the Wallet. The Wallet shows a hint in the credential list indicating that issuance of the digital criminal record certificate is under way. A few days later, she receives a notification from her Wallet app telling her that the certificate was successfully issued. She opens her Wallet, where she is asked after startup whether she wants to download the certificate. She confirms and the new credential is retrieved and stored in her Wallet.
+The user wants to obtain a digital criminal record. User chooses in her Wallet issuance of a digital criminal record and is sent to the issuance service of the responsible government authority. After logging in with eID and requesting the issuance of the digital record, the user is notified that the issuance will take few days due to necessary background checks by the authority. She confirms and is sent back to the Wallet. 
+
+In the Wallet, the user sees indication that issuance of the digital record is under way. A few days later, the user receives a notification from her Wallet app that requested credential was successfully issued. When the user opens the Wallet, she is asked whether she wants to download the certificate. She confirms and the new credential is retrieved and stored in the Wallet.
 
 Note that the issuance can have multiple characteristics, which can be combined depending on the use-cases: Authorization Code Flow or Pre-Authorized Code Flow; Wallet initiated or Issuer initiated; Same-device or Cross-device; and Just-in-time or Deferred. The concepts will be described in the following sections.
 
 # Overview
 
-ToDo: notification from the Wallet is weird. should be from the issuer. make clear this part is not standardized and under the discretion of an issuer/implementation.
-- per endpoint, not per flow.
-  - Make clear in the overvire that there is a need for the issuer to communicate to the Wallet
-
-
 This specification defines the following mechanisms to allow Wallet applications (acting as OAuth 2.0 and Credential Endpoint Clients) used by the End-User to request credential issuers (acting as OAuth 2.0 Authorization Servers and Credential Endpoint providers) to issue Verifiable Credentials via the Credential Endpoint:
 
 * A newly defined Credential Endpoint from which credentials can be issued. See (#credential_endpoint).
-* A mechanism for the Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
+* An optional mechanism for the Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
 * An extended Authorization Request syntax that allows to request issuance of a specific credential type. See (#credential-authz-request).
-* Ability to bind an issued credential to a proof submitted by the Wallet in the Credential Request. See (#credential_request). 
+* An optional ability to bind an issued credential to a proof submitted by the Wallet in the Credential Request. Multiple proof types are supported. See (#credential_request). 
 * A mechanism for the Deferred Credential Issuance. See (#deferred-credential-issuance).
 * A mechanism for the Issuer to publish metadata about the credential it is capable of issuing. See (#server-metadata)
 * A mechanism that allows issuance of multiple credentials of same or different type. See (#token-response) and (#credential-response).
 
- one at a time
+The Wallet can request only one credential per Credential Request. However, using the same Access Token the Wallet can repeat Credential Requests to request issuance of 
+  - multiple credentials of different types bound to the same proof, or
+  - as well as multiple credentials of the same type bound to different proofs
 
-The following figure shows the overall flow for (#use-case-1) End-User Initiated Issuance which represents the complete specification.
+The Wallet can also request presentation of credentials as means to authenticate the User during the Issuance Flow as illustrated in (#use-case-2).
 
 ## Authorized Code Flow Overview
 
-Below is a diagram of a credential issuance using Authorization Code flow, when the user authentication happens at the Authorization Endpoint. It is based on a Wallet initiated flow illustrated in (#use-case-1). The diagram does not illustrate all of the optional features. 
+Below is a diagram of a credential issuance using Authorization Code flow, when the user authentication happens at the Authorization Endpoint. 
+
+The diagram is based on a Wallet initiated flow illustrated in (#use-case-1) and does not illustrate all of the optional features. 
 
 ToDo: discuss if need to illustrate the verifier... per use-case-1
 
@@ -162,7 +163,7 @@ ToDo: discuss if need to illustrate the verifier... per use-case-1
         |                |      Token Response (access_token)                   |
         |                |<-----------------------------------------------------|    
         |                |                                                      |
-        |                |  (4) Credential Request (access_token, proof(s))     |
+        |                |  (3) Credential Request (access_token, proof(s))     |
         |                |----------------------------------------------------->| 
         |                |      Credential Response                             |
         |                |      (credential(s) OR acceptance_token)             |
@@ -171,11 +172,11 @@ ToDo: discuss if need to illustrate the verifier... per use-case-1
 !---
 Figure: Issuance using Authorization code flow 
 
-(2) Wallet sends an Credential Authorization Request to the Issuer's Authorization Endpoint. Issuer returns Authorization Response with the authorization code upon successfully authenticating and obtaining consent from the End-User. This step happens via a frontchannel, by redirecting the End-User via the user agents. This step is defined in (#authorization_endpoint).
+(1) Wallet sends an Credential Authorization Request to the Issuer's Authorization Endpoint. Issuer returns Authorization Response with the authorization code upon successfully authenticating and obtaining consent from the End-User. This step happens via a frontchannel, by redirecting the End-User via the user agents. This step is defined in (#authorization_endpoint).
 
-(3) Wallet sends a Token Request to the Issuer's Token Endpoint with the authorization code obtained in step (2). Issuer returns an Access Token in the Token Request upon successfully validating authorization code. This step happens backchannel using server to server communication. This step is defined in (#token_endpoint).
+(2) Wallet sends a Token Request to the Issuer's Token Endpoint with the authorization code obtained in step (2). Issuer returns an Access Token in the Token Request upon successfully validating authorization code. This step happens backchannel using server to server communication. This step is defined in (#token_endpoint).
 
-(4) Wallet sends a Credential Request to the Issuer's Credential Endpoint with the Access Token and proof of control over the public key to which the the issued VC shall be bound. Upon successfully validating Access Token and a proof, the Issuer returns a VC in the Credential Response if it is able to issue a credential right away. This step is defined in (#credential_endpoint).
+(3) Wallet sends a Credential Request to the Issuer's Credential Endpoint with the Access Token and proof of control over the public key to which the the issued VC shall be bound. Upon successfully validating Access Token and a proof, the Issuer returns a VC in the Credential Response if it is able to issue a credential right away. This step is defined in (#credential_endpoint).
 
 If the Issuer requires more time to issue a credential, the Issuer may returns an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued credential as defined in (#deferred-credential-issuance).
 
@@ -184,20 +185,21 @@ Note that this flow is based on OAuth and can be used not only with the code gra
 
 # Pre-Authorized Code Flow Overview
 
-Below is a diagram of a credential issuance using Pre-Authorized Code flow, when the user authentication happens out of band, prior to the issuance flow, without utilizing the Authorization Endpoint. It is based on an Issuer initiated flow illustrated in (#use-case-4). The diagram does not illustrate all of the optional features.
+Below is a diagram of a credential issuance using Pre-Authorized Code flow defined in (#pre-authorized-code-flow). It is a flow when the user authentication happens out of band, prior to the issuance flow, without utilizing the Authorization Endpoint. 
 
+The diagram is based on an Issuer initiated flow illustrated in (#use-case-4) and does not illustrate all of the optional features.
 
 !---
 ~~~ ascii-art
 +--------------+   +-----------+                                         +-------------+
 | User         |   |   Wallet  |                                         |   Issuer    |
 +--------------+   +-----------+                                         +-------------+
-        |                |    User provides to the Issuer information           |  
-        |                |    required for the issuance of a certain credential |
+        |                |  (0) User provides  information required             |  
+        |                |      for the issuance of a certain credential        |
         |---------------------------------------------------------------------->|
         |                |                                                      |
-        |                |  (1) Issuance Initiation Request                       |
-        |                |      (pre-authorized code)                           |
+        |                |  (1) Issuance Initiation Request                     |
+        |                |      (pre-authorized_code)                           |
         |                |<-----------------------------------------------------|        
         |    interacts   |                                                      |
         |--------------->|                                                      |
@@ -205,31 +207,31 @@ Below is a diagram of a credential issuance using Pre-Authorized Code flow, when
         |                |      |  Obtains Issuer's server metadata             |
         |                | <----                                                |
         |                |                                                      |
-        |                |  (3) Token Request (code)                            |
+        |                |  (2) Token Request (pre_authorized_code)             |
         |                |----------------------------------------------------->| 
         |                |      Token Response (access_token)                   |
         |                |<-----------------------------------------------------|    
         |                |                                                      |
-        |                |  (4) Credential Request (access_token, proof(s))     |
+        |                |  (3) Credential Request (access_token, proof(s))     |
         |                |----------------------------------------------------->| 
         |                |      Credential Response                             |
-        |                |      (credential(s))             |
+        |                |      (credential(s))                                 |
         |                |<-----------------------------------------------------|             
 ~~~
 !---
 Figure: Issuance using Pre-Authorized code flow 
 
-(1) Issuer sends pre-authorized_code to the Wallet upon successfully authenticating and obtaining consent from the End-User using Issuer specific business process, other than using Authorization Endpoint.
+(0) The Issuer successfully obtains consent and user data required for the issuance of a requested credential from the user using Issuer specific business process, without using Authorization Endpoint.
 
-(2) The flow begins as the Issuer generates an Issuance Initiation Request and communicates it to the Wallet, for example as a QR Code or as a deeplink. Wallet uses information in the Issuance Initiation Request to obtain issuer's metadata including details about the credential that this issuer wants to issue. This step is defined in (#issuance_initiation_endpoint).
+(1) The flow begins as the Issuer generates an Issuance Initiation Request and communicates it to the Wallet, for example as a QR Code or as a deeplink. Wallet uses information in the Issuance Initiation Request to obtain issuer's metadata including details about the credential that this issuer wants to issue. This step is defined in (#issuance_initiation_endpoint).
 
-(3) This step is the same as Step 3 in the Authorization Code Flow, but instead of authorization code, pre-authorized_code is sent in the Token Request.
+(2) This step is the same as Step 3 in the Authorization Code Flow, but instead of authorization code, pre-authorized_code is sent in the Token Request. This step is defined in (#token_endpoint).
 
-(4) This step is the same as Step 4 in the Authorization Code Flow.
+(3) This step is the same as Step 4 in the Authorization Code Flow. This step is defined in (#credential_endpoint).
 
 It is important to note that anyone who possesses a valid pre-authorization_code would be able to receive a VC from the Issuer. Implementers MUST implement mitigations most suitable to the use-case. For more details and concrete mitigations, see (#security-considerations).
 
-
+# Pre-Authorized Code Flow {#pre-authorized-code-flow} //WIP
 
 This section specifies an additional flow to obtain an access token for credential issuance. It is intended to support scenarios where the user starts a process on an issuer's website that ultimately results in one or more credentials being issued to the user's Wallet. The process on the issuer's website may include uploading documents and presenting verifiable credentials to the issuer. Moreover, the End-user may be accessing the issuer's website on a device different from the one with the Wallet application so the credential issuance process needs to be transfered to another device where the user's Wallet resides. 
 
