@@ -252,17 +252,17 @@ Note that the pre-authorized code is sent to the Token Endpoint and not to the A
 
 ## Overview
 
-This specification defines new endpoints as well as additional parameters to existing OAuth 2.0 endpoints required to implement the protocol outlined in the previous section. It also introduces a new authorization details type according to [@!I-D.ietf-oauth-rar] to convey the details about the credentials the Wallet wants to obtain. Aspects not defined in this specification are expected to follow [@!RFC6749]. it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks.
+This specification defines new endpoints as well as additional parameters to existing OAuth 2.0 endpoints required to implement the protocol outlined in the previous section. It also introduces a new authorization details type according to [@!I-D.ietf-oauth-rar] to convey the details about the credentials the Wallet wants to obtain. Aspects not defined in this specification are expected to follow [@!RFC6749]. It is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks.
 
 ToDo: introduce RAR before this authorization endpoint description.
 
-There are the following new endpoints: 
+Newly defined endpoints are the following: 
 
-* Issuance Initiation Endpoint: An endpoint exposed by the Wallet that allows an issuer to initiate the issuance flow
-* Credential Endpoint: this is an OAuth 2.0-protected API used to issue verifiable credentials
-* Deferred Credential Endpoint: this endpoint is used for deferred issuance of verifiable credentials 
+* Issuance Initiation Endpoint: An endpoint exposed by the Wallet that allows an issuer to initiate the issuance flow.
+* Credential Endpoint: An OAuth 2.0-protected endpoint exposed by the Issuer and used to issue verifiable credentials.
+* Deferred Credential Endpoint: this endpoint is used for deferred issuance of verifiable credentials.
 
-The following endpoints are extended:
+Existing OAuth 2.0 mechanisms are extended as following:
 
 * Client Metadata: new metadata parameter is added to allow a Wallet (acting as OAuth 2.0 client) to publish its issuance initiation endpoint.
 * Server Metadata: New metadata parameters are added to allow the client to determine what types of verifiable credentials a particular OAuth 2.0 Authorization Server is able to issue along with additional information about formats and prerequisites.
@@ -333,11 +333,17 @@ The Wallet is not supposed to create a response. UX control stays with the Walle
 
 ## Credential Authorization Endpoint {#authorization_endpoint}
 
-The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics] and utilizes [@!I-D.ietf-oauth-rar].
+The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics].
+
+### Credential Authorization Request {#credential-authz-request}
+
+A credential Authorization Request is an OAuth 2.0 Authorization Request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the credential endpoint as defined in (#credential-endpoint). It utilizes [@!I-D.ietf-oauth-rar].
 
 In addition to the required basic Authorization Request, this section also defines how pushed Authorization Requests can be used to protect the Authorization Request payload and when the requests become large.
 
-### `authorization_details` Request Parameter {#authorization-details}
+There are two possible ways to request issuance of a specific credential type in a credential Authorization Request. One way is to use of the `authorization_details` request parameter as defined in (#authorization-details) with one or more authorization details objects of type `openid_credential`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
+
+#### Request Issuance of a Certain Credential Type using `authorization_details` Parameter {#authorization-details}
 
 Request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-oauth-rar] MUST be used to convey the details about the credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
 
@@ -364,12 +370,6 @@ A non-normative example of an `authorization_details` object.
 }
 ```
 Note: applications MAY combine `openid_credential` with any other authorization details type in an Authorization Request.
- 
-### Credential Authorization Request {#credential-authz-request}
-
-A credential Authorization Request is an OAuth 2.0 Authorization Request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the credential endpoint as defined in (#credential-endpoint). It also follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
-
-There are two possible ways to make a credential Authorization Request. One way is to use of the `authorization_details` request parameter as defined in (#authorization-details) with one or more authorization details objects of type `openid_credential`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
 
 A non-normative example of a credential Authorization Request using the `authorization_details` parameter  (uses PKCE as defined in [@!RFC7636]) (with line wraps within values for display purposes only).
 
@@ -417,7 +417,7 @@ Location: https://server.example.com/authorize?
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 ```
 
-#### Credential Authorization Request using Type Specific Scope {#credential-request-using-type-specific-scope}
+#### Request Issuance of a Certain Credential Type using Scopes {#credential-request-using-type-specific-scope}
 
 An alternative credential request syntax to that defined in (#credential-authz-request) involves using an OAuth 2.0 scope following the syntax defined below.
 
@@ -444,7 +444,7 @@ If a scope `openid_credential:<credential-type>` and the `authorization_details`
 
 #### Additional Request Parameters
 
-This specification defines the following additional request parameters that can be supplied in any credential Authorization Request:
+This specification defines the following request parameters that can be supplied in a Credential Authorization Request:
 
 * `Wallet_issuer`: OPTIONAL. JSON String containing the Wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@!SIOPv2] to determine the Wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
 * `user_hint`: OPTIONAL. JSON String containing an opaque user hint the Wallet MAY use in subsequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
@@ -546,7 +546,6 @@ POST /token HTTP/1.1
   &redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb
   
 ```
-
 
 Below is a non-normative example of a Token Request in a pre-authorized code flow:
 
@@ -781,7 +780,7 @@ Note: Consider using CIBA Ping/Push OR SSE Poll/Push. Another option would be th
 
 Upon receiving a Credential Request, the credential issuer MAY require the client to send a proof of possession of the key material it wants a credential to be bound to. This proof MUST incorporate a nonce generated by the credential issuer. The credential issuer will provide the client with a nonce in an error response to any Credential Request not including such a proof or including an invalid proof. 
 
-Below is a non-normative example of a Credential Response when the Issuer requires a `proof` upon receiving a Credential Request:
+Below is a non-normative example of a Credential Response when the Issuer is requesting a Wallet to provide in a subsequent Credential Request a `proof` that is bound to a `c_nonce`:
 
 ```
 HTTP/1.1 400 Bad Request
