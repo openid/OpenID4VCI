@@ -110,13 +110,11 @@ The user wants to obtain a digital criminal record. User chooses in her Wallet i
 
 In the Wallet, the user sees indication that issuance of the digital record is under way. A few days later, the user receives a notification from her Wallet app that requested credential was successfully issued. When the user opens the Wallet, she is asked whether she wants to download the certificate. She confirms and the new credential is retrieved and stored in the Wallet.
 
-Note that the issuance can have multiple characteristics, which can be combined depending on the use-cases: Authorization Code Flow or Pre-Authorized Code Flow; Wallet initiated or Issuer initiated; Same-device or Cross-device; and Just-in-time or Deferred. The concepts will be described in the following sections.
-
 # Overview
 
 This specification defines the following mechanisms to allow Wallet applications (acting as OAuth 2.0 and Credential Endpoint Clients) used by the End-User to request credential issuers (acting as OAuth 2.0 Authorization Servers and Credential Endpoint providers) to issue Verifiable Credentials via the Credential Endpoint:
 
-* A newly defined Credential Endpoint from which credentials can be issued. See (#credential_endpoint).
+* A newly defined Credential Endpoint from which credentials can be issued. See (#credential-endpoint).
 * An optional mechanism for the Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
 * An extended Authorization Request syntax that allows to request issuance of a specific credential type. See (#credential-authz-request).
 * An optional ability to bind an issued credential to a proof submitted by the Wallet in the Credential Request. Multiple proof types are supported. See (#credential_request). 
@@ -129,6 +127,13 @@ The Wallet can request only one credential per Credential Request. However, usin
   - as well as multiple credentials of the same type bound to different proofs
 
 The Wallet can also request presentation of credentials as means to authenticate the User during the Issuance Flow as illustrated in (#use-case-2).
+
+Note that the issuance can have multiple characteristics, which can be combined depending on the use-cases: 
+
+* Authorization Code Flow or Pre-Authorized Code Flow: whether the Issuer obtains user information to turn into a verifiable credential using user authentication and consent at the Issuer's Authorization Endpoint (Authorization Code Flow), or using out of bound mechanisms outside of the issuance flow (pre-authorized code flow)
+* Wallet initiated or Issuer initiated: whether the issuance request from the Wallet is sent to the Issuer without any gesture from the Issuer (Wallet Initiated), or following the communication from the Issuer (Issuer Initiated).
+* Same-device or Cross-device: whether the Wallet to which credential is issued and the Issuer's user experience (website or an app) reside on the same device, or different device.
+* Just-in-time or Deferred: whether the Issuer can issue the credential directly in response to the Credential Request (just-in-time), or requires time and needs the Wallet to come back to retrieve credential (deferred).
 
 ## Authorized Code Flow Overview
 
@@ -176,7 +181,7 @@ Figure: Issuance using Authorization code flow
 
 (2) Wallet sends a Token Request to the Issuer's Token Endpoint with the authorization code obtained in step (2). Issuer returns an Access Token in the Token Request upon successfully validating authorization code. This step happens backchannel using server to server communication. This step is defined in (#token_endpoint).
 
-(3) Wallet sends a Credential Request to the Issuer's Credential Endpoint with the Access Token and proof of control over the public key to which the the issued VC shall be bound. Upon successfully validating Access Token and a proof, the Issuer returns a VC in the Credential Response if it is able to issue a credential right away. This step is defined in (#credential_endpoint).
+(3) Wallet sends a Credential Request to the Issuer's Credential Endpoint with the Access Token and proof of control over the public key to which the the issued VC shall be bound. Upon successfully validating Access Token and a proof, the Issuer returns a VC in the Credential Response if it is able to issue a credential right away. This step is defined in (#credential-endpoint).
 
 If the Issuer requires more time to issue a credential, the Issuer may returns an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued credential as defined in (#deferred-credential-issuance).
 
@@ -227,7 +232,7 @@ Figure: Issuance using Pre-Authorized code flow
 
 (2) This step is the same as Step 3 in the Authorization Code Flow, but instead of authorization code, pre-authorized_code is sent in the Token Request. This step is defined in (#token_endpoint).
 
-(3) This step is the same as Step 4 in the Authorization Code Flow. This step is defined in (#credential_endpoint).
+(3) This step is the same as Step 4 in the Authorization Code Flow. This step is defined in (#credential-endpoint).
 
 It is important to note that anyone who possesses a valid pre-authorization_code would be able to receive a VC from the Issuer. Implementers MUST implement mitigations most suitable to the use-case. For more details and concrete mitigations, see (#security-considerations).
 
@@ -608,7 +613,7 @@ Pragma: no-cache
 }
 ```
 
-## Credential Endpoint {#credential_endpoint}
+## Credential Endpoint {#credential-endpoint}
 
 The Credential Endpoint issues a credential as approved by the End-User upon presentation of a valid Access Token representing this approval. 
 
@@ -990,7 +995,7 @@ The approach recommended by this specification is that the issuer relies on the 
 The pre-authorized code flow is vulnerable to the replay of the pre-authorized code, because by design it is not bound to a certain device (as the authorization code flow does with PKCE). This means an attacker can replay at another device the pre-authorized code meant for a victime, e.g., the attacker can scan the QR code while it is displayed on the victim’s screen, and thereby getg access to the credential. Such replay attacks must be prevented using other means. The design facilitates the following options: 
 
 * User PIN: the issuer might set up a PIN with the user (e.g. via text message or email), which needs to be presented in the Token Request.
-* Callback to device where the transaction originated: upon receiving the Token Request, the issuer asks the user to confirm the originating device (device that displayed the QR code) that the issuer may proceed with the credential issuance process. While the issuer reaches out to the user on the other device to get confirmation, the issuer returns an `authorization_pending` error code to the Wallet (as described in (#pre-authz-token-response)). The Wallet is required to call the token endpoint again to obtain the access token. If the user does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the user on the originating device more control over the issuance process.
+* Callback to device where the transaction originated: upon receiving the Token Request, the issuer asks the user to confirm the originating device (device that displayed the QR code) that the issuer may proceed with the credential issuance process. While the issuer reaches out to the user on the other device to get confirmation, the issuer returns an `authorization_pending` error code to the Wallet (as described in (#token-response). The Wallet is required to call the token endpoint again to obtain the access token. If the user does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the user on the originating device more control over the issuance process.
 
 ### PIN Code Phishing
 
