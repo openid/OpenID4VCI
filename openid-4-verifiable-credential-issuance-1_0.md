@@ -648,7 +648,7 @@ bound to. The `proof` object MUST contain the following `proof_type` element whi
 
 This specification defines the following values for `proof_type`:
 
-* `jwt`: objects of this type contain a single `jwt` element with a JWS [@!7515] as proof of possession. The JWT MUST contain the following elements:
+* `jwt`: objects of this type contain a single `jwt` element with a JWS [@!RFC7515] as proof of possession. The JWT MUST contain the following elements:
     * `kid`: CONDITIONAL. JWT header containing the key ID. If the credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
     * `jwk`: CONDITIONAL. JWT header containing the key material the new credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
     * `x5c`: CONDITIONAL. JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
