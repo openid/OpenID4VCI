@@ -72,15 +72,15 @@ Issuance of credentials not directly in the response to a credential issuance re
 
 Wallet
 
-Entity that receives, stores, presents, and manages credentials and key material of the End-User. There is no single deployment model of a Wallet: credentials and keys can both be stored/managed locally by the end-user, or by using a remote self-hosted service, or a remote third party service. In the context of this specification, the Wallet acts as OAuth Client (see [@!RFC6749]) towards the Credential Issuer. 
+Entity that receives, stores, presents, and manages credentials and key material of the End-User. There is no single deployment model of a Wallet: credentials and keys can both be stored/managed locally by the end-user, or by using a remote self-hosted service, or a remote third party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Client (see [@!RFC6749]) towards the Credential Issuer. 
 
 Verifier
 
-Entity that verifies the credential to make a decision regarding providing a service to the End-User. Also called Relying Party (RP) or Client.
+Entity that verifies the credential to make a decision regarding providing a service to the End-User. Also called Relying Party (RP) or Client. During presentation of credentials, Verifier acts as an OAuth 2.0 Client towards the Wallet acting as an OAuth 2.0 Authorization Server.
 
 Credential Issuer
 
-Entity that issues verifiable credentials. Also called Issuer. In the context of this specification, the Credential Issuer acts as OAuth Authorization Server (see [@!RFC6749]).
+Entity that issues verifiable credentials. Also called Issuer. In the context of this specification, the Credential Issuer acts as OAuth 2.0 Authorization Server (see [@!RFC6749]).
 
 # Use Cases
 
@@ -124,7 +124,7 @@ This specification defines the following mechanisms to allow Wallet applications
 * A mechanism for the Issuer to publish metadata about the credential it is capable of issuing. See (#server-metadata)
 * A mechanism that allows issuance of multiple credentials of same or different type. See (#token-response) and (#credential-response).
 
-The Wallet sends a single Credential Request per individual credential. The wallet MAY use the same access token to send multiple Credential Requests to request issuance of 
+The Wallet sends one Credential Request per individual credential. The wallet MAY use the same access token to send multiple Credential Requests to request issuance of 
   - multiple credentials of different types bound to the same proof, or
   - multiple credentials of the same type bound to different proofs
 
@@ -187,11 +187,11 @@ Figure: Issuance using Authorization code flow
 
 If the Issuer requires more time to issue a credential, the Issuer may returns an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued credential as defined in (#deferred-credential-issuance).
 
-Note: this flow is based on OAuth and the code grant type, but it can be used with other grant types as well. 
+Note: this flow is based on OAuth 2.0 and the code grant type, but it can be used with other grant types as well. 
 
 ## Pre-Authorized Code Flow
 
-Below is a diagram of a credential issuance using Pre-Authorized Code flow defined in (#pre-authorized-code-flow). This flow uses a newly defined OAuth graht type "urn:ietf:params:oauth:grant-type:pre-authorized_code". It is a flow where the user authentication and authorization of the credential issuance happens out of band, 
+Below is a diagram of a credential issuance using Pre-Authorized Code flow defined in (#pre-authorized-code-flow). This flow uses a newly defined OAuth 2.0 grant type "urn:ietf:params:oauth:grant-type:pre-authorized_code". It is a flow where the user authentication and authorization of the credential issuance happens out of band, 
 prior to the issuance flow, without utilizing the Authorization Endpoint. 
 
 The diagram is based on an Issuer initiated flow illustrated in (#use-case-4) and does not illustrate all of the optional features.
@@ -251,7 +251,7 @@ In contrast to the flow specified in (#endpoints), this flows is initiated by th
 1. The Wallet sends a credential issuance request to the credential endpoint as defined in (#credential_request) using the credential type as indicated in the first step from the issuer to the Wallet.
 1. The issuer returns the requested credential as defined in (#credential-response). 
 
-Steps 1 through 3 constitute a new kind of pre-authorized code flow that is implemented using an additional issuance initiation endpoint and a new OAuth grant type "urn:ietf:params:oauth:grant-type:pre-authorized_code". Steps 4 through 6 conform to the process specified in (#endpoints).
+Steps 1 through 3 constitute a new kind of pre-authorized code flow that is implemented using an additional issuance initiation endpoint and a new OAuth 2.0 grant type "urn:ietf:params:oauth:grant-type:pre-authorized_code". Steps 4 through 6 conform to the process specified in (#endpoints).
 
 Note that the pre-authorized code is sent to the Token Endpoint and not to the Authorization Endpoint of the Issuer.
 
