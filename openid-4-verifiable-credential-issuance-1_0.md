@@ -135,7 +135,7 @@ Note that the issuance can have multiple characteristics, which can be combined 
 * Same-device or Cross-device: whether the Wallet to which credential is issued and the Issuer's user experience (website or an app) reside on the same device, or different device.
 * Just-in-time or Deferred: whether the Issuer can issue the credential directly in response to the Credential Request (just-in-time), or requires time and needs the Wallet to come back to retrieve credential (deferred).
 
-## Authorized Code Flow Overview
+## Authorized Code Flow
 
 Below is a diagram of a credential issuance using Authorization Code flow, when the user authentication happens at the Authorization Endpoint. 
 
@@ -188,7 +188,7 @@ If the Issuer requires more time to issue a credential, the Issuer may returns a
 Note that this flow is based on OAuth and can be used not only with the code grant type as in the description, but with other grant types as well, other than implicit grant. 
 
 
-# Pre-Authorized Code Flow Overview
+## Pre-Authorized Code Flow
 
 Below is a diagram of a credential issuance using Pre-Authorized Code flow defined in (#pre-authorized-code-flow). It is a flow when the user authentication happens out of band, prior to the issuance flow, without utilizing the Authorization Endpoint. 
 
