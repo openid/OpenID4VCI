@@ -255,9 +255,7 @@ Steps 1 through 3 constitute a new kind of pre-authorized code flow that is impl
 
 Note that the pre-authorized code is sent to the Token Endpoint and not to the Authorization Endpoint of the Issuer.
 
-# Endpoints {#endpoints}
-
-## Overview
+# New Endpoints and Other Extensions to OAuth 2.0 {#endpoints}
 
 This specification defines new endpoints as well as additional parameters to existing OAuth 2.0 endpoints required to implement the protocol outlined in the previous section. It also introduces a new authorization details type according to [@!I-D.ietf-oauth-rar] to convey the details about the credentials the Wallet wants to obtain. Aspects not defined in this specification are expected to follow [@!RFC6749]. It is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks.
 
@@ -276,12 +274,12 @@ Existing OAuth 2.0 mechanisms are extended as following:
 * Authorization Endpoint: The `authorization_details` parameter is extended to allow clients to specify types of the credentials when requesting authorization for issuance. These extension can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
 * Token Endpoint: optional parameters are added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the credential endpoint. 
 
-## Issuance Initiation Endpoint {#issuance_initiation_endpoint}
+# Issuance Initiation Endpoint {#issuance_initiation_endpoint}
 
 This endpoint is used by an issuer in case it is already in an interaction with a user that wishes to initate a credential issuance. It is used to pass available 
 information relevant for the credential issuance to ensure a convenient and secure process. 
 
-### Issuance Initiation Request {#issuance_initiation_request}
+## Issuance Initiation Request {#issuance_initiation_request}
 
 The issuer (or any other party wishing to kickstart an issuance into a Wallet) sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL.
 
@@ -334,15 +332,15 @@ openid_initiate_issuance://?
     &user_pin_required=true
 ```
 
-### Issuance Initiation Response
+## Issuance Initiation Response
 
 The Wallet is not supposed to create a response. UX control stays with the Wallet after completion of the process. 
 
-## Credential Authorization Endpoint {#authorization_endpoint}
+# Credential Authorization Endpoint {#authorization_endpoint}
 
 The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
-### Credential Authorization Request {#credential-authz-request}
+## Credential Authorization Request {#credential-authz-request}
 
 A credential Authorization Request is an OAuth 2.0 Authorization Request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the credential endpoint as defined in (#credential-endpoint). It utilizes [@!I-D.ietf-oauth-rar].
 
@@ -350,7 +348,7 @@ In addition to the required basic Authorization Request, this section also defin
 
 There are two possible ways to request issuance of a specific credential type in a credential Authorization Request. One way is to use of the `authorization_details` request parameter as defined in (#authorization-details) with one or more authorization details objects of type `openid_credential`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
 
-#### Request Issuance of a Certain Credential Type using `authorization_details` Parameter {#authorization-details}
+### Request Issuance of a Certain Credential Type using `authorization_details` Parameter {#authorization-details}
 
 Request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-oauth-rar] MUST be used to convey the details about the credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
 
@@ -424,7 +422,7 @@ Location: https://server.example.com/authorize?
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 ```
 
-#### Request Issuance of a Certain Credential Type using Scopes {#credential-request-using-type-specific-scope}
+### Request Issuance of a Certain Credential Type using Scopes {#credential-request-using-type-specific-scope}
 
 An alternative credential request syntax to that defined in (#credential-authz-request) involves using an OAuth 2.0 scope following the syntax defined below.
 
@@ -449,7 +447,7 @@ Location: https://server.example.com/authorize?
 
 If a scope `openid_credential:<credential-type>` and the `authorization_details` request parameter containing objects of type `openid_credential` are both present in a single request, the provider MUST interpret these individually. However, if both request the same credential type, than the Issuer MUST follow the request as given by the authorization details object.
 
-#### Additional Request Parameters
+### Additional Request Parameters
 
 This specification defines the following request parameters that can be supplied in a Credential Authorization Request:
 
@@ -459,7 +457,7 @@ This specification defines the following request parameters that can be supplied
 
 Note: When processing the Authorization Request, the issuer MUST take into account that the `op_state` is not guaranteed to originate from this issuer in all circumstances. It could have been injected by an attacker. 
 
-#### Pushed Authorization Request
+### Pushed Authorization Request
 
 Use of Pushed Authorization Requests is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues due to large requests due to the query language or if message level encryption is used.
 
@@ -488,7 +486,7 @@ Below is a non-normative example of a `authorization_details` parameter with `ma
 }
 ```
 
-#### Dynamic Credential Request
+### Dynamic Credential Request
 
 This step is OPTIONAL. After receiving an Authorization Request from the Client, the Issuer MAY use this step to obtain additional credentials from the End-User. 
 
@@ -502,7 +500,7 @@ For non-normative examples of request and response, see section 11.6 in [@OpenID
 
 Note to the editors: need to sort out credential issuer's client_id with Wallet and potentially add example with `Wallet_issuer` and `user_hint` 
 
-### Successful Credential Authorization Response
+## Successful Credential Authorization Response
 
 Authorization Responses MUST be made as defined in [@!RFC6749].
 
@@ -514,7 +512,7 @@ HTTP/1.1 302 Found
     code=SplxlOBeZQQYbYS6WxSbIA
 ```
 
-### Credential Authorization Error Response
+## Credential Authorization Error Response
 
 Credential Authorization Error Response MUST be made as defined in [@!RFC6749].
 
@@ -527,11 +525,11 @@ Location: https://client.example.net/cb?
     &error_description=Unsupported%20response_type%20value
 ```
 
-## Token Endpoint {#token_endpoint}
+# Token Endpoint {#token_endpoint}
 
 The Token Endpoint issues an Access Token and, optionally, a Refresh Token and an ID Token in exchange for the authorization code that client obtained in a successful Credential Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
-### Token Request
+## Token Request
 
 Upon receiving a successful Authorization Response, a Token Request is made as defined in Section 4.1.3 of [@!RFC6749].
 
@@ -567,7 +565,7 @@ POST /token HTTP/1.1
   &user_pin=493536
 ```
 
-### Successful Token Response {#token-response}
+## Successful Token Response {#token-response}
 
 Token Requests are made as defined in [@!RFC6749].
 
@@ -599,7 +597,7 @@ HTTP/1.1 200 OK
   }
 ```
 
-### Token Error Response
+## Token Error Response
 
 If the Token Request is invalid or unauthorized, the Authorization Server constructs the error response as defined as in Section 5.2 of OAuth 2.0 [@!RFC6749].
 
@@ -615,7 +613,7 @@ Pragma: no-cache
 }
 ```
 
-## Credential Endpoint {#credential-endpoint}
+# Credential Endpoint {#credential-endpoint}
 
 The Credential Endpoint issues a credential as approved by the End-User upon presentation of a valid Access Token representing this approval. 
 
@@ -625,7 +623,7 @@ The client can request issuance of a credential of a certain type multiple times
 
 If the access token is valid for requesting issuance of multiple credentials, it is at the client's discretion to decide the order in which to request issuance of multiple credentials requested in the Authorization Request.
 
-### Binding the Issued Credential to the identifier of the End-User possessing that Credential {#credential-binding}
+## Binding the Issued Credential to the identifier of the End-User possessing that Credential {#credential-binding}
 
 Issued credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the credential. Cryptographic binding allows the Verifier to verify during presentation that the End-User presenting a credential is the same End-User to whom it was issued. For non-cryptographic type of binding and credentials issued without any binding, see Implementations Considerations sections (#claim-based-binding) and (#no-binding). 
 
@@ -636,7 +634,7 @@ For cryptographic binding, the Client has the following options to provide crypt
 1. Provide proof of control alongside key material (`proof` that includes `sub_jwk` or `did`)
 1. Provide only proof of control without the key material (`proof` that does not include `sub_jwk` or `did`)
 
-### Credential Request {#credential_request}
+## Credential Request {#credential_request}
 
 A Client makes a Credential Request by sending a HTTP POST request to the Credential Endpoint with the following parameters:
 
@@ -723,7 +721,7 @@ did=did%3Aexample%3Aebfeb1f712ebc6f1c276e12ec21
 proof=%7B%22type%22:%22...-ace0-9c5210e16c32%22%7D
 ```
 
-### Credential Response {#credential-response}
+## Credential Response {#credential-response}
 
 Credential Response can be Synchronous or Deferred. The Issuer may be able to immediately issue a requested credential and send it to the Client. In other cases, the Issuer may not be able to immediately issue a requested credential and would want to send a token to the Client to be used later to receive a credential when it is ready.
 
@@ -783,7 +781,7 @@ HTTP/1.1 200 OK
 
 Note: Consider using CIBA Ping/Push OR SSE Poll/Push. Another option would be the Client providing `client_notification_token` to the Issuer, so that the issuer sends a Credential response upon successfully receiving a Credential request and then no need for the client to bring an acceptance token, the Issuer will send the credential once it is issued in a response that includes `client_notification_token`. (consider SSE options)
 
-### Credential Issuer-Provided Nonce
+## Credential Issuer-Provided Nonce
 
 Upon receiving a Credential Request, the credential issuer MAY require the client to send a proof of possession of the key material it wants a credential to be bound to. This proof MUST incorporate a nonce generated by the credential issuer. The credential issuer will provide the client with a nonce in an error response to any Credential Request not including such a proof or including an invalid proof. 
 
@@ -806,11 +804,11 @@ HTTP/1.1 400 Bad Request
 
 ToDo - 400 might not be a right answer.
 
-## Deferred Credential Endpoint {#deferred-credential-issuance}
+# Deferred Credential Endpoint {#deferred-credential-issuance}
 
 This endpoint is used to issue a credential previously requested at the credential endpoint in case the Issuer was not able to immediately issue this credential. 
 
-### Deferred Credential Request
+## Deferred Credential Request
 
 This is an HTTP POST request, which accepts an acceptance token as the only parameter. The acceptance token MUST be sent as access token in the HTTP header as shown in the following example.
 
@@ -822,9 +820,11 @@ Authorization: BEARER 8xLOxBtZp8
 
 ```
 
-### Deferred Credential Response
+## Deferred Credential Response
 
 The deferred Credential Response uses the `format` and `credential` parameters as defined in (#credential-response). 
+
+# Metadata
 
 ## Client Metadata 
 
