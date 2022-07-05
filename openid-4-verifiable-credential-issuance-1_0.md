@@ -191,8 +191,11 @@ Note: this flow is based on OAuth 2.0 and the code grant type, but it can be use
 
 ## Pre-Authorized Code Flow
 
-Below is a diagram of a Credential issuance using Pre-Authorized Code flow defined in (#pre-authorized-code-flow). This flow uses a newly defined OAuth 2.0 grant type "urn:ietf:params:oauth:grant-type:pre-authorized_code". It is a flow where the user authentication and authorization of the Credential issuance happens out of band, 
-prior to the issuance flow, without utilizing the Authorization Endpoint. 
+Below is a diagram of a Credential issuance using Pre-Authorized Code flow. It is a flow where the user authentication and authorization happens prior to the Issuer initiating the issuance flow, without utilizing the Authorization Endpoint. Issuance flow starts after Credentials are ready to be retrieved by the Wallet. See (#use-case-4) for a use case.
+
+How the user provides information required for the issuance of a requested Credential to the Issuer and the business processes conducted by the Issuer to prepare a Credential are out of scope of this specification.
+
+This flow uses a newly defined OAuth 2.0 grant type "urn:ietf:params:oauth:grant-type:pre-authorized_code".
 
 The diagram is based on an Issuer initiated flow illustrated in (#use-case-4) and does not illustrate all of the optional features.
 
@@ -230,30 +233,19 @@ Figure: Issuance using Pre-Authorized code flow
 
 (0) The Issuer successfully obtains consent and user data required for the issuance of a requested Credential from the user using Issuer specific business process.
 
-(1) The flow begins as the Issuer generates an Issuance Initiation Request and communicates it to the Wallet, for example as a QR Code or as a deeplink. The Wallet uses information from the Issuance Initiation Request to obtain the issuer's metadata including details about the Credential that this issuer wants to issue. This step is defined in (#issuance_initiation_endpoint).
+(1) The flow begins as the Issuer generates an Issuance Initiation Request for certain Credential(s) and communicates it to the Wallet, for example as a QR Code or as a deeplink. The Wallet uses information from the Issuance Initiation Request to obtain the issuer's metadata including details about the Credential that this issuer wants to issue. This step is defined in (#issuance_initiation_endpoint).
 
-(2) This step is the same as Step 3 in the Authorization Code Flow, but instead of authorization code, pre-authorized_code is sent in the Token Request. It might include a user pin for security reasons. This step is defined in (#token_endpoint).
+(2) This step is the same as Step 3 in the Authorization Code Flow, but instead of authorization code, pre-authorized_code obtained in step (1) is sent in the Token Request. This step is defined in (#token_endpoint).
 
 (3) This step is the same as Step 4 in the Authorization Code Flow. This step is defined in (#credential-endpoint).
 
-It is important to note that anyone who possesses a valid pre-authorization_code would be able to receive a VC from the Issuer. Implementers MUST implement mitigations most suitable to the use-case. For more details and concrete mitigations, see (#security-considerations).
+Note that the pre-authorized_code is sent to the Token Endpoint, and not to the Authorization Endpoint.
 
-# Pre-Authorized Code Flow {#pre-authorized-code-flow} //WIP
+It is also important to note that anyone who possesses a valid pre-authorization_code would be able to receive a VC from the Issuer. Implementers MUST implement mitigations most suitable to the use-case. 
 
-This section specifies an additional flow to obtain an access token for Credential issuance. It is intended to support scenarios where the user starts a process on an issuer's website that ultimately results in one or more Credentials being issued to the user's Wallet. The process on the issuer's website may include uploading documents and presenting verifiable Credentials to the issuer. Moreover, the End-user may be accessing the issuer's website on a device different from the one with the Wallet application so the Credential issuance process needs to be transfered to another device where the user's Wallet resides. 
+One such mechanism defined in this specification is the usage of PIN. If in the Issuance Initiation Request the Issuer indicated that the PIN is required, the user is requested to type in a PIN sent via a channel different that the Issuance Flow and the PIN is sent to the Issuer in the Token Request. 
 
-In contrast to the flow specified in (#endpoints), this flows is initiated by the Issuer when the Credentials are "ready" and need to be "picked up" by the Wallet application. How the user provides information required for the issuance of a requested Credential to the Issuer and the business processes conducted by the Issuer to issue a Credential are out of scope of this specification.
-
-1. To initiate the flow, the Issuer needs to communicates to the Wallet two parameters: the pre-authorized code and the Credential type the code is valid for. The Issuer can send them in two different ways. Either the issuer sends them in an issuance initiation request to the Issuance Initiation Endpoint of the Wallet as described in (#issuance_initiation_request). Or the issuer renders a QR code containing the issuance initiation request with these parameters. In this case, the user scans the QR code with her Wallet on a different device in order to proceed. 
-1. When initiating the flow, the Issuer also indicates if the PIN is required. If it is, sends PIN to the Wallet using a channel different from an issuance initiation request.
-1. The Wallet sends the pre-authorized code to the issuer's Token Endpoint. This request MUST contain a user PIN if requested by the issuer. 
-1. The issuer responds with an access token valid for Credential issuance. 
-1. The Wallet sends a Credential issuance request to the Credential endpoint as defined in (#credential_request) using the Credential type as indicated in the first step from the issuer to the Wallet.
-1. The issuer returns the requested Credential as defined in (#credential-response). 
-
-Steps 1 through 3 constitute a new kind of pre-authorized code flow that is implemented using an additional issuance initiation endpoint and a new OAuth 2.0 grant type "urn:ietf:params:oauth:grant-type:pre-authorized_code". Steps 4 through 6 conform to the process specified in (#endpoints).
-
-Note that the pre-authorized code is sent to the Token Endpoint and not to the Authorization Endpoint of the Issuer.
+For more details and concrete mitigations, see (#security-considerations).
 
 # New Endpoints and Other Extensions to OAuth 2.0 {#endpoints}
 
