@@ -364,78 +364,74 @@ The following example shows a non-normative example of the relevant entries in t
   Content-Type: application/json
 
  {
-  "credential_endpoint": "https://server.example.com/credential",
-  "credentials_supported": {
-    "university_degree" : {
-      "display": [
-        {
-          "name": "University Credential",
-          "locale": "en-US",
-          "logo": {
-            "url": "https://exampleuniversity.com/public/logo.png",
-            "alternative_text": "a square logo of a university"
-          },
-          "background_color": "#12107c",
-          "text_color": "#FFFFFF"
-        },
-        {
-          "name": "在籍証明書",
-          "locale": "jp-JA",
-          "logo": {
-            "url": "https://exampleuniversity.com/public/logo.png",
-            "alternative_text": "大学のロゴ"
-          },
-          "background_color": "#12107c",
-          "text_color": "#FFFFFF"
-        }
-      ],
-      "formats": {
-        "ldp_vc": {
-          "types": [ "VerifiableCredential", "UniversityDegreeCredential" ],
-          "binding_methods_supported": [ "did" ],
-          "proof_types_supported": [ "Ed25519Signature2018" ]
-        }
-      },
-      "claims": {
-        "given_name": {
-          "mandatory": false,
-          "display": [
-              {
-              `name`: `Given Name`,
-              `locale`: `en-US`
-            },
-            {
-              `name`: `名前`,
-              `locale`: `jp-JA`
-            }
-          ]  
-        },
-        "last_name": {},
-        "degree": {},
-        "gpa": {
-          "mandatory": false,
-          "value_type": "number",
-            "display": [
-              {
-              `name`: `GPA`
-              }
-          ]
-        }
-      }
-    },
-    "credential_issuer": {
-      "display": [
-        {
-          `name`: `Example University`,
-          `locale`: `en-US`
-        },
-        {
-          `name`: `サンプル大学`,
-          `locale`: `jp-JA`
-        }
-      ]  
-    }
-  }
+	"credential_endpoint": "https://server.example.com/credential",
+	"credentials_supported": [{
+		"university_degree": {
+			"display": [{
+					"name": "University Credential",
+					"locale": "en-US",
+					"logo": {
+						"url": "https://exampleuniversity.com/public/logo.png",
+						"alternative_text": "a square logo of a university"
+					},
+					"background_color": "#12107c",
+					"text_color": "#FFFFFF"
+				},
+				{
+					"name": "在籍証明書",
+					"locale": "jp-JA",
+					"logo": {
+						"url": "https://exampleuniversity.com/public/logo.png",
+						"alternative_text": "大学のロゴ"
+					},
+					"background_color": "#12107c",
+					"text_color": "#FFFFFF"
+				}
+			],
+			"formats": {
+				"ldp_vc": {
+					"types": ["VerifiableCredential", "UniversityDegreeCredential"],
+					"binding_methods_supported": ["did"],
+					"proof_types_supported": ["Ed25519Signature2018"]
+				}
+			},
+			"claims": {
+				"given_name": {
+					"mandatory": false,
+					"display": [{
+							"name": "Given Name",
+							"locale": "en-US"
+						},
+						{
+							"name": "名前",
+							"locale": "jp-JA"
+						}
+					]
+				},
+				"last_name": {},
+				"degree": {},
+				"gpa": {
+					"mandatory": false,
+					"value_type": "number",
+					"display": [{
+						"name": "GPA"
+					}]
+				}
+			}
+		}
+	}],
+	"credential_issuer": {
+		"display": [{
+				"name": "Example University",
+				"locale": "en-US"
+			},
+			{
+				"name": "サンプル大学",
+				"locale": "jp-JA"
+			}
+		]
+	}
+}
 ```
 
 Note: The Client MAY use other mechanisms to obtain information about the verifiable credentials that an Issuer can issue.
