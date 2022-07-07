@@ -96,7 +96,7 @@ The user is starting a job at a new employer. An employer has requested the user
 
 ## Issuer Initiated Issuance - Cross Device & Deferred {#use-case-5}
 
-The user wants to obtain a digital criminal record. She vists the local administration's office and requests the issuance of the official criminal record as digital Credential. After presenting her ID document, she is asked to scan a QR Code with her wallet. She is being told that the actual issuance of the Credential will take some time due to necessary background checks by the authority. 
+The user wants to obtain a digital criminal record. She vists the local administration's office and requests the issuance of the official criminal record as digital Credential. After presenting her ID document, she is asked to scan a QR code with her wallet. She is being told that the actual issuance of the Credential will take some time due to necessary background checks by the authority. 
 
 In the Wallet, the user sees indication that issuance of the digital record is under way. A few days later, the user receives a notification from her Wallet app that requested Credential was successfully issued. When the user opens the Wallet, she is asked whether she wants to download the Credential. She confirms and the new Credential is retrieved and stored in the Wallet.
 
@@ -233,7 +233,7 @@ Figure: Issuance using Pre-Authorized code flow
 
 (0) The Issuer successfully obtains consent and user data required for the issuance of a requested Credential from the user using Issuer specific business process.
 
-(1) The flow begins as the Issuer generates an Issuance Initiation Request for certain Credential(s) and communicates it to the Wallet, for example as a QR Code or as a deeplink. The Wallet uses information from the Issuance Initiation Request to obtain the issuer's metadata including details about the Credential that this issuer wants to issue. This step is defined in (#issuance_initiation_endpoint).
+(1) The flow begins as the Issuer generates an Issuance Initiation Request for certain Credential(s) and communicates it to the Wallet, for example as a QR code or as a deeplink. The Wallet uses information from the Issuance Initiation Request to obtain the issuer's metadata including details about the Credential that this issuer wants to issue. This step is defined in (#issuance_initiation_endpoint).
 
 (2) This step is the same as Step 3 in the Authorization Code Flow, but instead of authorization code, pre-authorized_code obtained in step (1) is sent in the Token Request. This step is defined in (#token_endpoint).
 
@@ -250,8 +250,6 @@ For more details and concrete mitigations, see (#security-considerations).
 # New Endpoints and Other Extensions to OAuth 2.0 {#endpoints}
 
 This specification defines new endpoints as well as additional parameters to existing OAuth 2.0 endpoints required to implement the protocol outlined in the previous section. It also introduces a new authorization details type according to [@!I-D.ietf-oauth-rar] to convey the details about the Credentials the Wallet wants to obtain. Aspects not defined in this specification are expected to follow [@!RFC6749]. It is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks.
-
-ToDo: introduce RAR before this authorization endpoint description.
 
 Newly defined endpoints are the following: 
 
@@ -273,7 +271,7 @@ information relevant for the Credential issuance to ensure a convenient and secu
 
 ## Issuance Initiation Request {#issuance_initiation_request}
 
-The issuer (or any other party wishing to kickstart an issuance into a Wallet) sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL.
+The Issuer sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL.
 
 The following request parameters are defined: 
 
@@ -283,7 +281,7 @@ The following request parameters are defined:
 * `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value. MUST NOT be used in Authorization Code flow when `pre-authorized_code` is present.
 
-Below is a non-normative example of an issuance initiation request in an authorization code flow:
+Below is a non-normative example of an Issuance Initiation Request in an authorization code flow:
 
 ```
   GET /initiate_issuance?
@@ -304,7 +302,7 @@ The Wallet MUST be able to process multiple occurences of the URL query paramete
 
 The Issuer MUST ensure the release of any privacy-sensitive data is legally based (e.g., if passing an e-mail address in the `login_hint` parameter).
 
-Below is a non-normative example of an issuance initiation request in a pre-authorized code flow:
+Below is a non-normative example of an Issuance Initiation Request in a pre-authorized code flow:
 
 ```
   GET /initiate_issuance?
@@ -313,7 +311,7 @@ Below is a non-normative example of an issuance initiation request in a pre-auth
     &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
 ```
 
-Below is a non-normative example of the issuance initiation Request displayed by the Issuer as a QR code:
+Below is a non-normative example of the Issuance Initiation Request included in a QR code displayed by the Issuer to the End-User:
 
 ```
 openid_initiate_issuance://?
@@ -346,7 +344,7 @@ The request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-o
 * `format`: OPTIONAL. JSON string representing a format in which the Credential is requested to be issued. Valid values are defined in the table in Section 6.7.3. and include `jwt_vp` and `ldp_vp`. Formats identifiers not in the table, MAY be defined by the profiles of this specification.
 * `locations`: OPTIONAL. An array of strings that allows a client to specify the location of the resource server(s) allowing the AS to mint audience restricted access tokens. This data field is predefined in Section 2.2 of ([@!I-D.ietf-oauth-rar]).
 
-Note: Passing the `format` to the Authorization Request is informational and allows the Credential issuer to refuse early in case it does not support the requested format/credential combination. The client MAY request issuance of Credentials in other formats as well later in the process at the Credential endpoint.
+Note that the client MAY request issuance of Credentials in other formats as well later in the process at the Credential endpoint.
 
 [TBD: `locations` could enable a single authorization server to authorize access to different Credential endpoints. Might be an architectural option we want to pursue.]
 
