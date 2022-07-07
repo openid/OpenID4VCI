@@ -333,22 +333,18 @@ The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] 
 
 ## Credential Authorization Request {#credential-authz-request}
 
-A Credential Authorization Request is an OAuth 2.0 Authorization Request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the Credential endpoint as defined in (#credential-endpoint). It utilizes [@!I-D.ietf-oauth-rar].
+A Credential Authorization Request is an OAuth 2.0 Authorization Request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the Credential endpoint as defined in (#credential-endpoint). The 
 
-In addition to the required basic Authorization Request, this section also defines how pushed Authorization Requests can be used to protect the Authorization Request payload and when the requests become large.
-
-There are two possible ways to request issuance of a specific Credential type in a Credential Authorization Request. One way is to use of the `authorization_details` request parameter as defined in (#authorization-details) with one or more authorization details objects of type `openid_credential`. The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
+There are two possible ways to request issuance of a specific Credential type in a Credential Authorization Request. One way is to use of the `authorization_details` request parameter as defined in [@!I-D.ietf-oauth-rar] with one or more authorization details objects of type `openid_credential` (#authorization-details). The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
 
 ### Request Issuance of a Certain Credential Type using `authorization_details` Parameter {#authorization-details}
 
-Request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-oauth-rar] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
+The request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-oauth-rar] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
 
 * `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
 * `credential_type`: REQUIRED. JSON string denoting the type of the requested Credential.
 * `format`: OPTIONAL. JSON string representing a format in which the Credential is requested to be issued. Valid values are defined in the table in Section 6.7.3. and include `jwt_vp` and `ldp_vp`. Formats identifiers not in the table, MAY be defined by the profiles of this specification.
 * `locations`: OPTIONAL. An array of strings that allows a client to specify the location of the resource server(s) allowing the AS to mint audience restricted access tokens. This data field is predefined in Section 2.2 of ([@!I-D.ietf-oauth-rar]).
-
-Note: The `credential_application` element defined in [@DIF.CredentialManifest] is not required by this specification.
 
 Note: Passing the `format` to the Authorization Request is informational and allows the Credential issuer to refuse early in case it does not support the requested format/credential combination. The client MAY request issuance of Credentials in other formats as well later in the process at the Credential endpoint.
 
@@ -365,7 +361,7 @@ A non-normative example of an `authorization_details` object.
 ```
 Note: applications MAY combine `openid_credential` with any other authorization details type in an Authorization Request.
 
-A non-normative example of a Credential Authorization Request using the `authorization_details` parameter  (uses PKCE as defined in [@!RFC7636]) (with line wraps within values for display purposes only).
+A non-normative example of a Credential Authorization Request using the `authorization_details` parameter (with line wraps within values for display purposes only).
 
 ```
 HTTP/1.1 302 Found
@@ -381,7 +377,7 @@ Location: https://server.example.com/authorize?
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 ```
 
-This particiular non-normative example requests authorization to issue two different Credentials:
+This non-normative example requests authorization to issue two different Credentials:
 
 ```json=
 [
@@ -397,20 +393,6 @@ This particiular non-normative example requests authorization to issue two diffe
 ]
 ```
 
-A non-normative example below shows a Credential Authorization Request which is also an OAuth 2.0 Authorization Request (uses PKCE as defined in [@!RFC7636]) and includes a truncated `authorization_request` parameter.
-
-```
-HTTP/1.1 302 Found
-Location: https://server.example.com/authorize?
-  response_type=code
-  &client_id=s6BhdRkqt3
-  &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
-  &code_challenge_method=S256
-  &scope=openid%20email
-  &authorization_details=%5B%7B%22type%22:%22openid_credential%...7D%5D
-  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-```
-
 ### Request Issuance of a Certain Credential Type using Scopes {#credential-request-using-type-specific-scope}
 
 An alternative Credential request syntax to that defined in (#credential-authz-request) involves using an OAuth 2.0 scope following the syntax defined below.
@@ -421,7 +403,7 @@ openid_credential:<credential-type>
 
 The value of `<credential-type>` indicates the type of Credential being requested, providers who do not understand the value of this scope in a request MUST ignore it entirely. The presence of a scope following this syntax in the request MUST be interpreted by the provider as a request for access to the Credential endpoint as defined in (#credential-endpoint) for the specific Credential type. Multiple scope parameters MAY be present in a single request whereby each occurrence MUST be interpreted individually.
 
-Below is a non-normative example of a Credential Authorization Request scoped to a specific Credential type (uses PKCE as defined in [@!RFC7636]).
+Below is a non-normative example of a Credential Authorization Request scoped to a specific Credential type .
 
 ```
 HTTP/1.1 302 Found
@@ -448,7 +430,7 @@ Note: When processing the Authorization Request, the issuer MUST take into accou
 
 ### Pushed Authorization Request
 
-Use of Pushed Authorization Requests is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues due to large requests due to the query language or if message level encryption is used.
+Use of Pushed Authorization Requests is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues due to large requests sizes.
 
 Below is a non-normative example of a Pushed Authorization Request  (uses PKCE as defined in [@!RFC7636]):
 
@@ -467,11 +449,9 @@ POST /op/par HTTP/1.1
 
 ### Dynamic Credential Request
 
-This step is OPTIONAL. After receiving an Authorization Request from the Client, the Issuer MAY use this step to obtain additional Credentials from the End-User. 
+This step is OPTIONAL. After receiving an Authorization Request from the Client, the Issuer MAY use this step to obtain additional Credentials from the End-User required to proceed with the authorization of the credential issuance, e.g. it may obtain an identity credential and utilize it to identify the user before issuing an additional credential. 
 
-The Issuer MUST utilize [@OpenID4VP] and [@!SIOPv2] to dynamically request additional Credentials. From a protocol perspective, the Issuer acts now as a verifier and sends a presentation request to the Wallet. The Client MUST have these Credentials obtained prior to initiating a transaction with this Issuer. 
-
-This provides the benefit of the Issuer being able to adhere to the principle of data minimization, for example by including only minimum requirements in the Credential Manifest knowing that it can supplement additional information if needed.
+The Issuer MUST utilize [@OpenID4VP] to dynamically request additional Credential Presentations. From a protocol perspective, the Issuer then acts as a verifier and sends a presentation request to the Wallet. The Client SHOULD have these Credentials obtained prior to initiating a transaction with this Issuer. 
 
 To enable dynamic callbacks of the issuer to the end-user's Wallet, the Wallet MAY provide additional parameters `Wallet_issuer` and `user_hint` defined in the Authorization Request section of this specification.
 
@@ -506,7 +486,7 @@ Location: https://client.example.net/cb?
 
 # Token Endpoint {#token_endpoint}
 
-The Token Endpoint issues an Access Token and, optionally, a Refresh Token and an ID Token in exchange for the authorization code that client obtained in a successful Credential Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
+The Token Endpoint issues an Access Token and, optionally, a Refresh Token in exchange for the authorization code that client obtained in a successful Credential Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
 ## Token Request
 
@@ -514,8 +494,8 @@ Upon receiving a successful Authorization Response, a Token Request is made as d
 
 The following are the extension parameters to the Token Request used in a pre-authorized code flow:
 
-* `pre-authorized_code`: REQUIRED. The code representing the authorization to obtain Credentials of a certain type. 
-* `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Issuance Initiation Request. The string value MUST consist of maximum 8 numeric characters (the numbers 0 - 9).
+* `pre-authorized_code`: CONDITIONAL. The code representing the authorization to obtain Credentials of a certain type. This parameter is required if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
+* `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Issuance Initiation Request. The string value MUST consist of maximum 8 numeric characters (the numbers 0 - 9). This parameter MUST only be used, if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 
 Below is a non-normative example of a Token Request in an authorization code flow:
 
@@ -556,8 +536,6 @@ In addition to the response parameters defined in [@!RFC6749], the AS MAY return
 * `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the token endpoint in pre-authorized code flow.  If no value is provided, clients MUST use 5 as the default.
 
 Upon receiving `pre-authorized_code`, the issuer MAY decide to interact with the end-user in the course of the Token Request processing, which might take some time. In such a case, the issuer SHOULD respond with the error `authorization_pending` and the new return parameter `interval`.
-
-Note: Subject Identifier in the ID Token is the End-User's identifier.
 
 Below is a non-normative example of a Token Response:
 
@@ -711,7 +689,6 @@ The following claims are used in the Credential Response:
 * `acceptance_token`: OPTIONAL. A JSON string containing a token subsequently used to obtain a Credential. MUST be present when `credential` is not returned.
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
-
 
 The following table defines how issued Credential MUST be returned in the `credential` claim in the Credential Response based on the Credential format and the signature scheme. This specification does not require any additional encoding when Credential format is already represented as a JSON object or a JSON string.
 
