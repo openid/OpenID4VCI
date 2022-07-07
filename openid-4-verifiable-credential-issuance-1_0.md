@@ -300,8 +300,7 @@ integrity is not protected. The Wallet MUST apply the same checks on the issuer 
 The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if
 the Wallet would have started the flow. 
 
-The Wallet MUST be able to process multiple occurences of the URL query parameters `credential_type` and/or `manifest_id`. Multiple occurences MUST be 
-treated as multiple values of the respective parameter.
+The Wallet MUST be able to process multiple occurences of the URL query parameters `credential_type`. Multiple occurences MUST be treated as multiple values of the respective parameter.
 
 The Issuer MUST ensure the release of any privacy-sensitive data is legally based (e.g., if passing an e-mail address in the `login_hint` parameter).
 
@@ -348,8 +347,6 @@ Request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-oauth
 * `credential_type`: REQUIRED. JSON string denoting the type of the requested Credential.
 * `format`: OPTIONAL. JSON string representing a format in which the Credential is requested to be issued. Valid values are defined in the table in Section 6.7.3. and include `jwt_vp` and `ldp_vp`. Formats identifiers not in the table, MAY be defined by the profiles of this specification.
 * `locations`: OPTIONAL. An array of strings that allows a client to specify the location of the resource server(s) allowing the AS to mint audience restricted access tokens. This data field is predefined in Section 2.2 of ([@!I-D.ietf-oauth-rar]).
-
-Note: `credential_type` and `format` are used when the Client has not pre-obtained a Credential Manifest. `manifest_id` is used when the Client has pre-obtained a Credential Manifest. These two approaches MAY be combined in one request in different authorization details objects.
 
 Note: The `credential_application` element defined in [@DIF.CredentialManifest] is not required by this specification.
 
@@ -466,16 +463,6 @@ POST /op/par HTTP/1.1
     &code_challenge_method=S256
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &authorization_details=...
-```
-
-Below is a non-normative example of a `authorization_details` parameter with `manifest_id`:
-
-```json=
-{
-   "type":"openid_credential",
-   "manifest_id":"WA-DL-CLASS-A",
-   "format":"jwt_vc"
-}
 ```
 
 ### Dynamic Credential Request
