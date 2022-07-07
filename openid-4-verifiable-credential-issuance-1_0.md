@@ -128,7 +128,7 @@ The Wallet sends one Credential Request per individual Credential. The wallet MA
   - multiple Credentials of different types bound to the same proof, or
   - multiple Credentials of the same type bound to different proofs
 
-The Issuer MAY also request Credential presentation as means to authenticate or identify the User during the Issuance Flow as illustrated in (#use-case-2).
+The Issuer MAY also request Credential presentation as means to authenticate or identify the User during the Issuance Flow as illustrated in a use case in (#use-case-2).
 
 Note that the issuance can have multiple characteristics, which can be combined depending on the use-cases: 
 
@@ -141,7 +141,7 @@ Note that the issuance can have multiple characteristics, which can be combined 
 
 Below is a diagram of a Credential issuance using the Authorization Code flow. 
 
-The diagram is based on a Wallet initiated flow illustrated in (#use-case-1) and does not illustrate all of the optional features. 
+The diagram is based on a Wallet initiated flow illustrated in a use case in (#use-case-1) and does not illustrate all of the optional features. 
 
 ToDo: discuss if need to illustrate the verifier... per use-case-1
 
@@ -197,7 +197,7 @@ How the user provides information required for the issuance of a requested Crede
 
 This flow uses a newly defined OAuth 2.0 grant type "urn:ietf:params:oauth:grant-type:pre-authorized_code".
 
-The diagram is based on an Issuer initiated flow illustrated in (#use-case-4) and does not illustrate all of the optional features.
+The diagram is based on an Issuer initiated flow illustrated in a use case in (#use-case-4) and does not illustrate all of the optional features.
 
 !---
 ~~~ ascii-art
@@ -279,9 +279,9 @@ The following request parameters are defined:
 
 * `issuer`: REQUIRED. The issuer URL of the Credential issuer, the Wallet is requested to obtain one or more Credentials from. 
 * `credential_type`: REQUIRED. A JSON string denoting the type of the Credential the Wallet shall request.
-* `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value.
 * `pre-authorized_code`: CONDITIONAL. The code representing the issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
 * `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
+* `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value. MUST NOT be used in Authorization Code flow when `pre-authorized_code` is present.
 
 Below is a non-normative example of an issuance initiation request in an authorization code flow:
 
@@ -333,7 +333,7 @@ The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] 
 
 ## Credential Authorization Request {#credential-authz-request}
 
-A Credential Authorization Request is an OAuth 2.0 Authorization Request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the Credential endpoint as defined in (#credential-endpoint). The 
+A Credential Authorization Request is an OAuth 2.0 Authorization Request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the Credential endpoint as defined in (#credential-endpoint). 
 
 There are two possible ways to request issuance of a specific Credential type in a Credential Authorization Request. One way is to use of the `authorization_details` request parameter as defined in [@!I-D.ietf-oauth-rar] with one or more authorization details objects of type `openid_credential` (#authorization-details). The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
 
@@ -449,7 +449,7 @@ POST /op/par HTTP/1.1
 
 ### Dynamic Credential Request
 
-This step is OPTIONAL. After receiving an Authorization Request from the Client, the Issuer MAY use this step to obtain additional Credentials from the End-User required to proceed with the authorization of the credential issuance, e.g. it may obtain an identity credential and utilize it to identify the user before issuing an additional credential. 
+This step is OPTIONAL. After receiving an Authorization Request from the Client, the Issuer MAY use this step to obtain additional Credentials from the End-User required to proceed with the authorization of the credential issuance, e.g. it may obtain an identity credential and utilize it to identify the user before issuing an additional credential. For a use case, see (#use-case-2).
 
 The Issuer MUST utilize [@OpenID4VP] to dynamically request additional Credential Presentations. From a protocol perspective, the Issuer then acts as a verifier and sends a presentation request to the Wallet. The Client SHOULD have these Credentials obtained prior to initiating a transaction with this Issuer. 
 
@@ -799,6 +799,7 @@ This specification defines the following new Server Metadata parameters for this
 * `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
 
 The following parameter MUST be used to communicates the specifics of the Credential that the issuer supports issuance of:
+
 * `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string serving as an abstract identifier of the Credential. This identifier is RECOMMENDED to be collision resistant - it can be globally unique, but does not have to be when naming conflicts are unlikely to arise in a given use case. The value is a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). 
 
 * `credential_issuer`: OPTIONAL. A JSON object containing display properties for the Credential issuer.
@@ -1047,24 +1048,6 @@ TBD
     </author>
    <date day="8" month="Nov" year="2014"/>
   </front>
-</reference>
-
-<reference anchor="DIF.CredentialManifest" target="https://identity.foundation/credential-manifest/">
-        <front>
-          <title>Presentation Exchange v1.0.0</title>
-      <author fullname="Daniel Buchner">
-            <organization>Microsoft</organization>
-          </author>
-          <author fullname="Brent Zunde">
-            <organization>Evernym</organization>
-          </author>
-          <author fullname="Jace Hensley">
-            <organization>Bloom</organization>
-          </author>
-          <author fullname="Daniel McGrogan">
-            <organization>Workday</organization>
-          </author>
-        </front>
 </reference>
 
 <reference anchor="DIF.PresentationExchange" target="https://identity.foundation/presentation-exchange/spec/v1.0.0/">
