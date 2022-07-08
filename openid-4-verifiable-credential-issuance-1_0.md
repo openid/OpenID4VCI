@@ -156,7 +156,7 @@ ToDo: discuss if need to illustrate the verifier... per use-case-1
         |                |      |  Obtains Issuer's server metadata             |
         |                | <----                                                |
         |                |                                                      |
-        |                |  (1) Credential Authorization Request                |
+        |                |  (1) Authorization Request                |
         |                |      (type(s) of Credentials to be issued)           |
         |                |----------------------------------------------------->|
         |                |                                                      |
@@ -179,7 +179,7 @@ ToDo: discuss if need to illustrate the verifier... per use-case-1
 !---
 Figure: Issuance using Authorization code flow 
 
-(1) The Wallet sends an Credential Authorization Request to the Issuer's Authorization Endpoint. Issuer returns Authorization Response with the authorization code upon successfully authenticating and obtaining consent from the End-User. This step happens in the frontchannel, by redirecting the End-User via the user agents. This step is defined in (#authorization_endpoint).
+(1) The Wallet sends an Authorization Request to the Issuer's Authorization Endpoint. Issuer returns Authorization Response with the authorization code upon successfully authenticating and obtaining consent from the End-User. This step happens in the frontchannel, by redirecting the End-User via the user agents. This step is defined in (#authorization_endpoint).
 
 (2) The Wallet sends a Token Request to the Issuer's Token Endpoint with the authorization code obtained in step (2). The Issuer returns an Access Token in the Token Request upon successfully validating authorization code. This step happens in the backchannel using server to server communication. This step is defined in (#token_endpoint).
 
@@ -329,11 +329,11 @@ The Wallet is not supposed to create a response. UX control stays with the Walle
 
 The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
-## Credential Authorization Request {#credential-authz-request}
+## Authorization Request {#credential-authz-request}
 
-A Credential Authorization Request is an OAuth 2.0 Authorization Request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the Credential endpoint as defined in (#credential-endpoint). 
+A Authorization Request is an OAuth 2.0 Authorization Request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the Credential endpoint as defined in (#credential-endpoint). 
 
-There are two possible ways to request issuance of a specific Credential type in a Credential Authorization Request. One way is to use of the `authorization_details` request parameter as defined in [@!I-D.ietf-oauth-rar] with one or more authorization details objects of type `openid_credential` (#authorization-details). The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
+There are two possible ways to request issuance of a specific Credential type in a Authorization Request. One way is to use of the `authorization_details` request parameter as defined in [@!I-D.ietf-oauth-rar] with one or more authorization details objects of type `openid_credential` (#authorization-details). The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
 
 ### Request Issuance of a Certain Credential Type using `authorization_details` Parameter {#authorization-details}
 
@@ -359,7 +359,7 @@ A non-normative example of an `authorization_details` object.
 ```
 Note: applications MAY combine `openid_credential` with any other authorization details type in an Authorization Request.
 
-A non-normative example of a Credential Authorization Request using the `authorization_details` parameter (with line wraps within values for display purposes only).
+A non-normative example of a Authorization Request using the `authorization_details` parameter (with line wraps within values for display purposes only).
 
 ```
 HTTP/1.1 302 Found
@@ -401,7 +401,7 @@ openid_credential:<credential-type>
 
 The value of `<credential-type>` indicates the type of Credential being requested, providers who do not understand the value of this scope in a request MUST ignore it entirely. The presence of a scope following this syntax in the request MUST be interpreted by the provider as a request for access to the Credential endpoint as defined in (#credential-endpoint) for the specific Credential type. Multiple scope parameters MAY be present in a single request whereby each occurrence MUST be interpreted individually.
 
-Below is a non-normative example of a Credential Authorization Request scoped to a specific Credential type .
+Below is a non-normative example of a Authorization Request scoped to a specific Credential type .
 
 ```
 HTTP/1.1 302 Found
@@ -418,7 +418,7 @@ If a scope `openid_credential:<credential-type>` and the `authorization_details`
 
 ### Additional Request Parameters
 
-This specification defines the following request parameters that can be supplied in a Credential Authorization Request:
+This specification defines the following request parameters that can be supplied in a Authorization Request:
 
 * `Wallet_issuer`: OPTIONAL. JSON String containing the Wallet's OpenID Connect Issuer URL. The Issuer will use the discovery process as defined in [@!SIOPv2] to determine the Wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
 * `user_hint`: OPTIONAL. JSON String containing an opaque user hint the Wallet MAY use in subsequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
