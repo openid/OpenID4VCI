@@ -264,6 +264,8 @@ Existing OAuth 2.0 mechanisms are extended as following:
 * Authorization Endpoint: The `authorization_details` parameter is extended to allow clients to specify types of the Credentials when requesting authorization for issuance. These extension can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
 * Token Endpoint: optional parameters are added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential endpoint. 
 
+ToDo: potentially add a section that explains basics of OAuth 2.0 (perhaps an addendum).
+
 # Issuance Initiation Endpoint {#issuance_initiation_endpoint}
 
 This endpoint is used by an issuer in case it is already in an interaction with a user that wishes to initate a Credential issuance. It is used to pass available 
@@ -430,7 +432,7 @@ Note: When processing the Authorization Request, the issuer MUST take into accou
 
 Use of Pushed Authorization Requests is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues due to large requests sizes.
 
-Below is a non-normative example of a Pushed Authorization Request  (uses PKCE as defined in [@!RFC7636]):
+Below is a non-normative example of a Pushed Authorization Request:
 
 ```
 POST /op/par HTTP/1.1
