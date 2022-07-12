@@ -162,7 +162,7 @@ ToDo: discuss if need to illustrate the verifier... per use-case-1
         |                |                                                      |
         |   User Authentication / Consent                                       |
         |                |                                                      |
-        |                |      Credential Authorization Response (code)        |
+        |                |      Authorization Response (code)        |
         |                |<-----------------------------------------------------|
         |                |                                                      |
         |                |  (3) Token Request (code)                            |
@@ -327,7 +327,7 @@ openid_initiate_issuance://?
 
 The Wallet is not supposed to create a response. UX control stays with the Wallet after completion of the process. 
 
-# Credential Authorization Endpoint {#authorization_endpoint}
+# Authorization Endpoint {#authorization_endpoint}
 
 The Authorization Endpoint is used in the same manner as defined in [@!RFC6749] taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
@@ -459,7 +459,7 @@ For non-normative examples of request and response, see section 11.6 in [@OpenID
 
 Note to the editors: need to sort out Credential issuer's client_id with Wallet and potentially add example with `Wallet_issuer` and `user_hint` 
 
-## Successful Credential Authorization Response
+## Successful Authorization Response
 
 Authorization Responses MUST be made as defined in [@!RFC6749].
 
@@ -471,11 +471,11 @@ HTTP/1.1 302 Found
     code=SplxlOBeZQQYbYS6WxSbIA
 ```
 
-## Credential Authorization Error Response
+## Authorization Error Response
 
-Credential Authorization Error Response MUST be made as defined in [@!RFC6749].
+Authorization Error Response MUST be made as defined in [@!RFC6749].
 
-Below is a non-normative example of an unsuccessful Credential authorization response.
+Below is a non-normative example of an unsuccessful Authorization Response.
 
 ```json=
 HTTP/1.1 302 Found
@@ -486,7 +486,7 @@ Location: https://client.example.net/cb?
 
 # Token Endpoint {#token_endpoint}
 
-The Token Endpoint issues an Access Token and, optionally, a Refresh Token in exchange for the authorization code that client obtained in a successful Credential Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
+The Token Endpoint issues an Access Token and, optionally, a Refresh Token in exchange for the authorization code that client obtained in a successful Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
 ## Token Request
 
