@@ -346,8 +346,6 @@ The request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-o
 * `format`: OPTIONAL. JSON string representing a format in which the Credential is requested to be issued. Valid values are defined in the table in Section 6.7.3. and include `jwt_vp` and `ldp_vp`. Formats identifiers not in the table, MAY be defined by the profiles of this specification.
 * `locations`: OPTIONAL. An array of strings that allows a client to specify the location of the resource server(s) allowing the AS to mint audience restricted access tokens. This data field is predefined in Section 2.2 of ([@!I-D.ietf-oauth-rar]).
 
-Note that the client MAY request issuance of Credentials in other formats as well later in the process at the Credential endpoint.
-
 [TBD: `locations` could enable a single authorization server to authorize access to different Credential endpoints. Might be an architectural option we want to pursue.]
 
 A non-normative example of an `authorization_details` object. 
