@@ -786,6 +786,8 @@ This specification defines the following new Client Metadata parameter in additi
 
 If the issuer is unable to perform discovery of the Issuance Initiation Endpoint URL, the following claimed URL is used: `openid://initiate-issuance`.
 
+Note that any Wallet that can handle `openid://` will receive an entire URI including `initiate-issuance`. It will be up to the Wallet implementations to differentiate Issuance Initiation Request from other requests such as Authorization Request requesting presentation of a credential using `openid://` as defined in [@!SIOPv2].
+
 ## Server Metadata {#server-metadata}
 
 This section extends the server metadata [@!RFC8414] to allow the RP to obtain information about the Credentials an OP is capable of issuing.
