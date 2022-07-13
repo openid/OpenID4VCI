@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-06"
+value = "openid-4-verifiable-credential-issuance-1_0-07"
 status = "standard"
 
 [[author]]
@@ -1121,6 +1121,14 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -07
+
+   * restructured the entire specification as following:
+    * reorganized defined parameters and mechanisms around endpoints, not the flows
+    * merged requirements section into a simpler overview section
+    * moved metadata to the after describing the endpoints
+    * broke down one large diagram into two simpler ones
 
    -06
 
