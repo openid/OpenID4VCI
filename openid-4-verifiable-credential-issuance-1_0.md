@@ -391,11 +391,17 @@ This non-normative example requests authorization to issue two different Credent
 ]
 ```
 
-### Using `scopes` Parameter to Request Issuance of a Credential {#credential-request-using-type-specific-scope}
+### Using `scope` Parameter to Request Issuance of a Credential {#credential-request-using-type-specific-scope}
 
 In addition to a mechanism defined in (#credential-authz-request), the Wallet can request issuance of a credential of a certain type using an OAuth 2.0 `scope` request parameter.
 
-The value of `<credential-type>` indicates the type of Credential being requested, providers who do not understand the value of this scope in a request MUST ignore it entirely. The presence of a scope following this syntax in the request MUST be interpreted by the provider as a request for access to the Credential endpoint as defined in (#credential-endpoint) for the specific Credential type. Multiple scope parameters MAY be present in a single request whereby each occurrence MUST be interpreted individually.
+The value of `scope` parameter MUST indicate the type of Credential being requested.
+
+Issuers MUST interpret each `scope` parameter as a request to access the Credential Endpoint as defined in (#credential-endpoint) for the issuance of a Credential type identified by that `scope`. Multiple scope parameters MAY be present in a single request whereby each occurrence MUST be interpreted individually.
+
+It is RECOMMENDED for the Wallets and the Issuers to pre-agree on how to resolve value of a `scope` parameter to an issuance request for a certain credential type.
+
+Providers who do not understand the value of this scope in a request MUST ignore it entirely. 
 
 Below is a non-normative example of a Authorization Request scoped to a specific Credential type .
 
