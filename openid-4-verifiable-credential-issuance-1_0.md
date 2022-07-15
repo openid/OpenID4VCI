@@ -391,13 +391,9 @@ This non-normative example requests authorization to issue two different Credent
 ]
 ```
 
-### Request Issuance of a Certain Credential Type using Scopes {#credential-request-using-type-specific-scope}
+### Using `scopes` Parameter to Request Issuance of a Credential {#credential-request-using-type-specific-scope}
 
-An alternative Credential request syntax to that defined in (#credential-authz-request) involves using an OAuth 2.0 scope following the syntax defined below.
-
-```
-openid_credential:<credential-type>
-```
+In addition to a mechanism defined in (#credential-authz-request), the Wallet can request issuance of a credential of a certain type using an OAuth 2.0 `scope` request parameter.
 
 The value of `<credential-type>` indicates the type of Credential being requested, providers who do not understand the value of this scope in a request MUST ignore it entirely. The presence of a scope following this syntax in the request MUST be interpreted by the provider as a request for access to the Credential endpoint as defined in (#credential-endpoint) for the specific Credential type. Multiple scope parameters MAY be present in a single request whereby each occurrence MUST be interpreted individually.
 
@@ -407,14 +403,14 @@ Below is a non-normative example of a Authorization Request scoped to a specific
 HTTP/1.1 302 Found
 Location: https://server.example.com/authorize?
   response_type=code
-  &scope=openid_credential:healthCard
+  &scope=healthCard
   &client_id=s6BhdRkqt3
   &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
   &code_challenge_method=S256
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 ```
 
-If a scope `openid_credential:<credential-type>` and the `authorization_details` request parameter containing objects of type `openid_credential` are both present in a single request, the provider MUST interpret these individually. However, if both request the same Credential type, than the Issuer MUST follow the request as given by the authorization details object.
+If a scope `<credential-type>` and the `authorization_details` request parameter containing objects of type `openid_credential` are both present in a single request, the provider MUST interpret these individually. However, if both request the same Credential type, than the Issuer MUST follow the request as given by the authorization details object.
 
 ### Additional Request Parameters
 
