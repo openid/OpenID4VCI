@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-07"
+value = "openid-4-verifiable-credential-issuance-1_0-08"
 status = "standard"
 
 [[author]]
@@ -393,30 +393,36 @@ This non-normative example requests authorization to issue two different Credent
 
 ### Using `scope` Parameter to Request Issuance of a Credential {#credential-request-using-type-specific-scope}
 
-In addition to a mechanism defined in (#credential-authz-request), the Wallet can request issuance of a credential of a certain type using an OAuth 2.0 `scope` request parameter.
+In addition to a mechanism defined in (#credential-authz-request), issuers MAY support requesting authorization to issue a credential using OAuth 2.0 scope values.
 
-The value of `scope` parameter MUST indicate the type of Credential being requested.
+The concrete scope values and the mapping between a certain scope value and the credential type (and further parameters 
+associated with the authorization to issue this credential type) is out of scope of this specification. 
+Possible options include normative text in a specification defining scope values along with a description of their
+semantics or machine readable definitions in the issuer's metadata, perhaps mapping a scope value to an equivalent 
+authorization details object (see above). 
 
-Issuers MUST interpret each `scope` parameter as a request to access the Credential Endpoint as defined in (#credential-endpoint) for the issuance of a Credential type identified by that `scope`. Multiple scope parameters MAY be present in a single request whereby each occurrence MUST be interpreted individually.
+It is RECOMMENDED to use collision-resistant scopes values.
 
-It is RECOMMENDED for the Wallets and the Issuers to pre-agree on how to resolve value of a `scope` parameter to an issuance request for a certain credential type.
+Issuers MUST interpret each scope value as a request to access the Credential Endpoint as defined in (#credential-endpoint) for the 
+issuance of a Credential type identified by that scope value. Multiple scope values MAY be present in a single request whereby each 
+occurrence MUST be interpreted individually.
 
 Providers who do not understand the value of this scope in a request MUST ignore it entirely. 
 
-Below is a non-normative example of a Authorization Request scoped to a specific Credential type .
+Below is a non-normative example of a Authorization Request using the scope `com.example.healthCardCredential`:
 
 ```
 HTTP/1.1 302 Found
 Location: https://server.example.com/authorize?
   response_type=code
-  &scope=healthCard
+  &scope=com.example.healthCardCredential
   &client_id=s6BhdRkqt3
   &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
   &code_challenge_method=S256
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 ```
 
-If a scope `<credential-type>` and the `authorization_details` request parameter containing objects of type `openid_credential` are both present in a single request, the provider MUST interpret these individually. However, if both request the same Credential type, than the Issuer MUST follow the request as given by the authorization details object.
+If a scope value related to credential issuance and the `authorization_details` request parameter containing objects of type `openid_credential` are both present in a single request, the provider MUST interpret these individually. However, if both request the same Credential type, than the Issuer MUST follow the request as given by the authorization details object.
 
 ### Additional Request Parameters
 
@@ -1127,6 +1133,10 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -08
+
+   * changed scope support to make scope an alias of an arbitrary pre-defined credential authorization
 
    -07
 
