@@ -876,10 +876,6 @@ The following example shows a non-normative example of the relevant entries in t
           "cryptographic_suites_supported": ["Ed25519Signature2018"]
         }
       },
-      "credentialSchema": {
-	"id": "https://example.org/examples/degree.json",
-	"type": "JsonSchemaValidator2018"
-       },
        "claims": {
         "given_name": {
           "mandatory": false,
