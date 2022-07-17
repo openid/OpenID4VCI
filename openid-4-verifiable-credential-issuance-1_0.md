@@ -848,6 +848,7 @@ The following example shows a non-normative example of the relevant entries in t
   "credential_endpoint": "https://server.example.com/credential",
   "credentials_supported": {
     "university_degree": {
+    "type": ["VerifiableCredential", "UniversityDegreeCredential"],
       "display": [{
           "name": "University Credential",
           "locale": "en-US",
