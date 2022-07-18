@@ -831,6 +831,7 @@ The value in a key value pair is a JSON object detailing the specifics about the
 
 * `claims`: REQUIRED. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
   * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
+  * `order`: OPTIONAL. Integer number representing the order in which the claim should be displayed to the user. Numbering should start at 1 and incrementally increase. If no order is specified the wallet can display the claims in any order.
   * `namespace`: OPTIONAL. String value of a namespace that the claim belongs to. Relevant for ISO/IEC 18013-5 (mobile Driving License) specification.
   * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
   * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
@@ -879,6 +880,7 @@ The following example shows a non-normative example of the relevant entries in t
        "claims": {
         "given_name": {
           "mandatory": false,
+          "order":1,
           "display": [{
               "name": "Given Name",
               "locale": "en-US"
@@ -889,10 +891,11 @@ The following example shows a non-normative example of the relevant entries in t
             }
           ]
         },
-        "last_name": {},
-        "degree": {},
+        "last_name": {"order":2},
+        "degree": {"order":3},
         "gpa": {
           "mandatory": false,
+          "order":4,
           "value_type": "number",
           "display": [{
             "name": "GPA"
