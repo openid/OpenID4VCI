@@ -879,7 +879,7 @@ The following example shows a non-normative example of the relevant entries in t
           "cryptographic_suites_supported": ["Ed25519Signature2018"]
         }
       },
-      "claims": {
+       "claims": {
         "given_name": {
           "mandatory": false,
           "display": [{
