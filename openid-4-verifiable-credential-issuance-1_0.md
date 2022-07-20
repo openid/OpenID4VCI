@@ -395,16 +395,11 @@ This non-normative example requests authorization to issue two different Credent
 
 In addition to a mechanism defined in (#credential-authz-request), issuers MAY support requesting authorization to issue a credential using OAuth 2.0 scope values.
 
-The concrete scope values and the mapping between a certain scope value and the credential type (and further parameters 
-associated with the authorization to issue this credential type) is out of scope of this specification. 
-Possible options include normative text in a specification defining scope values along with a description of their
-semantics or machine readable definitions in the issuer's metadata, perhaps mapping a scope value to an equivalent 
-authorization details object (see above). 
+The concrete scope values and the mapping between a certain scope value and the credential type (and further parameters associated with the authorization to issue this credential type) is out of scope of this specification. Possible options include normative text in a profile of this specification defining scope values along with a description of their semantics or machine readable definitions in the Issuer's metadata such as mapping a scope value to an equivalent authorization details object (see above). 
 
 It is RECOMMENDED to use collision-resistant scopes values.
 
-Issuers MUST interpret each scope value as a request to access the Credential Endpoint as defined in (#credential-endpoint) for the 
-issuance of a Credential type identified by that scope value. Multiple scope values MAY be present in a single request whereby each 
+Issuers MUST interpret each scope value as a request to access the Credential Endpoint as defined in (#credential-endpoint) for the issuance of a Credential type identified by that scope value. Multiple scope values MAY be present in a single request whereby each 
 occurrence MUST be interpreted individually.
 
 Providers who do not understand the value of this scope in a request MUST ignore it entirely. 
@@ -1136,8 +1131,7 @@ The technology described in this specification was made available from contribut
 
    -08
 
-   * changed scope support to make scope an alias of an arbitrary pre-defined credential authorization
-
+   * removed namespacing to `openid_credential` the scopes used to request issuance of a particular credential type
    -07
 
    * restructured the entire specification as following:
