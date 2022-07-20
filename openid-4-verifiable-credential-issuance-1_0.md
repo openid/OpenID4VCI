@@ -798,7 +798,7 @@ This specification defines the following new Server Metadata parameters for this
 
 The following parameter MUST be used to communicates the specifics of the Credential that the issuer supports issuance of:
 
-* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string serving as an abstract identifier of the Credential. This identifier is RECOMMENDED to be collision resistant - it can be globally unique, but does not have to be when naming conflicts are unlikely to arise in a given use case. The value is a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). 
+* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string serving as an abstract identifier of the Credential. The value is a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). 
 
 * `credential_issuer`: OPTIONAL. A JSON object containing display properties for the Credential issuer.
   * `display`: OPTIONAL. An array of objects, where each object contains display properties of a Credential issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
@@ -809,7 +809,8 @@ The following parameter MUST be used to communicates the specifics of the Creden
 
 This section defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
 
-* `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included. Note that the display name of the Credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
+  * `type`: REQUIRED. A set of URIs which unambiguously specify the type of credential
+  * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included. Note that the display name of the Credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
   * `name`: REQUIRED. String value of a display name for the Credential.
   * `locale`: OPTIONAL. String value that identifies language of this display object represented as language tag values defined in BCP47 [@!RFC5646]. Multiple `display` objects may be included for separate languages. There MUST be only one object with the same language identifier.
   * `logo`: OPTIONAL. A JSON object with information about the logo of the Credential with a following non-exhaustive list of parameters that MAY be included:
@@ -848,7 +849,7 @@ The following example shows a non-normative example of the relevant entries in t
   "credential_endpoint": "https://server.example.com/credential",
   "credentials_supported": {
     "university_degree": {
-    "type": ["VerifiableCredential", "UniversityDegreeCredential"],
+      "type": ["https://www.w3.org/2018/credentials#VerifiableCredential", "https://exampleuniversity.com/pubic/context/UniversityDegreeCredential"],
       "display": [{
           "name": "University Credential",
           "locale": "en-US",
