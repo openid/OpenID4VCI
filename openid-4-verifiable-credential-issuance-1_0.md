@@ -314,7 +314,7 @@ The Issuer MAY also render a QR code containing the request data that can be sca
 The following is a non-normative example of such a request that can be included in a QR code or a deeplink:
 
 ```
-openid://initiate-issuance?
+openid-initiate-issuance://?
     issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
     &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
     &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
@@ -784,9 +784,7 @@ This specification defines the following new Client Metadata parameter in additi
 
 * `initiate_issuance_endpoint`: OPTIONAL. URL of the issuance initation endpoint of a Wallet. 
 
-If the issuer is unable to perform discovery of the Issuance Initiation Endpoint URL, the following claimed URL is used: `openid://initiate-issuance`.
-
-Note that any Wallet that can handle `openid://` will receive an entire URI including `initiate-issuance`. It will be up to the Wallet implementations to differentiate Issuance Initiation Request from other requests such as Authorization Request requesting presentation of a credential using `openid://` as defined in [@!SIOPv2].
+If the issuer is unable to perform discovery of the Issuance Initiation Endpoint URL, the following claimed URL is used: `openid-initiate-issuance://`.
 
 ## Server Metadata {#server-metadata}
 
