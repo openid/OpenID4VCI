@@ -609,7 +609,7 @@ This specification defines the following values for `proof_type`:
     * `x5c`: CONDITIONAL. JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
     * `iss`: REQUIRED. MUST contain the client_id of the sender.
     * `aud`: REQUIRED. MUST contain the issuer URL of Credential issuer.
-    * `iat`: REQUIRED. MUST contain the instant when the proof was created.
+    * `iat`: REQUIRED. MUST contain the instant when the proof was created. The value is a JSON number representing the number of seconds from 1970-01-01T0:0:0Z as measured in UTC until the date/time. See RFC 3339 [RFC3339] for details regarding date/times in general and UTC in particular.
     * `nonce`: REQUIRED. MUST contain a fresh nonce as provided by the issuer.
 
 Note: if both `jwk` and `x5c` are present, the represented signing key MUST be the same in both. 
