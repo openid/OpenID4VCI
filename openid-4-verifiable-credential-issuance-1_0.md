@@ -289,7 +289,7 @@ The Wallet MUST NOT accept Credentials just because this mechanism was used. All
 
 The Wallet MUST be able to process multiple occurences of the URL query parameters `credential_type`. Multiple occurences MUST be treated as multiple values of the respective parameter.
 
-The Issuer MUST ensure the release of any privacy-sensitive data is legally based (e.g., if passing an e-mail address in the `login_hint` parameter).
+The Issuer MUST ensure the release of any privacy-sensitive data is legally based.
 
 Below is a non-normative example of an Issuance Initiation Request in an authorization code flow:
 
@@ -309,9 +309,9 @@ Below is a non-normative example of an Issuance Initiation Request in a pre-auth
     &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
 ```
 
-The issuer MAY also render a QR code containing the request data in order to allow the user to scan the request using her Wallet app. 
+The Issuer MAY also render a QR code containing the request data that can be scanned by the user using a Wallet app, or a deeplink that the user can click.
 
-The contents of a QR code could look like this:
+The following is a non-normative example of such a request that can be included in a QR code or a deeplink:
 
 ```
 openid://initiate-issuance?
