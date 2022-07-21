@@ -541,7 +541,6 @@ Below is a non-normative example of a Token Response:
 HTTP/1.1 200 OK
   Content-Type: application/json
   Cache-Control: no-store
-  Pragma: no-cache
 
   {
     "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ",
@@ -562,7 +561,6 @@ Below is a non-normative example Token Error Response:
 HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Cache-Control: no-store
-Pragma: no-cache
 {
    "error": "invalid_request"
 }
@@ -708,7 +706,6 @@ Below is a non-normative example of a Credential Response in a synchronous flow:
 HTTP/1.1 200 OK
   Content-Type: application/json
   Cache-Control: no-store
-  Pragma: no-cache
 
 {
   "format": "jwt_vc"
@@ -724,7 +721,6 @@ Below is a non-normative example of a Credential Response in a deferred flow:
 HTTP/1.1 200 OK
   Content-Type: application/json
   Cache-Control: no-store
-  Pragma: no-cache
 
 {
   "acceptance_token": "8xLOxBtZp8",
@@ -745,7 +741,6 @@ Below is a non-normative example of a Credential Response when the Issuer is req
 HTTP/1.1 400 Bad Request
   Content-Type: application/json
   Cache-Control: no-store
-  Pragma: no-cache
 
 {
   "error": "invalid_or_missing_proof"
