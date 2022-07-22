@@ -402,7 +402,7 @@ It is RECOMMENDED to use collision-resistant scopes values.
 Issuers MUST interpret each scope value as a request to access the Credential Endpoint as defined in (#credential-endpoint) for the issuance of a Credential type identified by that scope value. Multiple scope values MAY be present in a single request whereby each 
 occurrence MUST be interpreted individually.
 
-Providers who do not understand the value of this scope in a request MUST ignore it entirely. 
+Providers that do not understand the value of this scope in a request MUST ignore it entirely. 
 
 Below is a non-normative example of a Authorization Request using the scope `com.example.healthCardCredential`:
 
