@@ -278,7 +278,7 @@ The Issuer sends the request as a HTTP GET request or a HTTP redirect to the Iss
 The following request parameters are defined: 
 
 * `issuer`: REQUIRED. The issuer URL of the Credential issuer, the Wallet is requested to obtain one or more Credentials from. 
-* `credential_type`: REQUIRED. A JSON string denoting the type of the Credential the Wallet shall request.
+* `credential_type`: REQUIRED. A JSON string denoting the type of the Credential the Wallet shall request. It corresponds to the type property of a credential metadata object of the Issuer.
 * `pre-authorized_code`: CONDITIONAL. The code representing the issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
 * `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value. MUST NOT be used in Authorization Code flow when `pre-authorized_code` is present.
@@ -593,7 +593,7 @@ For cryptographic binding, the Client has the following options to provide crypt
 
 A Client makes a Credential Request by sending a HTTP POST request to the Credential Endpoint with the following parameters:
 
-* `type`: REQUIRED. Type of a Credential being requested. It corresponds to a `type` property in a Issuer metadata.
+* `type`: REQUIRED. Type of a Credential being requested. It corresponds to the `type` property in a credential metadata object of the Issuer.
 * `format`: OPTIONAL. Format of the Credential to be issued. If not present, the issuer will determine the Credential 
 format based on the client's format default.
 * `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued Credential shall be 
@@ -809,7 +809,7 @@ The following parameter MUST be used to communicates the specifics of the Creden
 
 This section defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
 
-  * `type`: REQUIRED. A set of URIs which unambiguously specify the type of credential
+  * `type`: REQUIRED. A URI which unambiguously specifies the type of credential and is carried in the credential_type parameter of the Issuance Initiation Request and the type parameter of the Credential Request.
   * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included. Note that the display name of the Credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
   * `name`: REQUIRED. String value of a display name for the Credential.
   * `locale`: OPTIONAL. String value that identifies language of this display object represented as language tag values defined in BCP47 [@!RFC5646]. Multiple `display` objects may be included for separate languages. There MUST be only one object with the same language identifier.
