@@ -273,7 +273,7 @@ information relevant for the Credential issuance to ensure a convenient and secu
 
 ## Issuance Initiation Request {#issuance_initiation_request}
 
-The Issuer sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL.
+The Issuer sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL defined in (#client-metadata).
 
 The following request parameters are defined: 
 
@@ -282,6 +282,14 @@ The following request parameters are defined:
 * `pre-authorized_code`: CONDITIONAL. The code representing the issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
 * `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value. MUST NOT be used in Authorization Code flow when `pre-authorized_code` is present.
+
+The Wallet MUST consider the parameter values in the initiation request as not trustworthy since the origin is not authenticated and the message integrity is not protected. The Wallet MUST apply the same checks on the issuer that it would apply when the flow is started from the Wallet itself since the issuer is not trustworthy just because it sent the initiation request. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
+
+The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if the Wallet would have started the flow. 
+
+The Wallet MUST be able to process multiple occurences of the URL query parameters `credential_type`. Multiple occurences MUST be treated as multiple values of the respective parameter.
+
+The Issuer MUST ensure the release of any privacy-sensitive data is legally based.
 
 Below is a non-normative example of an Issuance Initiation Request in an authorization code flow:
 
@@ -292,18 +300,6 @@ Below is a non-normative example of an Issuance Initiation Request in an authori
     &op_state=eyJhbGciOiJSU0Et...FYUaBy
 ```
 
-The issuer MAY also render a QR code containing the request data in order to allow the user to scan the request using her Wallet app. 
-
-The Wallet MUST consider the parameter values in the initiation request as not trustworthy since the origin is not authenticated and the message 
-integrity is not protected. The Wallet MUST apply the same checks on the issuer that it would apply when the flow is started from the Wallet itself since the issuer is not trustworthy just because it sent the initiation request. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
-
-The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if
-the Wallet would have started the flow. 
-
-The Wallet MUST be able to process multiple occurences of the URL query parameters `credential_type`. Multiple occurences MUST be treated as multiple values of the respective parameter.
-
-The Issuer MUST ensure the release of any privacy-sensitive data is legally based (e.g., if passing an e-mail address in the `login_hint` parameter).
-
 Below is a non-normative example of an Issuance Initiation Request in a pre-authorized code flow:
 
 ```
@@ -313,10 +309,12 @@ Below is a non-normative example of an Issuance Initiation Request in a pre-auth
     &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
 ```
 
-Below is a non-normative example of the Issuance Initiation Request included in a QR code displayed by the Issuer to the End-User:
+The Issuer MAY also render a QR code containing the request data that can be scanned by the user using a Wallet app, or a deeplink that the user can click.
+
+The following is a non-normative example of such a request that can be included in a QR code or a deeplink:
 
 ```
-openid_initiate_issuance://?
+openid-initiate-issuance://?
     issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
     &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
     &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
@@ -783,13 +781,13 @@ The deferred Credential Response uses the `format` and `credential` parameters a
 
 # Metadata
 
-## Client Metadata 
+## Client Metadata {#client-metadata}
 
 This specification defines the following new Client Metadata parameter in addition to [@!RFC7591] for Wallets acting as OAuth client:
 
 * `initiate_issuance_endpoint`: OPTIONAL. URL of the issuance initation endpoint of a Wallet. 
 
-If the issuer is unable to perform discovery of the Issuance Initiation Endpoint URL, the following static URL is used: `openid_initiate_issuance:`.
+If the issuer is unable to perform discovery of the Issuance Initiation Endpoint URL, the following claimed URL is used: `openid-initiate-issuance://`.
 
 ## Server Metadata {#server-metadata}
 
