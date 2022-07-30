@@ -987,6 +987,16 @@ One such use case is low assurance Credentials such as coupons or tickets.
 
 Another use case is when the Issuer uses cryptographic schemes that can provide binding to the End-User possessing that Credential without explicit cryptographic material being supplied by the application used by that End-User. For example, in the case of the BBS Signature Scheme, the issued Credential itself is a secret and only derivation of a Credential is presented to the Verifier. Effectively, Credential is bound to the Issuer's signature on the Credential, which becomes a shared secret transferred from the Issuer to the End-User.
 
+## Refreshing Credentials
+
+Refreshing Credentials can be done using existing OAuth 2.0 mechanisms. To request the latest version of a credential, the Wallet sends a Credential Request using a valid Access Token. If Refresh Token was returned, the Wallet needs to exchange Refresh Token with a valid Access Token before sending a Credential Request.
+
+The user action leading to the Wallet sending a refresh Credential Request can also be triggered by the Issuers using out-of-band mechanisms (SMS, email, etc.). 
+
+The Wallets can send a refresh Credential Request, even when they are not sure whether the Issuer has updated the credential or not.
+
+Refreshing is referred to as a process of obtaining a "fresh" credential using an existing Access Token (or a Refresh Token). For example, whether the Wallet can obraing a "fresh" credential bound to a new key material, or with additional claim values will be dependent on the Issuer's policy embodied by the Access Token. When the Issuer's policy require a new Access Token needs to be obtained, credential should be "re-issued" by starting the issuance flow from the beginning.
+
 # Privacy Considerations
 
 TBD
