@@ -592,7 +592,7 @@ For cryptographic binding, the Client has the following options to provide crypt
 
 ## Credential Request {#credential_request}
 
-A Client makes a Credential Request by sending a HTTP POST request to the Credential Endpoint with the following parameters:
+A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the "application/json" media type.
 
 * `type`: REQUIRED. Type of a Credential being requested. It corresponds to a `type` property in a Issuer metadata.
 * `format`: OPTIONAL. Format of the Credential to be issued. If not present, the issuer will determine the Credential 
@@ -668,13 +668,21 @@ Below is a non-normative example of a Credential Request:
 ```
 POST /credential HTTP/1.1
 Host: server.example.com
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
-type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard
-format=ldp%5Fvc
-did=did%3Aexample%3Aebfeb1f712ebc6f1c276e12ec21
-proof=%7B%22type%22:%22...-ace0-9c5210e16c32%22%7D
+{
+  "type": "https://did.example.org/healthCard"
+  "format": "ldp_vc",
+  "did": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+  "proof": {
+    "proof_type": "jwt",
+    "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
+    xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
+    0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
+    NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
+  }
+}
 ```
 
 ## Credential Response {#credential-response}
