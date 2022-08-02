@@ -15,7 +15,7 @@ i -> w: credential types, key requirements, endpoints
 w --> u : authorize (credential_type, client_id, ...)
 u --> i: authorize (credential_type, client_id, ...)
 ...
-note left: user authenticatation/identification + consent
+note right: user authenticatation/identification + consent
 i --> u : authorize response (code)
 u --> w: authorize response (code)
 w --> b: get nonce

@@ -1,0 +1,22 @@
+@startuml
+participant User as u
+participant "Wallet Frontend" as w
+participant "Wallet Backend" as b
+participant "Credential Issuer" as i
+
+w -> i: get metadata
+i -> w: credential types, key requirements, endpoints
+w --> u : authorize (credential_type, client_id, ...)
+u --> i: authorize (credential_type, client_id, ...)
+... 
+note over u, i: user authenticatation/identification + consent
+i --> u : authorize response (code)
+u --> w: authorize response (code)
+w -> i : token (code, client_id, assertion)
+note over w, i: wallet frontend authenticates with certificate issued by wallet provider (or any other trusted 3rd party) as OAuth Client\ncredential issuer checks assertion issuer (wallet provider) with trust registry\naccess token could be bound to wallet certificate
+i -> w : access_token, c_nonce
+w -> w : gen key : key, key_attestation
+w -> w : create proof of posssion (c_nonce)
+w -> i : issue credential (access_token, credential_type, format, proof, key_policy)
+i -> w : credential
+@enduml
