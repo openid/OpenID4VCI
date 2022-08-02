@@ -1,4 +1,5 @@
 @startuml
+autonumber
 participant User as u
 participant "Wallet Frontend" as w
 participant "Wallet Backend" as b
@@ -19,7 +20,7 @@ b -> b : check app_attestation
 b -> b : generate assertion (iss=wallet backend, hash_code, client_id)
 b -> w : assertion
 w -> i : token (code, client_id, assertion)
-note over w, i: wallet authenticates with assertion as OAuth Client\ncredential issuer checks assertion issuer (wallet provider) with trust registry
+note over w, i: wallet authenticates with assertion as OAuth Client and validates hash of authorization code with actual code\ncredential issuer checks assertion issuer (wallet provider) with trust registry
 i -> w : access_token, c_nonce
 w -> w : gen key : key, key_attestation
 w -> w : create proof of posssion (c_nonce)
