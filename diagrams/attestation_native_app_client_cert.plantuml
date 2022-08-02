@@ -1,4 +1,5 @@
 @startuml
+autonumber
 participant User as u
 participant "Wallet Frontend" as w
 participant "Wallet Backend" as b
