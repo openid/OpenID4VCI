@@ -278,7 +278,7 @@ The Issuer sends the request as a HTTP GET request or a HTTP redirect to the Iss
 The following request parameters are defined: 
 
 * `issuer`: REQUIRED. The issuer URL of the Credential issuer, the Wallet is requested to obtain one or more Credentials from. 
-* `credential_type`: REQUIRED. A JSON string denoting the type of the Credential the Wallet shall request. It corresponds to the type property of a credential metadata object of the Issuer.
+* `credential_type`: REQUIRED. A JSON string denoting the type of the Credential the Wallet shall request. It corresponds to one of the values of the type property of a credential metadata object of the Issuer.
 * `pre-authorized_code`: CONDITIONAL. The code representing the issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
 * `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value. MUST NOT be used in Authorization Code flow when `pre-authorized_code` is present.
@@ -300,7 +300,7 @@ integrity is not protected. The Wallet MUST apply the same checks on the issuer 
 The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if
 the Wallet would have started the flow. 
 
-The Wallet MUST be able to process multiple occurences of the URL query parameters `credential_type`. Multiple occurences MUST be treated as multiple values of the respective parameter.
+The Wallet MUST be able to process multiple occurrences of the URL query parameters `credential_type`. Multiple occurrences MUST be treated as multiple values of the respective parameter.
 
 The Issuer MUST ensure the release of any privacy-sensitive data is legally based (e.g., if passing an e-mail address in the `login_hint` parameter).
 
@@ -798,7 +798,7 @@ This specification defines the following new Server Metadata parameters for this
 
 The following parameter MUST be used to communicates the specifics of the Credential that the issuer supports issuance of:
 
-* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where each key is a `credential_type` that the server can issue. The value is a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). 
+* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where each key is a `credential_type` that the server can issue. It corresponds to the `credential_type` from a Credential Request. The value is a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). 
 
 * `credential_issuer`: OPTIONAL. A JSON object containing display properties for the Credential issuer.
   * `display`: OPTIONAL. An array of objects, where each object contains display properties of a Credential issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
@@ -809,7 +809,7 @@ The following parameter MUST be used to communicates the specifics of the Creden
 
 This section defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
 
-  * `display`: OPTIONAL. An array of objects, where each object contains the display properties of the `credential_type` for a certain language. Below is a non-exhaustive list of parameters that MAY be included. Note that the display name of the `credential_type` is obtained from `display.name` and individual claim names from `claims.display.name` values.
+  * `display`: OPTIONAL. An array of objects, where each object contains the display properties of the supported credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included. Note that the display name of the supported credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
    * `name`: REQUIRED. String value of a display name for the `credential_type`.
    * `locale`: OPTIONAL. String value that identifies the language of this display object represented as language tag values defined in BCP47 [@!RFC5646]. Multiple `display` objects may be included for separate languages. There MUST be only one object with the same language identifier.
   * `logo`: OPTIONAL. A JSON object with information about the logo of the `credential_type` with a following non-exhaustive list of parameters that MAY be included:
@@ -819,13 +819,12 @@ This section defines the structure of the object that appears as the value to th
   * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
   * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
 
-* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the Credential. Below is a non-exhaustive list of valid key values defined by this specification:
+* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the supported Credential. Below is a non-exhaustive list of valid key values defined by this specification:
   * Claim Format Designations defined in [@!DIF.PresentationExchange], such as `jwt_vc` and `ldp_vc`
   * `mdl_iso`: defined in this specification to express a mobile driving licence (mDL) Credential compliant to a data model and data sets defined in ISO/IEC 18013-5:2021 specification. 
   * `ac_vc`: defined in this specificaiton to express an AnonCreds Credential format defined as part of the Hyperledger Indy project [Hyperledger.Indy].
 
 The value in a key value pair is a JSON object detailing the specifics about the support for the Credential format with a following non-exhaustive list of parameters that MAY be included:
-  * `types`: REQUIRED. Array of strings representing a format specific type of a Credential. This value corresponds to `type` in W3C [@!VC_DATA] and a `doctype` in ISO/IEC 18013-5 (mobile Driving License).
   * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential as defined in (#credential-binding). A non-exhaustive list of valid values defined by this specification are `did`, `mso`, and `none`.
   * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptosuites for Credentials in `jwt_vc` format should use algorithm names defined in [IANA JOSE Algorithms Registry](https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms). Cryptosuites for Credentials in `ldp_vc` format should use signature suites names defined in [Linked Data Cryptographic Suite Registry](https://w3c-ccg.github.io/ld-cryptosuite-registry/).
 
@@ -871,7 +870,6 @@ The following example shows a non-normative example of the relevant entries in t
       ],
       "formats": {
         "ldp_vc": {
---COMMENT-- I don't think these are correct properties
           "cryptographic_binding_methods_supported": ["did"],
           "cryptographic_suites_supported": ["Ed25519Signature2018"]
         }
@@ -896,7 +894,6 @@ The following example shows a non-normative example of the relevant entries in t
     "WorkplaceCredential": {
       "formats": {
         "jwt_vc": {
---COMMENT-- I don't think these are correct properties
           "binding_methods_supported": ["did"],
           "cryptographic_suites_supported": ["ES256K"]
         }
