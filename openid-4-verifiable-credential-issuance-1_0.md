@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-07"
+value = "openid-4-verifiable-credential-issuance-1_0-08"
 status = "standard"
 
 [[author]]
@@ -88,17 +88,17 @@ This is a non-exhaustive list of sample use cases.
 
 ## Issuer Initiated Issuance - Same Device {#use-case-3}
 
-While browing university's home page, the user finds a link "request your digital diploma". User  clicks on this link and is being redirected to a digital Wallet application. The Wallet notifies the user that an issuer offered to issue a diploma Credential. User confirms this inquiry and is taken to the university's Credential issuance service's user experience. After authenticating at the university and consenting to the issuance of a digital diploma, the user is sent back to the Wallet, where she can check the successful creation of the digital diploma.
+While browsing the university's home page, the user finds a link "request your digital diploma". User  clicks on this link and is being redirected to a digital Wallet application. The Wallet notifies the user that an issuer offered to issue a diploma Credential. User confirms this inquiry and is taken to the university's Credential issuance service's user experience. After authenticating at the university and consenting to the issuance of a digital diploma, the user is sent back to the Wallet, where she can check the successful creation of the digital diploma.
 
 ## Issuer Initiated Issuance - Cross Device (with information pre-submitted by the User) {#use-case-4}
 
-The user is starting a job at a new employer. An employer has requested the user to upload certain documents to the employee portal. Few days later, the user receives an email from the employer notifying her that the employee Credential is ready and asking her to scan a QR code to retrieve it. User scans the QR code with her smartphone, which opens her Wallet. Meanwhile, the user has received a text message with a PIN code to her smartphone. After entering that PIN code in the Wallet for security reasons, the user confirms the Credential issuance, and receives Credential into the Wallet.
+The user is starting a job at a new employer. An employer has requested the user to upload certain documents to the employee portal. A few days later, the user receives an email from the employer notifying her that the employee Credential is ready and asking her to scan a QR code to retrieve it. User scans the QR code with her smartphone, which opens her Wallet. Meanwhile, the user has received a text message with a PIN code to her smartphone. After entering that PIN code in the Wallet for security reasons, the user confirms the Credential issuance, and receives Credential into the Wallet.
 
 ## Issuer Initiated Issuance - Cross Device & Deferred {#use-case-5}
 
-The user wants to obtain a digital criminal record. She vists the local administration's office and requests the issuance of the official criminal record as digital Credential. After presenting her ID document, she is asked to scan a QR code with her wallet. She is being told that the actual issuance of the Credential will take some time due to necessary background checks by the authority. 
+The user wants to obtain a digital criminal record. She visits the local administration's office and requests the issuance of the official criminal record as a digital Credential. After presenting her ID document, she is asked to scan a QR code with her wallet. She is being told that the actual issuance of the Credential will take some time due to necessary background checks by the authority. 
 
-In the Wallet, the user sees indication that issuance of the digital record is under way. A few days later, the user receives a notification from her Wallet app that requested Credential was successfully issued. When the user opens the Wallet, she is asked whether she wants to download the Credential. She confirms and the new Credential is retrieved and stored in the Wallet.
+In the Wallet, the user sees an indication that issuance of the digital record is under way. A few days later, the user receives a notification from her Wallet app that requested Credential was successfully issued. When the user opens the Wallet, she is asked whether she wants to download the Credential. She confirms, and the new Credential is retrieved and stored in the Wallet.
 
 ## Wallet Initiated Issuance during Presentation {#use-case-1}
 
@@ -106,9 +106,9 @@ A user comes across a verifier app that is requesting the user to present a Cred
 
 ## Wallet Initiated Issuance during Presentation (requires presentation of additional Credentials during issuance) {#use-case-2}
 
-A user comes across a verifier app that is requesting the user to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the Credential presentation request and notifies the user that there is currently no matching Credential in the Wallet. The Wallet than offers the user a list of issuers, which might be based on an issuer list curated by the Wallet provider. The user picks the university she graduated from and is sent to that university's user experience (web site or app).  
+A user comes across a verifier app that is requesting the user to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the Credential presentation request and notifies the user that there is currently no matching Credential in the Wallet. The Wallet then offers the user a list of issuers, which might be based on an issuer list curated by the Wallet provider. The user picks the university she graduated from and is sent to that university's user experience (web site or app).  
 
-The user logs in to the university, who determines that the respective user account is not verified yet. Among multiple identification options, the user chooses to present identity Credential from her Wallet. The user is sent back to the Wallet where she consents to sharing requested Credential(s) to the university. The user is sent back to the university user experience. Based on the presented Credential, the university completes the user verification, looks up user data in its database, and offers to issue a diploma as a verifiable Credential. 
+The user logs in to the university, which determines that the respective user account is not verified yet. Among multiple identification options, the user chooses to present identity Credential from her Wallet. The user is sent back to the Wallet where she consents to share requested Credential(s) to the university. The user is sent back to the university user experience. Based on the presented Credential, the university completes the user verification, looks up user data in its database, and offers to issue a diploma as a verifiable Credential. 
 
 Upon providing consent, the user is sent back to the Wallet. The Wallet informs the user Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
 
@@ -273,7 +273,7 @@ information relevant for the Credential issuance to ensure a convenient and secu
 
 ## Issuance Initiation Request {#issuance_initiation_request}
 
-The Issuer sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL.
+The Issuer sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL defined in (#client-metadata).
 
 The following request parameters are defined: 
 
@@ -282,6 +282,14 @@ The following request parameters are defined:
 * `pre-authorized_code`: CONDITIONAL. The code representing the issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
 * `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value. MUST NOT be used in Authorization Code flow when `pre-authorized_code` is present.
+
+The Wallet MUST consider the parameter values in the initiation request as not trustworthy since the origin is not authenticated and the message integrity is not protected. The Wallet MUST apply the same checks on the issuer that it would apply when the flow is started from the Wallet itself since the issuer is not trustworthy just because it sent the initiation request. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
+
+The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if the Wallet would have started the flow. 
+
+The Wallet MUST be able to process multiple occurences of the URL query parameters `credential_type`. Multiple occurences MUST be treated as multiple values of the respective parameter.
+
+The Issuer MUST ensure the release of any privacy-sensitive data is legally based.
 
 Below is a non-normative example of an Issuance Initiation Request in an authorization code flow:
 
@@ -292,18 +300,6 @@ Below is a non-normative example of an Issuance Initiation Request in an authori
     &op_state=eyJhbGciOiJSU0Et...FYUaBy
 ```
 
-The issuer MAY also render a QR code containing the request data in order to allow the user to scan the request using her Wallet app. 
-
-The Wallet MUST consider the parameter values in the initiation request as not trustworthy since the origin is not authenticated and the message 
-integrity is not protected. The Wallet MUST apply the same checks on the issuer that it would apply when the flow is started from the Wallet itself since the issuer is not trustworthy just because it sent the initiation request. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
-
-The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if
-the Wallet would have started the flow. 
-
-The Wallet MUST be able to process multiple occurences of the URL query parameters `credential_type`. Multiple occurences MUST be treated as multiple values of the respective parameter.
-
-The Issuer MUST ensure the release of any privacy-sensitive data is legally based (e.g., if passing an e-mail address in the `login_hint` parameter).
-
 Below is a non-normative example of an Issuance Initiation Request in a pre-authorized code flow:
 
 ```
@@ -313,10 +309,12 @@ Below is a non-normative example of an Issuance Initiation Request in a pre-auth
     &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
 ```
 
-Below is a non-normative example of the Issuance Initiation Request included in a QR code displayed by the Issuer to the End-User:
+The Issuer MAY also render a QR code containing the request data that can be scanned by the user using a Wallet app, or a deeplink that the user can click.
+
+The following is a non-normative example of such a request that can be included in a QR code or a deeplink:
 
 ```
-openid_initiate_issuance://?
+openid-initiate-issuance://?
     issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
     &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
     &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
@@ -391,30 +389,33 @@ This non-normative example requests authorization to issue two different Credent
 ]
 ```
 
-### Request Issuance of a Certain Credential Type using Scopes {#credential-request-using-type-specific-scope}
+### Using `scope` Parameter to Request Issuance of a Credential {#credential-request-using-type-specific-scope}
 
-An alternative Credential request syntax to that defined in (#credential-authz-request) involves using an OAuth 2.0 scope following the syntax defined below.
+In addition to a mechanism defined in (#credential-authz-request), issuers MAY support requesting authorization to issue a credential using OAuth 2.0 scope values.
 
-```
-openid_credential:<credential-type>
-```
+The concrete scope values and the mapping between a certain scope value and the credential type (and further parameters associated with the authorization to issue this credential type) is out of scope of this specification. Possible options include normative text in a profile of this specification defining scope values along with a description of their semantics or machine readable definitions in the Issuer's metadata such as mapping a scope value to an equivalent authorization details object (see above). 
 
-The value of `<credential-type>` indicates the type of Credential being requested, providers who do not understand the value of this scope in a request MUST ignore it entirely. The presence of a scope following this syntax in the request MUST be interpreted by the provider as a request for access to the Credential endpoint as defined in (#credential-endpoint) for the specific Credential type. Multiple scope parameters MAY be present in a single request whereby each occurrence MUST be interpreted individually.
+It is RECOMMENDED to use collision-resistant scopes values.
 
-Below is a non-normative example of a Authorization Request scoped to a specific Credential type .
+Issuers MUST interpret each scope value as a request to access the Credential Endpoint as defined in (#credential-endpoint) for the issuance of a Credential type identified by that scope value. Multiple scope values MAY be present in a single request whereby each 
+occurrence MUST be interpreted individually.
+
+Providers that do not understand the value of this scope in a request MUST ignore it entirely. 
+
+Below is a non-normative example of a Authorization Request using the scope `com.example.healthCardCredential`:
 
 ```
 HTTP/1.1 302 Found
 Location: https://server.example.com/authorize?
   response_type=code
-  &scope=openid_credential:healthCard
+  &scope=com.example.healthCardCredential
   &client_id=s6BhdRkqt3
   &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
   &code_challenge_method=S256
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 ```
 
-If a scope `openid_credential:<credential-type>` and the `authorization_details` request parameter containing objects of type `openid_credential` are both present in a single request, the provider MUST interpret these individually. However, if both request the same Credential type, than the Issuer MUST follow the request as given by the authorization details object.
+If a scope value related to credential issuance and the `authorization_details` request parameter containing objects of type `openid_credential` are both present in a single request, the provider MUST interpret these individually. However, if both request the same Credential type, than the Issuer MUST follow the request as given by the authorization details object.
 
 ### Additional Request Parameters
 
@@ -541,7 +542,6 @@ Below is a non-normative example of a Token Response:
 HTTP/1.1 200 OK
   Content-Type: application/json
   Cache-Control: no-store
-  Pragma: no-cache
 
   {
     "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ",
@@ -562,7 +562,6 @@ Below is a non-normative example Token Error Response:
 HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Cache-Control: no-store
-Pragma: no-cache
 {
    "error": "invalid_request"
 }
@@ -591,7 +590,7 @@ For cryptographic binding, the Client has the following options to provide crypt
 
 ## Credential Request {#credential_request}
 
-A Client makes a Credential Request by sending a HTTP POST request to the Credential Endpoint with the following parameters:
+A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the "application/json" media type.
 
 * `type`: REQUIRED. Type of a Credential being requested. It corresponds to a `type` property in a Issuer metadata.
 * `format`: OPTIONAL. Format of the Credential to be issued. If not present, the issuer will determine the Credential 
@@ -614,7 +613,7 @@ This specification defines the following values for `proof_type`:
 
 Note: if both `jwk` and `x5c` are present, the represented signing key MUST be the same in both. 
 
-The `proof` element MUST incorporate a fresh nonce value generated by the Credential issuer and the Credential issuer's identifier (audience) to allow the Credential issuer to detect replay. The way that data is incorporated depends on the proof type. In a JWT, for example, the nonce is conveyd in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the nonce is included as the `challenge` element in the proof object and the issuer (the intended audience) is included as the `domain` element.
+The `proof` element MUST incorporate a nonce value generated by the Credential issuer and the Credential issuer's identifier (audience) to allow the Credential issuer to detect replay. The way that data is incorporated depends on the proof type. In a JWT, for example, the nonce is conveyd in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the nonce is included as the `challenge` element in the proof object and the issuer (the intended audience) is included as the `domain` element.
 
 The Issuer MUST validate that the `proof` is actually signed by a key identified in `kid` parameter.
 
@@ -667,13 +666,21 @@ Below is a non-normative example of a Credential Request:
 ```
 POST /credential HTTP/1.1
 Host: server.example.com
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
-type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard
-format=ldp%5Fvc
-did=did%3Aexample%3Aebfeb1f712ebc6f1c276e12ec21
-proof=%7B%22type%22:%22...-ace0-9c5210e16c32%22%7D
+{
+  "type": "https://did.example.org/healthCard"
+  "format": "ldp_vc",
+  "did": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+  "proof": {
+    "proof_type": "jwt",
+    "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
+    xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
+    0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
+    NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
+  }
+}
 ```
 
 ## Credential Response {#credential-response}
@@ -708,7 +715,6 @@ Below is a non-normative example of a Credential Response in a synchronous flow:
 HTTP/1.1 200 OK
   Content-Type: application/json
   Cache-Control: no-store
-  Pragma: no-cache
 
 {
   "format": "jwt_vc"
@@ -724,7 +730,6 @@ Below is a non-normative example of a Credential Response in a deferred flow:
 HTTP/1.1 200 OK
   Content-Type: application/json
   Cache-Control: no-store
-  Pragma: no-cache
 
 {
   "acceptance_token": "8xLOxBtZp8",
@@ -745,7 +750,6 @@ Below is a non-normative example of a Credential Response when the Issuer is req
 HTTP/1.1 400 Bad Request
   Content-Type: application/json
   Cache-Control: no-store
-  Pragma: no-cache
 
 {
   "error": "invalid_or_missing_proof"
@@ -780,13 +784,13 @@ The deferred Credential Response uses the `format` and `credential` parameters a
 
 # Metadata
 
-## Client Metadata 
+## Client Metadata {#client-metadata}
 
 This specification defines the following new Client Metadata parameter in addition to [@!RFC7591] for Wallets acting as OAuth client:
 
 * `initiate_issuance_endpoint`: OPTIONAL. URL of the issuance initation endpoint of a Wallet. 
 
-If the issuer is unable to perform discovery of the Issuance Initiation Endpoint URL, the following static URL is used: `openid_initiate_issuance:`.
+If the issuer is unable to perform discovery of the Issuance Initiation Endpoint URL, the following claimed URL is used: `openid-initiate-issuance://`.
 
 ## Server Metadata {#server-metadata}
 
@@ -1126,6 +1130,11 @@ The technology described in this specification was made available from contribut
 
    [[ To be removed from the final specification ]]
 
+   -08
+
+   * removed namespacing to `openid_credential` the scopes used to request issuance of a particular credential type
+   * changed media type of a Credential Request to application/json from application/x-www-form-urlencoded
+   
    -07
 
    * restructured the entire specification as following:
