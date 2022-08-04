@@ -989,13 +989,13 @@ Another use case is when the Issuer uses cryptographic schemes that can provide 
 
 ## Refreshing Credentials
 
-Refreshing Credentials can be done using existing OAuth 2.0 mechanisms. To request the latest version of a credential, the Wallet sends a Credential Request using a valid Access Token. If Refresh Token was returned, the Wallet needs to exchange Refresh Token with a valid Access Token before sending a Credential Request.
+Refreshing Credentials can be done using existing OAuth 2.0 mechanisms. To refresh a credential, the Wallet sends a Credential Request using a valid Access Token. If a Refresh Token was returned, the Wallet needs to exchange the Refresh Token with a valid Access Token before sending the Credential Request.
 
-The user action leading to the Wallet sending a refresh Credential Request can also be triggered by the Issuers using out-of-band mechanisms (SMS, email, etc.). 
+The user action leading to the Wallet sending a refresh Credential Request can also be triggered by the Issuer using an out-of-band mechanism (SMS, email, etc.). 
 
-The Wallets can send a refresh Credential Request, even when they are not sure whether the Issuer has updated the credential or not.
+A Wallet can send a refresh Credential Request, even when it is not sure whether the Issuer has updated the credential or not.
 
-Refreshing is referred to as a process of obtaining a "fresh" credential using an existing Access Token (or a Refresh Token). For example, whether the Wallet can obraing a "fresh" credential bound to a new key material, or with additional claim values will be dependent on the Issuer's policy embodied by the Access Token. When the Issuer's policy require a new Access Token needs to be obtained, credential should be "re-issued" by starting the issuance flow from the beginning.
+Refreshing is referred to as a process of obtaining a "fresh" credential using an existing Access Token (or a Refresh Token). For example, whether the Wallet can obrain a "fresh" credential bound to a new key material, or with additional claim values will be dependent on the Issuer's policy embodied by the Access Token. When the Issuer's policy require a new Access Token needs to be obtained, credential should be "re-issued" by starting the issuance flow from the beginning.
 
 # Privacy Considerations
 
