@@ -606,10 +606,10 @@ This specification defines the following values for `proof_type`:
     * `kid`: CONDITIONAL. JWT header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
     * `jwk`: CONDITIONAL. JWT header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
     * `x5c`: CONDITIONAL. JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
-    * `iss`: REQUIRED. MUST contain the client_id of the sender.
-    * `aud`: REQUIRED. MUST contain the issuer URL of Credential issuer.
-    * `iat`: REQUIRED. MUST contain the instant when the proof was created.
-    * `nonce`: REQUIRED. MUST contain a nonce as provided by the issuer.
+    * `iss`: REQUIRED (string). The value of this claim MUST be the client_id of the client making the credential request.
+    * `aud`: REQUIRED (string). The value of this claim MUST be the issuer URL of credential issuer.
+    * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519].
+    * `nonce`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a nonce provided by the credential issuer.
 
 Note: if both `jwk` and `x5c` are present, the represented signing key MUST be the same in both. 
 
@@ -640,7 +640,7 @@ where the JWT looks like this:
 {
   "iss": "s6BhdRkqt3",
   "aud": "https://server.example.com",
-  "iat": "2018-09-14T21:19:10Z",
+  "iat": 1659145924,
   "nonce": "tZignsnFbp"
 }
 ```
@@ -656,7 +656,7 @@ Here is another example JWT not only proving possession of a private key but als
 {
   "iss": "s6BhdRkqt3",
   "aud": "https://server.example.com",
-  "iat": "2018-09-14T21:19:10Z",
+  "iat": 1659145924,
   "nonce": "tZignsnFbp"
 }
 ```
