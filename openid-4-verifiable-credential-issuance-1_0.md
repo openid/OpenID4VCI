@@ -987,15 +987,13 @@ One such use case is low assurance Credentials such as coupons or tickets.
 
 Another use case is when the Issuer uses cryptographic schemes that can provide binding to the End-User possessing that Credential without explicit cryptographic material being supplied by the application used by that End-User. For example, in the case of the BBS Signature Scheme, the issued Credential itself is a secret and only derivation of a Credential is presented to the Verifier. Effectively, Credential is bound to the Issuer's signature on the Credential, which becomes a shared secret transferred from the Issuer to the End-User.
 
-## Refreshing Credentials
+## Multiple Credential Requests
 
-Refreshing Credentials can be done using existing OAuth 2.0 mechanisms. To refresh a credential, the Wallet sends a Credential Request using a valid Access Token. If a Refresh Token was returned, the Wallet needs to exchange the Refresh Token with a valid Access Token before sending the Credential Request.
+The Credential Endpoint can accept multiple requests from a Wallet.  The Issuer determines if the subsequent requests will return the same or an updated Credential, such as having a new expiration time or using the most current End-User claims.
 
-The user action leading to the Wallet sending a refresh Credential Request can also be triggered by the Issuer using an out-of-band mechanism (SMS, email, etc.). 
+As with any OAuth 2.0 Protected Resource, the current Access Token may no longer be valid and a re-authentication or Token Refresh (see [@!RFC6749, section 6]) may be required.
 
-A Wallet can send a refresh Credential Request, even when it is not sure whether the Issuer has updated the credential or not.
-
-Refreshing is referred to as a process of obtaining a "fresh" credential using an existing Access Token (or a Refresh Token). For example, whether the Wallet can obrain a "fresh" credential bound to a new key material, or with additional claim values will be dependent on the Issuer's policy embodied by the Access Token. When the Issuer's policy require a new Access Token needs to be obtained, credential should be "re-issued" by starting the issuance flow from the beginning.
+The action leading to the Wallet sending another Credential Request can also be triggered by a background process, or by the Issuer using an out-of-band mechanism (SMS, email, etc.) to inform the End-User.
 
 # Privacy Considerations
 
