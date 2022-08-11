@@ -987,13 +987,13 @@ One such use case is low assurance Credentials such as coupons or tickets.
 
 Another use case is when the Issuer uses cryptographic schemes that can provide binding to the End-User possessing that Credential without explicit cryptographic material being supplied by the application used by that End-User. For example, in the case of the BBS Signature Scheme, the issued Credential itself is a secret and only derivation of a Credential is presented to the Verifier. Effectively, Credential is bound to the Issuer's signature on the Credential, which becomes a shared secret transferred from the Issuer to the End-User.
 
-## Multiple Credential Requests
+## Multiple Accesses to the Credential Endpoint
 
-The Credential Endpoint can accept multiple requests from a Wallet.  The Issuer determines if the subsequent requests will return the same or an updated Credential, such as having a new expiration time or using the most current End-User claims.
+The Credential Endpoint can be accessed multiple times by a Wallet, even for the same credential_type.  The Issuer determines if the subsequent requests will return the same or an updated Credential, such as having a new expiration time or using the most current End-User claims.
 
-As with any OAuth 2.0 Protected Resource, the current Access Token may no longer be valid and a re-authentication or Token Refresh (see [@!RFC6749, section 6]) may be required.
+As with any OAuth 2.0 Protected Resource, the current Access Token may no longer be valid and a re-authentication or Token Refresh (see [@!RFC6749, section 6]) may be required.  Any policies between the Credential Enpoint and the Authorization Server that may change the behavior of what is returned with a new Access Token are beyond the scope of this specification (see [@!RFC6749, section 7]).
 
-The action leading to the Wallet sending another Credential Request can also be triggered by a background process, or by the Issuer using an out-of-band mechanism (SMS, email, etc.) to inform the End-User.
+The action leading to the Wallet performing another Credential Request can also be triggered by a background process, or by the Issuer using an out-of-band mechanism (SMS, email, etc.) to inform the End-User.
 
 # Privacy Considerations
 
