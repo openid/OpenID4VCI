@@ -634,7 +634,6 @@ where the JWT looks like this:
 ```json
 {
   "alg": "ES256",
-  "typ": "JWT",
   "kid":"did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1"
 }.
 {
@@ -649,7 +648,6 @@ Here is another example JWT not only proving possession of a private key but als
 
 ```json
 {
-  "typ": "JWT",
   "alg": "ES256",
   "x5c":[<key certificate + certificate chain for attestation>]
 }.
