@@ -82,6 +82,10 @@ Credential Issuer
 
 Entity that issues verifiable Credentials. Also called Issuer. In the context of this specification, the Credential Issuer acts as OAuth 2.0 Authorization Server (see [@!RFC6749]).
 
+Base64url Encoding
+
+Base64 encoding using the URL- and filename-safe character set defined in Section 5 of [@!RFC4648], with all trailing '=' characters omitted (as permitted by Section 3.2 of [@!RFC4648]) and without the inclusion of any line breaks, whitespace, or other additional characters. Note that the base64url encoding of the empty octet sequence is the empty string. (See Appendix C of [@!RFC7517] for notes on implementing base64url encoding without padding.)
+
 # Use Cases
 
 This is a non-exhaustive list of sample use cases.
