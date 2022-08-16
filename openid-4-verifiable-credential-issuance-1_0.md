@@ -625,7 +625,9 @@ Below is a non-normative example of a `proof` parameter (line breaks for display
   "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
   xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
   0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
-  NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
+  NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM",
+  "key_attestation": "",
+  ""
 }
 ```
 
@@ -670,7 +672,6 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 {
   "type": "https://did.example.org/healthCard"
   "format": "ldp_vc",
-  "did": "did:example:ebfeb1f712ebc6f1c276e12ec21",
   "proof": {
     "proof_type": "jwt",
     "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
@@ -906,7 +907,7 @@ The following example shows a non-normative example of the relevant entries in t
       "formats": {
         "jwt_vc": {
           "types": ["VerifiableCredential", "WorkplaceCredential"],
-          "binding_methods_supported": ["did"],
+          "cryptographic_binding_methods_supported": ["did"],
           "cryptographic_suites_supported": ["ES256K"]
         }
       }
