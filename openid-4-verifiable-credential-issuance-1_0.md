@@ -777,7 +777,7 @@ When using the Batch Credential Request, the Batch Credential Request is used in
 Below is a non-normative example of a Batch Credential Request:
 
 ```
-POST /credential HTTP/1.1
+POST /batch_credential HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
