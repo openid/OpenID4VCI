@@ -835,7 +835,7 @@ HTTP/1.1 200 OK
 }]
 ```
 
-Below is a non-normative example of a Batch Credential Response in a deferred flow:
+Below is a non-normative example of a Batch Credential Response in a partial deferred flow:
 
 ```
 HTTP/1.1 200 OK
@@ -848,7 +848,8 @@ HTTP/1.1 200 OK
   "c_nonce_expires_in": 86400  
 },
 {
-  "acceptance_token": "3asdf3dx3d",
+  "format": "jwt_vc"
+  "credential" : "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy",
   "c_nonce": "f34afdSSXa",
   "c_nonce_expires_in": 86400  
 }]
