@@ -774,13 +774,85 @@ When using the Batch Credential Endpoint, a Credential Request included in a Bat
 
 When using the Batch Credential Request, the Batch Credential Request is used in the same manner as the Credential Request for the Credential Endpoint with the addition that the Batch Credential Request MUST be sent as a JSON array where each element is a JSON object representing a Credential Request.
 
-TBD: non-normative example
+Below is a non-normative example of a Batch Credential Request:
+
+```
+POST /credential HTTP/1.1
+Host: server.example.com
+Content-Type: application/json
+Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+[{
+  "type": "https://did.example.org/bachelorDegree"
+  "format": "jwt_vc",
+  "did": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+  "proof": {
+    "proof_type": "jwt",
+    "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
+    xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
+    0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
+    NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
+  }
+},
+{
+  "type": "https://did.example.org/healthCard"
+  "format": “jwt_vc",
+  "did": "did:example:abeadae34139fdsk34safdd2531",
+  "proof": {
+    "proof_type": "jwt",
+    "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTphYmVhZGFlMzQxMzlmZHNrMzRzYWZkZDI1MzEva2V5cy8
+    xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
+    0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
+    NlIjoiMzRhc2RmX1NTWCJ9.dBir0EEbGzYVqgpMh7QSOLeUVNYHcpG8Tnfhl941ibufxzCZpmGnbqo2
+    TeB2GmZkE5Bjx3ilrZLUNC4dAiD51Q"
+  }
+}]
+
+```
 
 ## Batch Credential Response {#credential_batch_response}
 
 When using the Batch Credential Request, the Batch Credential Response is used in the same manner as for the Credential Response with the addition that the individual Credential Response JSON objects MUST be sent as an JSON array. Each Credential Response in the array corresponds to the Credential Request at the same array index in the Batch Credential Request.
 
-TBD: non-normative example 
+Below is a non-normative example of a Batch Credential Response in a synchronous flow:
+
+```
+HTTP/1.1 200 OK
+  Content-Type: application/json
+  Cache-Control: no-store
+
+[{
+  "format": "jwt_vc"
+  "credential" : "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
+  "c_nonce": "fGFF7UkhLa",
+  "c_nonce_expires_in": 86400  
+},
+{
+  "format": "jwt_vc"
+  "credential" : "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy",
+  "c_nonce": "f34afdSSXa",
+  "c_nonce_expires_in": 86400  
+}]
+```
+
+Below is a non-normative example of a Batch Credential Response in a deferred flow:
+
+```
+HTTP/1.1 200 OK
+  Content-Type: application/json
+  Cache-Control: no-store
+
+[{
+  "acceptance_token": "8xLOxBtZp8",
+  "c_nonce": "fGFF7UkhLa",
+  "c_nonce_expires_in": 86400  
+},
+{
+  "acceptance_token": "3asdf3dx3d",
+  "c_nonce": "f34afdSSXa",
+  "c_nonce_expires_in": 86400  
+}]
+```
 
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
