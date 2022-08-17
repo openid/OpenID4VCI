@@ -784,7 +784,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 [{
   "type": "https://did.example.org/bachelorDegree"
-  "format": "jwt_vc",
+  "format": "ldp_vc",
   "did": "did:example:ebfeb1f712ebc6f1c276e12ec21",
   "proof": {
     "proof_type": "jwt",
@@ -822,7 +822,7 @@ HTTP/1.1 200 OK
   Cache-Control: no-store
 
 [{
-  "format": "ldp_vc"
+  "format": "jwt_vc"
   "credential" : "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
   "c_nonce": "fGFF7UkhLa",
   "c_nonce_expires_in": 86400  
