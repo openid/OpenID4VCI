@@ -991,7 +991,7 @@ Another use case is when the Issuer uses cryptographic schemes that can provide 
 
 The Credential Endpoint can be accessed multiple times by a Wallet, even for the same credential_type.  The Issuer determines if the subsequent requests will return the same or an updated Credential, such as having a new expiration time or using the most current End-User claims.
 
-As with any OAuth 2.0 Protected Resource, the current Access Token may no longer be valid and a re-authentication or Token Refresh (see [@!RFC6749, section 6]) may be required.  Any policies between the Credential Enpoint and the Authorization Server that may change the behavior of what is returned with a new Access Token are beyond the scope of this specification (see [@!RFC6749, section 7]).
+As with any OAuth 2.0 Protected Resource, the current Access Token may no longer be valid and a re-authentication or Token Refresh (see [@!RFC6749, section 6]) may be required by the Issuer.  Any policies between the Credential Enpoint and the Authorization Server that may change the behavior of what is returned with a new Access Token are beyond the scope of this specification (see [@!RFC6749, section 7]).
 
 The action leading to the Wallet performing another Credential Request can also be triggered by a background process, or by the Issuer using an out-of-band mechanism (SMS, email, etc.) to inform the End-User.
 
