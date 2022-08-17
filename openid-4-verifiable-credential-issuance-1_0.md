@@ -822,7 +822,7 @@ HTTP/1.1 200 OK
   Cache-Control: no-store
 
 [{
-  "format": "jwt_vc"
+  "format": "ldp_vc"
   "credential" : "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
   "c_nonce": "fGFF7UkhLa",
   "c_nonce_expires_in": 86400  
