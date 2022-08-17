@@ -796,7 +796,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 },
 {
   "type": "https://did.example.org/healthCard"
-  "format": “jwt_vc",
+  "format": "jwt_vc",
   "did": "did:example:abeadae34139fdsk34safdd2531",
   "proof": {
     "proof_type": "jwt",
