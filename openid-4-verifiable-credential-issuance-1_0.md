@@ -768,7 +768,7 @@ Communication with the Batch Credential Endpoint MUST utilize TLS.
 
 The client can request issuance of multiple Credentials of certain types and formats at the same time.
 
-When using the Batch Credential Endpoint, a Credential Request included in a Batch Credential Request and a Credential Response included in a Batch Credential Response is used in the same manner as for the Credential Endpoint.
+When using the Batch Credential Endpoint, a Credential Request included in a Batch Credential Request and a Credential Response included in a Batch Credential Response is used in the same manner as for the Credential Endpoint. The same applies to a deferred Credential Response.
 
 ## Batch Credential Request {#credential_batch_request}
 
