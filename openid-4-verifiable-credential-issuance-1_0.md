@@ -819,6 +819,7 @@ This section extends the server metadata [@!RFC8414] to allow the RP to obtain i
 This specification defines the following new Server Metadata parameters for this purpose:
 
 * `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
+* `batch_credential_endpoint`: OPTIONAL. URL of the OP's Batch Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components. If omitted, the OP does not support the Batch Credential Endpoint.
 
 The following parameter MUST be used to communicates the specifics of the Credential that the issuer supports issuance of:
 
