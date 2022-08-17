@@ -760,6 +760,28 @@ HTTP/1.1 400 Bad Request
 
 ToDo - 400 might not be a right answer.
 
+# Batch Credential Endpoint {#batch-credential-endpoint}
+
+The Batch Credential Endpoint issues multiple Credentials as approved by the End-User upon presentation of a valid Access Token representing this approval.
+
+Communication with the Batch Credential Endpoint MUST utilize TLS. 
+
+The client can request issuance of multiple Credentials of certain types and formats at the same time.
+
+When using the Batch Credential Endpoint, a Credential Request included in a Batch Credential Request and a Credential Response included in a Batch Credential Response is used in the same manner as for the Credential Endpoint.
+
+## Batch Credential Request {#credential_batch_request}
+
+When using the Batch Credential Request, the Batch Credential Request is used in the same manner as the Credential Request for the Credential Endpoint with the addition that the Batch Credential Request MUST be sent as a JSON array where each element is a JSON object representing a Credential Request.
+
+TBD: non-normative example
+
+## Batch Credential Response {#credential_batch_response}
+
+When using the Batch Credential Request, the Batch Credential Response is used in the same manner as for the Credential Response with the addition that the individual Credential Response JSON objects MUST be sent as an JSON array. Each Credential Response in the array corresponds to the Credential Request at the same array index in the Batch Credential Request.
+
+TBD: non-normative example 
+
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
 This endpoint is used to issue a Credential previously requested at the Credential endpoint in case the Issuer was not able to immediately issue this Credential. 
