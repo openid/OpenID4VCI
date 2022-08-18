@@ -285,7 +285,7 @@ The following request parameters are defined:
 
 The Wallet MUST consider the parameter values in the initiation request as not trustworthy since the origin is not authenticated and the message integrity is not protected. The Wallet MUST apply the same checks on the issuer that it would apply when the flow is started from the Wallet itself since the issuer is not trustworthy just because it sent the initiation request. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
 
-The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if the Wallet would have started the flow.
+The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if the Wallet would have started the flow. 
 
 The Issuer MUST ensure the release of any privacy-sensitive data is legally based.
 
