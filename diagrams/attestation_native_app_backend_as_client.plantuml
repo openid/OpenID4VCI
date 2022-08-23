@@ -1,0 +1,73 @@
+@startuml
+
+autonumber
+
+participant "User Agent" as ua
+
+participant "Wallet Frontend" as w
+
+participant "Wallet Backend" as b
+
+participant "Credential Issuer" as i
+
+ua --> w: get credential
+
+w -> i: get metadata
+
+i -> w : metadata
+
+w -> w : create PKCE code verifier
+
+w -> b : par (client_id, code_challenge, code_challenge_method, \nauthorization_details, redirect_uri)
+
+b -> i : par (response_type, client_id, code_challenge,\ncode_challenge_method, authorization_details, redirect_uri)
+
+i --> b : request_uri
+
+b --> w : request_uri
+
+
+w --> ua: authorize (client_id, request_uri)
+ua --> i: authorize (client_id, request_uri)
+
+
+note over ua, i: user authentication and consent
+
+i --> ua : authorize response (code)
+ua --> w : authorize response (code)
+
+w -> w : gen DPoP key
+
+w -> w : gen DPoP proof for issuer token endpoint
+
+w -> b : get nonce
+
+b -> w : return nonce
+
+w -> w : sign attestation assertion (nonce)
+
+w -> b : get access token (client_id, code, code_verifier,\ndpop, assertion, redirect_uri, token_endpoint)
+
+b -> b : check assertion
+
+b -> i : token (client_id, grant_type, code, code_verifier,\ndpop_proof, redirect_uri)
+
+note over w, i: wallet backend authenticates with certificate registered with trusted registry\ncredential issuer checks wallet provider's cert with trusted registry\naccess token is bound to DPoP key maintained by wallet frontend
+
+i -> b : access_token, c_nonce, authorization_details
+
+b -> w : access_token, c_nonce, authorization_details
+
+w -> w : gen key for credential
+
+w -> w : create proof of posssion (c_nonce)
+
+w  -> w : create DPoP proof for issuance request
+
+w -> i : issue credential (access_token, credential_type, format, proof, proof)
+
+i -> w : credential, format
+
+w -> w : store credential
+
+@enduml
