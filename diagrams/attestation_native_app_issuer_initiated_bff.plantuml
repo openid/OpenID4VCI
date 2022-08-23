@@ -28,7 +28,7 @@ w -> w : create proof of posssion (c_nonce)
 
 w  -> w : create DPoP proof for issuance request
 
-w -> i : issue credential (access_token, credential_type, format, proof, proof)
+w -> i : issue credential (access_token, credential_type, format, proof, dpop_proof)
 
 i -> w : credential, format
 
