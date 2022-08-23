@@ -1,6 +1,6 @@
 @startuml
 autonumber
-participant User as u
+participant "User Agent" as u
 participant "Wallet Frontend" as w
 participant "Wallet Backend" as b
 participant "Credential Issuer" as i
