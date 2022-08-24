@@ -345,7 +345,7 @@ The request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-o
 
 * `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
 * `credential_type`: REQUIRED. JSON string denoting the type of the requested Credential.
-* `format`: OPTIONAL. JSON string representing a format in which the Credential is requested to be issued. Valid values are defined in the table in Section 6.7.3. and include `jwt_vp` and `ldp_vp`. Formats identifiers not in the table, MAY be defined by the profiles of this specification.
+* `format`: OPTIONAL. JSON string representing a format in which the Credential is requested to be issued. Valid format identifier values are defined in the table in Section 9.3 and include `jwt_vp` and `ldp_vp`. Formats identifiers not in the table, MAY be defined by the profiles of this specification.
 * `locations`: OPTIONAL. An array of strings that allows a client to specify the location of the resource server(s) allowing the AS to mint audience restricted access tokens. This data field is predefined in Section 2.2 of ([@!I-D.ietf-oauth-rar]).
 
 [TBD: `locations` could enable a single authorization server to authorize access to different Credential endpoints. Might be an architectural option we want to pursue.]
@@ -632,7 +632,7 @@ Below is a non-normative example of a `proof` parameter (line breaks for display
   xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
   0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
   NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
-}
+  }
 ```
 
 where the JWT looks like this:
@@ -676,7 +676,6 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 {
   "type": "https://did.example.org/healthCard"
   "format": "ldp_vc",
-  "did": "did:example:ebfeb1f712ebc6f1c276e12ec21",
   "proof": {
     "proof_type": "jwt",
     "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
@@ -912,7 +911,7 @@ The following example shows a non-normative example of the relevant entries in t
       "formats": {
         "jwt_vc": {
           "types": ["VerifiableCredential", "WorkplaceCredential"],
-          "binding_methods_supported": ["did"],
+          "cryptographic_binding_methods_supported": ["did"],
           "cryptographic_suites_supported": ["ES256K"]
         }
       }
