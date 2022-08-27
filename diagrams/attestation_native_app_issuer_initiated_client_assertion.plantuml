@@ -1,0 +1,38 @@
+@startuml
+participant "User Agent" as u
+box "Wallet"
+participant "Frontend" as w
+participant "Backend" as b
+end box
+box "Issuer"
+participant "Metadata" as m
+participant "Web Site" as s
+participant "Token Endpoint" as t
+participant "Credential Endpoint" as c
+end box 
+
+u -> s : get credential
+note over u, s: prepare credential issuance
+s -> u : Issuance Initiation Request \n(pre-authz-code, credential_type, expected_key_types, issuer)
+u -> w : Issuance Initiation Request \n(pre-authz-code, credential_type, expected_key_types, issuer)
+w -> w : gen DPoP key
+w -> w : gen DPoP proof for issuer token endpoint
+w -> b : get nonce (for app attestation)
+b -> w : nonce
+w -> w : obtain app attestation (nonce)
+w -> b : get assertion for code exchange\n(hash(pre-authz-code), app attestation)
+b -> b : check app_attestation
+b -> b : generate assertion \n(iss=wallet backend, pre_authz_code_hash, client_id)
+b -> w : assertion
+w -> m : get issuer metadata
+w -> t : token request \n(pre-authz-code, pin, client_id, assertion, dpop_proof)
+note over w, t: wallet authenticates with issuer as OAuth Client using the assertion issued by its backend (RFC 7523)\nissuer checks wallet backend id and key against trust registry
+note over w, t: Token Endpoint validates pre-authorized code and creates corresponding access token
+t -> w : token response \n(access_token, c_nonce)
+w -> w : gen key : key, key_attestation
+w -> w : create proof of posssion (c_nonce)
+w  -> w : create DPoP proof for issuance request
+w -> c : issue credential \n(access_token, credential_type, format, proof, key_policy, dpop_proof)
+note over w, c: Credential Endpoint Token checks whether the access token is good for requested credential type and \nwhether the proof of possession is valid
+c -> w : credential response (credential, format)
+@enduml
