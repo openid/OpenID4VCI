@@ -117,6 +117,7 @@ Upon providing consent, the user is sent back to the Wallet. The Wallet informs 
 This specification defines the following mechanisms to allow Wallet applications used by the End-User to request Credential issuers to issue Verifiable Credentials via the Credential Endpoint:
 
 * A newly defined Credential Endpoint from which Credentials can be issued. See (#credential-endpoint).
+* An optional newly defined Batch Credential Endpoint from which multiple Credentials can be issued in one request. See (#batch-credential-endpoint).
 * An optional mechanism for the Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
 * An extended Authorization Request that allows to request authorization to request issuance of Credentials of specific types. See (#credential-authz-request).
 * An optional ability to bind an issued Credential to a cryptographic key material. The Credential request therefore allows to convey a proof of posession for the key material. Multiple proof types are supported. See (#credential_request). 
@@ -124,9 +125,11 @@ This specification defines the following mechanisms to allow Wallet applications
 * A mechanism for the Issuer to publish metadata about the Credential it is capable of issuing. See (#server-metadata)
 * A mechanism that allows issuance of multiple Credentials of same or different type. See (#token-response) and (#credential-response).
 
-The Wallet sends one Credential Request per individual Credential. The wallet MAY use the same access token to send multiple Credential Requests to request issuance of 
+The Wallet sends one Credential Request per individual Credential to the Credential Endpoint. The wallet MAY use the same access token to send multiple Credential Requests to request issuance of 
   - multiple Credentials of different types bound to the same proof, or
   - multiple Credentials of the same type bound to different proofs
+
+The Wallet MAY send one Batch Credential Request to the Batch Credential Endpoint to request multiple Credentials of different types bound to the same proof, or multiple Credentials of the same type bound to different proofs in the Batch Credential Response.
 
 The Issuer MAY also request Credential presentation as means to authenticate or identify the User during the Issuance Flow as illustrated in a use case in (#use-case-2).
 
@@ -186,6 +189,8 @@ Figure: Issuance using Authorization code flow
 (3) The Wallet sends a Credential Request to the Issuer's Credential Endpoint with the Access Token and proof of possession of the public key to which the the issued VC shall be bound. Upon successfully validating Access Token and proof, the Issuer returns a VC in the Credential Response if it is able to issue a Credential right away. This step is defined in (#credential-endpoint).
 
 If the Issuer requires more time to issue a Credential, the Issuer may returns an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued Credential as defined in (#deferred-credential-issuance).
+
+If the Issuer wants to issue multiple Credentials at the same time, the Issuer MAY support the Batch Credential Endpoint and the Wallet MAY send a Batch Credential Request to the Batch Credential Endpoint as defined in (#batch-credential-endpoint).
 
 Note: this flow is based on OAuth 2.0 and the code grant type, but it can be used with other grant types as well. 
 
@@ -255,6 +260,7 @@ Newly defined endpoints are the following:
 
 * Issuance Initiation Endpoint: An endpoint exposed by the Wallet that allows an issuer to initiate the issuance flow.
 * Credential Endpoint: An OAuth 2.0-protected endpoint exposed by the Issuer and used to issue verifiable Credentials.
+* Batch Credential Endpoint: An OAuth 2.0-protected endpoint exposed by the Issuer and used to include multiple verifiable Credentials in one response.
 * Deferred Credential Endpoint: this endpoint is used for deferred issuance of verifiable Credentials.
 
 Existing OAuth 2.0 mechanisms are extended as following:
@@ -855,9 +861,11 @@ HTTP/1.1 200 OK
 }]
 ```
 
+The Batch Credential Response MUST NOT include errors for individual Credential Requests in the Batch Credential Request. Note, a partial successful Batch Credential Response is not valid.
+
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
-This endpoint is used to issue a Credential previously requested at the Credential endpoint in case the Issuer was not able to immediately issue this Credential. 
+This endpoint is used to issue a Credential previously requested at the Credential Endpoint or Batch Credential Endpoint in case the Issuer was not able to immediately issue a Credential. 
 
 ## Deferred Credential Request
 
