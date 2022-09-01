@@ -92,7 +92,7 @@ This is a non-exhaustive list of sample use cases.
 
 ## Issuer Initiated Issuance - Same Device {#use-case-3}
 
-While browsing the university's home page, the user finds a link "request your digital diploma". User  clicks on this link and is being redirected to a digital Wallet application. The Wallet notifies the user that an issuer offered to issue a diploma Credential. User confirms this inquiry and is taken to the university's Credential issuance service's user experience. After authenticating at the university and consenting to the issuance of a digital diploma, the user is sent back to the Wallet, where she can check the successful creation of the digital diploma.
+While browsing the university's home page, the user finds a link "request your digital diploma". User  clicks on this link and is being redirected to a digital Wallet. The Wallet notifies the user that an issuer offered to issue a diploma Credential. User confirms this inquiry and is taken to the university's Credential issuance service's user experience. After authenticating at the university and consenting to the issuance of a digital diploma, the user is sent back to the Wallet, where she can check the successful creation of the digital diploma.
 
 ## Issuer Initiated Issuance - Cross Device (with information pre-submitted by the User) {#use-case-4}
 
@@ -102,7 +102,7 @@ The user is starting a job at a new employer. An employer has requested the user
 
 The user wants to obtain a digital criminal record. She visits the local administration's office and requests the issuance of the official criminal record as a digital Credential. After presenting her ID document, she is asked to scan a QR code with her wallet. She is being told that the actual issuance of the Credential will take some time due to necessary background checks by the authority. 
 
-In the Wallet, the user sees an indication that issuance of the digital record is under way. A few days later, the user receives a notification from her Wallet app that requested Credential was successfully issued. When the user opens the Wallet, she is asked whether she wants to download the Credential. She confirms, and the new Credential is retrieved and stored in the Wallet.
+In the Wallet, the user sees an indication that issuance of the digital record is under way. A few days later, the user receives a notification from her Wallet that requested Credential was successfully issued. When the user opens the Wallet, she is asked whether she wants to download the Credential. She confirms, and the new Credential is retrieved and stored in the Wallet.
 
 ## Wallet Initiated Issuance during Presentation {#use-case-1}
 
@@ -118,7 +118,7 @@ Upon providing consent, the user is sent back to the Wallet. The Wallet informs 
 
 # Overview
 
-This specification defines the following mechanisms to allow Wallet applications used by the End-User to request Credential issuers to issue Verifiable Credentials via the Credential Endpoint:
+This specification defines the following mechanisms to allow Wallets used by the End-User to request Credential issuers to issue Verifiable Credentials via the Credential Endpoint:
 
 * A newly defined Credential Endpoint from which Credentials can be issued. See (#credential-endpoint).
 * An optional mechanism for the Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
@@ -174,7 +174,7 @@ ToDo: discuss if need to illustrate the verifier... per use-case-1
         |                |      Token Response (access_token)                   |
         |                |<-----------------------------------------------------|    
         |                |                                                      |
-        |                |  (3) Credential Request (access_token, proof(s))     |
+        |                |  (4) Credential Request (access_token, proof(s))     |
         |                |----------------------------------------------------->| 
         |                |      Credential Response                             |
         |                |      (credential(s) OR acceptance_token)             |
@@ -313,7 +313,7 @@ Below is a non-normative example of an Issuance Initiation Request in a pre-auth
     &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
 ```
 
-The Issuer MAY also render a QR code containing the request data that can be scanned by the user using a Wallet app, or a deeplink that the user can click.
+The Issuer MAY also render a QR code containing the request data that can be scanned by the user using a Wallet, or a deeplink that the user can click.
 
 The following is a non-normative example of such a request that can be included in a QR code or a deeplink:
 
@@ -948,11 +948,11 @@ The following mechanisms in concert can be utilized to fulfill those objectives:
 
 **App Attestation**: Key attestation, however, does not establish trust in the application storing the Credential and producing presentation of that Credential. App attestation as provided by mobile operating systems, e.g. iOS's DeviceCheck or Android's Safetynet, allows a server system to ensure it is communicating to a legitimate instance of its genuine app. Those mechanisms can be utilized to validate the internal integrity of the Wallet (as a whole).  
 
-**Device Attestation**: Device Attestation attests the health of the device, on which the Wallet application is running, as a whole. It prevents compromises such as a malicious third party application tampering with a Wallet application managing keys and Credentials, which cannot be captured only by obtaining app attestation of a Wallet application.
+**Device Attestation**: Device Attestation attests the health of the device, on which the Wallet is running, as a whole. It prevents compromises such as a malicious third party application tampering with a Wallet that manages keys and Credentials, which cannot be captured only by obtaining app attestation of a Wallet.
 
 **Client authentication** allows a Wallet to authenticate with an issuer. In order to securely authenticate, the Wallet needs to utilize a backend component managing the key material and processing the secure communication with the Credential issuer. The issuer may establish trust with the Wallet based on its own auditing or a trusted 3rd party attestation of the conformance of the Wallet to a certain policy.  
 
-Directly using key, app and/or device attestations to proof certain capabilities towards an issuer is an obvious option. However, this at least requires platform mechanisms that issue signed assertions that 3rd parties can evaluate, which is not always the case (e.g. iOS's DeviceCheck). Also, such an approach creates dependencies on platform specific mechanisms, trust anchors, and platform specific identifiers (e.g. Android `apkPackageName`) and it reveals information about the internal design of a Wallet app. Implementers should take that consequences into account. 
+Directly using key, app and/or device attestations to proof certain capabilities towards an issuer is an obvious option. However, this at least requires platform mechanisms that issue signed assertions that 3rd parties can evaluate, which is not always the case (e.g. iOS's DeviceCheck). Also, such an approach creates dependencies on platform specific mechanisms, trust anchors, and platform specific identifiers (e.g. Android `apkPackageName`) and it reveals information about the internal design of a Wallet. Implementers should take that consequences into account. 
 
 The approach recommended by this specification is that the issuer relies on the OAuth 2.0 client authentication to establish trust in the Wallet and leaves it to the Wallet to ensure its internal integrity using app and key attestation (if required). This establishes a clean separation between the different hemispheres and a uniform interface irrespectively of the Wallet's architecture (e.g. native vs web Wallet). Client authentication can be performed with Credentials registered with the issuer or with assertions issued to the Wallet by a 3rd party the issuer trusts for the purpose of client authentication.  
 
