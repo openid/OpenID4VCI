@@ -195,7 +195,7 @@ Note: this flow is based on OAuth 2.0 and the code grant type, but it can be use
 
 ## Pre-Authorized Code Flow
 
-Below is a diagram of a Credential issuance using Pre-Authorized Code flow. It is a flow where the user authentication and authorization happens prior to the Credential Issuer initiating the issuance flow, without utilizing the Authorization Endpoint. Issuance flow starts after Credentials are ready to be retrieved by the Wallet. See (#use-case-4) for a use case.
+Figure 2 is a diagram of a Credential issuance using Pre-Authorized Code flow. It is a flow where the user authentication and authorization happens prior to the Credential Issuer initiating the issuance flow, without utilizing the Authorization Endpoint. Issuance flow starts after Credentials are ready to be retrieved by the Wallet. See (#use-case-4) for a use case.
 
 How the user provides information required for the issuance of a requested Credential to the Credential Issuer and the business processes conducted by the Credential Issuer to prepare a Credential are out of scope of this specification.
 
@@ -401,7 +401,7 @@ The concrete scope values and the mapping between a certain scope value and the 
 
 It is RECOMMENDED to use collision-resistant scopes values.
 
-Issuers MUST interpret each scope value as a request to access the Credential Endpoint as defined in (#credential-endpoint) for the issuance of a Credential type identified by that scope value. Multiple scope values MAY be present in a single request whereby each 
+Credential Issuers MUST interpret each scope value as a request to access the Credential Endpoint as defined in (#credential-endpoint) for the issuance of a Credential type identified by that scope value. Multiple scope values MAY be present in a single request whereby each 
 occurrence MUST be interpreted individually.
 
 Providers that do not understand the value of this scope in a request MUST ignore it entirely. 
