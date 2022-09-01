@@ -132,7 +132,7 @@ The Wallet sends one Credential Request per individual Credential. The wallet MA
   - multiple Credentials of different types bound to the same proof, or
   - multiple Credentials of the same type bound to different proofs
 
-the Credential Issuer MAY also request Credential presentation as means to authenticate or identify the User during the Issuance Flow as illustrated in a use case in (#use-case-2).
+the Credential Issuer MAY also request Credential presentation as means to authenticate or identify the User during the issuance flow as illustrated in a use case in (#use-case-2).
 
 Note that the issuance can have multiple characteristics, which can be combined depending on the use-cases: 
 
@@ -247,7 +247,7 @@ Note that the pre-authorized_code is sent to the Token Endpoint, and not to the 
 
 It is also important to note that anyone who possesses a valid pre-authorization_code would be able to receive a VC from the Credential Issuer. Implementers MUST implement mitigations most suitable to the use-case. 
 
-One such mechanism defined in this specification is the usage of PIN. If in the Issuance Initiation Request the Credential Issuer indicated that the PIN is required, the user is requested to type in a PIN sent via a channel different that the Issuance Flow and the PIN is sent to the Credential Issuer in the Token Request. 
+One such mechanism defined in this specification is the usage of PIN. If in the Issuance Initiation Request the Credential Issuer indicated that the PIN is required, the user is requested to type in a PIN sent via a channel different that the issuance Flow and the PIN is sent to the Credential Issuer in the Token Request. 
 
 For more details and concrete mitigations, see (#security-considerations).
 
