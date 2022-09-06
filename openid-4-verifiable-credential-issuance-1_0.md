@@ -1142,7 +1142,8 @@ The technology described in this specification was made available from contribut
 
    -08
 
-   * removed namespacing to `openid_credential` the scopes used to request issuance of a particular credential type
+   * reworked use of OAuth scopes to be more flexible for implementers
+   * added text on scope related error handling
    * changed media type of a Credential Request to application/json from application/x-www-form-urlencoded
    
    -07
