@@ -282,7 +282,7 @@ The Issuer sends the request as a HTTP GET request or a HTTP redirect to the Iss
 The following request parameters are defined: 
 
 * `issuer`: REQUIRED. The issuer URL of the Credential issuer, the Wallet is requested to obtain one or more Credentials from. 
-* `credential_type`: REQUIRED. A JSON string denoting the type of the Credential the Wallet shall request.
+* `credential_types`: REQUIRED. Space delimited, case sensitive list of ASCII string values that specify the types of the Credentials the Wallet shall request. A single ASCII space character (0x20) MUST be used as the delimiter.
 * `pre-authorized_code`: CONDITIONAL. The code representing the issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
 * `user_pin_required`: OPTIONAL. Boolean value specifying whether the issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value. MUST NOT be used in Authorization Code flow when `pre-authorized_code` is present.
@@ -290,8 +290,6 @@ The following request parameters are defined:
 The Wallet MUST consider the parameter values in the initiation request as not trustworthy since the origin is not authenticated and the message integrity is not protected. The Wallet MUST apply the same checks on the issuer that it would apply when the flow is started from the Wallet itself since the issuer is not trustworthy just because it sent the initiation request. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
 
 The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if the Wallet would have started the flow. 
-
-The Wallet MUST be able to process multiple occurences of the URL query parameters `credential_type`. Multiple occurences MUST be treated as multiple values of the respective parameter.
 
 The Issuer MUST ensure the release of any privacy-sensitive data is legally based.
 
