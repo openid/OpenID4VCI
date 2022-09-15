@@ -841,6 +841,7 @@ The value in a key value pair is a JSON object detailing the specifics about the
   * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
     * `name`: OPTIONAL. String value of a display name for the claim.
     * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier.
+* `order`: OPTIONAL. An array listing the claims in the order they should be presented.
 
 It is dependent on the Credential format where the requested claims will appear.
 
@@ -903,7 +904,8 @@ The following example shows a non-normative example of the relevant entries in t
             "name": "GPA"
           }]
         }
-      }
+      },
+      "order": ["last_name", "given_name", "degree", "gpa"]
     },
     "WorkplaceCredential": {
       "formats": {
