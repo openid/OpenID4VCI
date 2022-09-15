@@ -106,10 +106,10 @@ the Credential Issuer MAY also request Credential presentation as means to authe
 
 Note that the issuance can have multiple characteristics, which can be combined depending on the use-cases: 
 
-* Authorization Code Flow or Pre-Authorized Code Flow: whether the Credential Issuer obtains user information to turn into a verifiable Credential using user authentication and consent at the Credential Issuer's Authorization Endpoint (Authorization Code Flow), or using out of bound mechanisms outside of the issuance flow (pre-authorized code flow)
-* Wallet initiated or Issuer initiated: whether the issuance request from the Wallet is sent to the Credential Issuer without any gesture from the Credential Issuer (Wallet Initiated), or following the communication from the Credential Issuer (Issuer Initiated).
-* Same-device or Cross-device: whether the Wallet to which the Credential is issued and the Credential Issuer's user experience (website or an app) reside on the same device, or on different devices.
-* Just-in-time or Deferred: whether the Credential Issuer can issue the Credential directly in response to the Credential Request (just-in-time), or requires time and needs the Wallet to come back to retrieve Credential (deferred).
+* Authorization Code Flow or Pre-Authorized Code Flow: the Credential Issuer can obtain user information to turn into a verifiable Credential using user authentication and consent at the Credential Issuer's Authorization Endpoint (Authorization Code Flow), or using out of bound mechanisms outside of the issuance flow (pre-authorized code flow)
+* Wallet initiated or Issuer initiated: the issuance request from the Wallet can be sent to the Credential Issuer without any gesture from the Credential Issuer (Wallet Initiated), or following the communication from the Credential Issuer (Issuer Initiated).
+* Same-device or Cross-device: the Wallet to which the Credential is issued and the Credential Issuer's user experience (website or an app) can reside on the same device, or on different devices.
+* Just-in-time or Deferred: the Credential Issuer can issue the Credential directly in response to the Credential Request (just-in-time), or requires time and needs the Wallet to come back to retrieve Credential (deferred).
 
 ## Authorized Code Flow
 
