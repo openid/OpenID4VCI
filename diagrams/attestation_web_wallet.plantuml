@@ -1,6 +1,6 @@
 @startuml
 participant "User Agent" as w
-participant "Wallet" as b
+participant "Web Wallet" as b
 participant Issuer as i
 
 w -> b : start credential issuance : authz url

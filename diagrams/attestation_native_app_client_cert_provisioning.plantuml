@@ -1,0 +1,18 @@
+@startuml
+autonumber
+participant User as u
+participant "Wallet Frontend" as w
+participant "Wallet Backend" as b
+
+u -> w : setup
+w -> w : create key pair (pub, priv)
+w -> b : get nonce (for app attestation)
+b -> w : nonce
+w -> w : obtain app attestation (nonce)
+w -> b : get certificate (app attestation, pub)
+b -> b : check app_attestation
+b -> b : generate certificate (pub, issuer=wallet provider, client_id)
+b -> w : certificate, client_id
+note over w,b: could also be a verifiable credential
+w -> w: store certificate
+@enduml
