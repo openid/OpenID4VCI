@@ -566,7 +566,7 @@ For cryptographic binding, the Client has the following options to provide crypt
 
 A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the "application/json" media type.
 
-* `type`: REQUIRED. Type of a Credential being requested. It corresponds to a `type` property in a Issuer metadata.
+* `credential_type`: REQUIRED. Type of a Credential being requested. It corresponds to the `credential_type` property in the Authorization Request.
 * `format`: OPTIONAL. Format of the Credential to be issued. If not present, the Credential Issuer will determine the Credential 
 format based on the client's format default.
 * `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued Credential shall be 
@@ -773,7 +773,7 @@ This specification defines the following new Server Metadata parameters for this
 
 The following parameter MUST be used to communicates the specifics of the Credential that the Credential Issuer supports issuance of:
 
-* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string serving as an abstract identifier of the Credential. This identifier is RECOMMENDED to be collision resistant - it can be globally unique, but does not have to be when naming conflicts are unlikely to arise in a given use case. The value is a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). 
+* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where each key is a `credential_type` that the server can issue. It corresponds to the `credential_type` from a Credential Request. The value is a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). 
 
 * `credential_issuer`: OPTIONAL. A JSON object containing display properties for the Credential Issuer.
   * `display`: OPTIONAL. An array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
@@ -784,23 +784,22 @@ The following parameter MUST be used to communicates the specifics of the Creden
 
 This section defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
 
-* `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included. Note that the display name of the Credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
-  * `name`: REQUIRED. String value of a display name for the Credential.
-  * `locale`: OPTIONAL. String value that identifies language of this display object represented as language tag values defined in BCP47 [@!RFC5646]. Multiple `display` objects may be included for separate languages. There MUST be only one object with the same language identifier.
-  * `logo`: OPTIONAL. A JSON object with information about the logo of the Credential with a following non-exhaustive list of parameters that MAY be included:
-    * `url`: OPTIONAL. URL where the Wallet can obtain a logo of the Credential Issuer.
+  * `display`: OPTIONAL. An array of objects, where each object contains the display properties of the supported credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included. Note that the display name of the supported credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
+   * `name`: REQUIRED. String value of a display name for the `credential_type`.
+   * `locale`: OPTIONAL. String value that identifies the language of this display object represented as language tag values defined in BCP47 [@!RFC5646]. Multiple `display` objects may be included for separate languages. There MUST be only one object with the same language identifier.
+  * `logo`: OPTIONAL. A JSON object with information about the logo of the `credential_type` with a following non-exhaustive list of parameters that MAY be included:
+    * `url`: OPTIONAL. URL where the Wallet can obtain a logo of the `credential_type` from the Credential Issuer.
     * `alt_text`: OPTIONAL. String value of an alternative text of a logo image.
   * `description`: OPTIONAL. String value of a description of the Credential.
   * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
   * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
 
-* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the Credential. Below is a non-exhaustive list of valid key values defined by this specification:
+* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the supported Credential. Below is a non-exhaustive list of valid key values defined by this specification:
   * Claim Format Designations defined in [@!DIF.PresentationExchange], such as `jwt_vc` and `ldp_vc`
   * `mdl_iso`: defined in this specification to express a mobile driving licence (mDL) Credential compliant to a data model and data sets defined in ISO/IEC 18013-5:2021 specification. 
   * `ac_vc`: defined in this specificaiton to express an AnonCreds Credential format defined as part of the Hyperledger Indy project [Hyperledger.Indy].
 
 The value in a key value pair is a JSON object detailing the specifics about the support for the Credential format with a following non-exhaustive list of parameters that MAY be included:
-  * `types`: REQUIRED. Array of strings representing a format specific type of a Credential. This value corresponds to `type` in W3C [@!VC_DATA] and a `doctype` in ISO/IEC 18013-5 (mobile Driving License).
   * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential as defined in (#credential-binding). A non-exhaustive list of valid values defined by this specification are `did`, `jwk`, and `mso`.
   * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptosuites for Credentials in `jwt_vc` format should use algorithm names defined in [IANA JOSE Algorithms Registry](https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms). Cryptosuites for Credentials in `ldp_vc` format should use signature suites names defined in [Linked Data Cryptographic Suite Registry](https://w3c-ccg.github.io/ld-cryptosuite-registry/).
 
@@ -824,13 +823,13 @@ The following example shows a non-normative example of the relevant entries in t
  {
   "credential_endpoint": "https://server.example.com/credential",
   "credentials_supported": {
-    "university_degree": {
+    "https://did.example.org/healthCard": {
       "display": [{
-          "name": "University Credential",
+          "name": "Example Health Card",
           "locale": "en-US",
           "logo": {
-            "url": "https://exampleuniversity.com/public/logo.png",
-            "alternative_text": "a square logo of a university"
+            "url": "https://example.org/public/logo.png",
+            "alternative_text": "a square logo of a health card"
           },
           "background_color": "#12107c",
           "text_color": "#FFFFFF"
@@ -839,7 +838,7 @@ The following example shows a non-normative example of the relevant entries in t
           "name": "在籍証明書",
           "locale": "jp-JA",
           "logo": {
-            "url": "https://exampleuniversity.com/public/logo.png",
+            "url": "https://example.org/public/logo.png",
             "alternative_text": "大学のロゴ"
           },
           "background_color": "#12107c",
@@ -848,7 +847,6 @@ The following example shows a non-normative example of the relevant entries in t
       ],
       "formats": {
         "ldp_vc": {
-          "types": ["VerifiableCredential", "UniversityDegreeCredential"],
           "cryptographic_binding_methods_supported": ["did"],
           "cryptographic_suites_supported": ["Ed25519Signature2018"]
         }
@@ -867,21 +865,12 @@ The following example shows a non-normative example of the relevant entries in t
           ]
         },
         "last_name": {},
-        "degree": {},
-        "gpa": {
-          "mandatory": false,
-          "value_type": "number",
-          "display": [{
-            "name": "GPA"
-          }]
-        }
-      },
-      "order": ["last_name", "given_name", "degree", "gpa"]
+        "health_status": {}
+      }
     },
     "WorkplaceCredential": {
       "formats": {
         "jwt_vc": {
-          "types": ["VerifiableCredential", "WorkplaceCredential"],
           "cryptographic_binding_methods_supported": ["did"],
           "cryptographic_suites_supported": ["ES256K"]
         }
@@ -890,7 +879,7 @@ The following example shows a non-normative example of the relevant entries in t
   },
   "credential_issuer": {
     "display": [{
-        "name": "Example University",
+        "name": "Example Organisation",
         "locale": "en-US"
       },
       {
