@@ -44,9 +44,9 @@ This specification defines an API and corresponding OAuth 2.0-based authorizatio
 
 # Introduction
 
-This specification defines an API designated as Credential Endpoint and corresponding OAuth 2.0-based authorization mechanisms (see [@!RFC6749]) for the issuance of verifiable Credentials, supporting W3C formats as well as other Credential formats. This allows existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) to extend their service and become Credential Issuers. It also allows new applications built using Verifiable Credentials to utilize OAuth 2.0 as integration and interoperability layer.
+This specification defines an API designated as Credential Endpoint that is used to issue verifiable credentials and corresponding OAuth 2.0 based authorization mechanisms (see [@!RFC6749]) that the Wallet uses to obtain authorization to receive verifiable credentials. W3C formats as well as other Credential formats are supported. This allows existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) to extend their service and become Credential Issuers. It also allows new applications built using Verifiable Credentials to utilize OAuth 2.0 as integration and interoperability layer.
 
-Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect, in that they allow a Credential Issuer to assert End-User claims. However, in contrast to the identity assertions, a verifiable Credential follows a pre-defined schema (the Credential type) and is typically bound to key material allowing the End-User to prove the legitimate possession of the Credential. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential Issuer. This specification caters for those differences.
+Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect, in that they allow a Credential Issuer to assert End-User claims. However, in contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the Credential type) and is typically bound to key material allowing the End-User to prove the legitimate possession of the Credential. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential Issuer. This specification caters for those differences.
 
 # Terminology
 
@@ -86,36 +86,6 @@ Base64url Encoding
 
 Base64 encoding using the URL- and filename-safe character set defined in Section 5 of [@!RFC4648], with all trailing '=' characters omitted (as permitted by Section 3.2 of [@!RFC4648]) and without the inclusion of any line breaks, whitespace, or other additional characters. Note that the base64url encoding of the empty octet sequence is the empty string. (See Appendix C of [@!RFC7515] for notes on implementing base64url encoding without padding.)
 
-# Use Cases
-
-This is a non-exhaustive list of sample use cases.
-
-## Issuer Initiated Issuance - Same Device {#use-case-3}
-
-While browsing the university's home page, the user finds a link "request your digital diploma". User  clicks on this link and is being redirected to a digital Wallet. The Wallet notifies the user that a Credential Issuer offered to issue a diploma Credential. User confirms this inquiry and is taken to the university's Credential issuance service's user experience. After authenticating at the university and consenting to the issuance of a digital diploma, the user is sent back to the Wallet, where she can check the successful creation of the digital diploma.
-
-## Issuer Initiated Issuance - Cross Device (with information pre-submitted by the User) {#use-case-4}
-
-The user is starting a job at a new employer. An employer has requested the user to upload certain documents to the employee portal. A few days later, the user receives an email from the employer notifying her that the employee Credential is ready and asking her to scan a QR code to retrieve it. User scans the QR code with her smartphone, which opens her Wallet. Meanwhile, the user has received a text message with a PIN code to her smartphone. After entering that PIN code in the Wallet for security reasons, the user confirms the Credential issuance, and receives Credential into the Wallet.
-
-## Issuer Initiated Issuance - Cross Device & Deferred {#use-case-5}
-
-The user wants to obtain a digital criminal record. She visits the local administration's office and requests the issuance of the official criminal record as a digital Credential. After presenting her ID document, she is asked to scan a QR code with her wallet. She is being told that the actual issuance of the Credential will take some time due to necessary background checks by the authority. 
-
-In the Wallet, the user sees an indication that issuance of the digital record is under way. A few days later, the user receives a notification from her Wallet that requested Credential was successfully issued. When the user opens the Wallet, she is asked whether she wants to download the Credential. She confirms, and the new Credential is retrieved and stored in the Wallet.
-
-## Wallet Initiated Issuance during Presentation {#use-case-1}
-
-A user comes across a verifier app that is requesting the user to present a Credential, e.g., a driving license. The Wallet determines the requested Credential type(s) from the Credential presentation request and notifies the user that there is currently no matching Credential in the Wallet. The Wallet determines a Credential Issuer capable of issuing the lacking Credential and upon user consent sends the user to the Credential Issuer's user experience (web site or app). Upon being authenticated and providing consent to issue the Credential into her Wallet, the user is sent back to the Wallet. The Wallet informs the user Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
-
-## Wallet Initiated Issuance during Presentation (requires presentation of additional Credentials during issuance) {#use-case-2}
-
-A user comes across a verifier app that is requesting the user to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the Credential presentation request and notifies the user that there is currently no matching Credential in the Wallet. The Wallet then offers the user a list of Credential Issuers, which might be based on a Credential Issuer list curated by the Wallet provider. The user picks the university she graduated from and is sent to that university's user experience (web site or app).  
-
-The user logs in to the university, which determines that the respective user account is not verified yet. Among multiple identification options, the user chooses to present identity Credential from her Wallet. The user is sent back to the Wallet where she consents to share requested Credential(s) to the university. The user is sent back to the university user experience. Based on the presented Credential, the university completes the user verification, looks up user data in its database, and offers to issue a diploma as a verifiable Credential. 
-
-Upon providing consent, the user is sent back to the Wallet. The Wallet informs the user Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
-
 # Overview
 
 This specification defines the following mechanisms to allow Wallets used by the End-User to request Credential Issuers to issue Verifiable Credentials via the Credential Endpoint:
@@ -136,10 +106,10 @@ the Credential Issuer MAY also request Credential presentation as means to authe
 
 Note that the issuance can have multiple characteristics, which can be combined depending on the use-cases: 
 
-* Authorization Code Flow or Pre-Authorized Code Flow: whether the Credential Issuer obtains user information to turn into a verifiable Credential using user authentication and consent at the Credential Issuer's Authorization Endpoint (Authorization Code Flow), or using out of bound mechanisms outside of the issuance flow (pre-authorized code flow)
-* Wallet initiated or Issuer initiated: whether the issuance request from the Wallet is sent to the Credential Issuer without any gesture from the Credential Issuer (Wallet Initiated), or following the communication from the Credential Issuer (Issuer Initiated).
-* Same-device or Cross-device: whether the Wallet to which the Credential is issued and the Credential Issuer's user experience (website or an app) reside on the same device, or on different devices.
-* Just-in-time or Deferred: whether the Credential Issuer can issue the Credential directly in response to the Credential Request (just-in-time), or requires time and needs the Wallet to come back to retrieve Credential (deferred).
+* Authorization Code Flow or Pre-Authorized Code Flow: the Credential Issuer can obtain user information to turn into a verifiable Credential using user authentication and consent at the Credential Issuer's Authorization Endpoint (Authorization Code Flow), or using out of bound mechanisms outside of the issuance flow (pre-authorized code flow)
+* Wallet initiated or Issuer initiated: the issuance request from the Wallet can be sent to the Credential Issuer without any gesture from the Credential Issuer (Wallet Initiated), or following the communication from the Credential Issuer (Issuer Initiated).
+* Same-device or Cross-device: the Wallet to which the Credential is issued and the Credential Issuer's user experience (website or an app) can reside on the same device, or on different devices.
+* Just-in-time or Deferred: the Credential Issuer can issue the Credential directly in response to the Credential Request (just-in-time), or requires time and needs the Wallet to come back to retrieve Credential (deferred).
 
 ## Authorized Code Flow
 
@@ -221,7 +191,7 @@ The diagram is based on a Credential Issuer initiated flow illustrated in a use 
         |                |      |  Obtains Issuer's server metadata             |
         |                | <----                                                |
         |                |                                                      |
-        |                |  (2) Token Request (pre_authorized_code, pin)        |
+        |                |  (2) Token Request (pre-authorized_code, pin)        |
         |                |----------------------------------------------------->| 
         |                |      Token Response (access_token)                   |
         |                |<-----------------------------------------------------|    
@@ -452,7 +422,7 @@ POST /op/par HTTP/1.1
 
 This step is OPTIONAL. After receiving an Authorization Request from the Client, the Credential Issuer MAY use this step to obtain additional Credentials from the End-User required to proceed with the authorization of the credential issuance, e.g. it may obtain an identity credential and utilize it to identify the user before issuing an additional credential. For a use case, see (#use-case-2).
 
-the Credential Issuer MUST utilize [@OpenID4VP] to dynamically request additional Credential Presentations. From a protocol perspective, the Credential Issuer then acts as a verifier and sends a presentation request to the Wallet. The Client SHOULD have these Credentials obtained prior to initiating a transaction with this Credential Issuer. 
+It is RECOMMENDED that the Credential Issuer uses [@OpenID4VP] to dynamically request presentation of additional Credentials. From a protocol perspective, the Credential Issuer then acts as a verifier and sends a presentation request to the Wallet. The Client SHOULD have these Credentials obtained prior to initiating a transaction with this Credential Issuer. 
 
 To enable dynamic callbacks of the Credential Issuer to the end-user's Wallet, the Wallet MAY provide additional parameters `Wallet_issuer` and `user_hint` defined in the Authorization Request section of this specification.
 
@@ -841,6 +811,8 @@ The value in a key value pair is a JSON object detailing the specifics about the
   * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
     * `name`: OPTIONAL. String value of a display name for the claim.
     * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier.
+    
+* `order`: OPTIONAL. An array of claims.display.name values that lists them in the order they should be displayed by the Wallet.
 
 It is dependent on the Credential format where the requested claims will appear.
 
@@ -903,7 +875,8 @@ The following example shows a non-normative example of the relevant entries in t
             "name": "GPA"
           }]
         }
-      }
+      },
+      "order": ["last_name", "given_name", "degree", "gpa"]
     },
     "WorkplaceCredential": {
       "formats": {
@@ -1133,6 +1106,38 @@ Copyright (c) 2022 The OpenID Foundation.
 The OpenID Foundation (OIDF) grants to any Contributor, developer, implementer, or other interested party a non-exclusive, royalty free, worldwide copyright license to reproduce, prepare derivative works from, distribute, perform and display, this Implementers Draft or Final Specification solely for the purposes of (i) developing specifications, and (ii) implementing Implementers Drafts and Final Specifications based on such documents, provided that attribution be made to the OIDF as the source of the material, but that such attribution does not indicate an endorsement by the OIDF.
 
 The technology described in this specification was made available from contributions from various sources, including members of the OpenID Foundation and others. Although the OpenID Foundation has taken steps to help ensure that the technology is available for distribution, it takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this specification or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any independent effort to identify any such rights. The OpenID Foundation and the contributors to this specification make no (and hereby expressly disclaim any) warranties (express, implied, or otherwise), including implied warranties of merchantability, non-infringement, fitness for a particular purpose, or title, related to this specification, and the entire risk as to implementing this specification is assumed by the implementer. The OpenID Intellectual Property Rights policy requires contributors to offer a patent promise not to assert certain patent claims against other contributors and against implementers. The OpenID Foundation invites any interested party to bring to its attention any copyrights, patents, patent applications, or other proprietary rights that may cover technology that may be required to practice this specification.
+
+# Appendix
+
+# Use Cases
+
+This is a non-exhaustive list of sample use cases.
+
+## Issuer Initiated Issuance - Same Device {#use-case-3}
+
+While browsing the university's home page, the user finds a link "request your digital diploma". User  clicks on this link and is being redirected to a digital Wallet. The Wallet notifies the user that a Credential Issuer offered to issue a diploma Credential. User confirms this inquiry and is taken to the university's Credential issuance service's user experience. After authenticating at the university and consenting to the issuance of a digital diploma, the user is sent back to the Wallet, where she can check the successful creation of the digital diploma.
+
+## Issuer Initiated Issuance - Cross Device (with information pre-submitted by the User) {#use-case-4}
+
+The user is starting a job at a new employer. An employer has requested the user to upload certain documents to the employee portal. A few days later, the user receives an email from the employer notifying her that the employee Credential is ready and asking her to scan a QR code to retrieve it. User scans the QR code with her smartphone, which opens her Wallet. Meanwhile, the user has received a text message with a PIN code to her smartphone. After entering that PIN code in the Wallet for security reasons, the user confirms the Credential issuance, and receives Credential into the Wallet.
+
+## Issuer Initiated Issuance - Cross Device & Deferred {#use-case-5}
+
+The user wants to obtain a digital criminal record. She visits the local administration's office and requests the issuance of the official criminal record as a digital Credential. After presenting her ID document, she is asked to scan a QR code with her wallet. She is being told that the actual issuance of the Credential will take some time due to necessary background checks by the authority. 
+
+In the Wallet, the user sees an indication that issuance of the digital record is under way. A few days later, the user receives a notification from her Wallet that requested Credential was successfully issued. When the user opens the Wallet, she is asked whether she wants to download the Credential. She confirms, and the new Credential is retrieved and stored in the Wallet.
+
+## Wallet Initiated Issuance during Presentation {#use-case-1}
+
+A user comes across a verifier app that is requesting the user to present a Credential, e.g., a driving license. The Wallet determines the requested Credential type(s) from the Credential presentation request and notifies the user that there is currently no matching Credential in the Wallet. The Wallet determines a Credential Issuer capable of issuing the lacking Credential and upon user consent sends the user to the Credential Issuer's user experience (web site or app). Upon being authenticated and providing consent to issue the Credential into her Wallet, the user is sent back to the Wallet. The Wallet informs the user Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
+
+## Wallet Initiated Issuance during Presentation (requires presentation of additional Credentials during issuance) {#use-case-2}
+
+A user comes across a verifier app that is requesting the user to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the Credential presentation request and notifies the user that there is currently no matching Credential in the Wallet. The Wallet then offers the user a list of Credential Issuers, which might be based on a Credential Issuer list curated by the Wallet provider. The user picks the university she graduated from and is sent to that university's user experience (web site or app).  
+
+The user logs in to the university, which determines that the respective user account is not verified yet. Among multiple identification options, the user chooses to present identity Credential from her Wallet. The user is sent back to the Wallet where she consents to share requested Credential(s) to the university. The user is sent back to the university user experience. Based on the presented Credential, the university completes the user verification, looks up user data in its database, and offers to issue a diploma as a verifiable Credential. 
+
+Upon providing consent, the user is sent back to the Wallet. The Wallet informs the user Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
 
 # Document History
 
