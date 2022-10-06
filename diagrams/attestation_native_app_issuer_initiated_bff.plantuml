@@ -1,0 +1,37 @@
+@startuml
+participant User as u
+participant "Wallet Frontend" as w
+participant "Wallet Backend" as b
+participant Issuer as i
+
+u -> i : get credential
+i -> w : get your credential (pre-authz-code, credential_type, expected_key_types)
+w -> w : gen DPoP key
+w -> w : gen DPoP proof for issuer token endpoint
+w -> b : get nonce
+b -> w : return nonce
+w -> w : sign attestation assertion (nonce)
+w -> b : exchange code (pre-authz-code, pin, dpop, assertion)
+b -> b : check assertion
+
+b -> i : token (client_id, grant_type, code, code_verifier,\ndpop_proof, redirect_uri)
+
+note over w, i: wallet backend authenticates with certificate registered with trusted registry\ncredential issuer checks wallet provider's cert with trusted registry\naccess token is bound to DPoP key maintained by wallet frontend
+
+i -> b : access_token, c_nonce, authorization_details
+
+b -> w : access_token, c_nonce, authorization_details
+
+w -> w : gen key for credential
+
+w -> w : create proof of posssion (c_nonce)
+
+w  -> w : create DPoP proof for issuance request
+
+w -> i : issue credential (access_token, credential_type, format, proof, dpop_proof)
+
+i -> w : credential, format
+
+w -> w : store credential
+
+@enduml
