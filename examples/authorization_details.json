@@ -1,0 +1,15 @@
+[
+   {
+      "type":"openid_credential",
+      "format":"ldp_vc",
+      "types":[
+        "https://www.w3.org/2018/credentials/v1#VerifiableCredential",
+        "https://www.university.edu/w3c-vcs/context/v1#UniversityDegreeCredential"
+      ]
+   },
+   {
+      "type":"openid_credential",
+      "format":"iso-mdoc",
+      "doc-type":"org.iso.18013.5.1.mDL"
+   }
+]

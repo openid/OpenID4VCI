@@ -1,0 +1,18 @@
+{
+   "issuer": "https://issuer.example.com",
+   "credentials": [
+      {
+         "format": "ldp_vc",
+         "types": [
+            "https://www.w3.org/2018/credentials/v1#VerifiableCredential",
+            "https://www.university.edu/w3c-vcs/context/v1#UniversityDegreeCredential"
+         ]
+      },
+      {
+         "format": "iso-mdoc",
+         "doc-type":"org.iso.18013.5.1.mDL"
+      }
+   ],
+   "pre-authorized_code": "adhjhdjajkdkhjhdj",
+   "pin": "67637637"
+}
