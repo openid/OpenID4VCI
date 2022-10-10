@@ -9,7 +9,7 @@
    },
    {
       "type":"openid_credential",
-      "format":"iso-mdoc",
-      "doc-type":"org.iso.18013.5.1.mDL"
+      "format":"mso_mdoc",
+      "doctype":"org.iso.18013.5.1.mDL"
    }
 ]
