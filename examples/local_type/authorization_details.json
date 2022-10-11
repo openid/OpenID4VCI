@@ -1,0 +1,10 @@
+[
+   {
+      "type":"openid_credential",
+      "credential_type":"https://example.issuer.com/ABC"
+   },
+   {
+      "type":"openid_credential",
+      "credential_type":"https://example.issuer.com/GHI"
+   }
+]

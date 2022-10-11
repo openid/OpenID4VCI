@@ -1,0 +1,191 @@
+{
+    "credential_endpoint": "https://server.example.com/credential",
+    "credentials_supported": [
+        {
+            "format": "ldp_vc",
+            "type_ref": "https://example.issuer.com/ABC",
+            "@context": [
+                "https://www.w3.org/2018/credentials/v1",
+                "https://www.w3.org/2018/credentials/examples/v1"
+            ],
+            "types": [
+                "VerifiableCredential",
+                "UniversityDegreeCredential"
+            ],
+            "cryptographic_binding_methods_supported": [
+                "did"
+            ],
+            "cryptographic_suites_supported": [
+                "Ed25519Signature2018"
+            ],
+            "display": [
+                {
+                    "name": "University Credential",
+                    "locale": "en-US",
+                    "logo": {
+                        "url": "https://exampleuniversity.com/public/logo.png",
+                        "alternative_text": "a square logo of a university"
+                    },
+                    "background_color": "#12107c",
+                    "text_color": "#FFFFFF"
+                },
+                {
+                    "name": "在籍証明書",
+                    "locale": "jp-JA",
+                    "logo": {
+                        "url": "https://exampleuniversity.com/public/logo.png",
+                        "alternative_text": "大学のロゴ"
+                    },
+                    "background_color": "#12107c",
+                    "text_color": "#FFFFFF"
+                }
+            ],
+            "claims": {
+                "given_name": {
+                    "display": [
+                        {
+                            "name": "Given Name",
+                            "locale": "en-US"
+                        },
+                        {
+                            "name": "名前",
+                            "locale": "jp-JA"
+                        }
+                    ]
+                },
+                "last_name": {
+                    "display": [
+                        {
+                            "name": "Surname",
+                            "locale": "en-US"
+                        }
+                    ]
+                },
+                "degree": {},
+                "gpa": {
+                    "display": [
+                        {
+                            "name": "GPA"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "format": "jwt_vc",
+            "type_ref": "https://example.issuer.com/DEF",
+            "types": [
+                "UniversityDegreeCredential"
+            ],
+            "cryptographic_binding_methods_supported": [
+                "did"
+            ],
+            "cryptographic_suites_supported": [
+                "ES256K"
+            ],
+            "display": [
+                {
+                    "name": "University Credential",
+                    "locale": "en-US",
+                    "logo": {
+                        "url": "https://exampleuniversity.com/public/logo.png",
+                        "alternative_text": "a square logo of a university"
+                    },
+                    "background_color": "#12107c",
+                    "text_color": "#FFFFFF"
+                },
+                {
+                    "name": "在籍証明書",
+                    "locale": "jp-JA",
+                    "logo": {
+                        "url": "https://exampleuniversity.com/public/logo.png",
+                        "alternative_text": "大学のロゴ"
+                    },
+                    "background_color": "#12107c",
+                    "text_color": "#FFFFFF"
+                }
+            ],
+            "claims": {
+                "given_name": {
+                    "display": [
+                        {
+                            "name": "Given Name",
+                            "locale": "en-US"
+                        },
+                        {
+                            "name": "名前",
+                            "locale": "jp-JA"
+                        }
+                    ]
+                },
+                "last_name": {
+                    "display": [
+                        {
+                            "name": "Surname",
+                            "locale": "en-US"
+                        }
+                    ]
+                },
+                "degree": {},
+                "gpa": {
+                    "display": [
+                        {
+                            "name": "GPA"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "format": "mso_mdoc",
+            "type_ref": "https://example.issuer.com/GHI",
+            "doctype": "org.iso.18013.5.1.mDL",
+            "cryptographic_binding_methods_supported": [
+                "mso"
+            ],
+            "cryptographic_suites_supported": [
+                "ES256, ES384, ES512"
+            ],
+            "claims": {
+                "org.iso.18013.5.1": {
+                    "given_name": {
+                        "display": [
+                            {
+                                "name": "Given Name",
+                                "locale": "en-US"
+                            },
+                            {
+                                "name": "名前",
+                                "locale": "jp-JA"
+                            }
+                        ]
+                    },
+                    "last_name": {
+                        "display": [
+                            {
+                                "name": "Surname",
+                                "locale": "en-US"
+                            }
+                        ]
+                    },
+                    "birth_date": {}
+                },
+                "org.iso.18013.5.1.aamva": {
+                    "organ_donor": {}
+                }
+            }
+        }
+    ],
+    "credential_issuer": {
+        "display": [
+            {
+                "name": "Government University",
+                "locale": "en-US"
+            },
+            {
+                "name": "サンプル大学",
+                "locale": "jp-JA"
+            }
+        ]
+    }
+}

@@ -9,8 +9,8 @@
          ]
       },
       {
-         "format": "mso_mdoc",
-         "doctype":"org.iso.18013.5.1.mDL"
+         "format": "iso-mdoc",
+         "doc-type":"org.iso.18013.5.1.mDL"
       }
    ],
    "pre-authorized_code": "adhjhdjajkdkhjhdj",
