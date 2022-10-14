@@ -3,9 +3,13 @@
     "credentials_supported": [
         {
             "format": "ldp_vc",
+            "@context": [
+                "https://www.w3.org/2018/credentials/v1",
+                "https://www.w3.org/2018/credentials/examples/v1"
+            ],
             "types": [
-                "https://www.w3.org/2018/credentials/v1#VerifiableCredential",
-                "https://www.university.edu/w3c-vcs/context/v1#UniversityDegreeCredential"
+                "VerifiableCredential",
+                "UniversityDegreeCredential"
             ],
             "cryptographic_binding_methods_supported": [
                 "did"
@@ -35,7 +39,7 @@
                     "text_color": "#FFFFFF"
                 }
             ],
-            "claims": {
+            "credentialSubject": {
                 "given_name": {
                     "display": [
                         {
@@ -67,8 +71,9 @@
             }
         },
         {
-            "format": "jwt_vc",
+            "format": "jwt_vc_json",
             "types": [
+                "VerifiableCredential",
                 "UniversityDegreeCredential"
             ],
             "cryptographic_binding_methods_supported": [
@@ -99,7 +104,7 @@
                     "text_color": "#FFFFFF"
                 }
             ],
-            "claims": {
+            "credentialSubject": {
                 "given_name": {
                     "display": [
                         {
@@ -139,6 +144,28 @@
             "cryptographic_suites_supported": [
                 "ES256, ES384, ES512"
             ],
+            "display": [
+                {
+                    "name": "Mobile Drivers License",
+                    "locale": "en-US",
+                    "logo": {
+                        "url": "https://examplestate.com/public/mdl.png",
+                        "alternative_text": "a square figure of a mobile drivers license"
+                    },
+                    "background_color": "#12107c",
+                    "text_color": "#FFFFFF"
+                },
+                {
+                    "name": "在籍証明書",
+                    "locale": "jp-JA",
+                    "logo": {
+                        "url": "https://examplestate.com/public/mdl.png",
+                        "alternative_text": "大学のロゴ"
+                    },
+                    "background_color": "#12107c",
+                    "text_color": "#FFFFFF"
+                }
+            ],
             "claims": {
                 "org.iso.18013.5.1": {
                     "given_name": {
@@ -172,7 +199,7 @@
     "credential_issuer": {
         "display": [
             {
-                "name": "Government University",
+                "name": "Example Issuer",
                 "locale": "en-US"
             },
             {

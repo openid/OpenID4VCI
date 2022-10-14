@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-08"
+value = "openid-4-verifiable-credential-issuance-1_0-09"
 status = "standard"
 
 [[author]]
@@ -102,7 +102,9 @@ The Wallet sends one Credential Request per individual Credential. The wallet MA
   - multiple Credentials of different types bound to the same proof, or
   - multiple Credentials of the same type bound to different proofs
 
-the Credential Issuer MAY also request Credential presentation as means to authenticate or identify the User during the issuance flow as illustrated in a use case in (#use-case-2).
+The Credential Issuer MAY also request Credential presentation as means to authenticate or identify the User during the issuance flow as illustrated in a use case in (#use-case-2).
+
+This specification can be used with different credential formats (even within the same transaction). At its core, the specification is format agnostic but allows implementers to leverage the specific capabilities of their credential format of choise. To achieve this, the specification defines extension points in the different sub-functions (e.g. metadata, authorization, issuance) of the protocol to add format specific parameters or claims and utilizes the credential format identifier to designate the profile to be applied in the respective place. This specification already defines profiles for W3C Verifiable Credentials and ISO mDL in Section (#format_profiles). Other specification or deployment can defines their own profiles on top of the extensibility model.  
 
 Note that the issuance can have multiple characteristics, which can be combined depending on the use-cases: 
 
@@ -157,7 +159,7 @@ Figure: Issuance using Authorization code flow
 
 (2) The Wallet sends a Token Request to the Credential Issuer's Token Endpoint with the authorization code obtained in step (2). the Credential Issuer returns an Access Token in the Token Request upon successfully validating authorization code. This step happens in the backchannel using server to server communication. This step is defined in (#token_endpoint).
 
-(3) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and proof of possession of the public key to which the the issued VC shall be bound. Upon successfully validating Access Token and proof, the Credential Issuer returns a VC in the Credential Response if it is able to issue a Credential right away. This step is defined in (#credential-endpoint).
+(3) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and (optionally) the proof of possession of the public key to which the the issued VC shall be bound. Upon successfully validating Access Token and proof, the Credential Issuer returns a VC in the Credential Response if it is able to issue a Credential right away. This step is defined in (#credential-endpoint).
 
 If the Credential Issuer requires more time to issue a Credential, the Credential Issuer may returns an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued Credential as defined in (#deferred-credential-issuance).
 
@@ -209,7 +211,7 @@ Figure: Issuance using Pre-Authorized code flow
 
 (1) The flow begins as the Credential Issuer generates an Issuance Initiation Request for certain Credential(s) and communicates it to the Wallet, for example as a QR code or as a deeplink. The Wallet uses information from the Issuance Initiation Request to obtain the Credential Issuer's metadata including details about the Credential that this Credential Issuer wants to issue. This step is defined in (#issuance_initiation_endpoint).
 
-(2) This step is the same as Step 3 in the Authorization Code Flow, but instead of authorization code, pre-authorized_code obtained in step (1) is sent in the Token Request. This step is defined in (#token_endpoint).
+(2) This step is the same as Step 3 in the Authorization Code Flow, but instead of authorization code, pre-authorized_code obtained in step (1) is sent in the Token Request. This step is defined in (#token_endpoint).  
 
 (3) This step is the same as Step 4 in the Authorization Code Flow. This step is defined in (#credential-endpoint).
 
@@ -242,55 +244,60 @@ ToDo: potentially add a section that explains basics of OAuth 2.0 (perhaps an ad
 
 # Issuance Initiation Endpoint {#issuance_initiation_endpoint}
 
-This endpoint is used by a Credential Issuer in case it is already in an interaction with a user that wishes to initate a Credential issuance. It is used to pass available 
-information relevant for the Credential issuance to ensure a convenient and secure process. 
+This endpoint is used by a Credential Issuer in case it is already in an interaction with a user that wishes to initate a Credential issuance. It is used to pass available information relevant for the Credential issuance to ensure a convenient and secure process. 
 
 ## Issuance Initiation Request {#issuance_initiation_request}
 
-the Credential Issuer sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL defined in (#client-metadata).
+The Credential Issuer sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL defined in (#client-metadata). This request contains a single URI query parameter `issuance_request` that contains a JSON object with the actual request data. 
 
-The following request parameters are defined: 
+This JSON object may contain the following claims: 
 
 * `issuer`: REQUIRED. the Credential Issuer URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from. 
-* `credential_types`: REQUIRED. Space delimited, case sensitive list of ASCII string values that specify the types of the Credentials the Wallet shall request. A single ASCII space character (0x20) MUST be used as the delimiter.
+* `credentials`: REQUIRED. JSON array, where every object contains the data related to a certain credential type the Wallet shall request. The object MUST contain a claim `format` determining the format of the credential to be requested. Depending on the format value there will be further parameters characterising the type of the credential to be requested and (optionally) certain claims that shall be included in this credentials as well. See Section (#format_profiles) for details on credential format profiles. 
 * `pre-authorized_code`: CONDITIONAL. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
 * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value. MUST NOT be used in Pre-Authorized Code flow when `pre-authorized_code` is present.
 
+This is a non-normative example of an issuance request object used to initiate an authorization code flow
+
+<{{examples/issuer_initiated_issuance_request_authz_code.json}}
+
+and this is how such an object might look like for a pre-authorized code flow:
+
+<{{examples/issuer_initiated_issuance_request_pre-authz_code.json}}
+
+The following non-normative example shows how the issuer can initiate the issuance of two credentials of different formats:
+
+<{{examples/issuer_initiated_issuance_request_multiple_credentials.json}}
+
+The definition of the format specific profiles can be found in (#format_profiles).
+
 The Wallet MUST consider the parameter values in the initiation request as not trustworthy since the origin is not authenticated and the message integrity is not protected. The Wallet MUST apply the same checks on the Credential Issuer that it would apply when the flow is started from the Wallet itself since the Credential Issuer is not trustworthy just because it sent the initiation request. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
+
+TBD: the issuer could sign the JSON request object
 
 The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if the Wallet would have started the flow. 
 
 The Issuer MUST ensure the release of any privacy-sensitive data is legally based.
 
-Below is a non-normative example of an Issuance Initiation Request in an authorization code flow:
+Below is a non-normative example of an Issuance Initiation Request:
 
 ```
-  GET /initiate_issuance?
-    issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
-    &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
-    &op_state=eyJhbGciOiJSU0Et...FYUaBy
+  GET /initiate_issuance?issuance_request=%7B%22issuer%22:%22https://issuer.example.com
+  %22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22Verifiabl
+  eCredential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22op_stat%22:%22eyJhbGciOiJS
+  U0Et...FYUaBy%22%7D
 ```
 
-Below is a non-normative example of an Issuance Initiation Request in a pre-authorized code flow:
+The Credential Issuer MAY also render a QR code containing the request data that can be scanned by the user using a Wallet, or a deeplink that the user can click.
+
+The following is a non-normative example of such a request that can be included in a QR code or a deeplink used to active a native wallet app:
 
 ```
-  GET /initiate_issuance?
-    issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
-    &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
-    &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
-```
-
-the Credential Issuer MAY also render a QR code containing the request data that can be scanned by the user using a Wallet, or a deeplink that the user can click.
-
-The following is a non-normative example of such a request that can be included in a QR code or a deeplink:
-
-```
-openid-initiate-issuance://?
-    issuer=https%3A%2F%2Fserver%2Eexample%2Ecom
-    &credential_type=https%3A%2F%2Fdid%2Eexample%2Eorg%2FhealthCard 
-    &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
-    &user_pin_required=true
+openid-initiate-issuance://issuance_request=%7B%22issuer%22:%22https://issuer.example.com
+%22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22VerifiableCr
+edential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22op_stat%22:%22eyJhbGciOiJSU0Et...
+FYUaBy%22%7D
 ```
 
 ## Issuance Initiation Response
@@ -312,22 +319,11 @@ There are two possible ways to request issuance of a specific Credential type in
 The request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-oauth-rar] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
 
 * `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
-* `credential_type`: REQUIRED. JSON string denoting the type of the requested Credential.
-* `format`: OPTIONAL. JSON string representing a format in which the Credential is requested to be issued. Valid format identifier values are defined in the table in Section 9.3 and include `jwt_vp` and `ldp_vp`. Formats identifiers not in the table, MAY be defined by the profiles of this specification.
-* `locations`: OPTIONAL. An array of strings that allows a client to specify the location of the resource server(s) allowing the AS to mint audience restricted access tokens. This data field is predefined in Section 2.2 of ([@!I-D.ietf-oauth-rar]).
-
-[TBD: `locations` could enable a single authorization server to authorize access to different Credential endpoints. Might be an architectural option we want to pursue.]
+* `format`: REQUIRED. JSON string representing the format in which the Credential is requested to be issued. The format identifier determines the further claims in the authorization details object used to determine the credential type to be issued. This specification defines a couple of format specific profiles in (#format_profiles). 
 
 A non-normative example of an `authorization_details` object. 
 
-```json=
-{
-   "type":"openid_credential",
-   "credential_type":"https://did.example.org/healthCard",
-   "format":"ldp_vc"
-}
-```
-Note: applications MAY combine `openid_credential` with any other authorization details type in an Authorization Request.
+<{{examples/authorization_details.json}}
 
 A non-normative example of a Authorization Request using the `authorization_details` parameter (with line wraps within values for display purposes only).
 
@@ -338,28 +334,17 @@ Location: https://server.example.com/authorize?
   &client_id=s6BhdRkqt3
   &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
   &code_challenge_method=S256
-  &authorization_details=%5B%7B%22type%22:%22openid_credential%22,%22credential_type
-  %22:%22https://did.example.org/healthCard%22,%22format%22:%22ldp_vc%22%7D,%7B%22ty
-  pe%22:%22openid_credential%22,%22credential_type%22:%22https://did.example.org/mDL
-  %22%7D%5D
+  &authorization_details=%5B%7B%22type%22:%22openid_credential
+  %22,%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22Verifia
+  bleCredential%22,%22UniversityDegreeCredential%22%5D%7D%5D
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 ```
 
 This non-normative example requests authorization to issue two different Credentials:
 
-```json=
-[
-   {
-      "type":"openid_credential",
-      "credential_type":"https://did.example.org/healthCard",
-      "format":"ldp_vc"
-   },
-   {
-      "type":"openid_credential",
-      "credential_type":"https://did.example.org/mDL"
-   }
-]
-```
+<{{examples/authorization_details_multiple_credentials.json}}
+
+Note: applications MAY combine authorizarion details of type `openid_credential` with any other authorization details type in an Authorization Request.
 
 ### Using `scope` Parameter to Request Issuance of a Credential {#credential-request-using-type-specific-scope}
 
@@ -393,7 +378,7 @@ If a scope value related to credential issuance and the `authorization_details` 
 
 This specification defines the following request parameters that can be supplied in a Authorization Request:
 
-* `Wallet_issuer`: OPTIONAL. JSON String containing the Wallet's OpenID Connect issuer URL. the Credential Issuer will use the discovery process as defined in [@!SIOPv2] to determine the Wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
+* `wallet_issuer`: OPTIONAL. JSON String containing the Wallet's OpenID Connect issuer URL. the Credential Issuer will use the discovery process as defined in [@!SIOPv2] to determine the Wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
 * `user_hint`: OPTIONAL. JSON String containing an opaque user hint the Wallet MAY use in subsequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
 * `op_state`: OPTIONAL. String value identifying a certain processing context at the Credential Issuer. A value for this parameter is typically passed in an issuance initation request from the Credential Issuer to the Wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `op_state` value back to the Credential Issuer. 
 
@@ -422,7 +407,7 @@ POST /op/par HTTP/1.1
 
 This step is OPTIONAL. After receiving an Authorization Request from the Client, the Credential Issuer MAY use this step to obtain additional Credentials from the End-User required to proceed with the authorization of the credential issuance, e.g. it may obtain an identity credential and utilize it to identify the user before issuing an additional credential. For a use case, see (#use-case-2).
 
-the Credential Issuer MUST utilize [@OpenID4VP] to dynamically request additional Credential Presentations. From a protocol perspective, the Credential Issuer then acts as a verifier and sends a presentation request to the Wallet. The Client SHOULD have these Credentials obtained prior to initiating a transaction with this Credential Issuer. 
+The Credential Issuer MUST utilize [@OpenID4VP] to dynamically request additional Credential Presentations. From a protocol perspective, the Credential Issuer then acts as a verifier and sends a presentation request to the Wallet. The Client SHOULD have these Credentials obtained prior to initiating a transaction with this Credential Issuer. 
 
 To enable dynamic callbacks of the Credential Issuer to the end-user's Wallet, the Wallet MAY provide additional parameters `Wallet_issuer` and `user_hint` defined in the Authorization Request section of this specification.
 
@@ -566,13 +551,36 @@ For cryptographic binding, the Client has the following options to provide crypt
 
 A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the "application/json" media type.
 
-* `credential_type`: REQUIRED. Type of a Credential being requested. It corresponds to the `credential_type` property in the Authorization Request.
-* `format`: OPTIONAL. Format of the Credential to be issued. If not present, the Credential Issuer will determine the Credential 
-format based on the client's format default.
+* `format`: REQUIRED. Format of the Credential to be issued. The format identifier determines further parameters required to determine the type and (optionally) the content of the credential to be issued. Format specific profiles are defined in (#format_profiles).
 * `proof` OPTIONAL. JSON Object containing proof of possession of the key material the issued Credential shall be 
-bound to. The `proof` object MUST contain the following `proof_type` element which determines its structure:
+bound to. The specification envisions use of different types of proofs for different cryptographic schemes. The `proof` object MUST contain a `proof_type` claim of type JSON denoting the concrete proof type. This type determines the further claims in the proof object and its respective processing rules. Proof types are defined in (#proof_types). 
 
-  * `proof_type`: REQUIRED. JSON String denoting the proof type. 
+The `proof` element MUST incorporate a `c_nonce` value generated by the Credential Issuer and the Credential Issuer's identifier (audience) to allow the Credential Issuer to detect replay. The way that data is incorporated depends on the proof type. In a JWT, for example, the `c_nonce` is conveyd in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the proof object and the Credential Issuer (the intended audience) is included as the `domain` element.
+
+Below is a non-normative example of a Credential Request for a credential in JWT VC format (JSON encoding) with a JWT-based proof of possession:
+
+```
+POST /credential HTTP/1.1
+Host: server.example.com
+Content-Type: application/json
+Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+{
+   "format":"jwt_vc_json",
+   "types":[
+      "VerifiableCredential",
+      "UniversityDegreeCredential"
+   ],
+   "proof":{
+      "proof_type":"jwt",
+      "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
+      xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
+      0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
+      NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
+   }
+}
+```
+### Proof Types {#proof_types}
 
 This specification defines the following values for `proof_type`:
 
@@ -587,9 +595,7 @@ This specification defines the following values for `proof_type`:
 
 Note: if both `jwk` and `x5c` are present, the represented signing key MUST be the same in both. 
 
-The `proof` element MUST incorporate a `c_nonce` value generated by the Credential Issuer and the Credential Issuer's identifier (audience) to allow the Credential Issuer to detect replay. The way that data is incorporated depends on the proof type. In a JWT, for example, the `c_nonce` is conveyd in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the proof object and the Credential Issuer (the intended audience) is included as the `domain` element.
-
-the Credential Issuer MUST validate that the `proof` is actually signed by a key identified in `kid` parameter.
+The Credential Issuer MUST validate that the `proof` is actually signed by a key identified in `kid` parameter.
 
 Below is a non-normative example of a `proof` parameter (line breaks for display purposes only):
 
@@ -633,27 +639,6 @@ Here is another example JWT not only proving possession of a private key but als
 }
 ```
 
-Below is a non-normative example of a Credential Request:
-
-```
-POST /credential HTTP/1.1
-Host: server.example.com
-Content-Type: application/json
-Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
-
-{
-  "type": "https://did.example.org/healthCard"
-  "format": "ldp_vc",
-  "proof": {
-    "proof_type": "jwt",
-    "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
-    xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
-    0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
-    NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
-  }
-}
-```
-
 ## Credential Response {#credential-response}
 
 Credential Response can be Synchronous or Deferred. the Credential Issuer may be able to immediately issue a requested Credential and send it to the Client. In other cases, the Credential Issuer may not be able to immediately issue a requested Credential and would want to send a token to the Client to be used later to receive a Credential when it is ready.
@@ -666,21 +651,11 @@ The following claims are used in the Credential Response:
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
-The following table defines how issued Credential MUST be returned in the `credential` claim in the Credential Response based on the Credential format and the signature scheme. This specification does not require any additional encoding when Credential format is already represented as a JSON object or a JSON string.
-
-| Credential Signature Format | Credential Format Identifier | Signature Scheme | Need for encoding when returning in the Credential Response  |
-|:------|:-----|:-----|:------------|
-|JWS Compact Serialization | `jwt_vc`, `mdl_iso_json`, `mid_iso_json` | Credential conformant to the W3C Verifiable Credentials Data Model, ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, or ISO/IEC 23220-4 mobile eID document data model (not yet published), and signed as a JWS Compact Serialization. | MUST be a JSON string. Credential is already a sequence of base64url-encoded values separated by period characters and MUST NOT be re-encoded. |
-|JWS JSON Serialization | `jwt_vc`, `mdl_iso_json`, `mid_iso_cbor`| Credential conformant to the W3C Verifiable Credentials Data Model, ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, or ISO/IEC 23220-4 mobile eID document data model (not yet published), and signed as a JWS JSON Serialization. | MUST be a JSON object. MUST NOT be re-encoded. |
-|Data Integrity | `ldp_vc` | Credential conformant to the W3C Verifiable Credentials Data Model and signed with Data Integrity Proofs. | MUST be a JSON object. MUST NOT be re-encoded. |
-| CL-Signatures |`ac_vc` | Credential conformant to the AnonCreds format as defined in the Hyperledger Indy project and signed using CL-signature scheme. | MUST be a JSON object. MUST NOT be re-encoded. |
-| COSE |`mdl_iso_cbor`| Credential conformant to the ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, encoded as CBOR and signed as a COSE message. | MUST be a JSON string that is the base64url-encoded representation of the issued Credential |
+The format value determines the format and encoding of the credential in the credential response. Details are defined in the respective profile in (#format_profiles). 
 
 Credential formats expressed as binary formats MUST be base64url-encoded and returned as a JSON string.
 
-Note that this table might be superceded by a registry in the future. Meanwhile, for interoperability, implementers MUST follow the requirements defined in the table above.
-
-Below is a non-normative example of a Credential Response in a synchronous flow:
+Below is a non-normative example of a Credential Response in a synchronous flow for a credential in JWT VC format (JSON encoding):
 
 ```
 HTTP/1.1 200 OK
@@ -688,7 +663,7 @@ HTTP/1.1 200 OK
   Cache-Control: no-store
 
 {
-  "format": "jwt_vc"
+  "format": "jwt_vc_json"
   "credential" : "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
   "c_nonce": "fGFF7UkhLa",
   "c_nonce_expires_in": 86400  
@@ -773,7 +748,7 @@ This specification defines the following new Server Metadata parameters for this
 
 The following parameter MUST be used to communicates the specifics of the Credential that the Credential Issuer supports issuance of:
 
-* `credentials_supported`: REQUIRED. A JSON object containing a list of key value pairs, where each key is a `credential_type` that the server can issue. It corresponds to the `credential_type` from a Credential Request. The value is a JSON object. The JSON object MUST conform to the structure of the (#credential-metadata-object). 
+* `credentials_supported`: REQUIRED. A JSON array containing a list of JSON objects, each of them representing metadata about a credential type that the server can issue. The JSON objects in the array MUST conform to the structure of the (#credential-metadata-object). 
 
 * `credential_issuer`: OPTIONAL. A JSON object containing display properties for the Credential Issuer.
   * `display`: OPTIONAL. An array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
@@ -782,9 +757,14 @@ The following parameter MUST be used to communicates the specifics of the Creden
 
 ### Credential Metadata Object {#credential-metadata-object}
 
-This section defines the structure of the object that appears as the value to the keys inside the object defined for the `credentials_supported` metadata element.
+This section defines the structure of the objects that appear in the `credentials_supported` metadata element.
 
-  * `display`: OPTIONAL. An array of objects, where each object contains the display properties of the supported credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included. Note that the display name of the supported credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
+* `format`: REQUIRED. A JSON string identifying the format of this credential, e.g. `jwt_vc_json` or `ldp_vc`. Depending on the format value, the credential metadata object contains further elements defining its type and (optionally) the claims the credential may contain along with display information. (#format_profiles) defines the format specific profiles introduced by this specification. 
+
+* `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential as defined in (#credential-binding). A non-exhaustive list of valid values defined by this specification are `did`, `jwk`, and `mso`.
+* `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptosuites for Credentials in `jwt_vc` format should use algorithm names defined in [IANA JOSE Algorithms Registry](https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms). Cryptosuites for Credentials in `ldp_vc` format should use signature suites names defined in [Linked Data Cryptographic Suite Registry](https://w3c-ccg.github.io/ld-cryptosuite-registry/).
+
+* `display`: OPTIONAL. An array of objects, where each object contains the display properties of the supported credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included. Note that the display name of the supported credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
    * `name`: REQUIRED. String value of a display name for the `credential_type`.
    * `locale`: OPTIONAL. String value that identifies the language of this display object represented as language tag values defined in BCP47 [@!RFC5646]. Multiple `display` objects may be included for separate languages. There MUST be only one object with the same language identifier.
   * `logo`: OPTIONAL. A JSON object with information about the logo of the `credential_type` with a following non-exhaustive list of parameters that MAY be included:
@@ -794,104 +774,124 @@ This section defines the structure of the object that appears as the value to th
   * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
   * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
 
-* `formats`: REQUIRED. A JSON object containing a list of key value pairs, where the key is a string identifying the format of the supported Credential. Below is a non-exhaustive list of valid key values defined by this specification:
-  * Claim Format Designations defined in [@!DIF.PresentationExchange], such as `jwt_vc` and `ldp_vc`
-  * `mdl_iso`: defined in this specification to express a mobile driving licence (mDL) Credential compliant to a data model and data sets defined in ISO/IEC 18013-5:2021 specification. 
-  * `ac_vc`: defined in this specificaiton to express an AnonCreds Credential format defined as part of the Hyperledger Indy project [Hyperledger.Indy].
+It is dependent on the Credential format where the available claims will appear and how they are represented (see (#format_profiles)).
 
-The value in a key value pair is a JSON object detailing the specifics about the support for the Credential format with a following non-exhaustive list of parameters that MAY be included:
-  * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential as defined in (#credential-binding). A non-exhaustive list of valid values defined by this specification are `did`, `jwk`, and `mso`.
-  * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptosuites for Credentials in `jwt_vc` format should use algorithm names defined in [IANA JOSE Algorithms Registry](https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms). Cryptosuites for Credentials in `ldp_vc` format should use signature suites names defined in [Linked Data Cryptographic Suite Registry](https://w3c-ccg.github.io/ld-cryptosuite-registry/).
+The following example shows a non-normative example of a credential metadata object for a credential in JWT VC format (JSON encoding).
 
-* `claims`: REQUIRED. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
+<{{examples/credential_metadata_jwt_vc_json.json}}
+
+Note: The Client MAY use other mechanisms to obtain information about the verifiable Credentials that a Credential Issuer can issue.
+
+# Credential Format Profiles {#format_profiles}
+
+This specification defines several extension points to cater for the specifics of different credential formats. This section defines profiles for a couple of credential formats on top of those extension points.
+
+--------
+
+The following table defines how issued Credential MUST be returned in the `credential` claim in the Credential Response based on the Credential format and the signature scheme. This specification does not require any additional encoding when Credential format is already represented as a JSON object or a JSON string.
+
+| Credential Signature Format | Credential Format Identifier | Signature Scheme | Need for encoding when returning in the Credential Response  |
+|:------|:-----|:-----|:------------|
+|JWS Compact Serialization | `jwt_vc`, `mdl_iso_json`, `mid_iso_json` | Credential conformant to the W3C Verifiable Credentials Data Model, ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, or ISO/IEC 23220-4 mobile eID document data model (not yet published), and signed as a JWS Compact Serialization. | MUST be a JSON string. Credential is already a sequence of base64url-encoded values separated by period characters and MUST NOT be re-encoded. |
+|JWS JSON Serialization | `jwt_vc`, `mdl_iso_json`, `mid_iso_cbor`| Credential conformant to the W3C Verifiable Credentials Data Model, ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, or ISO/IEC 23220-4 mobile eID document data model (not yet published), and signed as a JWS JSON Serialization. | MUST be a JSON object. MUST NOT be re-encoded. |
+|Data Integrity | `ldp_vc` | Credential conformant to the W3C Verifiable Credentials Data Model and signed with Data Integrity Proofs. | MUST be a JSON object. MUST NOT be re-encoded. |
+| CL-Signatures |`ac_vc` | Credential conformant to the AnonCreds format as defined in the Hyperledger Indy project and signed using CL-signature scheme. | MUST be a JSON object. MUST NOT be re-encoded. |
+| COSE |`mdl_iso_cbor`| Credential conformant to the ISO/IEC 18013-5:2021 mobile driving licence (mDL) data model, encoded as CBOR and signed as a COSE message. | MUST be a JSON string that is the base64url-encoded representation of the issued Credential |
+
+Note that this table might be superceded by a registry in the future. Meanwhile, for interoperability, implementers MUST follow the requirements defined in the table above.
+
+## W3C Verifiable Credentials
+
+[@!VC_DATA], Section 6, defines how Verifiable Credentials can be represented in two different formats, JSON [@!RFC8259] and JSON-LD [@!JSON-LD]. As acknowleged in Section 6.1 and 4.1 implementations can behave differently regarding processing of the `@context` element in JWT-based credential. This specification therefore differentiate the following three formats for W3C Verifiable Credentials
+
+* JWT VCs in JSON encoding,
+* JWT VCs in JSON-LD encoding,
+* JSON-LD VCs
+
+and defines distinct formats identifiers, extension parameters/claims and processing rules for each of them. 
+
+### JWT VCs in JSON encoding
+#### Format Identifier
+
+The format identifier is `jwt_vc_json`.
+
+### Server Metadata {#server_metadata_jwt_vc_json}
+
+The following additional server metadata are defined for this credential format. 
+
+* `types`: REQUIRED. JSON array designating the types a certain credential type supports according to [@!VC_DATA], Section 4.3.
+* `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
   * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
-  * `namespace`: OPTIONAL. String value of a namespace that the claim belongs to. Relevant for ISO/IEC 18013-5 (mobile Driving License) specification.
   * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
   * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
     * `name`: OPTIONAL. String value of a display name for the claim.
     * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier.
-    
 * `order`: OPTIONAL. An array of claims.display.name values that lists them in the order they should be displayed by the Wallet.
 
-It is dependent on the Credential format where the requested claims will appear.
+The following is a non-normative example of a Credential Metadata Object of type `jwt_vc_json`.
 
-The following example shows a non-normative example of the relevant entries in the OP metadata defined above
+<{{examples/credential_metadata_jwt_vc_json.json}}
 
-```
- HTTP/1.1 200 OK
-  Content-Type: application/json
- {
-  "credential_endpoint": "https://server.example.com/credential",
-  "credentials_supported": {
-    "https://did.example.org/healthCard": {
-      "display": [{
-          "name": "Example Health Card",
-          "locale": "en-US",
-          "logo": {
-            "url": "https://example.org/public/logo.png",
-            "alternative_text": "a square logo of a health card"
-          },
-          "background_color": "#12107c",
-          "text_color": "#FFFFFF"
-        },
-        {
-          "name": "在籍証明書",
-          "locale": "jp-JA",
-          "logo": {
-            "url": "https://example.org/public/logo.png",
-            "alternative_text": "大学のロゴ"
-          },
-          "background_color": "#12107c",
-          "text_color": "#FFFFFF"
-        }
-      ],
-      "formats": {
-        "ldp_vc": {
-          "cryptographic_binding_methods_supported": ["did"],
-          "cryptographic_suites_supported": ["Ed25519Signature2018"]
-        }
-      },
-       "claims": {
-        "given_name": {
-          "mandatory": false,
-          "display": [{
-              "name": "Given Name",
-              "locale": "en-US"
-            },
-            {
-              "name": "名前",
-              "locale": "jp-JA"
-            }
-          ]
-        },
-        "last_name": {},
-        "health_status": {}
-      }
-    },
-    "WorkplaceCredential": {
-      "formats": {
-        "jwt_vc": {
-          "cryptographic_binding_methods_supported": ["did"],
-          "cryptographic_suites_supported": ["ES256K"]
-        }
-      }
-    }
-  },
-  "credential_issuer": {
-    "display": [{
-        "name": "Example Organisation",
-        "locale": "en-US"
-      },
-      {
-        "name": "サンプル大学",
-        "locale": "jp-JA"
-      }
-    ]
-  }
-}
-```
+### Issuer Initiated Issuance
 
-Note: The Client MAY use other mechanisms to obtain information about the verifiable Credentials that a Credential Issuer can issue.
+A `credentials` object of format `jwt_vc_json` may contain the following additional claims: 
+
+* `types`: REQUIRED. as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the wallet shall request in the subsequent credential issuance request.
+* `credentialSubject`: OPTIONAL. as defined in (#server_metadata_jwt_vc_json). This object indicates to the wallet what claims it shall request in the subsequent credential issuance request. 
+
+The following is a non-normative example of a Credential Metadata Object of type `jwt_vc_json`.
+
+<{{examples/issuer_initiated_issuance_request_jwt_vc_json.json}}
+
+### Authorization {#authorization_jwt_vc_json}
+
+An authorization details object of `type` `openid_credential` and `format` `jwt_vc_json` MAY contain the following additional claims:
+
+* `types`: REQUIRED. as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the wallet requests authorization for at the issuer.
+* `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. This object indicates the claims the wallet would like to turn up in the credential to be issued. 
+
+The following is a non-normative example of an authorization details object with format `jwt_vc_json`.
+
+<{{examples/authorization_details_jwt_vc_json.json}}
+
+### Credential Request
+
+A credential request with `format` value `jwt_vc_json` MAY contain the following additional claims:
+
+* `types`: REQUIRED. as defined in (#authorization_jwt_vc_json). The credential issued by the issuer MUST at least contain the values listed in this claim. 
+* `credentialSubject`: OPTIONAL. as defined in (#authorization_jwt_vc_json). This object determines the optional claims to be added to the credential to be issued. 
+
+The following is a non-normative example of a Credential Issuance Request with format `jwt_vc_json`.
+
+<{{examples/credential_request_jwt_vc_json_with_claims.json}}
+
+### Credential Response
+
+The value of the `credential` claim in the credential response MUST be a JSON String. 
+
+### JSON-LD VCs 
+
+#### Server Metadata
+#### Issuer Initiated Issuance
+#### Authorization
+#### Credential Request
+#### Credential Response
+
+### JWT VCs in JSON encoding
+
+#### Server Metadata
+#### Issuer Initiated Issuance
+#### Authorization
+#### Credential Request
+#### Credential Response
+
+## ISO mDL
+
+### Server Metadata
+### Issuer Initiated Issuance
+### Authorization
+### Credential Request
+### Credential Response
 
 # Security Considerations {#security-considerations}
 
@@ -1058,6 +1058,25 @@ TBD
       </front>
 </reference>
 
+<reference anchor="JSON-LD" target="https://www.w3.org/TR/json-ld11/">
+      <front>
+        <title>JSON-LD 1.1: A JSON-based Serialization for Linked Data.</title>
+        <author fullname="Gregg Kellogg">
+        </author>
+        <author fullname="Manu Sporny">
+        </author>
+        <author fullname="Dave Longley">
+       </author>
+       <author fullname="Markus Lanthaler">
+       </author>
+       <author fullname="Pierre-Antoine Champin">
+       </author>
+       <author fullname="Niklas Lindström">
+       </author>
+       <date day="16" month="July" year="2020"/>
+      </front>
+</reference>
+
 <reference anchor="OpenID4VP" target="https://openid.net/specs/openid-4-verifiable-presentations-1_0.html">
       <front>
         <title>OpenID for Verifiable Presentations</title>
@@ -1131,6 +1150,11 @@ Upon providing consent, the user is sent back to the Wallet. The Wallet informs 
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -09
+
+   * reworked credential type identification and issuer metadata
+   * changed format of issuer initiated credential issuance to JSON
 
    -08
 

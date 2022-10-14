@@ -1,0 +1,14 @@
+{
+    "issuer": "https://issuer.example.com",
+    "credentials": [
+        {
+            "format": "jwt_vc_json",
+            "types": [
+                "VerifiableCredential",
+                "UniversityDegreeCredential"
+            ]
+        }
+    ],
+    "pre-authorized_code": "adhjhdjajkdkhjhdj",
+    "pin": "67637637"
+}

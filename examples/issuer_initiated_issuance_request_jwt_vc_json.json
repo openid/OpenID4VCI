@@ -1,0 +1,18 @@
+{
+    "issuer": "https://issuer.example.com",
+    "credentials": [
+        {
+            "format": "jwt_vc_json",
+            "types": [
+                "VerifiableCredential",
+                "UniversityDegreeCredential"
+            ],
+            "CredentialSubject": {
+                "given_name": {},
+                "last_name": {},
+                "degree": {},
+            }
+        }
+    ],
+    "op_stat": "eyJhbGciOiJSU0Et...FYUaBy"
+}
