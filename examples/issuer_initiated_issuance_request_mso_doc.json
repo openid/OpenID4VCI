@@ -1,0 +1,21 @@
+{
+    "issuer": "https://issuer.example.com",
+    "credentials": [
+        {
+            "format": "mso_mdoc",
+            "doctype": "org.iso.18013.5.1.mDL",
+            "claims": {
+                "org.iso.18013.5.1": {
+                    "given_name": {},
+                    "last_name": {},
+                    "birth_date": {}
+                },
+                "org.iso.18013.5.1.aamva": {
+                    "organ_donor": {}
+                }
+            }
+        }
+    ],
+    "pre-authorized_code": "adhjhdjajkdkhjhdj",
+    "pin": "67637637"
+}
