@@ -562,6 +562,16 @@ HTTP/1.1 200 OK
 
 If the Token Request is invalid or unauthorized, the Authorization Server constructs the error response as defined as in Section 5.2 of OAuth 2.0 [@!RFC6749].
 
+The following additional clarifications are provided:
+
+- if the authorization server in the pre-authorized flow does not expect a PIN but the client provides a PIN, the result MUST be 400 Bad request with   "error":"invalid_request";
+
+- if the authorization server in the pre-authorized flow does expect a PIN but the client provides the wrong PIN, the result MUST be 400 Bad request with   "error":"invalid_grant";
+
+- if the authorization server in the pre-authorized flow does expect a PIN but the client does not provide a PIN, the result MUST be 400 Bad request with   "error":"invalid_request";
+
+- if the user provides the wrong pre-authorized code or the pre-authorized code has expired the result MUST be 400 Bad request with "error":"invalid_grant".
+
 Below is a non-normative example Token Error Response:
 
 ```json=
