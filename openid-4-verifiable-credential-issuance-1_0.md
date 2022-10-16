@@ -745,14 +745,13 @@ Note: Consider using CIBA Ping/Push OR SSE Poll/Push. Another option would be th
 
 ### Credential Error Response
 
-The following errors are defined:
+If the request contains the wrong access token or the access token is missing, the issuer MUST return 401 Unauthorized.
 
-* invalid_request - the credential request was malformed
-* invalid_token - the access_token was invalid
-* unsupported_type - the requested type is not supported
-* unsupported_format - the requested format is not supported
-* invalid_credential - the requested credential did not match any of the credentials to be issued
-* invalid_or_missing_proof - see next section
+If the request is malformed or contains erroneous parameters, the following errors are defined for 400 Bad Request:
+
+* invalid_request - the credential request was malformed for example, the credential type and/or the format and/or the proof is missing or the proof is badly formatted
+* unsupported_credential_type - the requested credential type is not supported
+* unsupported_credential_format - the requested credential format is not supported
 
 This is a non-normative example Credential Error Response:
 
@@ -780,15 +779,14 @@ HTTP/1.1 400 Bad Request
   Cache-Control: no-store
 
 {
-  "error": "invalid_or_missing_proof"
+  "error": "invalid_or_missing_nonce"
   "error_description":
-       "Credential issuer requires proof element in Credential Request"
+       "Credential issuer requires proof element with issuer provided nonce in Credential Request"
   "c_nonce": "8YE9hCnyV2",
   "c_nonce_expires_in": 86400  
 }
 ```
 
-ToDo - 400 might not be a right answer.
 
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
