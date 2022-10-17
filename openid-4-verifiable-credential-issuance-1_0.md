@@ -741,17 +741,17 @@ ToDo - 400 might not be a right answer.
 
 # Batch Credential Endpoint {#batch-credential-endpoint}
 
-The Batch Credential Endpoint issues multiple Credentials as approved by the End-User upon presentation of a valid Access Token representing this approval.
+The Batch Credential Endpoint issues multiple Credentials in one Batch Credential Response as approved by the End-User upon presentation of a valid Access Token representing this approval.
 
 Communication with the Batch Credential Endpoint MUST utilize TLS. 
 
-The client can request issuance of multiple Credentials of certain types and formats at the same time.
+The client can request issuance of multiple Credentials of certain types and formats at the same time. This includes Credentials of the same type and multiple formats, different types and one format, or both. 
 
-When using the Batch Credential Endpoint, a Credential Request included in a Batch Credential Request and a Credential Response included in a Batch Credential Response is used in the same manner as for the Credential Endpoint. The same applies to a deferred Credential Response.
+When using the Batch Credential Endpoint, a Credential Request (see (#credential_request)) included in a Batch Credential Request and a Credential Response (see (#credential_response)) or Deferred Credential Response (see (#deferred-credential_response)) included in a Batch Credential Response is used in the same manner as for the Credential Endpoint (see (#credential-endpoint)) or Deferred Credential Endpoint (see (#deferred-credential-issuance)).
 
-## Batch Credential Request {#credential_batch_request}
+## Batch Credential Request {#batch-credential_request}
 
-When using the Batch Credential Request, the Batch Credential Request is used in the same manner as the Credential Request for the Credential Endpoint with the addition that the Batch Credential Request MUST be sent as a JSON array where each element is a JSON object representing a Credential Request.
+The Batch Credential Endpoint allows a client to send multiple Credential Request objects (as defined in (#credential-request)) in an array in order to request the issuance of multiple credential at once.
 
 Below is a non-normative example of a Batch Credential Request:
 
@@ -789,9 +789,12 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ```
 
-## Batch Credential Response {#credential_batch_response}
+## Batch Credential Response {#batch-credential_response}
 
-When using the Batch Credential Request, the Batch Credential Response is used in the same manner as for the Credential Response with the addition that the individual Credential Response JSON objects MUST be sent as an JSON array. Each Credential Response in the array corresponds to the Credential Request at the same array index in the Batch Credential Request.
+The following claims are used in the Batch Credential Response:
+* `credential_responses`: REQUIRED. JSON array that contains Credential Response as defined in (#credential_request) and/or Deferred Credential Response objects as defined in (#deferred-credential_request). Every entry of the array corresponds to the Credential Request object at the same array index in the Batch Credential Request.
+* `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response). 
+* `c_nonce_expires_in`: OPTIONAL. The `c_nonce_expires_in` as defined in (#credential-response). 
 
 Below is a non-normative example of a Batch Credential Response in a synchronous flow:
 
@@ -800,18 +803,18 @@ HTTP/1.1 200 OK
   Content-Type: application/json
   Cache-Control: no-store
 
-[{
-  "format": "ldp_vc"
-  "credential" : { ... },
-  "c_nonce": "fGFF7UkhLa",
-  "c_nonce_expires_in": 86400  
-},
 {
-  "format": "jwt_vc"
-  "credential" : "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy",
-  "c_nonce": "f34afdSSXa",
-  "c_nonce_expires_in": 86400  
-}]
+  "credential_reponses": [{
+    "format": "ldp_vc"
+    "credential" : { ... }
+  },
+  {
+    "format": "jwt_vc"
+    "credential" : "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
+  }],
+  "c_nonce": "fGFF7UkhLa",
+  "c_nonce_expires_in": 86400
+}
 ```
 
 Below is a non-normative example of a Batch Credential Response in a partial deferred flow:
@@ -821,26 +824,30 @@ HTTP/1.1 200 OK
   Content-Type: application/json
   Cache-Control: no-store
 
-[{
-  "acceptance_token": "8xLOxBtZp8",
+{
+  "credential_responses": [{
+    "acceptance_token": "8xLOxBtZp8"
+  },
+  {
+    "format": "jwt_vc"
+    "credential" : "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
+  }],
   "c_nonce": "fGFF7UkhLa",
   "c_nonce_expires_in": 86400  
-},
-{
-  "format": "jwt_vc"
-  "credential" : "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy",
-  "c_nonce": "f34afdSSXa",
-  "c_nonce_expires_in": 86400  
-}]
+}
 ```
 
-The Batch Credential Response MUST NOT include errors for individual Credential Requests in the Batch Credential Request. Note, a partial successful Batch Credential Response is not valid.
+## Batch Credential Error Response {#batch-credential_error_response}
+
+The Batch Credential Issuance Endpoint responds with a HTTP status code 4xx in case of an error.
+
+Note: the Batch Credential Request either succeeds or fails entirely.
 
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
 This endpoint is used to issue a Credential previously requested at the Credential endpoint or or Batch Credential Endpoint in case the Credential Issuer was not able to immediately issue this Credential. 
 
-## Deferred Credential Request
+## Deferred Credential Request {#deferred-credential_request}
 
 This is an HTTP POST request, which accepts an acceptance token as the only parameter. The acceptance token MUST be sent as access token in the HTTP header as shown in the following example.
 
@@ -852,7 +859,7 @@ Authorization: BEARER 8xLOxBtZp8
 
 ```
 
-## Deferred Credential Response
+## Deferred Credential Response {#deferred-credential_response}
 
 The deferred Credential Response uses the `format` and `credential` parameters as defined in (#credential-response). 
 
