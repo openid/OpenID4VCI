@@ -817,7 +817,7 @@ HTTP/1.1 200 OK
 }
 ```
 
-Below is a non-normative example of a Batch Credential Response in a partial deferred flow:
+Below is a non-normative example of a Batch Credential Response that contains Credential Response and Deferred Credential Response objects:
 
 ```
 HTTP/1.1 200 OK
