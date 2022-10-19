@@ -104,7 +104,14 @@ The Wallet sends one Credential Request per individual Credential. The wallet MA
 
 The Credential Issuer MAY also request Credential presentation as means to authenticate or identify the User during the issuance flow as illustrated in a use case in (#use-case-2).
 
-This specification can be used with different credential formats (even within the same transaction). At its core, the specification is format agnostic but allows implementers to leverage the specific capabilities of their credential format of choise. To achieve this, the specification defines extension points in the different sub-functions (e.g. metadata, authorization, issuance) of the protocol to add format specific parameters or claims and utilizes the credential format identifier to designate the profile to be applied in the respective place. This specification already defines profiles for W3C Verifiable Credentials and ISO mDL in Section (#format_profiles). Other specification or deployment can defines their own profiles on top of the extensibility model.  
+At its core, this specification is credential format agnostic and allows implementers to leverage specific capabilities of credential formats of their choice. Multiple credential formats can be used within the same transaction. 
+
+The specification achieves this by defining
+
+- extension points in the different sub-functions (e.g. metadata, authorization, issuance) of the protocol to add format specific parameters or claims 
+- credential format identifiers to designate the profile to be applied in the respective place. 
+
+This specification defines profiles for W3C Verifiable Credentials and ISO/IEC 18013-5 mDL in section (#format_profiles). Other specifications or deployments can defines their own profiles using this extensibility model.  
 
 Note that the issuance can have multiple characteristics, which can be combined depending on the use-cases: 
 
