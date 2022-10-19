@@ -108,7 +108,7 @@ At its core, this specification is credential format agnostic and allows impleme
 
 The specification achieves this by defining
 
-- extension points in the different sub-functions (e.g. metadata, authorization, issuance) of the protocol to add format specific parameters or claims 
+- extension points in the different endpoints (issuer initiated issuance, metadata, authorization, credential issuance) to add format specific parameters or claims 
 - credential format identifiers to designate the profile to be applied in the respective place. 
 
 This specification defines profiles for W3C Verifiable Credentials and ISO/IEC 18013-5 mDL in (#format_profiles). Other specifications or deployments can defines their own profiles using this extensibility model.  
@@ -260,7 +260,7 @@ The Credential Issuer sends the request as a HTTP GET request or a HTTP redirect
 This JSON object may contain the following claims: 
 
 * `issuer`: REQUIRED. the Credential Issuer URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from. 
-* `credentials`: REQUIRED. JSON array of objects, where every object contains the data related to a certain credential type the Wallet shall request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). Each object MAY also contain certain claims that shall be included in the credential.
+* `credentials`: REQUIRED. JSON array of objects, where every object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). Each object MAY also contain certain claims that shall be included in the credential.
 * `pre-authorized_code`: CONDITIONAL. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
 * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value. MUST NOT be used in Pre-Authorized Code flow when `pre-authorized_code` is present.
@@ -326,7 +326,7 @@ There are two possible ways to request issuance of a specific Credential type in
 The request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-oauth-rar] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
 
 * `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
-* `format`: REQUIRED. JSON string representing the format in which the Credential is requested to be issued. The format identifier determines further claims in the authorization details object specific used to identify the credential type to be issued. This specification defines format specific profiles in (#format_profiles). 
+* `format`: REQUIRED. JSON string representing the format in which the Credential is requested to be issued. The format identifier determines further claims in the authorization details object specifically used to identify the credential type to be issued. This specification defines format specific profiles in (#format_profiles). 
 
 A non-normative example of an `authorization_details` object. 
 
@@ -1123,7 +1123,7 @@ The following is a non-normative example of a Credential Issuance Request with f
 
 #### Credential Response {#credential_response_jwt_vc_json}
 
-The value of the `credential` claim in the credential response MUST be a JSON String. Credential is already a sequence of base64url-encoded values separated by period characters and MUST NOT be re-encoded. 
+The value of the `credential` claim in the credential response MUST be a JSON String. Credentials of this format are already a sequence of base64url-encoded values separated by period characters and MUST NOT be re-encoded. 
 
 The following is a non-normative example of a credential issuance response with format `jwt_vc_json`.
 
@@ -1191,7 +1191,7 @@ The following is a non-normative example of a credential issuance request with f
 
 #### Credential Response
 
-The value of the `credential` claim in the credential response MUST be a JSON Object. MUST NOT be re-encoded.
+The value of the `credential` claim in the credential response MUST be a JSON Object. Credentials of this format MUST NOT be re-encoded.
 
 The following is a non-normative example of a credential issuance response with format `ldp_vc`.
 
