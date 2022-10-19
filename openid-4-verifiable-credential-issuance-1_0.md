@@ -260,7 +260,7 @@ The Credential Issuer sends the request as a HTTP GET request or a HTTP redirect
 This JSON object may contain the following claims: 
 
 * `issuer`: REQUIRED. the Credential Issuer URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from. 
-* `credentials`: REQUIRED. JSON array of objects, where every object contains the data related to a certain credential type the Wallet shall request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters specific to the type of the credential to be requested as defined in Section (#format_profiles). Each object MAY also contain certain claims that shall be included in the credential.
+* `credentials`: REQUIRED. JSON array of objects, where every object contains the data related to a certain credential type the Wallet shall request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in Section (#format_profiles). Each object MAY also contain certain claims that shall be included in the credential.
 * `pre-authorized_code`: CONDITIONAL. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
 * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value. MUST NOT be used in Pre-Authorized Code flow when `pre-authorized_code` is present.
@@ -850,11 +850,12 @@ Another use case is when the Credential Issuer uses cryptographic schemes that c
 
 ## Multiple Accesses to the Credential Endpoint
 
-The Credential Endpoint can be accessed multiple times by a Wallet using the same Access Token, even for the same credential_type. the Credential Issuer determines if the subsequent successful requests will return the same or an updated Credential, such as having a new expiration time or using the most current End-User claims.
+The Credential Endpoint can be accessed multiple times by a Wallet using the same Access Token, even for the same Credential. the Credential Issuer determines if the subsequent successful requests will return the same or an updated Credential, such as having a new expiration time or using the most current End-User claims.
 
 the Credential Issuer may also decide that the current Access Token is longer be valid and a re-authentication or Token Refresh (see [@!RFC6749, section 6]) may be required under the Credential Issuer's discretion. The policies between the Credential Endpoint and the Authorization Server that may change the behavior of what is returned with a new Access Token are beyond the scope of this specification (see [@!RFC6749, section 7]).
 
 The action leading to the Wallet performing another Credential Request can also be triggered by a background process, or by the Credential Issuer using an out-of-band mechanism (SMS, email, etc.) to inform the End-User.
+
 # Privacy Considerations
 
 TBD
