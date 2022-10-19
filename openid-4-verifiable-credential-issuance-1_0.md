@@ -111,7 +111,7 @@ The specification achieves this by defining
 - extension points in the different sub-functions (e.g. metadata, authorization, issuance) of the protocol to add format specific parameters or claims 
 - credential format identifiers to designate the profile to be applied in the respective place. 
 
-This specification defines profiles for W3C Verifiable Credentials and ISO/IEC 18013-5 mDL in section (#format_profiles). Other specifications or deployments can defines their own profiles using this extensibility model.  
+This specification defines profiles for W3C Verifiable Credentials and ISO/IEC 18013-5 mDL in (#format_profiles). Other specifications or deployments can defines their own profiles using this extensibility model.  
 
 Note that the issuance can have multiple characteristics, which can be combined depending on the use-cases: 
 
@@ -260,7 +260,7 @@ The Credential Issuer sends the request as a HTTP GET request or a HTTP redirect
 This JSON object may contain the following claims: 
 
 * `issuer`: REQUIRED. the Credential Issuer URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from. 
-* `credentials`: REQUIRED. JSON array of objects, where every object contains the data related to a certain credential type the Wallet shall request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in Section (#format_profiles). Each object MAY also contain certain claims that shall be included in the credential.
+* `credentials`: REQUIRED. JSON array of objects, where every object contains the data related to a certain credential type the Wallet shall request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). Each object MAY also contain certain claims that shall be included in the credential.
 * `pre-authorized_code`: CONDITIONAL. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
 * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value. MUST NOT be used in Pre-Authorized Code flow when `pre-authorized_code` is present.
@@ -657,7 +657,7 @@ The following claims are used in the Credential Response:
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)).
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
-The format value determines the format and encoding of the credential in the credential response. Details are defined in the credential format specific profiles in Section (#format_profiles). 
+The format value determines the format and encoding of the credential in the credential response. Details are defined in the credential format specific profiles in (#format_profiles). 
 
 Credential formats expressed as binary formats MUST be base64url-encoded and returned as a JSON string.
 
