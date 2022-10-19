@@ -260,7 +260,7 @@ The Credential Issuer sends the request as a HTTP GET request or a HTTP redirect
 This JSON object may contain the following claims: 
 
 * `issuer`: REQUIRED. the Credential Issuer URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from. 
-* `credentials`: REQUIRED. JSON array of objects, where every object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). Each object MAY also contain certain claims that shall be included in the credential.
+* `credentials`: REQUIRED. JSON array of objects, where every object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). 
 * `pre-authorized_code`: CONDITIONAL. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
 * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
 * `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value. MUST NOT be used in Pre-Authorized Code flow when `pre-authorized_code` is present.
@@ -1092,8 +1092,7 @@ The following is a non-normative example of a Credential Metadata Object of type
 
 The following additional claims are defined for this credential format. 
 
-* `types`: REQUIRED. as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the wallet shall request in the subsequent credential issuance request.
-* `credentialSubject`: OPTIONAL. as defined in (#server_metadata_jwt_vc_json). This object indicates to the wallet what claims it shall request in the subsequent credential issuance request. 
+* `types`: REQUIRED. as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the wallet shall request in the subsequent credential issuance request. 
 
 The following is a non-normative example of a Credential Metadata Object of type `jwt_vc_json`.
 
@@ -1162,12 +1161,11 @@ The following additional claims are defined for this credential format.
 * `credential_definition`: REQUIRED. JSON Object containing (and isolating) the detailed description of the credential type. This object MUST be processed using full JSON-LD processing. It consists of the following sub claims:
 
   * `@context`: REQUIRED. as defined in (#server_metadata_ldp_vc)
-  * `types`: REQUIRED. as defined in (#server_metadata_ldp_vc). This claim contains the type values the wallet shall request in the subsequent credential issuance request.
-  * `credentialSubject`: OPTIONAL. as defined in (#server_metadata_ldp_vc). This object indicates to the wallet what claims it shall request in the subsequent credential issuance request. 
+  * `types`: REQUIRED. as defined in (#server_metadata_ldp_vc). This claim contains the type values the wallet shall request in the subsequent credential issuance request. 
 
-The following is a non-normative example of a Issuer Initiated Issuance of type `jwt_vc_json`.
+The following is a non-normative example of a Issuer Initiated Issuance of type `ldp_vc`.
 
-<{{examples/issuer_initiated_issuance_request_jwt_vc_json.json}}
+<{{examples/issuer_initiated_issuance_request_ldp_vc.json}}
 
 #### Authorization Deails {#authorization_ldp_vc}
 
@@ -1256,7 +1254,6 @@ The following is a non-normative example of a Credential Metadata Object of type
 The following additional claims are defined for this credential format. 
 
 * `doctype`: REQUIRED. as defined in (#server_metadata_mso_mdoc) 
-* `claims`: OPTIONAL. as defined in (#server_metadata_mso_mdoc) 
 
 The following is a non-normative example of an Issuer Initiated Issuance of type `mso_doc`.
 
