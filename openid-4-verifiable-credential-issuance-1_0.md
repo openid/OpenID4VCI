@@ -414,7 +414,7 @@ POST /op/par HTTP/1.1
 
 This step is OPTIONAL. After receiving an Authorization Request from the Client, the Credential Issuer MAY use this step to obtain additional Credentials from the End-User required to proceed with the authorization of the credential issuance, e.g. it may obtain an identity credential and utilize it to identify the user before issuing an additional credential. For a use case, see (#use-case-2).
 
-The Credential Issuer MUST utilize [@OpenID4VP] to dynamically request additional Credential Presentations. From a protocol perspective, the Credential Issuer then acts as a verifier and sends a presentation request to the Wallet. The Client SHOULD have these Credentials obtained prior to initiating a transaction with this Credential Issuer. 
+It is RECOMMENDED that the Credential Issuer uses [@OpenID4VP] to dynamically request presentation of additional Credentials. From a protocol perspective, the Credential Issuer then acts as a verifier and sends a presentation request to the Wallet. The Client SHOULD have these Credentials obtained prior to initiating a transaction with this Credential Issuer. 
 
 To enable dynamic callbacks of the Credential Issuer to the end-user's Wallet, the Wallet MAY provide additional parameters `Wallet_issuer` and `user_hint` defined in the Authorization Request section of this specification.
 
