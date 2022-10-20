@@ -6,12 +6,7 @@
             "types": [
                 "VerifiableCredential",
                 "UniversityDegreeCredential"
-            ],
-            "CredentialSubject": {
-                "given_name": {},
-                "last_name": {},
-                "degree": {}
-            }
+            ]
         }
     ],
     "op_stat": "eyJhbGciOiJSU0Et...FYUaBy"

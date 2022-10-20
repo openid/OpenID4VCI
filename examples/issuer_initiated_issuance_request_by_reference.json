@@ -1,11 +1,7 @@
 {
    "issuer": "https://issuer.example.com",
    "credentials": [
-      "UniversityDegree_JWT",
-      {
-         "format": "mso_mdoc",
-         "doctype": "org.iso.18013.5.1.mDL"
-      }
+      "UniversityDegree_LDP"
    ],
    "pre-authorized_code": "adhjhdjajkdkhjhdj",
    "pin": "67637637"

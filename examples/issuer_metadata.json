@@ -2,6 +2,7 @@
     "credential_endpoint": "https://server.example.com/credential",
     "credentials_supported": [
         {
+            "id":"UniversityDegree_LDP",
             "format": "ldp_vc",
             "@context": [
                 "https://www.w3.org/2018/credentials/v1",
