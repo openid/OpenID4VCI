@@ -88,16 +88,15 @@ Base64 encoding using the URL- and filename-safe character set defined in Sectio
 
 # Overview
 
-This specification defines the following mechanisms to allow Wallets used by the End-User to request Credential Issuers to issue Verifiable Credentials via the Credential Endpoint:
+This specification defines the following mechanisms to allow Wallets used by the End-User to request Credential Issuers to issue Verifiable Credentials:
 
 * A mandatory newly defined Credential Endpoint from which Credentials can be issued. See (#credential-endpoint).
 * An optional newly defined Batch Credential Endpoint from which multiple Credentials can be issued in one request. See (#batch-credential-endpoint).
 * An optional mechanism for the Credential Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
-* An extended Authorization Request that allows to request authorization to request issuance of Credentials of specific types. See (#credential-authz-request).
-* An optional ability to bind an issued Credential to a cryptographic key material. The Credential request therefore allows to convey a proof of posession for the key material. Multiple proof types are supported. See (#credential_request). 
+* An extended Authorization Request that allows to request authorization to request issuance of Credentials of specific formats and types. See (#credential-authz-request).
+* An optional ability to bind an issued Credential to a cryptographic key material. The Credential request and the Batch Credential request both therefore allow to convey a proof of posession for the key material. Multiple proof types are supported. See (#credential_request). 
 * A mechanism for the Deferred Credential Issuance. See (#deferred-credential-issuance).
 * A mechanism for the Credential Issuer to publish metadata about the Credential it is capable of issuing. See (#server-metadata)
-* A mechanism that allows issuance of multiple Credentials of same or different type. See (#token-response) and (#credential-response).
 
 The Wallet sends one Credential Request per individual Credential to the Credential Endpoint. The wallet MAY use the same access token to send multiple Credential Requests to request issuance of 
   - multiple Credentials of different types bound to the same proof, or
@@ -105,16 +104,16 @@ The Wallet sends one Credential Request per individual Credential to the Credent
 
 The Wallet MAY send one Batch Credential Request to the Batch Credential Endpoint to request multiple Credentials of different types bound to the same proof, or multiple Credentials of the same type bound to different proofs in the Batch Credential Response.
 
-The Credential Issuer MAY also request Credential presentation as means to authenticate or identify the User during the issuance flow as illustrated in a use case in (#use-case-2).
+In the course of the authorization process, the Credential Issuer MAY also request Credential presentation as means to authenticate or identify the User during the issuance flow as illustrated in a use case in (#use-case-2).
 
 At its core, this specification is Credential format agnostic and allows implementers to leverage specific capabilities of Credential formats of their choice. Multiple Credential formats can be used within the same transaction. 
 
 The specification achieves this by defining
 
-- Extension points to add Credential format specific parameters or claims in the Credential Issuer metadata, Issuance Initiation Request, Authorization Request, Credential Request and Batch Credential Request,
-- Credential format identifiers to identify Credential format specific set of parameters and claims to be applied at each extention point. This set of Credential format specific set of parameters and claims is referred to as a Credential Format Profile in this specification.
+* Extension points to add Credential format specific parameters or claims in the Credential Issuer metadata, Issuance Initiation Request, Authorization Request, Credential Request and Batch Credential Request,
+* Credential format identifiers to identify Credential format specific set of parameters and claims to be applied at each extention point. This set of Credential format specific set of parameters and claims is referred to as a Credential Format Profile in this specification.
 
-This specification defines Credential Format Profiles for W3C Verifiable Credentials defined in [@VC_DATA] and ISO/IEC 18013-5 mDL defined in [@ISO.18013-5] in (#format_profiles). Other specifications or deployments can define their own Credential Format Profiles using above-mentioned extensibility points.
+This specification defines Credential Format Profiles for W3C Verifiable Credentials as defined in [@VC_DATA] and ISO/IEC 18013-5 mDL as defined in [@ISO.18013-5] in (#format_profiles). Other specifications or deployments can define their own Credential Format Profiles using above-mentioned extensibility points.
 
 Note that the issuance can have multiple characteristics, which can be combined depending on the use-cases: 
 
@@ -122,6 +121,8 @@ Note that the issuance can have multiple characteristics, which can be combined 
 * Wallet initiated or Issuer initiated: the issuance request from the Wallet can be sent to the Credential Issuer without any gesture from the Credential Issuer (Wallet Initiated), or following the communication from the Credential Issuer (Issuer Initiated).
 * Same-device or Cross-device: the Wallet to which the Credential is issued and the Credential Issuer's user experience (website or an app) can reside on the same device, or on different devices.
 * Just-in-time or Deferred: the Credential Issuer can issue the Credential directly in response to the Credential Request (just-in-time), or requires time and needs the Wallet to come back to retrieve Credential (deferred).
+
+The following sub-sections illusterate some of the authorization flows supported by this specification.
 
 ## Authorized Code Flow
 
@@ -225,7 +226,7 @@ Figure: Issuance using Pre-Authorized code flow
 
 (2) This step is the same as Step 3 in the Authorization Code Flow, but instead of authorization code, pre-authorized_code obtained in step (1) is sent in the Token Request. This step is defined in (#token_endpoint).  
 
-(3) This step is the same as Step 4 in the Authorization Code Flow. This step is defined in (#credential-endpoint).
+(3) This step is the same as Step 4 in the Authorization Code Flow. 
 
 Note that the pre-authorized_code is sent to the Token Endpoint, and not to the Authorization Endpoint.
 
@@ -233,7 +234,7 @@ It is also important to note that anyone who possesses a valid pre-authorization
 
 One such mechanism defined in this specification is the usage of PIN. If in the Issuance Initiation Request the Credential Issuer indicated that the PIN is required, the user is requested to type in a PIN sent via a channel different that the issuance Flow and the PIN is sent to the Credential Issuer in the Token Request. 
 
-For more details and concrete mitigations, see (#security-considerations).
+For more details and concrete mitigations, see (#security_considerations_pre-authz-code).
 
 # New Endpoints and Other Extensions to OAuth 2.0 {#endpoints}
 
@@ -253,8 +254,6 @@ Existing OAuth 2.0 mechanisms are extended as following:
 * Authorization Endpoint: The `authorization_details` parameter is extended to allow clients to specify types of the Credentials when requesting authorization for issuance. These extension can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
 * Token Endpoint: optional parameters are added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential endpoint. 
 
-ToDo: potentially add a section that explains basics of OAuth 2.0 (perhaps an addendum).
-
 # Issuance Initiation Endpoint {#issuance_initiation_endpoint}
 
 This endpoint is used by a Credential Issuer in case it is already in an interaction with a user that wishes to initate a Credential issuance. It is used to pass available information relevant for the Credential issuance to ensure a convenient and secure process. 
@@ -269,7 +268,7 @@ Issuance Initiation object may contain the following claims:
 * `credentials`: REQUIRED. JSON array, where every entry is a JSON Object or a JSON String. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `id` values in one of the Supported Credentials Objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the wallet MUST resolve this string value to the respective Supported Credentials Object.
 * `pre-authorized_code`: CONDITIONAL. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
 * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
-* `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authentication request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authentication Request to the Credential Issuer as the `op_state` parameter value. MUST NOT be used in Pre-Authorized Code flow when `pre-authorized_code` is present.
+* `op_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authorization request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `op_state` parameter value. MUST NOT be used in Pre-Authorized Code flow when `pre-authorized_code` is present.
 
 This is a non-normative example of an issuance request object used to initiate an authorization code flow
 
@@ -775,6 +774,7 @@ The client can request issuance of multiple Credentials of certain types and for
 The Batch Credential Endpoint allows a client to send multiple Credential Request objects (see (#credential_request)) to request the issuance of multiple credential at once.
 
 The following claims are used in the Batch Credential Request:
+
 * `credential_requests`: REQUIRED. JSON array that contains Credential Request objects as defined in (#credential_request).
 
 Below is a non-normative example of a Batch Credential Request:
@@ -786,31 +786,27 @@ Content-Type: application/json
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
-  "credential_requests": [{
-    "type": "https://did.example.org/bachelorDegree"
-    "format": "ldp_vc",
-    "did": "did:example:ebfeb1f712ebc6f1c276e12ec21",
-    "proof": {
-      "proof_type": "jwt",
-      "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
-      xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
-      0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
-      NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
-    }
-  },
-  {
-    "type": "https://did.example.org/healthCard"
-    "format": "jwt_vc",
-    "did": "did:example:abeadae34139fdsk34safdd2531",
-    "proof": {
-      "proof_type": "jwt",
-      "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTphYmVhZGFlMzQxMzlmZHNrMzRzYWZkZDI1MzEva2V5cy8
-      xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
-      0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
-      NlIjoiMzRhc2RmX1NTWCJ9.dBir0EEbGzYVqgpMh7QSOLeUVNYHcpG8Tnfhl941ibufxzCZpmGnbqo2
-      TeB2GmZkE5Bjx3ilrZLUNC4dAiD51Q"
-    }
-  }]
+   "credential_requests":[
+      {
+         "format":"jwt_vc_json",
+         "types":[
+            "VerifiableCredential",
+            "UniversityDegreeCredential"
+         ],
+         "proof":{
+            "proof_type":"jwt",
+            "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZTpl...C_aZKPxgihac0aW9EkL1nOzM"
+         }
+      },
+      {
+         "format":"mso_mdoc",
+         "doctype":"org.iso.18013.5.1.mDL",
+         "proof":{
+            "proof_type":"jwt",
+            "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
+         }
+      }
+   ]
 }
 ```
 
@@ -830,11 +826,11 @@ HTTP/1.1 200 OK
 
 {
   "credential_responses": [{
-    "format": "ldp_vc"
-    "credential" : { ... }
+    "format": "jwt_vc_json",
+    "credential" : "eyJraWQiOiJkaWQ6ZXhhbXBsZTpl...C_aZKPxgihac0aW9EkL1nOzM"
   },
   {
-    "format": "jwt_vc"
+    "format": "mso_mdoc",
     "credential" : "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
   }],
   "c_nonce": "fGFF7UkhLa",
@@ -850,15 +846,17 @@ HTTP/1.1 200 OK
   Cache-Control: no-store
 
 {
-  "credential_responses": [{
-    "acceptance_token": "8xLOxBtZp8"
-  },
-  {
-    "format": "jwt_vc"
-    "credential" : "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
-  }],
-  "c_nonce": "fGFF7UkhLa",
-  "c_nonce_expires_in": 86400  
+   "credential_responses":[
+      {
+         "acceptance_token":"8xLOxBtZp8"
+      },
+      {
+         "format":"jwt_vc_json",
+         "credential":"YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
+      }
+   ],
+   "c_nonce":"fGFF7UkhLa",
+   "c_nonce_expires_in":86400
 }
 ```
 
@@ -965,7 +963,7 @@ Directly using key, app and/or device attestations to proof certain capabilities
 
 The approach recommended by this specification is that the Credential Issuer relies on the OAuth 2.0 client authentication to establish trust in the Wallet and leaves it to the Wallet to ensure its internal integrity using app and key attestation (if required). This establishes a clean separation between the different hemispheres and a uniform interface irrespectively of the Wallet's architecture (e.g. native vs web Wallet). Client authentication can be performed with Credentials registered with the Credential Issuer or with assertions issued to the Wallet by a 3rd party the Credential Issuer trusts for the purpose of client authentication.  
 
-## Pre-authorized Code Flow
+## Pre-authorized Code Flow {#security_considerations_pre-authz-code}
 
 ### Replay Prevention
 
@@ -1469,6 +1467,7 @@ The value of the `credential` claim in the credential response MUST be a a JSON 
    * changed format of issuer initiated credential issuance request to JSON
    * added option to include credential data by reference in issuer initiated credential issuance request
    * added profiles for W3C VCs and ISO mDL
+   * added batch credential endpoint
 
    -08
 
