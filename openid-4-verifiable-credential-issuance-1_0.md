@@ -164,7 +164,7 @@ Figure: Issuance using Authorization code flow
 
 If the Credential Issuer requires more time to issue a Credential, the Credential Issuer may returns an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued Credential as defined in (#deferred-credential-issuance).
 
-If the Issuer wants to issue multiple Credentials at the same time, the Issuer MAY support the Batch Credential Endpoint and the Wallet MAY send a Batch Credential Request to the Batch Credential Endpoint as defined in (#batch-credential-endpoint).
+If the Issuer wants to issue multiple Credentials in one response, the Issuer MAY support the Batch Credential Endpoint and the Wallet MAY send a Batch Credential Request to the Batch Credential Endpoint as defined in (#batch-credential-endpoint).
 
 Note: this flow is based on OAuth 2.0 and the code grant type, but it can be used with other grant types as well. 
 
@@ -234,7 +234,7 @@ Newly defined endpoints are the following:
 
 * Issuance Initiation Endpoint: An endpoint exposed by the Wallet that allows a Credential Issuer to initiate the issuance flow.
 * Credential Endpoint: An OAuth 2.0-protected endpoint exposed by the Credential Issuer and used to issue verifiable Credentials.
-* Batch Credential Endpoint: An OAuth 2.0-protected endpoint exposed by the Issuer and used to include multiple verifiable Credentials in one response.
+* Batch Credential Endpoint: An OAuth 2.0-protected endpoint exposed by the Credential Issuer and used to issue multiple verifiable Credentials in one response.
 * Deferred Credential Endpoint: this endpoint is used for deferred issuance of verifiable Credentials.
 
 Existing OAuth 2.0 mechanisms are extended as following:
@@ -751,7 +751,7 @@ When using the Batch Credential Endpoint, a Credential Request (see (#credential
 
 ## Batch Credential Request {#batch-credential_request}
 
-The Batch Credential Endpoint allows a client to send multiple Credential Request to request the issuance of multiple credential at once.
+The Batch Credential Endpoint allows a client to send multiple Credential Request objects (see (#credential_request)) to request the issuance of multiple credential at once.
 
 The following claims are used in the Batch Credential Request:
 * `credential_requests`: REQUIRED. JSON array that contains Credential Request objects as defined in (#credential_request).
@@ -808,7 +808,7 @@ HTTP/1.1 200 OK
   Cache-Control: no-store
 
 {
-  "credential_reponses": [{
+  "credential_responses": [{
     "format": "ldp_vc"
     "credential" : { ... }
   },
@@ -843,13 +843,13 @@ HTTP/1.1 200 OK
 
 ## Batch Credential Error Response {#batch-credential_error_response}
 
-The Batch Credential Issuance Endpoint responds with a HTTP status code 4xx in case of an error.
+The Batch Credential Issuance Endpoint MUST respond with a HTTP status code 4xx in case of an error. 
 
-Note: the Batch Credential Request either succeeds or fails entirely.
+The Batch Credential Request either succeessfully issues all requested credentials or fails entirely if there is even one credential failed to be issued.
 
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
-This endpoint is used to issue a Credential previously requested at the Credential endpoint or or Batch Credential Endpoint in case the Credential Issuer was not able to immediately issue this Credential. 
+This endpoint is used to issue a Credential previously requested at the Credential endpoint or Batch Credential Endpoint in case the Credential Issuer was not able to immediately issue this Credential. 
 
 ## Deferred Credential Request {#deferred-credential_request}
 
@@ -884,7 +884,7 @@ This section extends the server metadata [@!RFC8414] to allow the RP to obtain i
 This specification defines the following new Server Metadata parameters for this purpose:
 
 * `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
-* `batch_credential_endpoint`: OPTIONAL. URL of the OP's Batch Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components. If omitted, the OP does not support the Batch Credential Endpoint.
+* `batch_credential_endpoint`: OPTIONAL. URL of the AS's Batch Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components. If omitted, the OP does not support the Batch Credential Endpoint.
 
 The following parameter MUST be used to communicates the specifics of the Credential that the Credential Issuer supports issuance of:
 
