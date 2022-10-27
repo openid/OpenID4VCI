@@ -1178,7 +1178,7 @@ Register "unsupported_credential_type", "unsupported_credential_format" and "inv
 
 # Acknowledgements {#Acknowledgements}
 
-We would like to thank David Chadwick, John Bradley, Mark Haine, Alen Horvat, Michael B. Jones, Kenichi Nakamura and David Waite for their valuable contributions to this specification.
+We would like to thank David Chadwick, John Bradley, Mark Haine, Alen Horvat, Michael B. Jones, Kenichi Nakamura, Oliver Terbu and David Waite for their valuable contributions to this specification.
 
 # Notices
 
