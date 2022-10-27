@@ -255,9 +255,9 @@ This endpoint is used by a Credential Issuer in case it is already in an interac
 
 ## Issuance Initiation Request {#issuance_initiation_request}
 
-The Credential Issuer sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL defined in (#client-metadata). This request contains a single URI query parameter `issuance_request` that contains a JSON object with the actual request data. 
+The Credential Issuer sends the request as a HTTP GET request or a HTTP redirect to the Issuance Initiation Endpoint URL defined in (#client-metadata). This request contains a single URI query parameter `credential_offer` that contains an Issuance Initiation object, which is a JSON object with the Issuance Initiation Request parameters.
 
-This JSON object may contain the following claims: 
+Issuance Initiation object may contain the following claims: 
 
 * `issuer`: REQUIRED. the Credential Issuer URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from. 
 * `credentials`: REQUIRED. JSON array, where every entry is a JSON Object or a JSON String. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `id` values in one of the Supported Credentials Objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the wallet MUST resolve this string value to the respective Supported Credentials Object.
@@ -288,7 +288,7 @@ The Issuer MUST ensure the release of any privacy-sensitive data is legally base
 Below is a non-normative example of an Issuance Initiation Request:
 
 ```
-  GET /initiate_issuance?issuance_request=%7B%22issuer%22:%22https://issuer.example.com
+  GET /initiate_issuance?credential_offer=%7B%22issuer%22:%22https://issuer.example.com
   %22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22Verifiabl
   eCredential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22op_stat%22:%22eyJhbGciOiJS
   U0Et...FYUaBy%22%7D
@@ -299,7 +299,7 @@ The Credential Issuer MAY also render a QR code containing the request data that
 The following is a non-normative example of such a request that can be included in a QR code or a deeplink used to active a native wallet app:
 
 ```
-openid-initiate-issuance://issuance_request=%7B%22issuer%22:%22https://issuer.example.com
+openid-initiate-issuance://credential_offer=%7B%22issuer%22:%22https://issuer.example.com
 %22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22VerifiableCr
 edential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22op_stat%22:%22eyJhbGciOiJSU0Et...
 FYUaBy%22%7D
