@@ -90,9 +90,9 @@ Base64 encoding using the URL- and filename-safe character set defined in Sectio
 
 This specification defines the following mechanisms to allow Wallets used by the End-User to request Credential Issuers to issue Verifiable Credentials via the Credential Endpoint:
 
-* A newly defined Credential Endpoint from which Credentials can be issued. See (#credential-endpoint).
-* An optional mechanism for the Credential Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
+* A mandatory newly defined Credential Endpoint from which Credentials can be issued. See (#credential-endpoint).
 * An optional newly defined Batch Credential Endpoint from which multiple Credentials can be issued in one request. See (#batch-credential-endpoint).
+* An optional mechanism for the Credential Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
 * An extended Authorization Request that allows to request authorization to request issuance of Credentials of specific types. See (#credential-authz-request).
 * An optional ability to bind an issued Credential to a cryptographic key material. The Credential request therefore allows to convey a proof of posession for the key material. Multiple proof types are supported. See (#credential_request). 
 * A mechanism for the Deferred Credential Issuance. See (#deferred-credential-issuance).
