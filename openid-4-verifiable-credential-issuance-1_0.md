@@ -90,7 +90,8 @@ Base64 encoding using the URL- and filename-safe character set defined in Sectio
 
 This specification defines the following mechanisms to allow Wallets used by the End-User to request Credential Issuers to issue Verifiable Credentials via the Credential Endpoint:
 
-* A newly defined Credential Endpoint from which Credentials can be issued. See (#credential-endpoint).
+* A mandatory newly defined Credential Endpoint from which Credentials can be issued. See (#credential-endpoint).
+* An optional newly defined Batch Credential Endpoint from which multiple Credentials can be issued in one request. See (#batch-credential-endpoint).
 * An optional mechanism for the Credential Issuer to initiate the issuance. See (#issuance_initiation_endpoint).
 * An extended Authorization Request that allows to request authorization to request issuance of Credentials of specific types. See (#credential-authz-request).
 * An optional ability to bind an issued Credential to a cryptographic key material. The Credential request therefore allows to convey a proof of posession for the key material. Multiple proof types are supported. See (#credential_request). 
@@ -98,9 +99,11 @@ This specification defines the following mechanisms to allow Wallets used by the
 * A mechanism for the Credential Issuer to publish metadata about the Credential it is capable of issuing. See (#server-metadata)
 * A mechanism that allows issuance of multiple Credentials of same or different type. See (#token-response) and (#credential-response).
 
-The Wallet sends one Credential Request per individual Credential. The wallet MAY use the same access token to send multiple Credential Requests to request issuance of 
+The Wallet sends one Credential Request per individual Credential to the Credential Endpoint. The wallet MAY use the same access token to send multiple Credential Requests to request issuance of 
   - multiple Credentials of different types bound to the same proof, or
   - multiple Credentials of the same type bound to different proofs
+
+The Wallet MAY send one Batch Credential Request to the Batch Credential Endpoint to request multiple Credentials of different types bound to the same proof, or multiple Credentials of the same type bound to different proofs in the Batch Credential Response.
 
 The Credential Issuer MAY also request Credential presentation as means to authenticate or identify the User during the issuance flow as illustrated in a use case in (#use-case-2).
 
@@ -170,6 +173,8 @@ Figure: Issuance using Authorization code flow
 
 If the Credential Issuer requires more time to issue a Credential, the Credential Issuer may returns an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued Credential as defined in (#deferred-credential-issuance).
 
+If the Issuer wants to issue multiple Credentials in one response, the Issuer MAY support the Batch Credential Endpoint and the Wallet MAY send a Batch Credential Request to the Batch Credential Endpoint as defined in (#batch-credential-endpoint).
+
 Note: this flow is based on OAuth 2.0 and the code grant type, but it can be used with other grant types as well. 
 
 ## Pre-Authorized Code Flow
@@ -238,6 +243,7 @@ Newly defined endpoints are the following:
 
 * Issuance Initiation Endpoint: An endpoint exposed by the Wallet that allows a Credential Issuer to initiate the issuance flow.
 * Credential Endpoint: An OAuth 2.0-protected endpoint exposed by the Credential Issuer and used to issue verifiable Credentials.
+* Batch Credential Endpoint: An OAuth 2.0-protected endpoint exposed by the Credential Issuer and used to issue multiple verifiable Credentials in one response.
 * Deferred Credential Endpoint: this endpoint is used for deferred issuance of verifiable Credentials.
 
 Existing OAuth 2.0 mechanisms are extended as following:
@@ -756,11 +762,117 @@ HTTP/1.1 400 Bad Request
 }
 ```
 
+# Batch Credential Endpoint {#batch-credential-endpoint}
+
+The Batch Credential Endpoint issues multiple Credentials in one Batch Credential Response as approved by the End-User upon presentation of a valid Access Token representing this approval.
+
+Communication with the Batch Credential Endpoint MUST utilize TLS. 
+
+The client can request issuance of multiple Credentials of certain types and formats in one Batch Credential Request. This includes Credentials of the same type and multiple formats, different types and one format, or both. 
+
+## Batch Credential Request {#batch-credential_request}
+
+The Batch Credential Endpoint allows a client to send multiple Credential Request objects (see (#credential_request)) to request the issuance of multiple credential at once.
+
+The following claims are used in the Batch Credential Request:
+* `credential_requests`: REQUIRED. JSON array that contains Credential Request objects as defined in (#credential_request).
+
+Below is a non-normative example of a Batch Credential Request:
+
+```
+POST /batch_credential HTTP/1.1
+Host: server.example.com
+Content-Type: application/json
+Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+{
+  "credential_requests": [{
+    "type": "https://did.example.org/bachelorDegree"
+    "format": "ldp_vc",
+    "did": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+    "proof": {
+      "proof_type": "jwt",
+      "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
+      xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
+      0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
+      NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
+    }
+  },
+  {
+    "type": "https://did.example.org/healthCard"
+    "format": "jwt_vc",
+    "did": "did:example:abeadae34139fdsk34safdd2531",
+    "proof": {
+      "proof_type": "jwt",
+      "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTphYmVhZGFlMzQxMzlmZHNrMzRzYWZkZDI1MzEva2V5cy8
+      xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
+      0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
+      NlIjoiMzRhc2RmX1NTWCJ9.dBir0EEbGzYVqgpMh7QSOLeUVNYHcpG8Tnfhl941ibufxzCZpmGnbqo2
+      TeB2GmZkE5Bjx3ilrZLUNC4dAiD51Q"
+    }
+  }]
+}
+```
+
+## Batch Credential Response {#batch-credential_response}
+
+The following claims are used in the Batch Credential Response:
+* `credential_responses`: REQUIRED. JSON array that contains Credential Response objects as defined in (#credential_request) and/or Deferred Credential Response objects as defined in (#deferred-credential_request). Every entry of the array corresponds to the Credential Request object at the same array index in the `credential_requests` parameter of the Batch Credential Request.
+* `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response). 
+* `c_nonce_expires_in`: OPTIONAL. The `c_nonce_expires_in` as defined in (#credential-response). 
+
+Below is a non-normative example of a Batch Credential Response in a synchronous flow:
+
+```
+HTTP/1.1 200 OK
+  Content-Type: application/json
+  Cache-Control: no-store
+
+{
+  "credential_responses": [{
+    "format": "ldp_vc"
+    "credential" : { ... }
+  },
+  {
+    "format": "jwt_vc"
+    "credential" : "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
+  }],
+  "c_nonce": "fGFF7UkhLa",
+  "c_nonce_expires_in": 86400
+}
+```
+
+Below is a non-normative example of a Batch Credential Response that contains Credential Response and Deferred Credential Response objects:
+
+```
+HTTP/1.1 200 OK
+  Content-Type: application/json
+  Cache-Control: no-store
+
+{
+  "credential_responses": [{
+    "acceptance_token": "8xLOxBtZp8"
+  },
+  {
+    "format": "jwt_vc"
+    "credential" : "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
+  }],
+  "c_nonce": "fGFF7UkhLa",
+  "c_nonce_expires_in": 86400  
+}
+```
+
+## Batch Credential Error Response {#batch-credential_error_response}
+
+The Batch Credential Issuance Endpoint MUST respond with a HTTP status code 4xx in case of an error. 
+
+The Batch Credential Request either succeessfully issues all requested credentials or fails entirely if there is even one credential failed to be issued.
+
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
-This endpoint is used to issue a Credential previously requested at the Credential endpoint in case the Credential Issuer was not able to immediately issue this Credential. 
+This endpoint is used to issue a Credential previously requested at the Credential endpoint or Batch Credential Endpoint in case the Credential Issuer was not able to immediately issue this Credential. 
 
-## Deferred Credential Request
+## Deferred Credential Request {#deferred-credential_request}
 
 This is an HTTP POST request, which accepts an acceptance token as the only parameter. The acceptance token MUST be sent as access token in the HTTP header as shown in the following example.
 
@@ -772,7 +884,7 @@ Authorization: BEARER 8xLOxBtZp8
 
 ```
 
-## Deferred Credential Response
+## Deferred Credential Response {#deferred-credential_response}
 
 The deferred Credential Response uses the `format` and `credential` parameters as defined in (#credential-response). 
 
@@ -793,6 +905,7 @@ This section extends the server metadata [@!RFC8414] to allow the RP to obtain i
 This specification defines the following new Server Metadata parameters for this purpose:
 
 * `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
+* `batch_credential_endpoint`: OPTIONAL. URL of the AS's Batch Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components. If omitted, the OP does not support the Batch Credential Endpoint.
 
 The following parameter MUST be used to communicates the specifics of the Credential that the Credential Issuer supports issuance of:
 
