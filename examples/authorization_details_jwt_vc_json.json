@@ -1,0 +1,15 @@
+[
+    {
+        "type": "openid_credential",
+        "format": "jwt_vc_json",
+        "types": [
+            "VerifiableCredential",
+            "UniversityDegreeCredential"
+        ],
+        "CredentialSubject": {
+            "given_name": {},
+            "last_name": {},
+            "degree": {},
+        }
+    }
+]

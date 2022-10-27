@@ -1,0 +1,11 @@
+{
+    "issuer": "https://issuer.example.com",
+    "credentials": [
+        {
+            "format": "mso_mdoc",
+            "doctype": "org.iso.18013.5.1.mDL"
+        }
+    ],
+    "pre-authorized_code": "adhjhdjajkdkhjhdj",
+    "pin": "67637637"
+}

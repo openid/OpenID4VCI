@@ -1,0 +1,13 @@
+{
+    "issuer": "https://issuer.example.com",
+    "credentials": [
+        {
+            "format": "jwt_vc_json",
+            "types": [
+                "VerifiableCredential",
+                "UniversityDegreeCredential"
+            ]
+        }
+    ],
+    "op_stat": "eyJhbGciOiJSU0Et...FYUaBy"
+}
