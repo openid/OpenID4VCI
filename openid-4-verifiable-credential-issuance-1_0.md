@@ -745,7 +745,7 @@ The Batch Credential Endpoint issues multiple Credentials in one Batch Credentia
 
 Communication with the Batch Credential Endpoint MUST utilize TLS. 
 
-The client can request issuance of multiple Credentials of certain types and formats at the same time. This includes Credentials of the same type and multiple formats, different types and one format, or both. 
+The client can request issuance of multiple Credentials of certain types and formats in one Batch Credential Request. This includes Credentials of the same type and multiple formats, different types and one format, or both. 
 
 ## Batch Credential Request {#batch-credential_request}
 
