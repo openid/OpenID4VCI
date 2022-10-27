@@ -1,0 +1,8 @@
+{
+   "issuer": "https://issuer.example.com",
+   "credentials": [
+      "UniversityDegree_LDP"
+   ],
+   "pre-authorized_code": "adhjhdjajkdkhjhdj",
+   "pin": "67637637"
+}
