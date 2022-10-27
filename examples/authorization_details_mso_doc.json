@@ -1,0 +1,17 @@
+[
+    {
+        "type": "openid_credential",
+        "format": "mso_doc",
+        "doctype": "org.iso.18013.5.1.mDL",
+        "claims": {
+            "org.iso.18013.5.1": {
+                "given_name": {},
+                "last_name": {},
+                "birth_date": {}
+            },
+            "org.iso.18013.5.1.aamva": {
+                "organ_donor": {}
+            }
+        }
+    }
+]
