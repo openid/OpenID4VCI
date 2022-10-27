@@ -532,17 +532,15 @@ If the Token Request is invalid or unauthorized, the Authorization Server constr
 
 The following additional clarifications are provided for the following parameters already defined in [@!RFC6749]:
 
-invalid_request:
+`invalid_request`:
 
-- the Authorization Server does not expect a PIN in the pre-authorized flow but the client provides a PIN,
+- the Authorization Server does not expect a PIN in the pre-authorized flow but the client provides a PIN
+- the Authorization Server expects a PIN in the pre-authorized flow but the client does not provide a PIN
 
-- the Authorization Server expects a PIN in the pre-authorized flow but the client does not provide a PIN,
+`invalid_grant`:
 
-invalid_grant:
-
-- the Authorization Server expects a PIN in the pre-authorized flow but the client provides the wrong PIN,
-
-- the user provides the wrong pre-authorized code or the pre-authorized code has expired.
+- the Authorization Server expects a PIN in the pre-authorized flow but the client provides the wrong PIN
+- the user provides the wrong pre-authorized code or the pre-authorized code has expired
 
 Below is a non-normative example Token Error Response:
 
@@ -727,16 +725,24 @@ Note: Consider using CIBA Ping/Push OR SSE Poll/Push. Another option would be th
 
 ### Credential Error Response
 
-If the request contains the wrong access token or the access token is missing, the issuer MUST return the invalid_token error as prescribed in section 3.1 of [@!RFC6750].
+When the Credential Request is invalid or unauthorized, the Credential Issuer constructs the error response as defined in this section.
 
-If the request is malformed or contains erroneous parameters, the following errors are specified for 400 Bad Request:
+The following additional clarifications are provided for the following parameters already defined in section 3.1 of [@!RFC6750]:
 
-* invalid_request - the credential request was malformed for example, the credential type and/or the format and/or the proof is missing or the proof is badly formatted
-Note. This error is defined in section 3.1 of [@!RFC6750].
-* unsupported_credential_type - the requested credential type is not supported
-* unsupported_credential_format - the requested credential format is not supported
+`invalid_request`:
 
-This is a non-normative example Credential Error Response:
+- Credential Request was malformed. One or more of the parameters (i.e. `format`, `proof`)are missing or malformatted.
+
+`invalid_token`:
+
+- Credential Request contains the wrong Access Token or the Access Token is missing
+
+The following additional error codes are specified:
+
+* `unsupported_credential_type`: requested credential type is not supported
+* `unsupported_credential_format`:  requested credential format is not supported
+
+This is a non-normative example of a Credential Error Response:
 
 ```
 HTTP/1.1 400 Bad Request
@@ -747,7 +753,6 @@ Cache-Control: no-store
    "error": "invalid_request"
 }
 ```
-
 
 #### Credential Issuer-Provided Nonce
 
