@@ -1239,10 +1239,7 @@ The Credential format identifier is `mso_mdoc`.
 The following additional server metadata are defined for this Credential format. 
 
 * `doctype`: REQUIRED. JSON string identifying the credential type. 
-* `claims`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies a certain namespace as 
-defined in [@!ISO.18013-5] or other any profile of it. Every of those namespace objects contains a list of key value pairs where the key identifies a 
-claim that is defined in the respective namespace and is offered in the Credential. The value is a JSON object detailing the specifics about the support for the claim 
-with a following non-exhaustive list of parameters that MAY be included:
+* `claims`: OPTIONAL. A JSON object containing a list of key value pairs, where the key is a certain `namespace` as defined in [@!ISO.18013-5] (or any profile of it), and the value is a JSON object. This object also contains a list of key value pairs, where the key is a claim that is defined in the respective namespace and is offered in the Credential. The value is a JSON object detailing the specifics of the claim with a following non-exhaustive list of parameters that MAY be included:
   * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
   * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
   * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
@@ -1260,7 +1257,7 @@ The following additional claims are defined for this Credential format.
 
 * `doctype`: REQUIRED. as defined in (#server_metadata_mso_mdoc) 
 
-The following is a non-normative example of an Issuer Initiated Issuance of type `mso_doc`.
+The following is a non-normative example of an Issuer Initiated Issuance of type `mso_mdoc`.
 
 <{{examples/issuer_initiated_issuance_request_mso_doc.json}}
 
@@ -1282,7 +1279,7 @@ The following additional parameters are defined for credential issuance requests
 * `doctype`: REQUIRED. as defined in (#server_metadata_mso_mdoc) 
 * `claims`: OPTIONAL. as defined in (#server_metadata_mso_mdoc) 
 
-The following is a non-normative example of a credential issuance request with Credential format `mso_doc`.
+The following is a non-normative example of a credential issuance request with Credential format `mso_mdoc`.
 
 <{{examples/credential_request_iso_mdl_with_claims.json}}
 
