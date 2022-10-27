@@ -751,7 +751,10 @@ When using the Batch Credential Endpoint, a Credential Request (see (#credential
 
 ## Batch Credential Request {#batch-credential_request}
 
-The Batch Credential Endpoint allows a client to send multiple Credential Request objects (as defined in (#credential-request)) in an array in order to request the issuance of multiple credential at once.
+The Batch Credential Endpoint allows a client to send multiple Credential Request to request the issuance of multiple credential at once.
+
+The following claims are used in the Batch Credential Request:
+* `credential_requests`: REQUIRED. JSON array that contains Credential Request objects as defined in (#credential_request).
 
 Below is a non-normative example of a Batch Credential Request:
 
@@ -761,38 +764,39 @@ Host: server.example.com
 Content-Type: application/json
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
-[{
-  "type": "https://did.example.org/bachelorDegree"
-  "format": "ldp_vc",
-  "did": "did:example:ebfeb1f712ebc6f1c276e12ec21",
-  "proof": {
-    "proof_type": "jwt",
-    "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
-    xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
-    0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
-    NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
-  }
-},
 {
-  "type": "https://did.example.org/healthCard"
-  "format": "jwt_vc",
-  "did": "did:example:abeadae34139fdsk34safdd2531",
-  "proof": {
-    "proof_type": "jwt",
-    "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTphYmVhZGFlMzQxMzlmZHNrMzRzYWZkZDI1MzEva2V5cy8
-    xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
-    0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
-    NlIjoiMzRhc2RmX1NTWCJ9.dBir0EEbGzYVqgpMh7QSOLeUVNYHcpG8Tnfhl941ibufxzCZpmGnbqo2
-    TeB2GmZkE5Bjx3ilrZLUNC4dAiD51Q"
-  }
-}]
-
+  "credential_requests": [{
+    "type": "https://did.example.org/bachelorDegree"
+    "format": "ldp_vc",
+    "did": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+    "proof": {
+      "proof_type": "jwt",
+      "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
+      xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
+      0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
+      NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
+    }
+  },
+  {
+    "type": "https://did.example.org/healthCard"
+    "format": "jwt_vc",
+    "did": "did:example:abeadae34139fdsk34safdd2531",
+    "proof": {
+      "proof_type": "jwt",
+      "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTphYmVhZGFlMzQxMzlmZHNrMzRzYWZkZDI1MzEva2V5cy8
+      xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
+      0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
+      NlIjoiMzRhc2RmX1NTWCJ9.dBir0EEbGzYVqgpMh7QSOLeUVNYHcpG8Tnfhl941ibufxzCZpmGnbqo2
+      TeB2GmZkE5Bjx3ilrZLUNC4dAiD51Q"
+    }
+  }]
+}
 ```
 
 ## Batch Credential Response {#batch-credential_response}
 
 The following claims are used in the Batch Credential Response:
-* `credential_responses`: REQUIRED. JSON array that contains Credential Response as defined in (#credential_request) and/or Deferred Credential Response objects as defined in (#deferred-credential_request). Every entry of the array corresponds to the Credential Request object at the same array index in the Batch Credential Request.
+* `credential_responses`: REQUIRED. JSON array that contains Credential Response objects as defined in (#credential_request) and/or Deferred Credential Response objects as defined in (#deferred-credential_request). Every entry of the array corresponds to the Credential Request object at the same array index in the `credential_requests` parameter of the Batch Credential Request.
 * `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response). 
 * `c_nonce_expires_in`: OPTIONAL. The `c_nonce_expires_in` as defined in (#credential-response). 
 
