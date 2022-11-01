@@ -3,4 +3,4 @@ Specification to allow holders to request issuance of credentials and issuers to
 
 ### Build the HTML ###
 
-```docker run -v `pwd`:/data danielfett/markdown2rfc openid-connect-4-verifiable-credential-issuance-1_0.md```
+```docker run -v `pwd`:/data danielfett/markdown2rfc openid-4-verifiable-credential-issuance-1_0.md```
