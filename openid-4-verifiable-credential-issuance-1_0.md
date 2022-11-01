@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-09"
+value = "openid-4-verifiable-credential-issuance-1_0-10"
 status = "standard"
 
 [[author]]
@@ -465,7 +465,12 @@ The following are the extension parameters to the Token Request used in a pre-au
 * `pre-authorized_code`: CONDITIONAL. The code representing the authorization to obtain Credentials of a certain type. This parameter is required if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 * `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Issuance Initiation Request. The string value MUST consist of maximum 8 numeric characters (the numbers 0 - 9). This parameter MUST only be used, if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 
-Requirements around how the client identifies and if applicable authenticates itself with the authorization server in the Token Request as described in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
+Requirements around how the client identifies and if applicable authenticates itself with the authorization server in the Token Request depend on the grant type.
+
+For the authorization code grant type, the requirement as as described in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
+
+For the pre-authorized code grant type, authentication of the client is optional, as described in Section 3.2.1 of OAuth 2.0 [@!RFC6749] and consequently, 
+the "client_id" is only needed when a form of client authentication that relies on the parameter is used.
 
 Below is a non-normative example of a Token Request in an authorization code flow:
 
@@ -481,13 +486,12 @@ POST /token HTTP/1.1
   
 ```
 
-Below is a non-normative example of a Token Request in a pre-authorized code flow:
+Below is a non-normative example of a Token Request in a pre-authorized code flow (without client authentication):
 
 ```
 POST /token HTTP/1.1
   Host: server.example.com
   Content-Type: application/x-www-form-urlencoded
-  Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
   grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
   &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
@@ -1460,6 +1464,10 @@ The value of the `credential` claim in the credential response MUST be a a JSON 
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -10
+
+   * relaxed client identification requirements for pre-authorized code grant type
 
    -09
 
