@@ -556,7 +556,7 @@ The Credential Endpoint issues a Credential as approved by the End-User upon pre
 
 Communication with the Credential Endpoint MUST utilize TLS. 
 
-The client can request issuance of a Credential of a certain type multiple times, e.g., to associate the Credential with different DIDs/public keys or to refresh a certain Credential.
+The client can request issuance of a Credential of a certain type multiple times, e.g., to associate the Credential with different public keys/Decentralized Identifiers (DIDs) or to refresh a certain Credential.
 
 If the access token is valid for requesting issuance of multiple Credentials, it is at the client's discretion to decide the order in which to request issuance of multiple Credentials requested in the Authorization Request.
 
@@ -920,7 +920,7 @@ This section defines the structure of the objects that appear in the `credential
 
 * `format`: REQUIRED. A JSON string identifying the format of this credential, e.g. `jwt_vc_json` or `ldp_vc`. Depending on the format value, the Supported Credentials Object contains further elements defining the type and (optionally) particular claims the credential may contain, and informatio how to display the credential. (#format_profiles) defines Credential Format Profiles introduced by this specification. 
 * `id`: OPTIONAL. A JSON String identifying the respective Supported Credentials Object. The value MUST be unique across all `credentials_supported` entries in the Credential Issuer Metadata.
-* `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential as defined in (#credential-binding). A non-exhaustive list of valid values defined by this specification are `did`, `jwk`, and `mso`.
+* `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential as defined in (#credential-binding). When Cryptographic Binding Method is a Decentralized Identifier, valid values MUST be a did: prefix followed by a supported DID method without a : suffix. For example, support for the DID method with a method-name "example" would be represented by did:example. Support for all DID methods is indicated by sending did without any method-name. A non-exhaustive list of valid values defined by this specification also includes `jwk`, and `mso`. 
 * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptosuites for Credentials in `jwt_vc` format should use algorithm names defined in [IANA JOSE Algorithms Registry](https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms). Cryptosuites for Credentials in `ldp_vc` format should use signature suites names defined in [Linked Data Cryptographic Suite Registry](https://w3c-ccg.github.io/ld-cryptosuite-registry/).
 * `display`: OPTIONAL. An array of objects, where each object contains the display properties of the supported credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included. Note that the display name of the supported credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
    * `name`: REQUIRED. String value of a display name for the Credential.
