@@ -469,8 +469,7 @@ Requirements around how the client identifies and if applicable authenticates it
 
 For the authorization code grant type, the requirement as as described in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
 
-For the pre-authorized code grant type, authentication of the client is optional, as described in Section 3.2.1 of OAuth 2.0 [@!RFC6749] and consequently, 
-the "client_id" is only needed when a form of client authentication that relies on the parameter is used.
+For the pre-authorized code grant type, authentication of the client is optional, as described in Section 3.2.1 of OAuth 2.0 [@!RFC6749] and consequently, the "client_id" is only needed when a form of client authentication that relies on the parameter is used.
 
 Below is a non-normative example of a Token Request in an authorization code flow:
 
@@ -542,6 +541,10 @@ The following additional clarifications are provided for the following parameter
 
 - the Authorization Server expects a PIN in the pre-authorized flow but the client provides the wrong PIN
 - the user provides the wrong pre-authorized code or the pre-authorized code has expired
+
+`invalid_client`:
+
+- the client tried to send a token request with a pre-authorized code without client id but the Authorization Server does not support anonymous access
 
 Below is a non-normative example Token Error Response:
 
@@ -917,6 +920,10 @@ The following parameter MUST be used to communicates the specifics of the Creden
   * `display`: OPTIONAL. An array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
     * `name`: OPTIONAL. String value of a display name for the Credential Issuer.
     * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier
+
+This specification also defines a new metadata parameter to publish whether the issuer supports anonymous token requests with the pre-authorized grant type. It is defined as follows:
+
+* `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A JSON Boolean indicating whether the issuer accepts token requests to exchange a pre-authorized code without client id. The default is `false`. 
 
 ### Supported Credentials Object {#credential-metadata-object}
 
