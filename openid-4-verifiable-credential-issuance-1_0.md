@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-09"
+value = "openid-4-verifiable-credential-issuance-1_0-10"
 status = "standard"
 
 [[author]]
@@ -465,7 +465,11 @@ The following are the extension parameters to the Token Request used in a pre-au
 * `pre-authorized_code`: CONDITIONAL. The code representing the authorization to obtain Credentials of a certain type. This parameter is required if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 * `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Issuance Initiation Request. The string value MUST consist of maximum 8 numeric characters (the numbers 0 - 9). This parameter MUST only be used, if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 
-Requirements around how the client identifies and if applicable authenticates itself with the authorization server in the Token Request as described in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
+Requirements around how the client identifies and, if applicable, authenticates itself with the authorization server in the Token Request depend on the grant type.
+
+For the authorization code grant type, the requirement as as described in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
+
+For the pre-authorized code grant type, authentication of the client is OPTIONAL, as described in Section 3.2.1 of OAuth 2.0 [@!RFC6749] and consequently, the "client_id" is only needed when a form of client authentication that relies on the parameter is used.
 
 Below is a non-normative example of a Token Request in an authorization code flow:
 
@@ -481,13 +485,12 @@ POST /token HTTP/1.1
   
 ```
 
-Below is a non-normative example of a Token Request in a pre-authorized code flow:
+Below is a non-normative example of a Token Request in a pre-authorized code flow (without client authentication):
 
 ```
 POST /token HTTP/1.1
   Host: server.example.com
   Content-Type: application/x-www-form-urlencoded
-  Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
   grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
   &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
@@ -538,6 +541,10 @@ The following additional clarifications are provided for the following parameter
 
 - the Authorization Server expects a PIN in the pre-authorized flow but the client provides the wrong PIN
 - the user provides the wrong pre-authorized code or the pre-authorized code has expired
+
+`invalid_client`:
+
+- the client tried to send a token request with a pre-authorized code without client id but the Authorization Server does not support anonymous access
 
 Below is a non-normative example Token Error Response:
 
@@ -913,6 +920,10 @@ The following parameter MUST be used to communicates the specifics of the Creden
   * `display`: OPTIONAL. An array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
     * `name`: OPTIONAL. String value of a display name for the Credential Issuer.
     * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier
+
+This specification also defines a new metadata parameter to publish whether the issuer supports anonymous token requests with the pre-authorized grant type. It is defined as follows:
+
+* `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A JSON Boolean indicating whether the issuer accepts token requests to exchange a pre-authorized code without client id. The default is `false`. 
 
 ### Supported Credentials Object {#credential-metadata-object}
 
@@ -1460,6 +1471,10 @@ The value of the `credential` claim in the credential response MUST be a a JSON 
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -10
+
+   * relaxed client identification requirements for pre-authorized code grant type
 
    -09
 
