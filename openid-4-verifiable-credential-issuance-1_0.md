@@ -110,7 +110,7 @@ At its core, this specification is Credential format agnostic and allows impleme
 
 The specification achieves this by defining
 
-* Extension points to add Credential format specific parameters or claims in the Credential Issuer metadata, Credential Offer Request, Authorization Request, Credential Request and Batch Credential Request,
+* Extension points to add Credential format specific parameters or claims in the Credential Issuer metadata, Credential Offer, Authorization Request, Credential Request and Batch Credential Request,
 * Credential format identifiers to identify Credential format specific set of parameters and claims to be applied at each extention point. This set of Credential format specific set of parameters and claims is referred to as a Credential Format Profile in this specification.
 
 This specification defines Credential Format Profiles for W3C Verifiable Credentials as defined in [@VC_DATA] and ISO/IEC 18013-5 mDL as defined in [@ISO.18013-5] in (#format_profiles). Other specifications or deployments can define their own Credential Format Profiles using above-mentioned extensibility points.
@@ -197,7 +197,7 @@ The diagram is based on a Credential Issuer initiated flow illustrated in a use 
         |                |      for the issuance of a certain Credential        |
         |---------------------------------------------------------------------->|
         |                |                                                      |
-        |                |  (1) Credential Offer Request                     |
+        |                |  (1) Credential Offer                     |
         |                |      (pre-authorized_code)                           |
         |                |<-----------------------------------------------------|        
         |    interacts   |                                                      |
@@ -222,7 +222,7 @@ Figure: Issuance using Pre-Authorized code flow
 
 (0) the Credential Issuer successfully obtains consent and user data required for the issuance of a requested Credential from the user using Issuer specific business process.
 
-(1) The flow begins as the Credential Issuer generates an Credential Offer Request for certain Credential(s) and communicates it to the Wallet, for example as a QR code or as a deeplink. The Wallet uses information from the Credential Offer Request to obtain the Credential Issuer's metadata including details about the Credential that this Credential Issuer wants to issue. This step is defined in (#issuance_initiation_endpoint).
+(1) The flow begins as the Credential Issuer generates an Credential Offer for certain Credential(s) and communicates it to the Wallet, for example as a QR code or as a deeplink. The Wallet uses information from the Credential Offer to obtain the Credential Issuer's metadata including details about the Credential that this Credential Issuer wants to issue. This step is defined in (#issuance_initiation_endpoint).
 
 (2) This step is the same as Step 3 in the Authorization Code Flow, but instead of authorization code, pre-authorized_code obtained in step (1) is sent in the Token Request. This step is defined in (#token_endpoint).  
 
@@ -232,7 +232,7 @@ Note that the pre-authorized_code is sent to the Token Endpoint, and not to the 
 
 It is also important to note that anyone who possesses a valid pre-authorization_code would be able to receive a VC from the Credential Issuer. Implementers MUST implement mitigations most suitable to the use-case. 
 
-One such mechanism defined in this specification is the usage of PIN. If in the Credential Offer Request the Credential Issuer indicated that the PIN is required, the user is requested to type in a PIN sent via a channel different that the issuance Flow and the PIN is sent to the Credential Issuer in the Token Request. 
+One such mechanism defined in this specification is the usage of PIN. If in the Credential Offer the Credential Issuer indicated that the PIN is required, the user is requested to type in a PIN sent via a channel different that the issuance Flow and the PIN is sent to the Credential Issuer in the Token Request. 
 
 For more details and concrete mitigations, see (#security_considerations_pre-authz-code).
 
@@ -258,9 +258,9 @@ Existing OAuth 2.0 mechanisms are extended as following:
 
 This endpoint is used by a Credential Issuer in case it is already in an interaction with a user that wishes to initate a Credential issuance. It is used to pass available information relevant for the Credential issuance to ensure a convenient and secure process. 
 
-## Credential Offer Request {#issuance_initiation_request}
+## Credential Offer {#issuance_initiation_request}
 
-The Credential Issuer sends the request as a HTTP GET request or a HTTP redirect to the Credential Offer Endpoint URL defined in (#client-metadata). This request contains a single URI query parameter `credential_offer` that contains an Credential Offer object, which is a JSON object with the Credential Offer Request parameters.
+The Credential Issuer sends the request as a HTTP GET request or a HTTP redirect to the Credential Offer Endpoint URL defined in (#client-metadata). This request contains a single URI query parameter `credential_offer` that contains an Credential Offer object, which is a JSON object with the Credential Offer parameters.
 
 Credential Offer object may contain the following claims: 
 
@@ -284,13 +284,13 @@ The following non-normative example shows how the issuer can offer the issuance 
 
 Credential Format Profiles can be found in (#format_profiles).
 
-The Wallet MUST consider the parameter values in the Credential Offer Request as not trustworthy since the origin is not authenticated and the message integrity is not protected. The Wallet MUST apply the same checks on the Credential Issuer that it would apply when the flow is started from the Wallet itself since the Credential Issuer is not trustworthy just because it sent the Credential Offer Request. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
+The Wallet MUST consider the parameter values in the Credential Offer as not trustworthy since the origin is not authenticated and the message integrity is not protected. The Wallet MUST apply the same checks on the Credential Issuer that it would apply when the flow is started from the Wallet itself since the Credential Issuer is not trustworthy just because it sent the Credential Offer. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
 
 The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if the Wallet would have started the flow. 
 
 The Issuer MUST ensure the release of any privacy-sensitive data is legally based.
 
-Below is a non-normative example of an Credential Offer Request:
+Below is a non-normative example of an Credential Offer:
 
 ```
   GET /credential_offer?credential_offer=%7B%22issuer%22:%22https://issuer.example.com
@@ -463,7 +463,7 @@ Upon receiving a successful Authorization Response, a Token Request is made as d
 The following are the extension parameters to the Token Request used in a pre-authorized code flow:
 
 * `pre-authorized_code`: CONDITIONAL. The code representing the authorization to obtain Credentials of a certain type. This parameter is required if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
-* `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Credential Offer Request. The string value MUST consist of maximum 8 numeric characters (the numbers 0 - 9). This parameter MUST only be used, if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
+* `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Credential Offer. The string value MUST consist of maximum 8 numeric characters (the numbers 0 - 9). This parameter MUST only be used, if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 
 Requirements around how the client identifies and, if applicable, authenticates itself with the authorization server in the Token Request depend on the grant type.
 
@@ -987,7 +987,7 @@ The pre-authorized code flow is vulnerable to the replay of the pre-authorized c
 
 An attacker might leverage the Credential issuance process and the user's trust into the Wallet to phish PIN codes sent out by a different service that grant attacker access to services other than Credential issuance. The attacker could setup a Credential Issuer site and in parallel to the issuance request trigger transmission of a PIN code to the user's phone from a service other than Credential issuance, e.g. from a payment service. The user would then be asked to enter this PIN into the Wallet and since the Wallet sends this PIN to the token endpoint of the Credential Issuer (the attacker), the attacker would get access to the PIN code, and access to that other service. 
 
-In order to cope with that issue, the Wallet is RECOMMENDED to interact with trusted Credential Issuers only. In that case, the Wallet would not process an Credential Offer Request with an untrusted issuer URL. The Wallet MAY also show to the user the endpoint or issuer it will be sending the PIN code and ask the user for confirmation.
+In order to cope with that issue, the Wallet is RECOMMENDED to interact with trusted Credential Issuers only. In that case, the Wallet would not process an Credential Offer with an untrusted issuer URL. The Wallet MAY also show to the user the endpoint or issuer it will be sending the PIN code and ask the user for confirmation.
 
 ## Credential Lifecycle Management 
 
@@ -1272,7 +1272,7 @@ The following is a non-normative example of a Supported Credentials Object of ty
 
 <{{examples/credential_metadata_jwt_vc_json.json}}
 
-#### Credential Offer Request
+#### Credential Offer
 
 The following additional claims are defined for this Credential format. 
 
@@ -1322,7 +1322,7 @@ The Credential format identifier is `jwt_vc_json-ld`.
 
 The definitions in (#server_metadata_ldp_vc) apply for metadata of credentials of this type as well. 
 
-#### Credential Offer Request
+#### Credential Offer
 
 The definitions in (#issuer_initiated_issuance_ldp_vc) apply for credentials of this type as well. 
 
@@ -1366,7 +1366,7 @@ The following is a non-normative example of a Supported Credentials Object of ty
 
 <{{examples/credential_metadata_ldp_vc.json}}
 
-#### Credential Offer Request {#issuer_initiated_issuance_ldp_vc}
+#### Credential Offer {#issuer_initiated_issuance_ldp_vc}
 
 The following additional claims are defined for this Credential format. 
 
@@ -1432,7 +1432,7 @@ The following is a non-normative example of a Supported Credentials Object of ty
 
 <{{examples/credential_metadata_mso_mdoc.json}}
 
-### Credential Offer Request
+### Credential Offer
 
 The following additional claims are defined for this Credential format. 
 
