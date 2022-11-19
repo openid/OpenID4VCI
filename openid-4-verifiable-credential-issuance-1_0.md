@@ -295,7 +295,7 @@ Below is a non-normative example of an Issuance Initiation Request:
 ```
   GET /initiate_issuance?credential_offer=%7B%22issuer%22:%22https://issuer.example.com
   %22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22Verifiabl
-  eCredential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22op_stat%22:%22eyJhbGciOiJS
+  eCredential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22issuer_state%22:%22eyJhbGciOiJS
   U0Et...FYUaBy%22%7D
 ```
 
@@ -306,7 +306,7 @@ The following is a non-normative example of such a request that can be included 
 ```
 openid-initiate-issuance://credential_offer=%7B%22issuer%22:%22https://issuer.example.com
 %22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22VerifiableCr
-edential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22op_stat%22:%22eyJhbGciOiJSU0Et...
+edential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22issuer_state%22:%22eyJhbGciOiJSU0Et...
 FYUaBy%22%7D
 ```
 
