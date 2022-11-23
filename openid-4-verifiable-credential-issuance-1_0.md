@@ -197,8 +197,7 @@ The diagram is based on a Credential Issuer initiated flow illustrated in a use 
         |                |      for the issuance of a certain Credential        |
         |---------------------------------------------------------------------->|
         |                |                                                      |
-        |                |  (1) Credential Offer                     |
-        |                |      (pre-authorized_code)                           |
+        |                |  (1) Credential Offer (pre-authorized_code)          |
         |                |<-----------------------------------------------------|        
         |    interacts   |                                                      |
         |--------------->|                                                      |
