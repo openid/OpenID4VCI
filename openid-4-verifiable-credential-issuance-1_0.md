@@ -621,7 +621,7 @@ This specification defines the following values for `proof_type`:
     * `jwk`: CONDITIONAL. JWT header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
     * `x5c`: CONDITIONAL. JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
   * in the JWT body, 
-    * `iss`: REQUIRED (string). The value of this claim MUST be the client_id of the client making the credential request.
+    * `iss`: OPTIONAL (string). The value of this claim MUST be the client_id of the client making the credential request if the access token being used in the request was granted to a specific client.
     * `aud`: REQUIRED (string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
     * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519].
     * `nonce`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the credential issuer.
