@@ -113,9 +113,9 @@ The specification achieves this by defining
 * Extension points to add Credential format specific parameters or claims in the Credential Issuer metadata, Credential Offer, Authorization Request, Credential Request and Batch Credential Request,
 * Credential format identifiers to identify Credential format specific set of parameters and claims to be applied at each extention point. This set of Credential format specific set of parameters and claims is referred to as a Credential Format Profile in this specification.
 
-This specification defines Credential Format Profiles for W3C Verifiable Credentials as defined in [@VC_DATA] and ISO/IEC 18013-5 mDL as defined in [@ISO.18013-5] in (#format_profiles). Other specifications or deployments can define their own Credential Format Profiles using above-mentioned extensibility points.
+This specification defines Credential Format Profiles for W3C Verifiable Credentials as defined in [@VC_DATA] and ISO/IEC 18013-5 mDL as defined in [@ISO.18013-5] in (#format_profiles) that contain Credential Format specific parameters to be included at each extensibility point defined in this specification. Other specifications or deployments can define their own Credential Format Profiles using above-mentioned extensibility points.
 
-Note that the issuance can have multiple characteristics, which can be combined depending on the use-cases: 
+The issuance can have multiple characteristics, which can be combined depending on the use-cases: 
 
 * Authorization Code Flow or Pre-Authorized Code Flow: the Credential Issuer can obtain user information to turn into a verifiable Credential using user authentication and consent at the Credential Issuer's Authorization Endpoint (Authorization Code Flow), or using out of bound mechanisms outside of the issuance flow (pre-authorized code flow)
 * Wallet initiated or Issuer initiated: the issuance request from the Wallet can be sent to the Credential Issuer without any gesture from the Credential Issuer (Wallet Initiated), or following the communication from the Credential Issuer (Issuer Initiated).
@@ -281,7 +281,7 @@ The following non-normative example shows how the issuer can offer the issuance 
 
 <{{examples/issuer_initiated_issuance_request_multiple_credentials.json}}
 
-Credential Format Profiles can be found in (#format_profiles).
+Note that the examples throughout the specification use Credential Format specific parameters defined in the Credential Format Profiles that can be found in (#format_profiles).
 
 The Wallet MUST consider the parameter values in the Credential Offer as not trustworthy since the origin is not authenticated and the message integrity is not protected. The Wallet MUST apply the same checks on the Credential Issuer that it would apply when the flow is started from the Wallet itself since the Credential Issuer is not trustworthy just because it sent the Credential Offer. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
 
