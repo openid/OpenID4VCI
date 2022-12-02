@@ -336,15 +336,13 @@ There are two possible ways to request issuance of a specific Credential type in
 The request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-oauth-rar] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
 
 * `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
-* `format`: REQUIRED. JSON string representing the format in which the Credential is requested to be issued. This Credential format identifier determines further claims in the authorization details object specifically used to identify the Credential type to be issued. This specification defines Credential Format Profiles in (#format_profiles). 
-
-If the Credential Issuer metadata contain an `authorization_server` property, the authorization detail's `locations` common data field MUST be set to the Credential Issuer's identifier value.  
+* `format`: REQUIRED. JSON string representing the format in which the Credential is requested to be issued. This Credential format identifier determines further claims in the authorization details object specifically used to identify the Credential type to be issued. This specification defines Credential Format Profiles in (#format_profiles).  
 
 A non-normative example of an `authorization_details` object. 
 
 <{{examples/authorization_details.json}}
 
-A non-norative example for a deployment where an AS protects multiple Credential Issuers would look like this:
+If the Credential Issuer metadata contains an `authorization_server` parameter, the authorization detail's `locations` common data field MUST be set to the Credential Issuer's identifier value. A non-normative example for a deployment where an AS protects multiple Credential Issuers would look like this:
 
 <{{examples/authorization_details_with_as.json}}
 
@@ -382,7 +380,7 @@ occurrence MUST be interpreted individually.
 
 Providers that do not understand the value of this scope in a request MUST ignore it entirely. 
 
-If the Credential Issuer metadata contain an `authorization_server` property, the authorization request MUST also contain a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value.  
+If the Credential Issuer metadata contains an `authorization_server` property, the authorization request MUST also contain a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value.  
 
 Below is a non-normative example of a Authorization Request using the scope `com.example.healthCardCredential`:
 
@@ -1513,6 +1511,7 @@ The value of the `credential` claim in the credential response MUST be a a JSON 
 
    * relaxed client identification requirements for pre-authorized code grant type
    * renamed issuance initiation endpoint to Credential Offer Endpoint
+   * split Credential Issuer and OAuth AS metadata
 
    -09
 
