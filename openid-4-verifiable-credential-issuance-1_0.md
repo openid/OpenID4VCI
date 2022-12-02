@@ -338,9 +338,15 @@ The request parameter `authorization_type` defined in Section 2 of [@!I-D.ietf-o
 * `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
 * `format`: REQUIRED. JSON string representing the format in which the Credential is requested to be issued. This Credential format identifier determines further claims in the authorization details object specifically used to identify the Credential type to be issued. This specification defines Credential Format Profiles in (#format_profiles). 
 
+If the Credential Issuer metadata contain an `authorization_server` property, the authorization detail's `locations` common data field MUST be set to the Credential Issuer's identifier value.  
+
 A non-normative example of an `authorization_details` object. 
 
 <{{examples/authorization_details.json}}
+
+A non-norative example for a deployment where an AS protects multiple Credential Issuers would look like this:
+
+<{{examples/authorization_details_with_as.json}}
 
 A non-normative example of a Authorization Request using the `authorization_details` parameter (with line wraps within values for display purposes only).
 
@@ -376,6 +382,8 @@ occurrence MUST be interpreted individually.
 
 Providers that do not understand the value of this scope in a request MUST ignore it entirely. 
 
+If the Credential Issuer metadata contain an `authorization_server` property, the authorization request MUST also contain a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value.  
+
 Below is a non-normative example of a Authorization Request using the scope `com.example.healthCardCredential`:
 
 ```
@@ -383,6 +391,7 @@ HTTP/1.1 302 Found
 Location: https://server.example.com/authorize?
   response_type=code
   &scope=com.example.healthCardCredential
+  &resource=https://issuer.example.com
   &client_id=s6BhdRkqt3
   &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
   &code_challenge_method=S256
@@ -477,6 +486,10 @@ Requirements around how the client identifies and, if applicable, authenticates 
 For the authorization code grant type, the requirement as as described in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
 
 For the pre-authorized code grant type, authentication of the client is OPTIONAL, as described in Section 3.2.1 of OAuth 2.0 [@!RFC6749] and consequently, the "client_id" is only needed when a form of client authentication that relies on the parameter is used.
+
+If the token request contains an `authorization_details` parameter of type `openid_credential` and the Credential Issuer's metadata contains an `authorization_server` parameter, the `authorization_details` object MUST contain the Credential Issuer's identifier in the `locations` element. 
+
+If the token request contains a scope value related to credential issuance and the Credential Issuer's metadata contains an `authorization_server` parameter, the request MUST contain a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value.  
 
 Below is a non-normative example of a Token Request in an authorization code flow:
 
