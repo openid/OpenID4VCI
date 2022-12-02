@@ -237,21 +237,26 @@ One such mechanism defined in this specification is the usage of PIN. If in the 
 
 For more details and concrete mitigations, see (#security_considerations_pre-authz-code).
 
-# New Endpoints and Other Extensions to OAuth 2.0 {#endpoints}
+# API endpoints
 
-This specification defines new endpoints as well as additional parameters to existing OAuth 2.0 endpoints required to implement the protocol outlined in the previous section. It also introduces a new authorization details type according to [@!I-D.ietf-oauth-rar] to convey the details about the Credentials the Wallet wants to obtain. Aspects not defined in this specification are expected to follow [@!RFC6749]. It is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks.
+The credential issuance API defined in this specification is comprised of the following endpoints:
 
-Newly defined endpoints are the following: 
-
-* Credential Offer Endpoint: An endpoint exposed by the Wallet that allows a Credential Issuer to encourage the Wallet to start the Issuance flow by sending information about the Credential Issuer and the Verifiable Credential it is capable of issuing.
 * Credential Endpoint: An OAuth 2.0-protected endpoint exposed by the Credential Issuer and used to issue verifiable Credentials.
 * Batch Credential Endpoint: An OAuth 2.0-protected endpoint exposed by the Credential Issuer and used to issue multiple verifiable Credentials in one response.
 * Deferred Credential Endpoint: this endpoint is used for deferred issuance of verifiable Credentials.
+* Credential Issuer Metadata: this endpoint is used to publish metadata about the credential issuer
+
+Corresponding to the issuance API, a new endpoint is defined exposed by wallets:
+
+* Credential Offer Endpoint: An endpoint exposed by the Wallet that allows a Credential Issuer to encourage the Wallet to start the Issuance flow by sending information about the Credential Issuer and the Verifiable Credential it is capable of issuing.
+
+# Extensions to OAuth 2.0 {#endpoints}
+
+This specification defines additional parameters to existing OAuth 2.0 endpoints required to implement the protocol outlined in the previous section. It also introduces a new authorization details type according to [@!I-D.ietf-oauth-rar] to convey the details about the Credentials the Wallet wants to obtain. Aspects not defined in this specification are expected to follow [@!RFC6749]. It is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks.
 
 Existing OAuth 2.0 mechanisms are extended as following:
 
 * Client Metadata: new metadata parameter is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint.
-* Server Metadata: New metadata parameters are added to allow the client to determine the Credential Issuer specific metadata such as Credential Endpoint URL and information about the Credential types it can issue.
 * Authorization Endpoint: The `authorization_details` parameter is extended to allow clients to specify types of the Credentials when requesting authorization for issuance. These extension can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
 * Token Endpoint: optional parameters are added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential endpoint. 
 
