@@ -924,13 +924,14 @@ A Credential Issuer is identified by a HTTPS URL. The way the wallet discovers t
 
 Using the Issuer identifier the Credential Issuer's configuration can be retrieved.
 
-Credential Issuers publishing Metadata MUST make a JSON document available at the path formed by concatenating the string /.well-known/openid-credential-issuer to the Credential Issuer identifier. The syntax and semantics of .well-known are defined in [@!RFC5785] and apply to the Credential Issuer identifier value when it contains no path component. openid-credential-issuer MUST point to a JSON document compliant with this specification and MUST be returned using the `application/json` content type.
+Credential Issuers publishing Metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer identifier. The syntax and semantics of .well-known are defined in [@!RFC5785] and apply to the Credential Issuer identifier value when it contains no path component. `openid-credential-issuer` MUST point to a JSON document compliant with this specification and MUST be returned using the `application/json` content type.
 
 ### Credential Issuer Metadata Parameters
 
 This specification defines the following Credential Issuer Metadata:
 
 * `credential_issuer`: REQUIRED. The Credential Issuer's identifier.
+* `authorization_server`: OPTIONAL. Identifier of the OAuth authorization server (as defined in [@!RFC8414]) the credential issuer relies on for authorization. If this element is omited, the entity providing the Credential Issuer is also acting as AS, i.e. the Credential Issuer's identifier is used to also obtain the authorization server metadata by appending the .well-known location `oauth-authorization-server` as defined in [@!RFC8414]. 
 * `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
 * `batch_credential_endpoint`: OPTIONAL. URL of the AS's Batch Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components. If omitted, the OP does not support the Batch Credential Endpoint.
 
@@ -938,14 +939,9 @@ The following parameter MUST be used to communicates the specifics of the Creden
 
 * `credentials_supported`: REQUIRED. A JSON array containing a list of JSON objects, each of them representing metadata about a separate credential type that the Credential Issuer can issue. The JSON objects in the array MUST conform to the structure of the (#credential-metadata-object). 
 
-* `credential_issuer`: OPTIONAL. A JSON object containing display properties for the Credential Issuer.
-  * `display`: OPTIONAL. An array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
-    * `name`: OPTIONAL. String value of a display name for the Credential Issuer.
-    * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier
-
-This specification also defines a new metadata parameter to publish whether the issuer supports anonymous token requests with the pre-authorized grant type. It is defined as follows:
-
-* `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A JSON Boolean indicating whether the issuer accepts token requests to exchange a pre-authorized code without client id. The default is `false`. 
+* `display`: OPTIONAL. An array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
+  * `name`: OPTIONAL. String value of a display name for the Credential Issuer.
+  * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier
 
 #### Supported Credentials Object {#credential-metadata-object}
 
@@ -972,6 +968,12 @@ The following example shows a non-normative example of a Supported Credentials O
 <{{examples/credential_metadata_jwt_vc_json.json}}
 
 Note: The Client MAY use other mechanisms to obtain information about the verifiable Credentials that a Credential Issuer can issue.
+
+## OAuth Server Metadata
+
+This specification also defines a new OAuth server metadata [@!RFC8414] parameter to publish whether the AS of the credential issuer supports anonymous token requests with the pre-authorized grant type. It is defined as follows:
+
+* `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A JSON Boolean indicating whether the issuer accepts token requests to exchange a pre-authorized code without client id. The default is `false`. 
 
 # Security Considerations {#security-considerations}
 
