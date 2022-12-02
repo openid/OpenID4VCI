@@ -48,7 +48,7 @@ This specification defines an API that is used to issue verifiable credentials. 
 
 Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. However, in contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the Credential type) and is typically bound to key material allowing the End-User to prove the legitimate possession of the Credential. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential Issuer. This specification caters for those differences.
 
-Access to this API is authorized using OAuth 2.0 [@!RFC6749], i.e. the Wallet uses OAuth to obtain authorization to receive verifiable credentials. This way the issuance process can benefit from the proven security, simplicity, and flexibility of OAuth and existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) can be extended to become Credential Issuers. The same OAuth authorization server can protect one or more instances of the credential issuance API. 
+Access to this API is authorized using OAuth 2.0 [@!RFC6749], i.e. the Wallet uses OAuth to obtain authorization to receive verifiable credentials. This way the issuance process can benefit from the proven security, simplicity, and flexibility of OAuth and existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) can be extended to become Credential Issuers. 
 
 # Terminology
 
@@ -90,15 +90,28 @@ Base64 encoding using the URL- and filename-safe character set defined in Sectio
 
 # Overview
 
-This specification defines the following mechanisms to allow Wallets used by the End-User to request Credential Issuers to issue Verifiable Credentials:
+## Credential Issuer
 
-* A mandatory newly defined Credential Endpoint from which Credentials can be issued. See (#credential-endpoint).
-* An optional newly defined Batch Credential Endpoint from which multiple Credentials can be issued in one request. See (#batch-credential-endpoint).
+This specification defines an API for credential issuance provided by a Credential Issuer. The API is comprised by the following endpoints:
+
+* A mandatory Credential Endpoint from which Credentials can be issued.  See (#credential-endpoint).
+* An optional Batch Credential Endpoint from which multiple Credentials can be issued in one request. See (#batch-credential-endpoint).
+* An optional Deferred Credential Endpoint to allow for the deferred delivery of credentials. 
 * An optional mechanism for the Credential Issuer to make a credential offer to the Wallet to encourage the Wallet to start the Issuance Flow. See (#issuance_initiation_endpoint).
+* A mechanism for the Credential Issuer to publish metadata about the Credential it is capable of issuing. See (#credential_issuer_metadata)
+
+Both the Credential and the Batch Credential endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both request therefore allow to convey a proof of posession for the key material. Multiple proof types are supported. 
+
+## OAuth 2.0
+
+Every Credential Issuer utilizes an OAuth authorization server to authorize access. The same OAuth authorization server can protect one or more Credential Issuers. Wallets determine the authorization server a certain Credential Issuer relies on using the Credential Issuer's metadata.   
+
+All OAuth grant types and extensions mechanisms can be used in conjunction with the credential issuance API. Additionally, this specification defines the following extensions to OAuth 2.0 to facilitate authorization for credential issuance:
+
 * An extended Authorization Request that allows to request authorization to request issuance of Credentials of specific formats and types. See (#credential-authz-request).
-* An optional ability to bind an issued Credential to a cryptographic key material. The Credential request and the Batch Credential request both therefore allow to convey a proof of posession for the key material. Multiple proof types are supported. See (#credential_request). 
-* A mechanism for the Deferred Credential Issuance. See (#deferred-credential-issuance).
-* A mechanism for the Credential Issuer to publish metadata about the Credential it is capable of issuing. See (#server-metadata)
+* A new grant type "pre-authorized code" to facilitate a certain kind of issuance flow (see below).
+
+## Core Concepts
 
 The Wallet sends one Credential Request per individual Credential to the Credential Endpoint. The wallet MAY use the same access token to send multiple Credential Requests to request issuance of 
   - multiple Credentials of different types bound to the same proof, or
