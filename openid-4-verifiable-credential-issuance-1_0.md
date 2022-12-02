@@ -92,13 +92,13 @@ Base64 encoding using the URL- and filename-safe character set defined in Sectio
 
 ## Credential Issuer
 
-This specification defines an API for credential issuance provided by a Credential Issuer. The API is comprised by the following endpoints:
+This specification defines an API for credential issuance provided by a Credential Issuer. The API is comprised of the following endpoints:
 
 * A mandatory Credential Endpoint from which Credentials can be issued.  See (#credential-endpoint).
 * An optional Batch Credential Endpoint from which multiple Credentials can be issued in one request. See (#batch-credential-endpoint).
-* An optional Deferred Credential Endpoint to allow for the deferred delivery of credentials. 
+* An optional Deferred Credential Endpoint to allow for the deferred delivery of credentials (#deferred-credential-issuance). 
 * An optional mechanism for the Credential Issuer to make a credential offer to the Wallet to encourage the Wallet to start the Issuance Flow. See (#issuance_initiation_endpoint).
-* A mechanism for the Credential Issuer to publish metadata about the Credential it is capable of issuing. See (#credential_issuer_metadata)
+* A mechanism for the Credential Issuer to publish metadata about the Credential it is capable of issuing. See (#server-metadata)
 
 Both the Credential and the Batch Credential endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both request therefore allow to convey a proof of posession for the key material. Multiple proof types are supported. 
 
@@ -114,17 +114,21 @@ Existing OAuth 2.0 mechanisms are extended as following:
 
 * A new grant type "pre-authorized code" is defined to facilitate a certain class of issuance flow (#pre-authz-code-flow).
 * A new authorization details [@!I-D.ietf-oauth-rar] type is defined to convey the details about the Credentials (including formats and types) the Wallet wants to obtain (#authorization-details). 
-* Client Metadata: new metadata parameter is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint {#client-metadata}.
+* Client Metadata: new metadata parameter is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (#client-metadata).
 * Authorization Endpoint: An additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated credential offer (#credential-authz-request). 
-* Token Endpoint: an optional response parameters is added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential endpoint. 
+* Token Endpoint: an optional response parameters is added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential endpoint (#token-response). 
 
 ## Core Concepts
 
 The Wallet sends one Credential Request per individual Credential to the Credential Endpoint. The wallet MAY use the same access token to send multiple Credential Requests to request issuance of 
-  - multiple Credentials of different types bound to the same proof, or
-  - multiple Credentials of the same type bound to different proofs
 
-The Wallet MAY send one Batch Credential Request to the Batch Credential Endpoint to request multiple Credentials of different types bound to the same proof, or multiple Credentials of the same type bound to different proofs in the Batch Credential Response.
+* multiple Credentials of different types bound to the same proof, or
+* multiple Credentials of the same type bound to different proofs.
+
+The Wallet MAY send one Batch Credential Request to the Batch Credential Endpoint to request 
+
+* multiple Credentials of different types bound to the same proof, or 
+* multiple Credentials of the same type bound to different proofs in the Batch Credential Response.
 
 In the course of the authorization process, the Credential Issuer MAY also request Credential presentation as means to authenticate or identify the User during the issuance flow as illustrated in a use case in (#use-case-2).
 
@@ -133,7 +137,7 @@ At its core, this specification is Credential format agnostic and allows impleme
 The specification achieves this by defining
 
 * Extension points to add Credential format specific parameters or claims in the Credential Issuer metadata, Credential Offer, Authorization Request, Credential Request and Batch Credential Request,
-* Credential format identifiers to identify Credential format specific set of parameters and claims to be applied at each extention point. This set of Credential format specific set of parameters and claims is referred to as a Credential Format Profile in this specification.
+* Credential format identifiers to identify Credential format specific set of parameters and claims to be applied at each extention point. This set of Credential format specific set of parameters and claims is referred to as a "Credential Format Profile" in this specification.
 
 This specification defines Credential Format Profiles for W3C Verifiable Credentials as defined in [@VC_DATA] and ISO/IEC 18013-5 mDL as defined in [@ISO.18013-5] in (#format_profiles). Other specifications or deployments can define their own Credential Format Profiles using above-mentioned extensibility points.
 
@@ -910,12 +914,23 @@ This specification defines the following new Client Metadata parameter in additi
 
 If the Credential Issuer is unable to perform discovery of the Credential Offer Endpoint URL, the following claimed URL is used: `openid-credential-offer://`.
 
-## Server Metadata {#server-metadata}
+## Credential Issuer Metadata {#credential-issuer-metadata}
 
-This section extends the server metadata [@!RFC8414] to allow the RP to obtain information about the Credentials an OP is capable of issuing.
+### Credential Issuer Identifier
 
-This specification defines the following new Server Metadata parameters for this purpose:
+A Credential Issuer is identified by a HTTPS URL. The way the wallet discovers the Credential Issuer's URL is out of scope of this specification. 
 
+### Credential Issuer Metadata Retrieval
+
+Using the Issuer identifier the Credential Issuer's configuration can be retrieved.
+
+Credential Issuers publishing Metadata MUST make a JSON document available at the path formed by concatenating the string /.well-known/openid-credential-issuer to the Credential Issuer identifier. The syntax and semantics of .well-known are defined in [@!RFC5785] and apply to the Credential Issuer identifier value when it contains no path component. openid-credential-issuer MUST point to a JSON document compliant with this specification and MUST be returned using the `application/json` content type.
+
+### Credential Issuer Metadata Parameters
+
+This specification defines the following Credential Issuer Metadata:
+
+* `credential_issuer`: REQUIRED. The Credential Issuer's identifier.
 * `credential_endpoint`: REQUIRED. URL of the OP's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
 * `batch_credential_endpoint`: OPTIONAL. URL of the AS's Batch Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components. If omitted, the OP does not support the Batch Credential Endpoint.
 
@@ -932,7 +947,7 @@ This specification also defines a new metadata parameter to publish whether the 
 
 * `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A JSON Boolean indicating whether the issuer accepts token requests to exchange a pre-authorized code without client id. The default is `false`. 
 
-### Supported Credentials Object {#credential-metadata-object}
+#### Supported Credentials Object {#credential-metadata-object}
 
 This section defines the structure of the objects that appear in the `credentials_supported` metadata element.
 
