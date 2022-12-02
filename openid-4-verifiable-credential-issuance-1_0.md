@@ -38,15 +38,17 @@ organization="Mattr"
 
 .# Abstract
 
-This specification defines an API and corresponding OAuth 2.0-based authorization mechanisms for the issuance of verifiable Credentials.
+This specification defines an API for the issuance of verifiable Credentials.
 
 {mainmatter}
 
 # Introduction
 
-This specification defines an API designated as Credential Endpoint that is used to issue verifiable credentials and corresponding OAuth 2.0 based authorization mechanisms (see [@!RFC6749]) that the Wallet uses to obtain authorization to receive verifiable credentials. W3C formats as well as other Credential formats are supported. This allows existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) to extend their service and become Credential Issuers. It also allows new applications built using Verifiable Credentials to utilize OAuth 2.0 as integration and interoperability layer.
+This specification defines an API that is used to issue verifiable credentials. W3C formats [@VC_DATA] as well as other Credential formats are supported. 
 
-Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect, in that they allow a Credential Issuer to assert End-User claims. However, in contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the Credential type) and is typically bound to key material allowing the End-User to prove the legitimate possession of the Credential. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential Issuer. This specification caters for those differences.
+Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. However, in contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the Credential type) and is typically bound to key material allowing the End-User to prove the legitimate possession of the Credential. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential Issuer. This specification caters for those differences.
+
+Access to this API is authorized using OAuth 2.0 [@!RFC6749], i.e. the Wallet uses OAuth to obtain authorization to receive verifiable credentials. This way the issuance process can benefit from the proven security, simplicity, and flexibility of OAuth and existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) can be extended to become Credential Issuers. The same OAuth authorization server can protect one or more instances of the credential issuance API. 
 
 # Terminology
 
