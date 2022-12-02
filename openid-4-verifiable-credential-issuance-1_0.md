@@ -106,10 +106,17 @@ Both the Credential and the Batch Credential endpoints have the (optional) abili
 
 Every Credential Issuer utilizes an OAuth authorization server to authorize access. The same OAuth authorization server can protect one or more Credential Issuers. Wallets determine the authorization server a certain Credential Issuer relies on using the Credential Issuer's metadata.   
 
-All OAuth grant types and extensions mechanisms can be used in conjunction with the credential issuance API. Additionally, this specification defines the following extensions to OAuth 2.0 to facilitate authorization for credential issuance:
+All OAuth grant types and extensions mechanisms can be used in conjunction with the credential issuance API. Aspects not defined in this specification are expected to follow [@!RFC6749]. 
 
-* An extended Authorization Request that allows to request authorization to request issuance of Credentials of specific formats and types. See (#credential-authz-request).
-* A new grant type "pre-authorized code" to facilitate a certain kind of issuance flow (see below).
+It is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks and Pushed Authorization Requests [@RFC9126] to ensure integrity and authenticity of the authorization request.
+
+Existing OAuth 2.0 mechanisms are extended as following:
+
+* A new grant type "pre-authorized code" is defined to facilitate a certain class of issuance flow (#pre-authz-code-flow).
+* A new authorization details [@!I-D.ietf-oauth-rar] type is defined to convey the details about the Credentials (including formats and types) the Wallet wants to obtain (#authorization-details). 
+* Client Metadata: new metadata parameter is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint {#client-metadata}.
+* Authorization Endpoint: An additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated credential offer (#credential-authz-request). 
+* Token Endpoint: an optional response parameters is added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential endpoint. 
 
 ## Core Concepts
 
@@ -193,7 +200,7 @@ If the Issuer wants to issue multiple Credentials in one response, the Issuer MA
 
 Note: this flow is based on OAuth 2.0 and the code grant type, but it can be used with other grant types as well. 
 
-## Pre-Authorized Code Flow
+## Pre-Authorized Code Flow {#pre-authz-code-flow}
 
 Figure 2 is a diagram of a Credential issuance using Pre-Authorized Code flow. It is a flow where the user authentication and authorization happens prior to the Credential Issuer initiating the issuance flow, without utilizing the Authorization Endpoint. Issuance flow starts after Credentials are ready to be retrieved by the Wallet. See (#use-case-4) for a use case.
 
@@ -249,29 +256,6 @@ It is also important to note that anyone who possesses a valid pre-authorization
 One such mechanism defined in this specification is the usage of PIN. If in the Credential Offer the Credential Issuer indicated that the PIN is required, the user is requested to type in a PIN sent via a channel different that the issuance Flow and the PIN is sent to the Credential Issuer in the Token Request. 
 
 For more details and concrete mitigations, see (#security_considerations_pre-authz-code).
-
-# API endpoints
-
-The credential issuance API defined in this specification is comprised of the following endpoints:
-
-* Credential Endpoint: An OAuth 2.0-protected endpoint exposed by the Credential Issuer and used to issue verifiable Credentials.
-* Batch Credential Endpoint: An OAuth 2.0-protected endpoint exposed by the Credential Issuer and used to issue multiple verifiable Credentials in one response.
-* Deferred Credential Endpoint: this endpoint is used for deferred issuance of verifiable Credentials.
-* Credential Issuer Metadata: this endpoint is used to publish metadata about the credential issuer
-
-Corresponding to the issuance API, a new endpoint is defined exposed by wallets:
-
-* Credential Offer Endpoint: An endpoint exposed by the Wallet that allows a Credential Issuer to encourage the Wallet to start the Issuance flow by sending information about the Credential Issuer and the Verifiable Credential it is capable of issuing.
-
-# Extensions to OAuth 2.0 {#endpoints}
-
-This specification defines additional parameters to existing OAuth 2.0 endpoints required to implement the protocol outlined in the previous section. It also introduces a new authorization details type according to [@!I-D.ietf-oauth-rar] to convey the details about the Credentials the Wallet wants to obtain. Aspects not defined in this specification are expected to follow [@!RFC6749]. It is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks.
-
-Existing OAuth 2.0 mechanisms are extended as following:
-
-* Client Metadata: new metadata parameter is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint.
-* Authorization Endpoint: The `authorization_details` parameter is extended to allow clients to specify types of the Credentials when requesting authorization for issuance. These extension can also be used via the Pushed Authorization Endpoint, which is recommended by this specification. 
-* Token Endpoint: optional parameters are added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential endpoint. 
 
 # Credential Offer Endpoint {#issuance_initiation_endpoint}
 
