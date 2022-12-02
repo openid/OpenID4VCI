@@ -1,0 +1,11 @@
+[
+   {
+      "type":"openid_credential",
+      "locations": ["https://issuer.example.com"],
+      "format":"jwt_vc_json",
+      "types":[
+        "VerifiableCredential",
+        "UniversityDegreeCredential"
+      ]
+   }
+]
