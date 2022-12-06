@@ -38,7 +38,7 @@ organization="Mattr"
 
 .# Abstract
 
-This specification defines an API for the issuance of verifiable Credentials.
+This specification defines an API for the issuance of Verifiable Credentials.
 
 {mainmatter}
 
@@ -62,11 +62,11 @@ A verifiable Credential is a tamper-evident Credential that has authorship that 
 
 Presentation
 
-Data derived from one or more verifiable Credentials, issued by one or more Credential Issuers, that is shared with a specific verifier (see [@VC_DATA]).
+Data derived from one or more Verifiable Credentials, issued by one or more Credential Issuers, that is shared with a specific verifier (see [@VC_DATA]).
 
 Verified Presentation (VP)
 
-A verifiable presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain data that is synthesized from, but do not contain, the original verifiable Credentials (for example, zero-knowledge proofs) (see [@VC_DATA]).
+A verifiable presentation is a tamper-evident presentation encoded in such a way that authorship of the data can be trusted after a process of cryptographic verification. Certain types of verifiable presentations might contain data that is synthesized from, but do not contain, the original Verifiable Credentials (for example, zero-knowledge proofs) (see [@VC_DATA]).
 
 Deferred Credential Issuance
 
@@ -82,7 +82,7 @@ Entity that verifies the Credential to make a decision regarding providing a ser
 
 Credential Issuer
 
-Entity that issues verifiable Credentials. Also called Issuer. In the context of this specification, the Credential Issuer acts as OAuth 2.0 Authorization Server (see [@!RFC6749]).
+Entity that issues Verifiable Credentials. Also called Issuer. In the context of this specification, the Credential Issuer acts as OAuth 2.0 Authorization Server (see [@!RFC6749]).
 
 Base64url Encoding
 
@@ -98,15 +98,15 @@ This specification defines an API for credential issuance provided by a Credenti
 * An optional Batch Credential Endpoint from which multiple Credentials can be issued in one request. See (#batch-credential-endpoint).
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of credentials (#deferred-credential-issuance). 
 * An optional mechanism for the Credential Issuer to make a credential offer to the Wallet to encourage the Wallet to start the Issuance Flow. See (#issuance_initiation_endpoint).
-* A mechanism for the Credential Issuer to publish metadata about the Credential it is capable of issuing. See (#server-metadata)
+* A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing. See (#server-metadata)
 
-Both the Credential and the Batch Credential endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both request therefore allow to convey a proof of posession for the key material. Multiple proof types are supported. 
+Both the Credential and the Batch Credential endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both requests therefore allow to convey a proof of posession for the key material. Multiple proof types are supported. 
 
 ## OAuth 2.0
 
-Every Credential Issuer utilizes an OAuth authorization server to authorize access. The same OAuth authorization server can protect one or more Credential Issuers. Wallets determine the authorization server a certain Credential Issuer relies on using the Credential Issuer's metadata.   
+Every Credential Issuer utilizes an OAuth [@!RFC7636] authorization server to authorize access. The same OAuth authorization server can protect one or more Credential Issuers. Wallets determine the authorization server a certain Credential Issuer relies on using the Credential Issuer's metadata.   
 
-All OAuth grant types and extensions mechanisms can be used in conjunction with the credential issuance API. Aspects not defined in this specification are expected to follow [@!RFC6749]. 
+All OAuth 2.0 grant types and extensions mechanisms can be used in conjunction with the credential issuance API. Aspects not defined in this specification are expected to follow [@!RFC6749]. 
 
 It is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks and Pushed Authorization Requests [@RFC9126] to ensure integrity and authenticity of the authorization request.
 
@@ -116,7 +116,7 @@ Existing OAuth 2.0 mechanisms are extended as following:
 * A new authorization details [@!I-D.ietf-oauth-rar] type is defined to convey the details about the Credentials (including formats and types) the Wallet wants to obtain (#authorization-details). 
 * Client Metadata: new metadata parameter is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (#client-metadata).
 * Authorization Endpoint: An additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated credential offer (#credential-authz-request). 
-* Token Endpoint: an optional response parameters is added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential endpoint (#token-response). 
+* Token Endpoint: an optional response parameter is added to the token endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential endpoint (#token-response). 
 
 ## Core Concepts
 
@@ -929,13 +929,15 @@ If the Credential Issuer is unable to perform discovery of the Credential Offer 
 
 ### Credential Issuer Identifier
 
-A Credential Issuer is identified by a HTTPS URL. The way the wallet discovers the Credential Issuer's URL is out of scope of this specification. 
+A Credential Issuer is identified by an HTTPS URL. The way the wallet discovers the Credential Issuer's URL is out of scope of this specification. 
 
-### Credential Issuer Metadata Retrieval
+### Credential Issuer Metadata Retrieval  {#credential-issuer-wellknown}
 
-Using the Issuer identifier the Credential Issuer's configuration can be retrieved.
+The Credential Issuer's configuration can be retrieved using the Issuer identifier .
 
-Credential Issuers publishing Metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer identifier. The syntax and semantics of .well-known are defined in [@!RFC5785] and apply to the Credential Issuer identifier value when it contains no path component. `openid-credential-issuer` MUST point to a JSON document compliant with this specification and MUST be returned using the `application/json` content type.
+Credential Issuers publishing Metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer identifier. The syntax and semantics of .well-known are defined in [@!RFC5785] and apply to the Credential Issuer identifier value when it contains no path component. 
+
+`openid-credential-issuer` MUST point to a JSON document compliant with this specification and MUST be returned using the `application/json` content type.
 
 ### Credential Issuer Metadata Parameters
 
@@ -978,11 +980,11 @@ The following example shows a non-normative example of a Supported Credentials O
 
 <{{examples/credential_metadata_jwt_vc_json.json}}
 
-Note: The Client MAY use other mechanisms to obtain information about the verifiable Credentials that a Credential Issuer can issue.
+Note: The Client MAY use other mechanisms to obtain information about the Verifiable Credentials that a Credential Issuer can issue.
 
 ## OAuth Server Metadata
 
-This specification also defines a new OAuth server metadata [@!RFC8414] parameter to publish whether the AS of the credential issuer supports anonymous token requests with the pre-authorized grant type. It is defined as follows:
+This specification also defines a new OAuth server metadata [@!RFC8414] parameter to publish whether the AS the credential issuer relies on for authorization supports anonymous token requests with the pre-authorized grant type. It is defined as follows:
 
 * `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A JSON Boolean indicating whether the issuer accepts token requests to exchange a pre-authorized code without client id. The default is `false`. 
 
@@ -1222,9 +1224,20 @@ register "urn:ietf:params:oauth:grant-type:pre-authorized_code"
 
 Register "unsupported_credential_type", "unsupported_credential_format" and "invalid_or_missing_nonce"
 
+## Well-Known URI Registry
+
+This specification registers the well-known URI defined in (#credential-issuer-wellknown) in the IANA Well-Known URI registry defined in RFC 5785 [@!RFC5785].
+
+### Registry Contents
+
+* URI suffix: openid-credential-issuer
+* Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+* Specification document: (#credential-issuer-wellknown) of this document
+* Related information: (none)
+
 # Acknowledgements {#Acknowledgements}
 
-We would like to thank David Chadwick, John Bradley, Mark Haine, Alen Horvat, Michael B. Jones, Kenichi Nakamura, Oliver Terbu and David Waite for their valuable contributions to this specification.
+We would like to thank Daniel McGrogan, David Chadwick, John Bradley, Mark Haine, Alen Horvat, Michael B. Jones, Kenichi Nakamura, Oliver Terbu and David Waite for their valuable contributions to this specification.
 
 # Notices
 
