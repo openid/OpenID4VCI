@@ -265,21 +265,27 @@ Credential Offer object may contain the following claims:
 
 * `issuer`: REQUIRED. the Credential Issuer URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from. 
 * `credentials`: REQUIRED. JSON array, where every entry is a JSON Object or a JSON String. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `id` values in one of the Supported Credentials Objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the wallet MUST resolve this string value to the respective Supported Credentials Object.
-* `pre-authorized_code`: CONDITIONAL. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
-* `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
-* `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authorization request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value. MUST NOT be used in Pre-Authorized Code flow when `pre-authorized_code` is present.
+* `grants`: OPTIONAL. A JSON object indicating to the wallet the grant types the credential issuer's AS is prepared to process for this credential offer. Every grant is represented by a key and an object. The key value is the grant type identifier, the object MAY contain parameters either determining the way the wallet MUST use the particular grant and/or parameters the wallet MUST send with the respective request(s). If `grants` is not present or empty, the wallet MUST determine the grant types the credential issuer's AS supports using the respective metadata. 
+
+The following parameters are defined by this specification: 
+
+* grant type `authorization_code`:
+  * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authorization request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value. 
+* grant type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
+  * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. If the wallet decides to use the pre-authorized code flow, this parameter value MUST be include in the sub-sequent token request with the grant type pre-authorized code.
+  * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel. If the wallet decides to use the pre-authorized code flow, a PIN value MUST be sent in the `user_pin` parameter with the respective token request. 
 
 This is a non-normative example of an Credential Offer object used to encourage the Wallet to start an authorization code flow
 
-<{{examples/issuer_initiated_issuance_request_authz_code.json}}
+<{{examples/credential_offer_authz_code.json}}
 
-and this is how such an object might look like for a pre-authorized code flow:
+and this is how such an object might look like for a pre-authorized code flow (with a credential type reference):
 
-<{{examples/issuer_initiated_issuance_request_pre-authz_code.json}}
+<{{examples/credential_offer_by_reference.json}}
 
 The following non-normative example shows how the issuer can offer the issuance of two Credentials of different formats, one by reference ("UniversityDegree_JWT") and the other one by value:
 
-<{{examples/issuer_initiated_issuance_request_multiple_credentials.json}}
+<{{examples/credential_offer_multiple_credentials.json}}
 
 Credential Format Profiles can be found in (#format_profiles).
 
@@ -1319,7 +1325,7 @@ The following additional claims are defined for this Credential format.
 
 The following is a non-normative example of a Supported Credentials Object of type `jwt_vc_json`.
 
-<{{examples/issuer_initiated_issuance_request_jwt_vc_json.json}}
+<{{examples/credential_offer_jwt_vc_json.json}}
 
 #### Authorization Deails {#authorization_jwt_vc_json}
 
@@ -1416,7 +1422,7 @@ The following additional claims are defined for this Credential format.
 
 The following is a non-normative example of a Credential Offer of type `ldp_vc`.
 
-<{{examples/issuer_initiated_issuance_request_ldp_vc.json}}
+<{{examples/credential_offer_ldp_vc.json}}
 
 #### Authorization Deails {#authorization_ldp_vc}
 
@@ -1479,7 +1485,7 @@ The following additional claims are defined for this Credential format.
 
 The following is a non-normative example of an Credential Offer of type `mso_mdoc`.
 
-<{{examples/issuer_initiated_issuance_request_mso_doc.json}}
+<{{examples/credential_offer_mso_doc.json}}
 
 ### Authorization Details
 
@@ -1515,6 +1521,7 @@ The value of the `credential` claim in the credential response MUST be a a JSON 
 
    * relaxed client identification requirements for pre-authorized code grant type
    * renamed issuance initiation endpoint to Credential Offer Endpoint
+   * added `grants` structure to credential offer
 
    -09
 
