@@ -139,9 +139,9 @@ The specification achieves this by defining
 * Extension points to add Credential format specific parameters or claims in the Credential Issuer metadata, Credential Offer, Authorization Request, Credential Request and Batch Credential Request,
 * Credential format identifiers to identify Credential format specific set of parameters and claims to be applied at each extention point. This set of Credential format specific set of parameters and claims is referred to as a "Credential Format Profile" in this specification.
 
-This specification defines Credential Format Profiles for W3C Verifiable Credentials as defined in [@VC_DATA] and ISO/IEC 18013-5 mDL as defined in [@ISO.18013-5] in (#format_profiles). Other specifications or deployments can define their own Credential Format Profiles using above-mentioned extensibility points.
+This specification defines Credential Format Profiles for W3C Verifiable Credentials as defined in [@VC_DATA] and ISO/IEC 18013-5 mDL as defined in [@ISO.18013-5] in (#format_profiles) that contain Credential Format specific parameters to be included at each extensibility point defined in this specification. Other specifications or deployments can define their own Credential Format Profiles using above-mentioned extensibility points.
 
-Note that the issuance can have multiple characteristics, which can be combined depending on the use-cases: 
+The issuance can have multiple characteristics, which can be combined depending on the use-cases: 
 
 * Authorization Code Flow or Pre-Authorized Code Flow: the Credential Issuer can obtain user information to turn into a verifiable Credential using user authentication and consent at the Credential Issuer's Authorization Endpoint (Authorization Code Flow), or using out of bound mechanisms outside of the issuance flow (pre-authorized code flow)
 * Wallet initiated or Issuer initiated: the issuance request from the Wallet can be sent to the Credential Issuer without any gesture from the Credential Issuer (Wallet Initiated), or following the communication from the Credential Issuer (Issuer Initiated).
@@ -273,23 +273,29 @@ Credential Offer object may contain the following claims:
 
 * `credential_issuer`: REQUIRED. the Credential Issuer URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from. 
 * `credentials`: REQUIRED. JSON array, where every entry is a JSON Object or a JSON String. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `id` values in one of the Supported Credentials Objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the wallet MUST resolve this string value to the respective Supported Credentials Object.
-* `pre-authorized_code`: CONDITIONAL. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. MUST be present in a pre-authorized code flow.
-* `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel.
-* `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authorization request with the Credential Issuer to a context set up during previous steps. If the client receives a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value. MUST NOT be used in Pre-Authorized Code flow when `pre-authorized_code` is present.
+* `grants`: OPTIONAL. A JSON object indicating to the wallet the grant types the credential issuer's AS is prepared to process for this credential offer. Every grant is represented by a key and an object. The key value is the grant type identifier, the object MAY contain parameters either determining the way the wallet MUST use the particular grant and/or parameters the wallet MUST send with the respective request(s). If `grants` is not present or empty, the wallet MUST determine the grant types the credential issuer's AS supports using the respective metadata. When multiple grants are present, it's at the wallet’s discretion which one to use.
+
+The following parameters are defined by this specification: 
+
+* grant type `authorization_code`:
+  * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authorization request with the Credential Issuer to a context set up during previous steps. If the wallet decides to use the authorization code flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value. 
+* grant type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
+  * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. If the wallet decides to use the pre-authorized code flow, this parameter value MUST be include in the sub-sequent token request with the grant type pre-authorized code.
+  * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel. If the wallet decides to use the pre-authorized code flow, a PIN value MUST be sent in the `user_pin` parameter with the respective token request. 
 
 This is a non-normative example of an Credential Offer object used to encourage the Wallet to start an authorization code flow
 
-<{{examples/issuer_initiated_issuance_request_authz_code.json}}
+<{{examples/credential_offer_authz_code.json}}
 
-and this is how such an object might look like for a pre-authorized code flow:
+and this is how such an object might look like for a pre-authorized code flow (with a credential type reference):
 
-<{{examples/issuer_initiated_issuance_request_pre-authz_code.json}}
+<{{examples/credential_offer_by_reference.json}}
 
 The following non-normative example shows how the issuer can offer the issuance of two Credentials of different formats, one by reference ("UniversityDegree_JWT") and the other one by value:
 
-<{{examples/issuer_initiated_issuance_request_multiple_credentials.json}}
+<{{examples/credential_offer_multiple_credentials.json}}
 
-Credential Format Profiles can be found in (#format_profiles).
+Note that the examples throughout the specification use Credential Format specific parameters defined in the Credential Format Profiles that can be found in (#format_profiles).
 
 The Wallet MUST consider the parameter values in the Credential Offer as not trustworthy since the origin is not authenticated and the message integrity is not protected. The Wallet MUST apply the same checks on the Credential Issuer that it would apply when the flow is started from the Wallet itself since the Credential Issuer is not trustworthy just because it sent the Credential Offer. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
 
@@ -581,7 +587,7 @@ The Credential Endpoint issues a Credential as approved by the End-User upon pre
 
 Communication with the Credential Endpoint MUST utilize TLS. 
 
-The client can request issuance of a Credential of a certain type multiple times, e.g., to associate the Credential with different DIDs/public keys or to refresh a certain Credential.
+The client can request issuance of a Credential of a certain type multiple times, e.g., to associate the Credential with different public keys/Decentralized Identifiers (DIDs) or to refresh a certain Credential.
 
 If the access token is valid for requesting issuance of multiple Credentials, it is at the client's discretion to decide the order in which to request issuance of multiple Credentials requested in the Authorization Request.
 
@@ -962,7 +968,8 @@ This section defines the structure of the objects that appear in the `credential
 
 * `format`: REQUIRED. A JSON string identifying the format of this credential, e.g. `jwt_vc_json` or `ldp_vc`. Depending on the format value, the Supported Credentials Object contains further elements defining the type and (optionally) particular claims the credential may contain, and informatio how to display the credential. (#format_profiles) defines Credential Format Profiles introduced by this specification. 
 * `id`: OPTIONAL. A JSON String identifying the respective Supported Credentials Object. The value MUST be unique across all `credentials_supported` entries in the Credential Issuer Metadata.
-* `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential as defined in (#credential-binding). A non-exhaustive list of valid values defined by this specification are `did`, `jwk`, and `mso`.
+* `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential as defined in (#credential-binding). Support for keys in JWK format [@!RFC7517] is indicated by the value `jwk`. Support for keys expressed as a COSE_Key object [@!RFC8152] (for example, used in [@!ISO.18013-5]) is indicated by the value `cose_key`. When Cryptographic Binding Method is a DID, valid values MUST be a `did:` prefix followed by a method-name using a syntax as defined in Section 3.1 of [@!DID-Core], but without a `:`and method-specific-id. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in Section 13 of [@DID_Specification_Registries] is indicated by sending a DID without any method-name.
+
 * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptosuites for Credentials in `jwt_vc` format should use algorithm names defined in [IANA JOSE Algorithms Registry](https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms). Cryptosuites for Credentials in `ldp_vc` format should use signature suites names defined in [Linked Data Cryptographic Suite Registry](https://w3c-ccg.github.io/ld-cryptosuite-registry/).
 * `display`: OPTIONAL. An array of objects, where each object contains the display properties of the supported credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included. Note that the display name of the supported credential is obtained from `display.name` and individual claim names from `claims.display.name` values.
    * `name`: REQUIRED. String value of a display name for the Credential.
@@ -1061,6 +1068,25 @@ The action leading to the Wallet performing another Credential Request can also 
 TBD
 
 {backmatter}
+
+<reference anchor="DID-Core" target="https://www.w3.org/TR/2021/PR-did-core-20210803/">
+        <front>
+        <title>Decentralized Identifiers (DIDs) v1.0</title>
+        <author fullname="Manu Sporny">
+            <organization>Digital Bazaar</organization>
+        </author>
+        <author fullname="Amy Guy">
+            <organization>Digital Bazaar</organization>
+        </author>
+        <author fullname="Markus Sabadello">
+            <organization>Danube Tech</organization>
+        </author>
+        <author fullname="Drummond Reed">
+            <organization>Evernym</organization>
+        </author>
+        <date day="3" month="Aug" year="2021"/>
+        </front>
+</reference>
 
 <reference anchor="VC_DATA" target="https://www.w3.org/TR/vc-data-model">
   <front>
@@ -1218,6 +1244,22 @@ TBD
       </front>
 </reference>
 
+<reference anchor="DID_Specification_Registries" target="https://www.w3.org/TR/did-spec-registries/">
+        <front>
+          <title>DID Specification Registries</title>
+      <author fullname="Orie Steele">
+            <organization>Transmute</organization>
+          </author>
+          <author fullname="Manu Sporny">
+            <organization>Digital Bazaar</organization>
+          </author>
+          <author fullname="Michael Prorock">
+            <organization>mesur.io</organization>
+          </author>
+         <date month="Aug" year="2022"/>
+        </front>
+</reference>
+
 # IANA Considerations
 
 register "urn:ietf:params:oauth:grant-type:pre-authorized_code"
@@ -1328,7 +1370,7 @@ The following additional claims are defined for this Credential format.
 
 The following is a non-normative example of a Supported Credentials Object of type `jwt_vc_json`.
 
-<{{examples/issuer_initiated_issuance_request_jwt_vc_json.json}}
+<{{examples/credential_offer_jwt_vc_json.json}}
 
 #### Authorization Deails {#authorization_jwt_vc_json}
 
@@ -1425,7 +1467,7 @@ The following additional claims are defined for this Credential format.
 
 The following is a non-normative example of a Credential Offer of type `ldp_vc`.
 
-<{{examples/issuer_initiated_issuance_request_ldp_vc.json}}
+<{{examples/credential_offer_ldp_vc.json}}
 
 #### Authorization Deails {#authorization_ldp_vc}
 
@@ -1488,7 +1530,7 @@ The following additional claims are defined for this Credential format.
 
 The following is a non-normative example of an Credential Offer of type `mso_mdoc`.
 
-<{{examples/issuer_initiated_issuance_request_mso_doc.json}}
+<{{examples/credential_offer_mso_doc.json}}
 
 ### Authorization Details
 
@@ -1524,7 +1566,7 @@ The value of the `credential` claim in the credential response MUST be a a JSON 
 
    * relaxed client identification requirements for pre-authorized code grant type
    * renamed issuance initiation endpoint to Credential Offer Endpoint
-   * split Credential Issuer and OAuth AS metadata
+   * added `grants` structure to credential offer
 
    -09
 
