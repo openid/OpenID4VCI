@@ -1279,7 +1279,7 @@ This specification registers the well-known URI defined in (#credential-issuer-w
 
 # Acknowledgements {#Acknowledgements}
 
-We would like to thank Daniel McGrogan, David Chadwick, John Bradley, Mark Haine, Alen Horvat, Michael B. Jones, Kenichi Nakamura, Oliver Terbu and David Waite for their valuable contributions to this specification.
+We would like to thank Brian Campbell, Joseph Heenan, Daniel McGrogan, David Chadwick, John Bradley, Mark Haine, Alen Horvat, Michael B. Jones, Kenichi Nakamura, Oliver Terbu and David Waite for their valuable contributions to this specification.
 
 # Notices
 
