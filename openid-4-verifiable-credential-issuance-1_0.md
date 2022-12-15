@@ -935,7 +935,7 @@ A Credential Issuer is identified by an HTTPS URL. The way the wallet discovers 
 
 The Credential Issuer's configuration can be retrieved using the Issuer identifier .
 
-Credential Issuers publishing Metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer identifier. The syntax and semantics of .well-known are defined in [@!RFC5785] and apply to the Credential Issuer identifier value when it contains no path component. 
+Credential Issuers publishing Metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer identifier. If the Credential Issuer value contains a path component, any terminating `/` MUST be removed before appending `/.well-known/openid-configuration`. 
 
 `openid-credential-issuer` MUST point to a JSON document compliant with this specification and MUST be returned using the `application/json` content type.
 
