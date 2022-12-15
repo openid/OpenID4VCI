@@ -380,7 +380,7 @@ occurrence MUST be interpreted individually.
 
 Providers that do not understand the value of this scope in a request MUST ignore it entirely. 
 
-If the Credential Issuer metadata contains an `authorization_server` property, the authorization request MUST also contain a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value.  
+If the Credential Issuer metadata contains an `authorization_server` property, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the AS to differentiate credential issuers.  
 
 Below is a non-normative example of a Authorization Request using the scope `com.example.healthCardCredential`:
 
@@ -487,7 +487,7 @@ For the pre-authorized code grant type, authentication of the client is OPTIONAL
 
 If the token request contains an `authorization_details` parameter of type `openid_credential` and the Credential Issuer's metadata contains an `authorization_server` parameter, the `authorization_details` object MUST contain the Credential Issuer's identifier in the `locations` element. 
 
-If the token request contains a scope value related to credential issuance and the Credential Issuer's metadata contains an `authorization_server` parameter, the request MUST contain a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value.  
+If the token request contains a scope value related to credential issuance and the Credential Issuer's metadata contains an `authorization_server` parameter, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the AS to differentiate credential issuers. 
 
 Below is a non-normative example of a Token Request in an authorization code flow:
 
