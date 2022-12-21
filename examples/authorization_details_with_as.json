@@ -1,7 +1,7 @@
 [
    {
       "type":"openid_credential",
-      "locations": ["https://issuer.example.com"],
+      "locations": ["https://credential-issuer.example.com"],
       "format":"jwt_vc_json",
       "types":[
         "VerifiableCredential",

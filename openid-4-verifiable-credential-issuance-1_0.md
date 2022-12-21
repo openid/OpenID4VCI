@@ -306,7 +306,7 @@ The Issuer MUST ensure the release of any privacy-sensitive data is legally base
 Below is a non-normative example of an Credential Offer:
 
 ```
-  GET /credential_offer?credential_offer=%7B%22issuer%22:%22https://issuer.example.com
+  GET /credential_offer?credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com
   %22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22Verifiabl
   eCredential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22issuer_state%22:%22eyJhbGciOiJS
   U0Et...FYUaBy%22%7D
@@ -317,7 +317,7 @@ The Credential Issuer MAY also render a QR code containing the request data that
 The following is a non-normative example of such a request that can be included in a QR code or a deeplink used to invoke Wallet deployed as a native app:
 
 ```
-openid-credential-offer://credential_offer=%7B%22issuer%22:%22https://issuer.example.com
+openid-credential-offer://credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com
 %22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22VerifiableCr
 edential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22issuer_state%22:%22eyJhbGciOiJSU0Et...
 FYUaBy%22%7D
@@ -395,7 +395,7 @@ HTTP/1.1 302 Found
 Location: https://server.example.com/authorize?
   response_type=code
   &scope=com.example.healthCardCredential
-  &resource=https://issuer.example.com
+  &resource=https://credential-issuer.example.com
   &client_id=s6BhdRkqt3
   &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
   &code_challenge_method=S256
@@ -439,11 +439,11 @@ This step is OPTIONAL. After receiving an Authorization Request from the Client,
 
 It is RECOMMENDED that the Credential Issuer uses [@OpenID4VP] to dynamically request presentation of additional Credentials. From a protocol perspective, the Credential Issuer then acts as a verifier and sends a presentation request to the Wallet. The Client SHOULD have these Credentials obtained prior to starting a transaction with this Credential Issuer. 
 
-To enable dynamic callbacks of the Credential Issuer to the end-user's Wallet, the Wallet MAY provide additional parameters `Wallet_issuer` and `user_hint` defined in the Authorization Request section of this specification.
+To enable dynamic callbacks of the Credential Issuer to the end-user's Wallet, the Wallet MAY provide additional parameters `wallet_issuer` and `user_hint` defined in the Authorization Request section of this specification.
 
 For non-normative examples of request and response, see section 11.6 in [@OpenID4VP].
 
-Note to the editors: need to sort out Credential Issuer's client_id with Wallet and potentially add example with `Wallet_issuer` and `user_hint` 
+Note to the editors: need to sort out Credential Issuer's client_id with Wallet and potentially add example with `wallet_issuer` and `user_hint` 
 
 ## Successful Authorization Response
 
