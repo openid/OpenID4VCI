@@ -935,7 +935,9 @@ If the Credential Issuer is unable to perform discovery of the Credential Offer 
 
 ### Credential Issuer Identifier
 
-A Credential Issuer is identified by an HTTPS URL. The way the wallet discovers the Credential Issuer's URL is out of scope of this specification. 
+A Credential Issuer is identified by a case sensitive URL using the https scheme that contains scheme, host, and optionally, port number and path components and no query or fragment components. 
+
+The way the wallet discovers the Credential Issuer's URL is out of scope of this specification. 
 
 ### Credential Issuer Metadata Retrieval  {#credential-issuer-wellknown}
 
