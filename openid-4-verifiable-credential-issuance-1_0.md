@@ -527,7 +527,7 @@ Token Requests are made as defined in [@!RFC6749].
 
 In addition to the response parameters defined in [@!RFC6749], the AS MAY return the following parameters:
 
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)).
+* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). The wallet MUST use this nonce value for its subsequent credential requests until the credential issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 * `authorization_pending`: OPTIONAL. JSON Boolean. In pre-authorized code flow, the Token Request is still pending as the Credential Issuer is waiting for the end user interaction to complete. The client SHOULD repeat the Token Request. Before each new request, the client MUST wait at least the number of seconds specified by the "interval" response parameter. ToDo: clarify boolean.
 * `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the token endpoint in pre-authorized code flow.  If no value is provided, clients MUST use 5 as the default.
@@ -636,14 +636,9 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 ```
 ### Proof Types {#proof_types}
 
-This specification defines the following values for `proof_type`: 
+This specification defines the following values for `proof_type`:
 
-* `jwt`: objects of this type contain a single `jwt` element with a JWT [@!RFC7519] as proof of possession. 
-* `cwt`: objects of this type contain a single `cwt` element with a CWT [@!RFC8392] as proof of possession.
-
-#### jwt
-
-The JWT MUST contain the following elements:
+* `jwt`: objects of this type contain a single `jwt` element with a JWS [@!RFC7515] as proof of possession. The JWT MUST contain the following elements:
   * in the JWT header,
     * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the proof JWT as recommended in Section 3.11 of [@!RFC8725].
     * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry. MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
@@ -702,21 +697,6 @@ Here is another example JWT not only proving possession of a private key but als
 }
 ```
 
-#### cwt
-
-The CWT MUST contain the following elements:
-  * in the JWT header,
-    * `content type`: REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the proof JWT as recommended in Section 3.11 of [@!RFC8725].
-    * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry. MUST NOT be an identifier for a symmetric algorithm (MAC).
-    * `kid`: CONDITIONAL. The key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
-    * `COSE_Key`: CONDITIONAL. ??? Is there a COSE header value for presenting a key? JWT header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
-    * `x5c`: CONDITIONAL. ??? Is there a COSE header value for presenting a cert? JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
-  * in the JWT body, 
-    * `iss`: REQUIRED (string). The value of this claim MUST be the client_id of the client making the credential request.
-    * `aud`: REQUIRED (string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
-    * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519].
-    * `nonce`: REQUIRED (string). ??? RFC8392 does not define a none claim. How do we cope with this? The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the credential issuer.
-
 ## Credential Response {#credential-response}
 
 Credential Response can be Synchronous or Deferred. the Credential Issuer may be able to immediately issue a requested Credential and send it to the Client. In other cases, the Credential Issuer may not be able to immediately issue a requested Credential and would want to send a token to the Client to be used later to receive a Credential when it is ready.
@@ -726,7 +706,7 @@ The following claims are used in the Credential Response:
 * `format`: REQUIRED. JSON string denoting the format of the issued Credential.
 * `credential`: OPTIONAL. Contains issued Credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the Credential format. See (#format_profiles) for the Credential format specific encoding requirements.
 * `acceptance_token`: OPTIONAL. A JSON string containing a token subsequently used to obtain a Credential. MUST be present when `credential` is not returned.
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)).
+* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). The wallet MUST use this nonce value for its subsequent credential requests until the credential issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
 The `format` Claim determines the Credential format and encoding of the credential in the Credential Response. Details are defined in the Credential Format Profiles in (#format_profiles). 
