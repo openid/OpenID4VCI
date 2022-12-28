@@ -476,7 +476,7 @@ Location: https://client.example.net/cb?
 
 The Token Endpoint issues an Access Token and, optionally, a Refresh Token in exchange for the authorization code that client obtained in a successful Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
-## Token Request
+## Token Request {#token_request}
 
 Upon receiving a successful Authorization Response, a Token Request is made as defined in Section 4.1.3 of [@!RFC6749].
 
@@ -1262,18 +1262,21 @@ TBD
 
 # IANA Considerations
 
-register "urn:ietf:params:oauth:grant-type:pre-authorized_code"
+## Sub-Namespace Registration
 
-Register "unsupported_credential_type", "unsupported_credential_format" and "invalid_or_missing_nonce"
+This section registers the value "urn:ietf:params:oauth:grant-type:pre-authorized_code" in the IANA "OAuth URI" registry established by "An IETF URN Sub-Namespace for OAuth" [@!RFC6755].
+
+* URN: urn:ietf:params:oauth:grant-type:pre-authorized_code
+* Common Name: Pre-Authorized Code
+* Change Controller: AB/Connect Working Group - openid-specs-ab@lists.openid.net
+* Specification Document: (#token_request) of this document
 
 ## Well-Known URI Registry
 
 This specification registers the well-known URI defined in (#credential-issuer-wellknown) in the IANA Well-Known URI registry defined in RFC 5785 [@!RFC5785].
 
-### Registry Contents
-
 * URI suffix: openid-credential-issuer
-* Change controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+* Change controller: AB/Connect Working Group - openid-specs-ab@lists.openid.net
 * Specification document: (#credential-issuer-wellknown) of this document
 * Related information: (none)
 
