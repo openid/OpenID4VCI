@@ -636,9 +636,14 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 ```
 ### Proof Types {#proof_types}
 
-This specification defines the following values for `proof_type`:
+This specification defines the following values for `proof_type`: 
 
-* `jwt`: objects of this type contain a single `jwt` element with a JWS [@!RFC7515] as proof of possession. The JWT MUST contain the following elements:
+* `jwt`: objects of this type contain a single `jwt` element with a JWT [@!RFC7519] as proof of possession. 
+* `cwt`: objects of this type contain a single `cwt` element with a CWT [@!RFC8392] as proof of possession.
+
+#### jwt
+
+The JWT MUST contain the following elements:
   * in the JWT header,
     * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the proof JWT as recommended in Section 3.11 of [@!RFC8725].
     * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry. MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
@@ -696,6 +701,21 @@ Here is another example JWT not only proving possession of a private key but als
   "nonce": "tZignsnFbp"
 }
 ```
+
+#### cwt
+
+The CWT MUST contain the following elements:
+  * in the JWT header,
+    * `content type`: REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the proof JWT as recommended in Section 3.11 of [@!RFC8725].
+    * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry. MUST NOT be an identifier for a symmetric algorithm (MAC).
+    * `kid`: CONDITIONAL. The key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
+    * `COSE_Key`: CONDITIONAL. ??? Is there a COSE header value for presenting a key? JWT header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
+    * `x5c`: CONDITIONAL. ??? Is there a COSE header value for presenting a cert? JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
+  * in the JWT body, 
+    * `iss`: REQUIRED (string). The value of this claim MUST be the client_id of the client making the credential request.
+    * `aud`: REQUIRED (string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
+    * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519].
+    * `nonce`: REQUIRED (string). ??? RFC8392 does not define a none claim. How do we cope with this? The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the credential issuer.
 
 ## Credential Response {#credential-response}
 
