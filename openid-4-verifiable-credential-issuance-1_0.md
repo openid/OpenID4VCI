@@ -527,7 +527,7 @@ Token Requests are made as defined in [@!RFC6749].
 
 In addition to the response parameters defined in [@!RFC6749], the AS MAY return the following parameters:
 
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)).
+* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). The wallet MUST use this nonce value for its subsequent credential requests until the credential issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 * `authorization_pending`: OPTIONAL. JSON Boolean. In pre-authorized code flow, the Token Request is still pending as the Credential Issuer is waiting for the end user interaction to complete. The client SHOULD repeat the Token Request. Before each new request, the client MUST wait at least the number of seconds specified by the "interval" response parameter. ToDo: clarify boolean.
 * `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the token endpoint in pre-authorized code flow.  If no value is provided, clients MUST use 5 as the default.
@@ -706,7 +706,7 @@ The following claims are used in the Credential Response:
 * `format`: REQUIRED. JSON string denoting the format of the issued Credential.
 * `credential`: OPTIONAL. Contains issued Credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the Credential format. See (#format_profiles) for the Credential format specific encoding requirements.
 * `acceptance_token`: OPTIONAL. A JSON string containing a token subsequently used to obtain a Credential. MUST be present when `credential` is not returned.
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)).
+* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). The wallet MUST use this nonce value for its subsequent credential requests until the credential issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
 The `format` Claim determines the Credential format and encoding of the credential in the Credential Response. Details are defined in the Credential Format Profiles in (#format_profiles). 
