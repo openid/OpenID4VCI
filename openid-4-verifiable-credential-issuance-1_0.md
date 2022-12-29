@@ -554,7 +554,7 @@ HTTP/1.1 200 OK
 
 If the Token Request is invalid or unauthorized, the Authorization Server constructs the error response as defined as in Section 5.2 of OAuth 2.0 [@!RFC6749].
 
-The following additional clarifications are provided for the following parameters already defined in [@!RFC6749]:
+The following additional clarifications are provided for the following error codes already defined in [@!RFC6749]:
 
 `invalid_request`:
 
