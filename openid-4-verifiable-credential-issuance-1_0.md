@@ -651,9 +651,7 @@ This specification defines the following values for `proof_type`:
     * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519].
     * `nonce`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the credential issuer.
 
-Note: if both `jwk` and `x5c` are present, the represented signing key MUST be the same in both. 
-
-The Credential Issuer MUST validate that the `proof` is actually signed by a key identified in `kid` parameter.
+The Credential Issuer MUST validate that the `proof` is actually signed by a key identified in the JWT header.
 
 Below is a non-normative example of a `proof` parameter (line breaks for display purposes only):
 
