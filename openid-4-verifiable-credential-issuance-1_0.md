@@ -44,7 +44,7 @@ This specification defines an API for the issuance of Verifiable Credentials.
 
 # Introduction
 
-This specification defines an API that is used to issue verifiable credentials. W3C formats [@VC_DATA] as well as other Credential formats are supported. 
+This specification defines an API that is used to issue verifiable credentials. W3C formats [@VC_DATA] as well as other Credential formats, like [@ISO.18013-5], are supported. 
 
 Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. However, in contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the Credential type) and is typically bound to key material allowing the End-User to prove the legitimate possession of the Credential. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential Issuer. This specification caters for those differences.
 
@@ -1567,6 +1567,7 @@ The value of the `credential` claim in the credential response MUST be a a JSON 
 
    -10
 
+   * introduced differentiation between credential issuer and authorization server 
    * relaxed client identification requirements for pre-authorized code grant type
    * renamed issuance initiation endpoint to Credential Offer Endpoint
    * added `grants` structure to credential offer
