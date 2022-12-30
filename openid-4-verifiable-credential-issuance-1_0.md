@@ -933,13 +933,15 @@ If the Credential Issuer is unable to perform discovery of the Credential Offer 
 
 ### Credential Issuer Identifier
 
-A Credential Issuer is identified by an HTTPS URL. The way the wallet discovers the Credential Issuer's URL is out of scope of this specification. 
+A Credential Issuer is identified by a case sensitive URL using the https scheme that contains scheme, host, and optionally, port number and path components and no query or fragment components. 
+
+The way the wallet discovers the Credential Issuer's URL is out of scope of this specification. 
 
 ### Credential Issuer Metadata Retrieval  {#credential-issuer-wellknown}
 
 The Credential Issuer's configuration can be retrieved using the Issuer identifier.
 
-Credential Issuers publishing Metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer identifier. If the Credential Issuer value contains a path component, any terminating `/` MUST be removed before appending `/.well-known/openid-configuration`. 
+Credential Issuers publishing Metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer identifier. If the Credential Issuer value contains a path component, any terminating `/` MUST be removed before appending `/.well-known/openid-credential-issuer`. 
 
 `openid-credential-issuer` MUST point to a JSON document compliant with this specification and MUST be returned using the `application/json` content type.
 
