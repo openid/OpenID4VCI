@@ -348,7 +348,7 @@ openid-credential-offer://?
 
 Below is a non-normative example of a response from the Credential Issuer that contains an Credential Offer Object used to encourage the Wallet to start an authorization code flow:
 
-<{{examples/credential_offer_authz_code.json}}
+<{{examples/credential_offer_authz_code.txt}}
 
 Below is a non-normative example how a Credential Offer Object might look like for a pre-authorized code flow (with a credential type reference):
 
