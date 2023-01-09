@@ -104,7 +104,7 @@ Both the Credential and the Batch Credential endpoints have the (optional) abili
 
 ## OAuth 2.0
 
-Every Credential Issuer utilizes an OAuth [@!RFC7636] authorization server to authorize access. The same OAuth authorization server can protect one or more Credential Issuers. Wallets determine the authorization server a certain Credential Issuer relies on using the Credential Issuer's metadata.   
+Every Credential Issuer utilizes an OAuth [@!RFC6749] authorization server to authorize access. The same OAuth authorization server can protect one or more Credential Issuers. Wallets determine the authorization server a certain Credential Issuer relies on using the Credential Issuer's metadata.   
 
 All OAuth 2.0 grant types and extensions mechanisms can be used in conjunction with the credential issuance API. Aspects not defined in this specification are expected to follow [@!RFC6749]. 
 
