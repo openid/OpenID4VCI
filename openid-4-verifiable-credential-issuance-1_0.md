@@ -280,7 +280,7 @@ The following parameters are defined by this specification:
 * grant type `authorization_code`:
   * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authorization request with the Credential Issuer to a context set up during previous steps. If the wallet decides to use the authorization code flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value. 
 * grant type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
-  * `pre-authorized code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. If the wallet decides to use the pre-authorized code flow, this parameter value MUST be include in the sub-sequent token request with the grant type pre-authorized code.
+  * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. If the wallet decides to use the pre-authorized code flow, this parameter value MUST be include in the sub-sequent token request with the grant type pre-authorized code.
   * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel. If the wallet decides to use the pre-authorized code flow, a PIN value MUST be sent in the `user_pin` parameter with the respective token request. 
 
 This is a non-normative example of an Credential Offer object used to encourage the Wallet to start an authorization code flow
@@ -482,7 +482,7 @@ Upon receiving a successful Authorization Response, a Token Request is made as d
 
 The following are the extension parameters to the Token Request used in a pre-authorized code flow:
 
-* `pre-authorized code`: CONDITIONAL. The code representing the authorization to obtain Credentials of a certain type. This parameter is required if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
+* `pre-authorized_code`: CONDITIONAL. The code representing the authorization to obtain Credentials of a certain type. This parameter is required if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 * `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Credential Offer. The string value MUST consist of maximum 8 numeric characters (the numbers 0 - 9). This parameter MUST only be used, if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 
 Requirements around how the client identifies and, if applicable, authenticates itself with the authorization server in the Token Request depend on the grant type.
@@ -532,7 +532,7 @@ In addition to the response parameters defined in [@!RFC6749], the AS MAY return
 * `authorization_pending`: OPTIONAL. JSON Boolean. In pre-authorized code flow, the Token Request is still pending as the Credential Issuer is waiting for the end user interaction to complete. The client SHOULD repeat the Token Request. Before each new request, the client MUST wait at least the number of seconds specified by the "interval" response parameter. ToDo: clarify boolean.
 * `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the token endpoint in pre-authorized code flow.  If no value is provided, clients MUST use 5 as the default.
 
-Upon receiving `pre-authorized code`, the Credential Issuer MAY decide to interact with the end-user in the course of the Token Request processing, which might take some time. In such a case, the Credential Issuer SHOULD respond with the error `authorization_pending` and the new return parameter `interval`.
+Upon receiving pre-authorized code, the Credential Issuer MAY decide to interact with the end-user in the course of the Token Request processing, which might take some time. In such a case, the Credential Issuer SHOULD respond with the error `authorization_pending` and the new return parameter `interval`.
 
 Below is a non-normative example of a Token Response:
 
