@@ -517,7 +517,7 @@ POST /token HTTP/1.1
   Content-Type: application/x-www-form-urlencoded
 
   grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
-  &pre-authorized code=SplxlOBeZQQYbYS6WxSbIA
+  &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
   &user_pin=493536
 ```
 
