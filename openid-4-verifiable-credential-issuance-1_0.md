@@ -78,7 +78,7 @@ Entity that receives, stores, presents, and manages Credentials and key material
 
 Verifier
 
-Entity that verifies the Credential to make a decision regarding providing a service to the End-User. Also called Relying Party (RP) or Client. During presentation of Credentials, Verifier acts as an OAuth 2.0 Client towards the Wallet acting as an OAuth 2.0 Authorization Server.
+Entity that requests, checks and extracts the claims from Verifiable Presentations to make a decision regarding providing a service to the End-User. During presentation of Credentials, Verifier acts as an OAuth 2.0 Client towards the Wallet that is acting as an OAuth 2.0 Authorization Server. Verifier is a specific instance of OAuth 2.0 Client, just like Relying Party (RP) in [@OpenID.Core].
 
 Credential Issuer
 
