@@ -210,7 +210,7 @@ Figure 2 is a diagram of a Credential issuance using Pre-Authorized Code flow. I
 
 How the user provides information required for the issuance of a requested Credential to the Credential Issuer and the business processes conducted by the Credential Issuer to prepare a Credential are out of scope of this specification.
 
-This flow uses a newly defined OAuth 2.0 grant type "urn:ietf:params:oauth:grant-type:pre-authorized_code".
+This flow uses a newly defined OAuth 2.0 grant type "urn:ietf:params:oauth:grant-type:pre-authorized code".
 
 The diagram is based on a Credential Issuer initiated flow illustrated in a use case in (#use-case-4) and does not illustrate all of the optional features.
 
@@ -223,7 +223,7 @@ The diagram is based on a Credential Issuer initiated flow illustrated in a use 
         |                |      for the issuance of a certain Credential        |
         |---------------------------------------------------------------------->|
         |                |                                                      |
-        |                |  (1) Credential Offer (pre-authorized_code)          |
+        |                |  (1) Credential Offer (pre-authorized code)          |
         |                |<-----------------------------------------------------|        
         |    interacts   |                                                      |
         |--------------->|                                                      |
@@ -231,7 +231,7 @@ The diagram is based on a Credential Issuer initiated flow illustrated in a use 
         |                |      |  Obtains Issuer's server metadata             |
         |                | <----                                                |
         |                |                                                      |
-        |                |  (2) Token Request (pre-authorized_code, pin)        |
+        |                |  (2) Token Request (pre-authorized code, pin)        |
         |                |----------------------------------------------------->| 
         |                |      Token Response (access_token)                   |
         |                |<-----------------------------------------------------|    
@@ -249,11 +249,11 @@ Figure: Issuance using Pre-Authorized code flow
 
 (1) The flow begins as the Credential Issuer generates an Credential Offer for certain Credential(s) and communicates it to the Wallet, for example as a QR code or as a deeplink. The Wallet uses information from the Credential Offer to obtain the Credential Issuer's metadata including details about the Credential that this Credential Issuer wants to issue. This step is defined in (#issuance_initiation_endpoint).
 
-(2) This step is the same as Step 3 in the Authorization Code Flow, but instead of authorization code, pre-authorized_code obtained in step (1) is sent in the Token Request. This step is defined in (#token_endpoint).  
+(2) This step is the same as Step 3 in the Authorization Code Flow, but instead of authorization code, pre-authorized code obtained in step (1) is sent in the Token Request. This step is defined in (#token_endpoint).  
 
 (3) This step is the same as Step 4 in the Authorization Code Flow. 
 
-Note that the pre-authorized_code is sent to the Token Endpoint, and not to the Authorization Endpoint.
+Note that the pre-authorized code is sent to the Token Endpoint, and not to the Authorization Endpoint.
 
 It is also important to note that anyone who possesses a valid pre-authorization_code would be able to receive a VC from the Credential Issuer. Implementers MUST implement mitigations most suitable to the use-case. 
 
@@ -279,8 +279,8 @@ The following parameters are defined by this specification:
 
 * grant type `authorization_code`:
   * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authorization request with the Credential Issuer to a context set up during previous steps. If the wallet decides to use the authorization code flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value. 
-* grant type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
-  * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. If the wallet decides to use the pre-authorized code flow, this parameter value MUST be include in the sub-sequent token request with the grant type pre-authorized code.
+* grant type `urn:ietf:params:oauth:grant-type:pre-authorized code`:
+  * `pre-authorized code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. If the wallet decides to use the pre-authorized code flow, this parameter value MUST be include in the sub-sequent token request with the grant type pre-authorized code.
   * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel. If the wallet decides to use the pre-authorized code flow, a PIN value MUST be sent in the `user_pin` parameter with the respective token request. 
 
 This is a non-normative example of an Credential Offer object used to encourage the Wallet to start an authorization code flow
@@ -482,8 +482,8 @@ Upon receiving a successful Authorization Response, a Token Request is made as d
 
 The following are the extension parameters to the Token Request used in a pre-authorized code flow:
 
-* `pre-authorized_code`: CONDITIONAL. The code representing the authorization to obtain Credentials of a certain type. This parameter is required if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
-* `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Credential Offer. The string value MUST consist of maximum 8 numeric characters (the numbers 0 - 9). This parameter MUST only be used, if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
+* `pre-authorized code`: CONDITIONAL. The code representing the authorization to obtain Credentials of a certain type. This parameter is required if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized code`.
+* `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Credential Offer. The string value MUST consist of maximum 8 numeric characters (the numbers 0 - 9). This parameter MUST only be used, if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized code`.
 
 Requirements around how the client identifies and, if applicable, authenticates itself with the authorization server in the Token Request depend on the grant type.
 
@@ -516,8 +516,8 @@ POST /token HTTP/1.1
   Host: server.example.com
   Content-Type: application/x-www-form-urlencoded
 
-  grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
-  &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
+  grant_type=urn:ietf:params:oauth:grant-type:pre-authorized code
+  &pre-authorized code=SplxlOBeZQQYbYS6WxSbIA
   &user_pin=493536
 ```
 
@@ -532,7 +532,7 @@ In addition to the response parameters defined in [@!RFC6749], the AS MAY return
 * `authorization_pending`: OPTIONAL. JSON Boolean. In pre-authorized code flow, the Token Request is still pending as the Credential Issuer is waiting for the end user interaction to complete. The client SHOULD repeat the Token Request. Before each new request, the client MUST wait at least the number of seconds specified by the "interval" response parameter. ToDo: clarify boolean.
 * `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the token endpoint in pre-authorized code flow.  If no value is provided, clients MUST use 5 as the default.
 
-Upon receiving `pre-authorized_code`, the Credential Issuer MAY decide to interact with the end-user in the course of the Token Request processing, which might take some time. In such a case, the Credential Issuer SHOULD respond with the error `authorization_pending` and the new return parameter `interval`.
+Upon receiving `pre-authorized code`, the Credential Issuer MAY decide to interact with the end-user in the course of the Token Request processing, which might take some time. In such a case, the Credential Issuer SHOULD respond with the error `authorization_pending` and the new return parameter `interval`.
 
 Below is a non-normative example of a Token Response:
 
@@ -1264,9 +1264,9 @@ TBD
 
 ## Sub-Namespace Registration
 
-This section registers the value "urn:ietf:params:oauth:grant-type:pre-authorized_code" in the IANA "OAuth URI" registry established by "An IETF URN Sub-Namespace for OAuth" [@!RFC6755].
+This section registers the value "urn:ietf:params:oauth:grant-type:pre-authorized code" in the IANA "OAuth URI" registry established by "An IETF URN Sub-Namespace for OAuth" [@!RFC6755].
 
-* URN: urn:ietf:params:oauth:grant-type:pre-authorized_code
+* URN: urn:ietf:params:oauth:grant-type:pre-authorized code
 * Common Name: Pre-Authorized Code
 * Change Controller: AB/Connect Working Group - openid-specs-ab@lists.openid.net
 * Specification Document: (#token_request) of this document
