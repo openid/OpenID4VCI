@@ -108,7 +108,9 @@ Every Credential Issuer utilizes an OAuth [@!RFC6749] authorization server to au
 
 All OAuth 2.0 grant types and extensions mechanisms can be used in conjunction with the credential issuance API. Aspects not defined in this specification are expected to follow [@!RFC6749]. 
 
-When using the grant type `authorization_code`, it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks and Pushed Authorization Requests [@RFC9126] to ensure integrity and authenticity of the authorization request.
+When using the grant type `authorization_code` defined in (#authorized-code-flow), it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks and Pushed Authorization Requests [@RFC9126] to ensure integrity and authenticity of the authorization request.
+
+Note: PKCE cannot be used with pre-authorized code defined in (#pre-authz-code-flow), which does not involve Authorization Endpoint.
 
 Existing OAuth 2.0 mechanisms are extended as following:
 
@@ -150,7 +152,7 @@ The issuance can have multiple characteristics, which can be combined depending 
 
 The following sub-sections illusterate some of the authorization flows supported by this specification.
 
-## Authorized Code Flow
+## Authorized Code Flow (#authorized-code-flow)
 
 Below is a diagram of a Credential issuance using the Authorization Code flow. 
 
