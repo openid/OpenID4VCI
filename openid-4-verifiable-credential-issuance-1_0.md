@@ -56,63 +56,47 @@ Common terms in this document come from [@!RFC6749].
 
 This specification also defines the following terms. In the case where a term has a definition that differs, the definition below is authoritative.
 
-Credential
+Credential:
+:  A set of one or more claims about a subject made by a Credential Issuer. This definition of a term "credential" in this specification is different from that in [@!OpenID.Core] and [@!RFC6749].
 
-  A set of one or more claims about a subject made by a Credential Issuer.
+Verifiable Credential (VC):
+:  A tamper-evident credential that has authorship of the Issuer that can be cryptographically verified. Can be of any format used in the Issuer-Holder-Verifier Model, including, but not limited to those defined in [@VC_DATA] and [@ISO.18013-5].
 
-Note: the definition of a term "credential" in this specification is different from that in [@!OpenID.Core].
+W3C Verifiable Credential:
+:  A Verifiable Credential compliant to the [@VC_DATA] specification.
 
-Verifiable Credential (VC)
+Presentation:
+:  Data derived from one or more Verifiable Credentials that can be from the same or different issuers that is shared with a specific verifier.
 
-  A tamper-evident credential that has authorship of the Issuer that can be cryptographically verified. Can be of any format used in the Issuer-Holder-Verifier Model, including, but not limited to those defined in [@VC_DATA], [@ISO.18013-5] and [@Hyperledger.Indy] (AnonCreds).
+Verifiable Presentation (VP):
+:  A tamper-evident presentation that has authorship of the Holder that can be cryptographically verified to provide Cryptographic Holder Binding. Can be of any format used in the Issuer-Holder-Verifier Model, including, but not limited to those defined in [@VC_DATA] and [@ISO.18013-5].
 
-W3C Verifiable Credential
+W3C Verifiable Presentation:
+:  A Verifiable Presentations compliant to the [@VC_DATA] specification.
 
-  A Verifiable Credential compliant to the [@VC_DATA] specification.
+Credential Issuer:
+:  Entity that issues Verifiable Credentials. Also called Issuer. In the context of this specification, the Credential Issuer acts as OAuth 2.0 Authorization Server (see [@!RFC6749]).
 
-Presentation
+Holder:
+:  An entity that receives Verifiable Credentials and has control over them to present them to the Verifiers as Verifiable Presentations.
 
-  Data derived from one or more Verifiable Credentials that can be from the same or different issuers that is shared with a specific verifier.
+Verifier:
+:  Entity that verifies the Credential to make a decision regarding providing a service to the End-User. Also called Relying Party (RP) or Client. During presentation of Credentials, Verifier acts as an OAuth 2.0 Client towards the Wallet acting as an OAuth 2.0 Authorization Server.
 
-Verified Presentation (VP)
+Issuer-Holder-Verifier Model:
+:  A model for claims sharing where claims are issued in the form of Verifiable Credentials independent of the process of presenting them as Verifiable Presentation to the Verifiers. Issued Verifiable Credential can (but must not necessarily) be used multiple times.
 
-  A tamper-evident presentation that has authorship of the Holder that can be cryptographically verified to provide Cryptographic Holder Binding. Can be of any format used in the Issuer-Holder-Verifier Model, including, but not limited to those defined in [@VC_DATA], [@ISO.18013-5] and [@Hyperledger.Indy] (AnonCreds).
+Cryptographic Holder Binding:
+:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proving control over the same private key during the issuance and presentation. Mechanism might depend on the Credential Format. For example, in `jwt_vc_json` Credential Format, a VC with Cryptographic Holder Binding contains a public key or a reference to a public key that matches to the private key controlled by the Holder. Claim-based or biometrics-based holder binding is also possible.
 
-W3C Verifiable Presentation
+Wallet:
+:  Entity used by the Holder to receive, store, present, and manage Verifiable Credentials and key material. There is no single deployment model of a Wallet: Verifiable Credentials and keys can both be stored/managed locally, or by using a remote self-hosted service, or a remote third-party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Authorization Server (see [@!RFC6749]) towards the Credential Verifier which acts as the OAuth 2.0 Client.
 
-  A Verifiable Presentations compliant to the [@VC_DATA] specification.
+Base64url Encoding:
+:  Base64 encoding using the URL- and filename-safe character set defined in Section 5 of [@!RFC4648], with all trailing '=' characters omitted (as permitted by Section 3.2 of [@!RFC4648]) and without the inclusion of any line breaks, whitespace, or other additional characters. Note that the base64url encoding of the empty octet sequence is the empty string. (See Appendix C of [@!RFC7515] for notes on implementing base64url encoding without padding.)
 
-Credential Issuer
-
-  Entity that issues Verifiable Credentials. Also called Issuer. In the context of this specification, the Credential Issuer acts as OAuth 2.0 Authorization Server (see [@!RFC6749]).
-
-Holder
-
-  An entity that receives Verifiable Credentials and has control over them to present them to the Verifiers as Verifiable Presentations.
-
-Verifier
-
-  Entity that verifies the Credential to make a decision regarding providing a service to the End-User. Also called Relying Party (RP) or Client. During presentation of Credentials, Verifier acts as an OAuth 2.0 Client towards the Wallet acting as an OAuth 2.0 Authorization Server.
-
-Issuer-Holder-Verifier Model
-
-  A model for claims sharing where claims are issued in the form of Verifiable Credentials independent of the process of presenting them as Verifiable Presentation to the Verifiers. Issued Verifiable Credential can (but must not necessarily) be used multiple times.
-
-Cryptographic Holder Binding
-
-  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proving control over the same private key during the issuance and presentation. Mechanism might depend on the Credential Format. For example, in `jwt_vc_json` Credential Format, a VC with Cryptographic Holder Binding contains a public key or a reference to a public key that matches to the private key controlled by the Holder. Claim-based or biometrics-based holder binding is also possible.
-
-Wallet
-
-  Entity that receives, stores, presents, and manages Credentials and key material of the End-User. There is no single deployment model of a Wallet: Credentials and keys can both be stored/managed locally by the end-user, or by using a remote self-hosted service, or a remote third party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Client (see [@!RFC6749]) towards the Credential Issuer. 
-
-Base64url Encoding
-
-  Base64 encoding using the URL- and filename-safe character set defined in Section 5 of [@!RFC4648], with all trailing '=' characters omitted (as permitted by Section 3.2 of [@!RFC4648]) and without the inclusion of any line breaks, whitespace, or other additional characters. Note that the base64url encoding of the empty octet sequence is the empty string. (See Appendix C of [@!RFC7515] for notes on implementing base64url encoding without padding.)
-
-Deferred Credential Issuance
-
-  Issuance of Credentials not directly in the response to a Credential issuance request, but following a period of time that can be used to perform certain offline business processes.
+Deferred Credential Issuance:
+:  Issuance of Credentials not directly in the response to a Credential issuance request, but following a period of time that can be used to perform certain offline business processes.
 
 # Overview
 
