@@ -267,15 +267,28 @@ This endpoint is used by a Credential Issuer in case it is already in an interac
 
 ## Credential Offer {#issuance_initiation_request}
 
-The Credential Issuer sends the request as a HTTP GET request or a HTTP redirect to the Credential Offer Endpoint URL defined in (#client-metadata). This request contains a single URI query parameter `credential_offer` that contains an Credential Offer object, which is a JSON object with the Credential Offer parameters.
+The Credential Issuer sends Credential Offer as a HTTP GET request or a HTTP redirect to the Credential Offer Endpoint URL defined in (#client-metadata).
 
-Credential Offer object may contain the following claims: 
+Credential Offer object which is a JSON object with the Credential Offer parameters, can be sent by value or by refernce.
 
-* `credential_issuer`: REQUIRED. the Credential Issuer URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from. 
-* `credentials`: REQUIRED. JSON array, where every entry is a JSON Object or a JSON String. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `id` values in one of the Supported Credentials Objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the wallet MUST resolve this string value to the respective Supported Credentials Object.
+Credential Offer contains a single URI query parameter `credential_offer` or `credential_offer_uri`:
+
+* `credential_offer`: CONDITIONAL. A JSON object with the Credential Offer parameters. MUST NOT be present when `credential_offer_uri` parameter is present.
+* `credential_offer_uri`: A URL using the `https` scheme referencing a resource containing a JSON Object with the Credential Offer parameters. MUST NOT be present when `credential_offer` parameter is present.
+
+The Credential Issuer MAY render a QR code containing the Credential Offer that can be scanned by the user using a Wallet, or a deeplink that the user can click.
+
+For security considerations, see (#credential-offer-security).
+
+### Credential Offer Parameters
+
+Credential Offer object may contain the following parameters: 
+
+* `credential_issuer`: REQUIRED. The Credential Issuer URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from. 
+* `credentials`: REQUIRED. A JSON array, where every entry is a JSON Object or a JSON String. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `id` values in one of the Supported Credentials Objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the wallet MUST resolve this string value to the respective Supported Credentials Object.
 * `grants`: OPTIONAL. A JSON object indicating to the wallet the grant types the credential issuer's AS is prepared to process for this credential offer. Every grant is represented by a key and an object. The key value is the grant type identifier, the object MAY contain parameters either determining the way the wallet MUST use the particular grant and/or parameters the wallet MUST send with the respective request(s). If `grants` is not present or empty, the wallet MUST determine the grant types the credential issuer's AS supports using the respective metadata. When multiple grants are present, it's at the wallet’s discretion which one to use.
 
-The following parameters are defined by this specification: 
+The following values are defined by this specification: 
 
 * grant type `authorization_code`:
   * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authorization request with the Credential Issuer to a context set up during previous steps. If the wallet decides to use the authorization code flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value. 
@@ -283,27 +296,15 @@ The following parameters are defined by this specification:
   * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. If the wallet decides to use the pre-authorized code flow, this parameter value MUST be include in the sub-sequent token request with the grant type pre-authorized code.
   * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel. If the wallet decides to use the pre-authorized code flow, a PIN value MUST be sent in the `user_pin` parameter with the respective token request. 
 
-This is a non-normative example of an Credential Offer object used to encourage the Wallet to start an authorization code flow
-
-<{{examples/credential_offer_authz_code.json}}
-
-and this is how such an object might look like for a pre-authorized code flow (with a credential type reference):
-
-<{{examples/credential_offer_by_reference.json}}
-
-The following non-normative example shows how the issuer can offer the issuance of two Credentials of different formats, one by reference ("UniversityDegree_JWT") and the other one by value:
+The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two Credentials of different formats, one as JSON string ("UniversityDegree_JWT") and the other one as JSON object:
 
 <{{examples/credential_offer_multiple_credentials.json}}
 
 Note that the examples throughout the specification use Credential Format specific parameters defined in the Credential Format Profiles that can be found in (#format_profiles).
 
-The Wallet MUST consider the parameter values in the Credential Offer as not trustworthy since the origin is not authenticated and the message integrity is not protected. The Wallet MUST apply the same checks on the Credential Issuer that it would apply when the flow is started from the Wallet itself since the Credential Issuer is not trustworthy just because it sent the Credential Offer. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
+### Sending Credential Offer by Value Using `credential_offer` Parameter
 
-The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if the Wallet would have started the flow. 
-
-The Issuer MUST ensure the release of any privacy-sensitive data is legally based.
-
-Below is a non-normative example of an Credential Offer:
+Below is a non-normative example of an Credential Offer passed by value:
 
 ```
   GET /credential_offer?credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com
@@ -312,9 +313,7 @@ Below is a non-normative example of an Credential Offer:
   U0Et...FYUaBy%22%7D
 ```
 
-The Credential Issuer MAY also render a QR code containing the request data that can be scanned by the user using a Wallet, or a deeplink that the user can click.
-
-The following is a non-normative example of such a request that can be included in a QR code or a deeplink used to invoke Wallet deployed as a native app:
+The following is a non-normative example of a Credential Offer that can be included in a QR code or a deeplink used to invoke Wallet deployed as a native app:
 
 ```
 openid-credential-offer://credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com
@@ -322,6 +321,38 @@ openid-credential-offer://credential_offer=%7B%22credential_issuer%22:%22https:/
 edential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22issuer_state%22:%22eyJhbGciOiJSU0Et...
 FYUaBy%22%7D
 ```
+
+### Sending Credential Offer by Reference Using `credential_offer_uri` Parameter
+
+Upon receipt of the `credential_offer_uri`, the Wallet MUST send an HTTP GET request to URI to retrieve the referenced Credential Offer Object, unless it is already cached, and parse it to recreate the Credential Offer parameters.
+
+Note: The Credential Issuer SHOULD use a unique URI for each Credential Offer utilizing distinct parameters, or otherwise prevent the Credential Issuer from caching the `credential_offer_uri`.
+
+Below is a non-normative example of this fetch process:
+
+```
+GET /credential-offer.jwt HTTP/1.1
+Host: server.example.com
+```
+
+Response from the Credential Issuer that contains an Credential Offer Object MUST have the media type "application/json".
+
+This ability to pass Credential Offer by reference is particularly useful for large requests.
+
+Below is a non-normative example of the Credential Offer displayed by the Credential Issuer as a QR code when the Credential Offer is passed by reference:
+
+```
+openid-credential-offer://?
+  credential_offer_uri=https%3A%2F%2Fserver%2Eexample%2Ecom%2Fcredential-offer.jwt
+```
+
+Below is a non-normative example of a response from the Credential Issuer that contains an Credential Offer Object used to encourage the Wallet to start an authorization code flow:
+
+<{{examples/credential_offer_authz_code.txt}}
+
+Below is a non-normative example how a Credential Offer Object might look like for a pre-authorized code flow (with a credential type reference):
+
+<{{examples/credential_offer_by_reference.json}}
 
 ## Credential Offer Response
 
@@ -554,7 +585,7 @@ HTTP/1.1 200 OK
 
 If the Token Request is invalid or unauthorized, the Authorization Server constructs the error response as defined as in Section 5.2 of OAuth 2.0 [@!RFC6749].
 
-The following additional clarifications are provided for the following error codes already defined in [@!RFC6749]:
+The following additional clarifications are provided for some of the error codes already defined in [@!RFC6749]:
 
 `invalid_request`:
 
@@ -1017,6 +1048,14 @@ The following mechanisms in concert can be utilized to fulfill those objectives:
 Directly using key, app and/or device attestations to prove certain capabilities towards a Credential Issuer is an obvious option. However, this at least requires platform mechanisms that issue signed assertions that 3rd parties can evaluate, which is not always the case (e.g. iOS's DeviceCheck). Also, such an approach creates dependencies on platform specific mechanisms, trust anchors, and platform specific identifiers (e.g. Android `apkPackageName`) and it reveals information about the internal design of a Wallet. Implementers should take these consequences into account. 
 
 The approach recommended by this specification is that the Credential Issuer relies on the OAuth 2.0 client authentication to establish trust in the Wallet and leaves it to the Wallet to ensure its internal integrity using app and key attestation (if required). This establishes a clean separation between the different hemispheres and a uniform interface irrespectively of the Wallet's architecture (e.g. native vs web Wallet). Client authentication can be performed with Credentials registered with the Credential Issuer or with assertions issued to the Wallet by a 3rd party the Credential Issuer trusts for the purpose of client authentication.  
+
+## Credential Offer {#credential-offer-security}
+
+The Wallet MUST consider the parameter values in the Credential Offer as not trustworthy since the origin is not authenticated and the message integrity is not protected. The Wallet MUST apply the same checks on the Credential Issuer that it would apply when the flow is started from the Wallet itself since the Credential Issuer is not trustworthy just because it sent the Credential Offer. An attacker might attempt to use an initation request to conduct a phishing or injection attack. 
+
+The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this draft MUST be performed in the same way as if the Wallet would have started the flow. 
+
+The Credential Issuer MUST ensure the release of any privacy-sensitive data in Credential Offer is legally based.
 
 ## Pre-authorized Code Flow {#security_considerations_pre-authz-code}
 
