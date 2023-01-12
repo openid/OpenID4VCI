@@ -97,7 +97,7 @@ This specification defines an API for credential issuance provided by a Credenti
 * A mandatory Credential Endpoint from which Credentials can be issued.  See (#credential-endpoint).
 * An optional Batch Credential Endpoint from which multiple Credentials can be issued in one request. See (#batch-credential-endpoint).
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of credentials (#deferred-credential-issuance). 
-* An optional mechanism for the Credential Issuer to make a credential offer to the Wallet to encourage the Wallet to start the Issuance Flow. See (#issuance_initiation_endpoint).
+* An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow. See (#issuance_initiation_endpoint).
 * A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing. See (#server-metadata)
 
 Both the Credential and the Batch Credential endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both requests therefore allow to convey a proof of posession for the key material. Multiple proof types are supported. 
@@ -926,7 +926,7 @@ HTTP/1.1 200 OK
 
 ## Batch Credential Error Response {#batch-credential_error_response}
 
-The Batch Credential Issuance Endpoint MUST respond with a HTTP status code 4xx in case of an error. 
+The Batch Credential Endpoint MUST respond with a HTTP status code 4xx in case of an error. 
 
 The Batch Credential Request either succeessfully issues all requested credentials or fails entirely if there is even one credential failed to be issued.
 
@@ -1432,7 +1432,7 @@ The following additional parameters are defined for credential issuance requests
 * `types`: REQUIRED. as defined in (#authorization_jwt_vc_json). The credential issued by the issuer MUST at least contain the values listed in this claim. 
 * `credentialSubject`: OPTIONAL. as defined in (#authorization_jwt_vc_json). This object determines the optional claims to be added to the credential to be issued. 
 
-The following is a non-normative example of a Credential Issuance Request with Credential format `jwt_vc_json`.
+The following is a non-normative example of a Credential Request with Credential format `jwt_vc_json`.
 
 <{{examples/credential_request_jwt_vc_json_with_claims.json}}
 
