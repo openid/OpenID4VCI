@@ -1102,6 +1102,8 @@ the Credential Issuer may also decide that the current Access Token is longer be
 
 The action leading to the Wallet performing another Credential Request can also be triggered by a background process, or by the Credential Issuer using an out-of-band mechanism (SMS, email, etc.) to inform the End-User.
 
+## Relationsihp between the Credential Issuer Identifier in the metadata and the Issuer Identifier in the Issued Credential
+
 # Privacy Considerations
 
 TBD
