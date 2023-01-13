@@ -280,11 +280,11 @@ The Credential Issuer MAY render a QR code containing the Credential Offer that 
 
 For security considerations, see (#credential-offer-security).
 
-### Credential Offer Parameters
+### Credential Offer Parameters {#credential_offer_parameters}
 
 Credential Offer object may contain the following parameters: 
 
-* `credential_issuer`: REQUIRED. REQUIRED. The Credential Issuer's identifier as defined in (#credential-issuer-identifier). 
+* `credential_issuer`: REQUIRED. The Credential Issuer Identifier as defined in (#credential-issuer-identifier). 
 * `credentials`: REQUIRED. A JSON array, where every entry is a JSON Object or a JSON String. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `id` values in one of the Supported Credentials Objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the wallet MUST resolve this string value to the respective Supported Credentials Object.
 * `grants`: OPTIONAL. A JSON object indicating to the wallet the grant types the credential issuer's AS is prepared to process for this credential offer. Every grant is represented by a key and an object. The key value is the grant type identifier, the object MAY contain parameters either determining the way the wallet MUST use the particular grant and/or parameters the wallet MUST send with the respective request(s). If `grants` is not present or empty, the wallet MUST determine the grant types the credential issuer's AS supports using the respective metadata. When multiple grants are present, it's at the wallet’s discretion which one to use.
 
@@ -379,7 +379,7 @@ A non-normative example of an `authorization_details` object.
 
 <{{examples/authorization_details.json}}
 
-If the Credential Issuer metadata contains an `authorization_server` parameter, the authorization detail's `locations` common data field MUST be set to the Credential Issuer's identifier value. A non-normative example for a deployment where an AS protects multiple Credential Issuers would look like this:
+If the Credential Issuer metadata contains an `authorization_server` parameter, the authorization detail's `locations` common data field MUST be set to the Credential Issuer Identifier value. A non-normative example for a deployment where an AS protects multiple Credential Issuers would look like this:
 
 <{{examples/authorization_details_with_as.json}}
 
@@ -417,7 +417,7 @@ occurrence MUST be interpreted individually.
 
 Providers that do not understand the value of this scope in a request MUST ignore it entirely. 
 
-If the Credential Issuer metadata contains an `authorization_server` property, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the AS to differentiate credential issuers.  
+If the Credential Issuer metadata contains an `authorization_server` property, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer Identifier value to allow the AS to differentiate credential issuers.  
 
 Below is a non-normative example of a Authorization Request using the scope `com.example.healthCardCredential`:
 
@@ -522,9 +522,9 @@ For the authorization code grant type, the requirement as as described in Sectio
 
 For the pre-authorized code grant type, authentication of the client is OPTIONAL, as described in Section 3.2.1 of OAuth 2.0 [@!RFC6749] and consequently, the "client_id" is only needed when a form of client authentication that relies on the parameter is used.
 
-If the token request contains an `authorization_details` parameter of type `openid_credential` and the Credential Issuer's metadata contains an `authorization_server` parameter, the `authorization_details` object MUST contain the Credential Issuer's identifier in the `locations` element. 
+If the token request contains an `authorization_details` parameter of type `openid_credential` and the Credential Issuer's metadata contains an `authorization_server` parameter, the `authorization_details` object MUST contain the Credential Issuer Identifier in the `locations` element. 
 
-If the token request contains a scope value related to credential issuance and the Credential Issuer's metadata contains an `authorization_server` parameter, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the AS to differentiate credential issuers. 
+If the token request contains a scope value related to credential issuance and the Credential Issuer's metadata contains an `authorization_server` parameter, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer Identifier value to allow the AS to differentiate credential issuers. 
 
 Below is a non-normative example of a Token Request in an authorization code flow:
 
@@ -640,7 +640,7 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 * `format`: REQUIRED. Format of the Credential to be issued. This Credential format identifier determines further parameters required to determine the type and (optionally) the content of the credential to be issued. Credential Format Profiles consisting of the Credential format specific set of parameters are defined in (#format_profiles).
 * `proof`: OPTIONAL. JSON Object containing proof of possession of the key material the issued Credential shall be bound to. The specification envisions use of different types of proofs for different cryptographic schemes. The `proof` object MUST contain a `proof_type` claim of type JSON denoting the concrete proof type. This type determines the further claims in the proof object and its respective processing rules. Proof types are defined in (#proof_types). 
 
-The `proof` element MUST incorporate a `c_nonce` value generated by the Credential Issuer and the Credential Issuer's identifier (audience) to allow the Credential Issuer to detect replay. The way that data is incorporated depends on the proof type. In a JWT, for example, the `c_nonce` is conveyd in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the proof object and the Credential Issuer (the intended audience) is included as the `domain` element.
+The `proof` element MUST incorporate a `c_nonce` value generated by the Credential Issuer and the Credential Issuer Identifier (audience) to allow the Credential Issuer to detect replay. The way that data is incorporated depends on the proof type. In a JWT, for example, the `c_nonce` is conveyd in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the proof object and the Credential Issuer (the intended audience) is included as the `domain` element.
 
 Below is a non-normative example of a Credential Request for a credential in JWT VC format (JSON encoding) with a proof type `jwt`:
 
@@ -964,15 +964,15 @@ If the Credential Issuer is unable to perform discovery of the Credential Offer 
 
 ### Credential Issuer Identifier {#credential-issuer-identifier}
 
-A Credential Issuer is identified by a case sensitive URL using the https scheme that contains scheme, host, and optionally, port number and path components and no query or fragment components. 
+A Credential Issuer is identified by a case sensitive URL using the `https` scheme that contains scheme, host and, optionally, port number and path components, but no query or fragment components. 
 
-The way the wallet discovers the Credential Issuer's URL is out of scope of this specification. 
+One mechanism for the Wallet to discover the Credential Issuer Identifier is from the Credential Offer as defined in (#credential_offer_parameters). Other mechanisms are out of scope of this specification. 
 
 ### Credential Issuer Metadata Retrieval  {#credential-issuer-wellknown}
 
-The Credential Issuer's configuration can be retrieved using the Issuer identifier.
+The Credential Issuer's configuration can be retrieved using the Credential Issuer Identifier.
 
-Credential Issuers publishing Metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer identifier. If the Credential Issuer value contains a path component, any terminating `/` MUST be removed before appending `/.well-known/openid-credential-issuer`. 
+Credential Issuers publishing metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer Identifier. If the Credential Issuer value contains a path component, any terminating `/` MUST be removed before appending `/.well-known/openid-credential-issuer`. 
 
 `openid-credential-issuer` MUST point to a JSON document compliant with this specification and MUST be returned using the `application/json` content type.
 
@@ -980,8 +980,8 @@ Credential Issuers publishing Metadata MUST make a JSON document available at th
 
 This specification defines the following Credential Issuer Metadata:
 
-* `credential_issuer`: REQUIRED. The Credential Issuer's identifier as defined in (#credential-issuer-identifier).
-* `authorization_server`: OPTIONAL. Identifier of the OAuth authorization server (as defined in [@!RFC8414]) the credential issuer relies on for authorization. If this element is omited, the entity providing the Credential Issuer is also acting as AS, i.e. the Credential Issuer's identifier is used as the OAuth Issuer value to obtain the authorization server metadata as per [@!RFC8414]. 
+* `credential_issuer`: REQUIRED. The Credential Issuer Identifier as defined in (#credential-issuer-identifier).
+* `authorization_server`: OPTIONAL. Identifier of the OAuth authorization server (as defined in [@!RFC8414]) the credential issuer relies on for authorization. If this element is omited, the entity providing the Credential Issuer is also acting as AS, i.e. the Credential Issuer identifier is used as the OAuth Issuer value to obtain the authorization server metadata as per [@!RFC8414]. 
 * `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
 * `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
 
