@@ -120,7 +120,7 @@ Existing OAuth 2.0 mechanisms are extended as following:
 
 ## Core Concepts
 
-The Wallet sends one Credential Request per individual Credential to the Credential Endpoint. The wallet MAY use the same access token to send multiple Credential Requests to request issuance of 
+The Wallet sends one Credential Request per individual Credential to the Credential Endpoint. The Wallet MAY use the same access token to send multiple Credential Requests to request issuance of 
 
 * multiple Credentials of different types bound to the same proof, or
 * multiple Credentials of the same type bound to different proofs.
@@ -166,7 +166,7 @@ ToDo: discuss if need to illustrate the verifier... per use-case-1
         |    interacts   |                                                      |
         |--------------->|                                                      |
         |                | -----                                                |
-        |                |      |  Obtains Issuer's server metadata             |
+        |                |      |  Obtains Issuer's Credential Issuer metadata             |
         |                | <----                                                |
         |                |                                                      |
         |                |  (1) Authorization Request                |
@@ -228,7 +228,7 @@ The diagram is based on a Credential Issuer initiated flow illustrated in a use 
         |    interacts   |                                                      |
         |--------------->|                                                      |
         |                | -----                                                |
-        |                |      |  Obtains Issuer's server metadata             |
+        |                |      |  Obtains Issuer's Credential Issuer metadata             |
         |                | <----                                                |
         |                |                                                      |
         |                |  (2) Token Request (pre-authorized code, pin)        |
@@ -285,16 +285,16 @@ For security considerations, see (#credential-offer-security).
 Credential Offer object may contain the following parameters: 
 
 * `credential_issuer`: REQUIRED. The Credential Issuer URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from. 
-* `credentials`: REQUIRED. A JSON array, where every entry is a JSON Object or a JSON String. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `id` values in one of the Supported Credentials Objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the wallet MUST resolve this string value to the respective Supported Credentials Object.
-* `grants`: OPTIONAL. A JSON object indicating to the wallet the grant types the credential issuer's AS is prepared to process for this credential offer. Every grant is represented by a key and an object. The key value is the grant type identifier, the object MAY contain parameters either determining the way the wallet MUST use the particular grant and/or parameters the wallet MUST send with the respective request(s). If `grants` is not present or empty, the wallet MUST determine the grant types the credential issuer's AS supports using the respective metadata. When multiple grants are present, it's at the wallet’s discretion which one to use.
+* `credentials`: REQUIRED. A JSON array, where every entry is a JSON Object or a JSON String. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `id` values in one of the Supported Credentials Objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the Wallet MUST resolve this string value to the respective Supported Credentials Object.
+* `grants`: OPTIONAL. A JSON object indicating to the Wallet the grant types the credential issuer's AS is prepared to process for this credential offer. Every grant is represented by a key and an object. The key value is the grant type identifier, the object MAY contain parameters either determining the way the Wallet MUST use the particular grant and/or parameters the Wallet MUST send with the respective request(s). If `grants` is not present or empty, the Wallet MUST determine the grant types the credential issuer's AS supports using the respective metadata. When multiple grants are present, it's at the Wallet’s discretion which one to use.
 
 The following values are defined by this specification: 
 
 * grant type `authorization_code`:
-  * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authorization request with the Credential Issuer to a context set up during previous steps. If the wallet decides to use the authorization code flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value. 
+  * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the sub-sequent authorization request with the Credential Issuer to a context set up during previous steps. If the Wallet decides to use the authorization code flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value. 
 * grant type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
-  * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. If the wallet decides to use the pre-authorized code flow, this parameter value MUST be include in the sub-sequent token request with the grant type pre-authorized code.
-  * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel. If the wallet decides to use the pre-authorized code flow, a PIN value MUST be sent in the `user_pin` parameter with the respective token request. 
+  * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. If the Wallet decides to use the pre-authorized code flow, this parameter value MUST be include in the sub-sequent token request with the grant type pre-authorized code.
+  * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a pre-authorized code flow. Default is `false`. This PIN is intended to bind the pre-authorized code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel. If the Wallet decides to use the pre-authorized code flow, a PIN value MUST be sent in the `user_pin` parameter with the respective token request. 
 
 The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two Credentials of different formats, one as JSON string ("UniversityDegree_JWT") and the other one as JSON object:
 
@@ -558,7 +558,7 @@ Token Requests are made as defined in [@!RFC6749].
 
 In addition to the response parameters defined in [@!RFC6749], the AS MAY return the following parameters:
 
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received,the wallet MUST use this nonce value for its subsequent credential requests until the credential issuer provides a fresh nonce.
+* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received,the Wallet MUST use this nonce value for its subsequent credential requests until the credential issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 * `authorization_pending`: OPTIONAL. JSON Boolean. In pre-authorized code flow, the Token Request is still pending as the Credential Issuer is waiting for the end user interaction to complete. The client SHOULD repeat the Token Request. Before each new request, the client MUST wait at least the number of seconds specified by the "interval" response parameter. ToDo: clarify boolean.
 * `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the token endpoint in pre-authorized code flow.  If no value is provided, clients MUST use 5 as the default.
@@ -735,7 +735,7 @@ The following claims are used in the Credential Response:
 * `format`: REQUIRED. JSON string denoting the format of the issued Credential.
 * `credential`: OPTIONAL. Contains issued Credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the Credential format. See (#format_profiles) for the Credential format specific encoding requirements.
 * `acceptance_token`: OPTIONAL. A JSON string containing a token subsequently used to obtain a Credential. MUST be present when `credential` is not returned.
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received,the wallet MUST use this nonce value for its subsequent credential requests until the credential issuer provides a fresh nonce.
+* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received,the Wallet MUST use this nonce value for its subsequent credential requests until the credential issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
 The `format` Claim determines the Credential format and encoding of the credential in the Credential Response. Details are defined in the Credential Format Profiles in (#format_profiles). 
@@ -966,7 +966,7 @@ If the Credential Issuer is unable to perform discovery of the Credential Offer 
 
 A Credential Issuer is identified by a case sensitive URL using the https scheme that contains scheme, host, and optionally, port number and path components and no query or fragment components. 
 
-The way the wallet discovers the Credential Issuer's URL is out of scope of this specification. 
+The way the Wallet discovers the Credential Issuer's URL is out of scope of this specification. 
 
 ### Credential Issuer Metadata Retrieval  {#credential-issuer-wellknown}
 
@@ -1345,7 +1345,7 @@ The user is starting a job at a new employer. An employer has requested the user
 
 ## Credential Offer - Cross Device & Deferred {#use-case-5}
 
-The user wants to obtain a digital criminal record. She visits the local administration's office and requests the issuance of the official criminal record as a digital Credential. After presenting her ID document, she is asked to scan a QR code with her wallet. She is being told that the actual issuance of the Credential will take some time due to necessary background checks by the authority. 
+The user wants to obtain a digital criminal record. She visits the local administration's office and requests the issuance of the official criminal record as a digital Credential. After presenting her ID document, she is asked to scan a QR code with her Wallet. She is being told that the actual issuance of the Credential will take some time due to necessary background checks by the authority. 
 
 In the Wallet, the user sees an indication that issuance of the digital record is under way. A few days later, the user receives a notification from her Wallet that requested Credential was successfully issued. When the user opens the Wallet, she is asked whether she wants to download the Credential. She confirms, and the new Credential is retrieved and stored in the Wallet.
 
@@ -1387,9 +1387,9 @@ Distinct Credential formats identifiers, extension parameters/claims and process
 
 The Credential format identifier is `jwt_vc_json`.
 
-#### Server Metadata {#server_metadata_jwt_vc_json}
+#### Credential Issuer Metadata {#server_metadata_jwt_vc_json}
 
-The following additional server metadata are defined for this Credential format. 
+The following additional Credential Issuer metadata are defined for this Credential format. 
 
 * `types`: REQUIRED. JSON array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
 * `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
@@ -1408,7 +1408,7 @@ The following is a non-normative example of a Supported Credentials Object of ty
 
 The following additional claims are defined for this Credential format. 
 
-* `types`: REQUIRED. as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the wallet shall request in the subsequent credential issuance request. 
+* `types`: REQUIRED. as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the Wallet shall request in the subsequent credential issuance request. 
 
 The following is a non-normative example of a Supported Credentials Object of type `jwt_vc_json`.
 
@@ -1418,8 +1418,8 @@ The following is a non-normative example of a Supported Credentials Object of ty
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
 
-* `types`: REQUIRED. as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the wallet requests authorization for at the issuer.
-* `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. This object indicates the claims the wallet would like to turn up in the credential to be issued. 
+* `types`: REQUIRED. as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the Wallet requests authorization for at the issuer.
+* `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. This object indicates the claims the Wallet would like to turn up in the credential to be issued. 
 
 The following is a non-normative example of an authorization details object with Credential format `jwt_vc_json`.
 
@@ -1450,7 +1450,7 @@ The following is a non-normative example of a credential issuance response with 
 
 The Credential format identifier is `jwt_vc_json-ld`.
 
-#### Server Metadata
+#### Credential Issuer Metadata
 
 The definitions in (#server_metadata_ldp_vc) apply for metadata of credentials of this type as well. 
 
@@ -1478,9 +1478,9 @@ The Credential format identifier is `ldp_vc`.
 
 Note that Data Integrity used to be called Linked Data Proofs, hence "ldp" in the Credential format identifier.
 
-#### Server Metadata {#server_metadata_ldp_vc}
+#### Credential Issuer Metadata {#server_metadata_ldp_vc}
 
-The following additional server metadata are defined for this Credential format. 
+The following additional Credential Issuer metadata are defined for this Credential format. 
 
 * `@context`: REQUIRED. JSON array as defined in [@VC_DATA], Section 4.1.
 * `types`: REQUIRED. JSON array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
@@ -1505,7 +1505,7 @@ The following additional claims are defined for this Credential format.
 * `credential_definition`: REQUIRED. JSON Object containing (and isolating) the detailed description of the credential type. This object MUST be processed using full JSON-LD processing. It consists of the following sub claims:
 
   * `@context`: REQUIRED. as defined in (#server_metadata_ldp_vc)
-  * `types`: REQUIRED. as defined in (#server_metadata_ldp_vc). This claim contains the type values the wallet shall request in the subsequent credential issuance request. 
+  * `types`: REQUIRED. as defined in (#server_metadata_ldp_vc). This claim contains the type values the Wallet shall request in the subsequent credential issuance request. 
 
 The following is a non-normative example of a Credential Offer of type `ldp_vc`.
 
@@ -1547,9 +1547,9 @@ This section defines a Credential Format Profile for credentials complying with 
 
 The Credential format identifier is `mso_mdoc`.
 
-### Server Metadata {#server_metadata_mso_mdoc}
+### Credential Issuer Metadata {#server_metadata_mso_mdoc}
 
-The following additional server metadata are defined for this Credential format. 
+The following additional Credential Issuer metadata are defined for this Credential format. 
 
 * `doctype`: REQUIRED. JSON string identifying the credential type. 
 * `claims`: OPTIONAL. A JSON object containing a list of key value pairs, where the key is a certain `namespace` as defined in [@!ISO.18013-5] (or any profile of it), and the value is a JSON object. This object also contains a list of key value pairs, where the key is a claim that is defined in the respective namespace and is offered in the Credential. The value is a JSON object detailing the specifics of the claim with a following non-exhaustive list of parameters that MAY be included:
