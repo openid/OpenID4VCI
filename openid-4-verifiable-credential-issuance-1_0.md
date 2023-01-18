@@ -1408,7 +1408,7 @@ The following is a non-normative example of a Supported Credentials Object of ty
 
 The following additional claims are defined for this Credential format. 
 
-* `types`: REQUIRED. as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the Wallet shall request in the subsequent credential issuance request. 
+* `types`: REQUIRED. JSON array as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the Wallet shall request in the subsequent credential issuance request. 
 
 The following is a non-normative example of a Supported Credentials Object of type `jwt_vc_json`.
 
@@ -1418,7 +1418,7 @@ The following is a non-normative example of a Supported Credentials Object of ty
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
 
-* `types`: REQUIRED. as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the Wallet requests authorization for at the issuer.
+* `types`: REQUIRED. JSON array as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the Wallet requests authorization for at the issuer.
 * `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. This object indicates the claims the Wallet would like to turn up in the credential to be issued. 
 
 The following is a non-normative example of an authorization details object with Credential format `jwt_vc_json`.
@@ -1429,8 +1429,8 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for credential issuance requests and this Credential format.  
 
-* `types`: REQUIRED. as defined in (#authorization_jwt_vc_json). The credential issued by the issuer MUST at least contain the values listed in this claim. 
-* `credentialSubject`: OPTIONAL. as defined in (#authorization_jwt_vc_json). This object determines the optional claims to be added to the credential to be issued. 
+* `types`: REQUIRED. JSON array as defined in (#authorization_jwt_vc_json). The credential issued by the issuer MUST at least contain the values listed in this claim. 
+* `credentialSubject`: OPTIONAL. A JSON object as defined in (#authorization_jwt_vc_json). This object determines the optional claims to be added to the credential to be issued. 
 
 The following is a non-normative example of a Credential Request with Credential format `jwt_vc_json`.
 
@@ -1504,8 +1504,8 @@ The following additional claims are defined for this Credential format.
 
 * `credential_definition`: REQUIRED. JSON Object containing (and isolating) the detailed description of the credential type. This object MUST be processed using full JSON-LD processing. It consists of the following sub claims:
 
-  * `@context`: REQUIRED. as defined in (#server_metadata_ldp_vc)
-  * `types`: REQUIRED. as defined in (#server_metadata_ldp_vc). This claim contains the type values the Wallet shall request in the subsequent credential issuance request. 
+  * `@context`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc)
+  * `types`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc). This claim contains the type values the Wallet shall request in the subsequent credential issuance request. 
 
 The following is a non-normative example of a Credential Offer of type `ldp_vc`.
 
@@ -1515,7 +1515,7 @@ The following is a non-normative example of a Credential Offer of type `ldp_vc`.
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.  
 
-* `credential_definition`: REQUIRED. as defined in (#issuer_initiated_issuance_ldp_vc).
+* `credential_definition`: REQUIRED. JSON Object as defined in (#issuer_initiated_issuance_ldp_vc).
 
 The following is a non-normative example of an authorization details object with Credential format `ldp_vc`.
 
@@ -1525,7 +1525,7 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for credential issuance requests and this Credential format.  
 
-* `credential_definition`: REQUIRED. as defined in (#issuer_initiated_issuance_ldp_vc).
+* `credential_definition`: REQUIRED. JSON Object as defined in (#issuer_initiated_issuance_ldp_vc).
 
 The following is a non-normative example of a credential issuance request with Credential format `ldp_vc`.
 
@@ -1568,7 +1568,7 @@ The following is a non-normative example of a Supported Credentials Object of ty
 
 The following additional claims are defined for this Credential format. 
 
-* `doctype`: REQUIRED. as defined in (#server_metadata_mso_mdoc) 
+* `doctype`: REQUIRED. JSON string as defined in (#server_metadata_mso_mdoc) 
 
 The following is a non-normative example of an Credential Offer of type `mso_mdoc`.
 
@@ -1578,8 +1578,8 @@ The following is a non-normative example of an Credential Offer of type `mso_mdo
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
 
-* `doctype`: REQUIRED. as defined in (#server_metadata_mso_mdoc) 
-* `claims`: OPTIONAL. as defined in (#server_metadata_mso_mdoc)  
+* `doctype`: REQUIRED. JSON string as defined in (#server_metadata_mso_mdoc) 
+* `claims`: OPTIONAL. A JSON object as defined in (#server_metadata_mso_mdoc)  
 
 The following is a non-normative example of an authorization details object with Credential format `mso_mdoc`.
 
@@ -1589,8 +1589,8 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for credential issuance requests and this Credential format.  
 
-* `doctype`: REQUIRED. as defined in (#server_metadata_mso_mdoc) 
-* `claims`: OPTIONAL. as defined in (#server_metadata_mso_mdoc) 
+* `doctype`: REQUIRED. JSON string as defined in (#server_metadata_mso_mdoc) 
+* `claims`: OPTIONAL. A JSON object as defined in (#server_metadata_mso_mdoc) 
 
 The following is a non-normative example of a credential issuance request with Credential format `mso_mdoc`.
 

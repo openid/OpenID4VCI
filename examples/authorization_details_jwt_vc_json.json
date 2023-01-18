@@ -9,7 +9,7 @@
         "credentialSubject": {
             "given_name": {},
             "last_name": {},
-            "degree": {},
+            "degree": {}
         }
     }
 ]
