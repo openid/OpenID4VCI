@@ -208,7 +208,7 @@ Note: this flow is based on OAuth 2.0 and the Authorization Code Grant Type, but
 
 Figure 2 is a diagram of a Credential issuance using Pre-Authorized Code Flow. It is a flow where the user authentication and authorization happens prior to the Credential Issuer initiating the issuance flow, without utilizing the Authorization Endpoint. Issuance flow starts after Credentials are ready to be retrieved by the Wallet. See (#use-case-4) for a use case.
 
-How the  User provides information required for the issuance of a requested Credential to the Credential Issuer and the business processes conducted by the Credential Issuer to prepare a Credential are out of scope of this specification.
+How the User provides information required for the issuance of a requested Credential to the Credential Issuer and the business processes conducted by the Credential Issuer to prepare a Credential are out of scope of this specification.
 
 This flow uses a newly defined OAuth 2.0 Grant Type "urn:ietf:params:oauth:grant-type:pre-authorized_code".
 
@@ -245,7 +245,7 @@ The diagram is based on a Credential Issuer initiated flow illustrated in a use 
 !---
 Figure: Issuance using Pre-Authorized code flow 
 
-(0) the Credential Issuer successfully obtains consent and user data required for the issuance of a requested Credential from the  User using Issuer specific business process.
+(0) the Credential Issuer successfully obtains consent and user data required for the issuance of a requested Credential from the User using Issuer specific business process.
 
 (1) The flow begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example as a QR code or as a deeplink. The Wallet uses information from the Credential Offer to obtain the Credential Issuer's metadata including details about the Credential that this Credential Issuer wants to issue. This step is defined in (#issuance_initiation_endpoint).
 
@@ -257,7 +257,7 @@ Note that the Pre-authorized Code is sent to the Token Endpoint, and not to the 
 
 It is also important to note that anyone who possesses a valid pre-authorization_code would be able to receive a VC from the Credential Issuer. Implementers MUST implement mitigations most suitable to the use-case. 
 
-One such mechanism defined in this specification is the usage of PIN. If in the Credential Offer the Credential Issuer indicated that the PIN is required, the  User is requested to type in a PIN sent via a channel different that the issuance Flow and the PIN is sent to the Credential Issuer in the Token Request. 
+One such mechanism defined in this specification is the usage of PIN. If in the Credential Offer the Credential Issuer indicated that the PIN is required, the User is requested to type in a PIN sent via a channel different that the issuance Flow and the PIN is sent to the Credential Issuer in the Token Request. 
 
 For more details and concrete mitigations, see (#security_considerations_pre-authz-code).
 
@@ -276,7 +276,7 @@ Credential Offer contains a single URI query parameter `credential_offer` or `cr
 * `credential_offer`: CONDITIONAL. A JSON object with the Credential Offer parameters. MUST NOT be present when `credential_offer_uri` parameter is present.
 * `credential_offer_uri`: A URL using the `https` scheme referencing a resource containing a JSON object with the Credential Offer parameters. MUST NOT be present when `credential_offer` parameter is present.
 
-The Credential Issuer MAY render a QR code containing the Credential Offer that can be scanned by the  User using a Wallet, or a deeplink that the  User can click.
+The Credential Issuer MAY render a QR code containing the Credential Offer that can be scanned by the User using a Wallet, or a deeplink that the User can click.
 
 For security considerations, see (#credential-offer-security).
 
@@ -456,7 +456,7 @@ POST /op/par HTTP/1.1
     Host: as.example.com
     Content-Type: application/x-www-form-urlencoded
 
-    &response_type=code
+    response_type=code
     &client_id=CLIENT1234
     &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
     &code_challenge_method=S256
@@ -466,7 +466,7 @@ POST /op/par HTTP/1.1
 
 ### Dynamic Credential Request
 
-This step is OPTIONAL. After receiving an Authorization Request from the Client, the Credential Issuer MAY use this step to obtain additional Credentials from the End-User required to proceed with the authorization of the credential issuance, e.g. it may obtain an identity credential and utilize it to identify the  User before issuing an additional credential. For a use case, see (#use-case-2).
+This step is OPTIONAL. After receiving an Authorization Request from the Client, the Credential Issuer MAY use this step to obtain additional Credentials from the End-User required to proceed with the authorization of the credential issuance, e.g. it may obtain an identity credential and utilize it to identify the User before issuing an additional credential. For a use case, see (#use-case-2).
 
 It is RECOMMENDED that the Credential Issuer uses [@OpenID4VP] to dynamically request presentation of additional Credentials. From a protocol perspective, the Credential Issuer then acts as a verifier and sends a presentation request to the Wallet. The Client SHOULD have these Credentials obtained prior to starting a transaction with this Credential Issuer. 
 
@@ -533,6 +533,7 @@ POST /token HTTP/1.1
   Host: server.example.com
   Content-Type: application/x-www-form-urlencoded
   Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
   grant_type=authorization_code
   &code=SplxlOBeZQQYbYS6WxSbIA
   &code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
@@ -554,13 +555,13 @@ POST /token HTTP/1.1
 
 ## Successful Token Response {#token-response}
 
-Token Requests are made as defined in [@!RFC6749].
+Token Responses are made as defined in [@!RFC6749].
 
 In addition to the response parameters defined in [@!RFC6749], the AS MAY return the following parameters:
 
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received,the Wallet MUST use this nonce value for its subsequent credential requests until the Credential Issuer provides a fresh nonce.
+* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent credential requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
-* `authorization_pending`: OPTIONAL. JSON Boolean. In Pre-authorized Code Flow, the Token Request is still pending as the Credential Issuer is waiting for the End-User interaction to complete. The client SHOULD repeat the Token Request. Before each new request, the client MUST wait at least the number of seconds specified by the "interval" response parameter. ToDo: clarify boolean.
+* `authorization_pending`: OPTIONAL. JSON Boolean. In Pre-authorized Code Flow, the Token Request is still pending as the Credential Issuer is waiting for the End-User interaction to complete. The client SHOULD repeat the Token Request. Before each new request, the client MUST wait at least the number of seconds specified by the `interval` response parameter. ToDo: clarify boolean.
 * `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the Token Endpoint in Pre-authorized Code Flow.  If no value is provided, clients MUST use 5 as the default.
 
 Upon receiving pre-authorized code, the Credential Issuer MAY decide to interact with the End-User in the course of the Token Request processing, which might take some time. In such a case, the Credential Issuer SHOULD respond with the error `authorization_pending` and the new return parameter `interval`.
@@ -595,7 +596,7 @@ The following additional clarifications are provided for some of the error codes
 `invalid_grant`:
 
 - the Authorization Server expects a PIN in the pre-authorized flow but the client provides the wrong PIN
-- the  User provides the wrong Pre-authorized Code or the Pre-authorized Code has expired
+- the User provides the wrong Pre-authorized Code or the Pre-authorized Code has expired
 
 `invalid_client`:
 
@@ -607,6 +608,7 @@ Below is a non-normative example Token Error Response:
 HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Cache-Control: no-store
+
 {
    "error": "invalid_request"
 }
@@ -624,7 +626,7 @@ If the Access Token is valid for requesting issuance of multiple Credentials, it
 
 ## Binding the Issued Credential to the identifier of the End-User possessing that Credential {#credential-binding}
 
-Issued Credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the Credential. Cryptographic binding allows the Verifier to verify during presentation that the End-User presenting a Credential is the same End-User to whom it was issued. For non-cryptographic type of binding and Credentials issued without any binding, see Implementations Considerations sections (#claim-based-binding) and (#no-binding). 
+Issued Credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the Credential. Cryptographic binding allows the Verifier to verify during the presentation of a Credential that the End-User presenting a Credential is the same End-User to whom that Credential was issued. For non-cryptographic type of binding and Credentials issued without any binding, see Implementation Considerations sections (#claim-based-binding) and (#no-binding). 
 
 Note that claims in the Credential are usually about the End-User who possesses it, but can be about another entity.
 
@@ -638,7 +640,7 @@ For cryptographic binding, the Client has the following options to provide crypt
 A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the "application/json" media type.
 
 * `format`: REQUIRED. Format of the Credential to be issued. This Credential format identifier determines further parameters required to determine the type and (optionally) the content of the credential to be issued. Credential Format Profiles consisting of the Credential format specific set of parameters are defined in (#format_profiles).
-* `proof`: OPTIONAL. JSON object containing proof of possession of the key material the issued Credential shall be bound to. The specification envisions use of different types of proofs for different cryptographic schemes. The `proof` object MUST contain a `proof_type` claim of type JSON denoting the concrete proof type. This type determines the further claims in the proof object and its respective processing rules. Proof types are defined in (#proof_types). 
+* `proof`: OPTIONAL. JSON object containing proof of possession of the key material the issued Credential shall be bound to. The specification envisions use of different types of proofs for different cryptographic schemes. The `proof` object MUST contain a `proof_type` claim of type JSON string denoting the concrete proof type. This type determines the further claims in the proof object and its respective processing rules. Proof types are defined in (#proof_types). 
 
 The `proof` element MUST incorporate a `c_nonce` value generated by the Credential Issuer and the Credential Issuer's identifier (audience) to allow the Credential Issuer to detect replay. The way that data is incorporated depends on the proof type. In a JWT, for example, the `c_nonce` is conveyd in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the proof object and the Credential Issuer (the intended audience) is included as the `domain` element.
 
@@ -735,7 +737,7 @@ The following claims are used in the Credential Response:
 * `format`: REQUIRED. JSON string denoting the format of the issued Credential.
 * `credential`: OPTIONAL. Contains issued Credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the Credential format. See (#format_profiles) for the Credential format specific encoding requirements.
 * `acceptance_token`: OPTIONAL. A JSON string containing a security token subsequently used to obtain a Credential. MUST be present when `credential` is not returned.
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received,the Wallet MUST use this nonce value for its subsequent credential requests until the Credential Issuer provides a fresh nonce.
+* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent credential requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
 The `format` Claim determines the Credential format and encoding of the credential in the Credential Response. Details are defined in the Credential Format Profiles in (#format_profiles). 
@@ -750,7 +752,7 @@ HTTP/1.1 200 OK
   Cache-Control: no-store
 
 {
-  "format": "jwt_vc_json"
+  "format": "jwt_vc_json",
   "credential" : "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
   "c_nonce": "fGFF7UkhLa",
   "c_nonce_expires_in": 86400  
@@ -781,7 +783,7 @@ The following additional clarifications are provided for the following parameter
 
 `invalid_request`:
 
-- Credential Request was malformed. One or more of the parameters (i.e. `format`, `proof`)are missing or malformatted.
+- Credential Request was malformed. One or more of the parameters (i.e. `format`, `proof`) are missing or malformed.
 
 `invalid_token`:
 
@@ -797,8 +799,8 @@ This is a non-normative example of a Credential Error Response:
 
 ```
 HTTP/1.1 400 Bad Request
-Content-Type: application/json
-Cache-Control: no-store
+  Content-Type: application/json
+  Cache-Control: no-store
 
 {
    "error": "invalid_request"
@@ -817,9 +819,9 @@ HTTP/1.1 400 Bad Request
   Cache-Control: no-store
 
 {
-  "error": "invalid_or_missing_proof"
+  "error": "invalid_or_missing_proof",
   "error_description":
-       "Credential Issuer requires proof to be bound to a Credential Issuer provided nonce."
+       "Credential Issuer requires proof to be bound to a Credential Issuer provided nonce.",
   "c_nonce": "8YE9hCnyV2",
   "c_nonce_expires_in": 86400  
 }
@@ -1064,14 +1066,14 @@ The Credential Issuer MUST ensure the release of any privacy-sensitive data in C
 
 The Pre-authorized Code Flow is vulnerable to the replay of the pre-authorized code, because by design it is not bound to a certain device (as the Authorization Code Flow does with PKCE). This means an attacker can replay at another device the Pre-authorized Code meant for a victim, e.g., the attacker can scan the QR code while it is displayed on the victim’s screen, and thereby get access to the Credential. Such replay attacks must be prevented using other means. The design facilitates the following options: 
 
-* User PIN: the Credential Issuer might set up a PIN with the  User (e.g. via text message or email), which needs to be presented in the Token Request.
-* Callback to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the  User to confirm the originating device (device that displayed the QR code) that the Credential Issuer may proceed with the Credential issuance process. While the Credential Issuer reaches out to the  User on the other device to get confirmation, the Credential Issuer returns an `authorization_pending` error code to the Wallet as described in (#token-response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the  User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the  User on the originating device more control over the issuance process.
+* User PIN: the Credential Issuer might set up a PIN with the User (e.g. via text message or email), which needs to be presented in the Token Request.
+* Callback to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the User to confirm the originating device (device that displayed the QR code) that the Credential Issuer may proceed with the Credential issuance process. While the Credential Issuer reaches out to the User on the other device to get confirmation, the Credential Issuer returns an `authorization_pending` error code to the Wallet as described in (#token-response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the User on the originating device more control over the issuance process.
 
 ### PIN Code Phishing
 
 An attacker might leverage the Credential issuance process and the user's trust into the Wallet to phish PIN codes sent out by a different service that grant attacker access to services other than Credential issuance. The attacker could setup a Credential Issuer site and in parallel to the issuance request trigger transmission of a PIN code to the user's phone from a service other than Credential issuance, e.g. from a payment service. The user would then be asked to enter this PIN into the Wallet and since the Wallet sends this PIN to the Token Endpoint of the Credential Issuer (the attacker), the attacker would get access to the PIN code, and access to that other service. 
 
-In order to cope with that issue, the Wallet is RECOMMENDED to interact with trusted Credential Issuers only. In that case, the Wallet would not process a Credential Offer with an untrusted issuer URL. The Wallet MAY also show to the  User the endpoint of the Credential Issuer it will be sending the PIN code to and ask the End-User for confirmation.
+In order to cope with that issue, the Wallet is RECOMMENDED to interact with trusted Credential Issuers only. In that case, the Wallet would not process a Credential Offer with an untrusted issuer URL. The Wallet MAY also show to the User the endpoint of the Credential Issuer it will be sending the PIN code to and ask the End-User for confirmation.
 
 ## Credential Lifecycle Management 
 
