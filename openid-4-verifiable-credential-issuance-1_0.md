@@ -108,8 +108,6 @@ Every Credential Issuer utilizes an OAuth [@!RFC6749] authorization server to au
 
 All OAuth 2.0 grant types and extensions mechanisms can be used in conjunction with the credential issuance API. Aspects not defined in this specification are expected to follow [@!RFC6749]. 
 
-When using the grant type `authorization_code`, it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks and Pushed Authorization Requests [@RFC9126] to ensure integrity and authenticity of the authorization request.
-
 Existing OAuth 2.0 mechanisms are extended as following:
 
 * A new grant type "pre-authorized code" is defined to facilitate a certain class of issuance flow (#pre-authz-code-flow).
@@ -150,9 +148,9 @@ The issuance can have multiple characteristics, which can be combined depending 
 
 The following sub-sections illusterate some of the authorization flows supported by this specification.
 
-## Authorized Code Flow
+## Authorized Code Flow {#authorization-code-flow}
 
-Below is a diagram of a Credential issuance using the Authorization Code flow. 
+Below is a diagram of a Credential issuance using the Authorization Code flow, using grant type `authorization_code` as defined in [@!RFC6749].
 
 The diagram is based on a Wallet initiated flow illustrated in a use case in (#use-case-1) and does not illustrate all of the optional features. 
 
@@ -201,6 +199,8 @@ Figure: Issuance using Authorization code flow
 If the Credential Issuer requires more time to issue a Credential, the Credential Issuer may returns an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued Credential as defined in (#deferred-credential-issuance).
 
 If the Issuer wants to issue multiple Credentials in one response, the Issuer MAY support the Batch Credential Endpoint and the Wallet MAY send a Batch Credential Request to the Batch Credential Endpoint as defined in (#batch-credential-endpoint).
+
+With grant type `authorization_code`, it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks and Pushed Authorization Requests [@RFC9126] to ensure integrity and authenticity of the authorization request.
 
 Note: this flow is based on OAuth 2.0 and the code grant type, but it can be used with other grant types as well. 
 
