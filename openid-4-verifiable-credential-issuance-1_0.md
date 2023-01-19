@@ -48,7 +48,7 @@ This specification defines an API that is used to issue verifiable credentials. 
 
 Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. However, in contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the Credential type) and is typically bound to key material allowing the End-User to prove the legitimate possession of the Credential. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential Issuer. This specification caters for those differences.
 
-Access to this API is authorized using OAuth 2.0 [@!RFC6749], i.e. The Wallet uses OAuth 2.0to obtain authorization to receive verifiable credentials. This way the issuance process can benefit from the proven security, simplicity, and flexibility of OAuth 2.0and existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) can be extended to become Credential Issuers. 
+Access to this API is authorized using OAuth 2.0 [@!RFC6749], i.e. The Wallet uses OAuth 2.0 to obtain authorization to receive verifiable credentials. This way the issuance process can benefit from the proven security, simplicity, and flexibility of OAuth 2.0 and existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) can be extended to become Credential Issuers. 
 
 # Terminology
 
@@ -104,7 +104,7 @@ Both the Credential and the Batch Credential Endpoints have the (optional) abili
 
 ## OAuth 2.0
 
-Every Credential Issuer utilizes an OAuth 2.0 [@!RFC6749] Aauthorization Server to authorize access. The same OAuth 2.0 Aauthorization Server can protect one or more Credential Issuers. Wallets determine the Aauthorization Server a certain Credential Issuer relies on using the Credential Issuer's metadata.   
+Every Credential Issuer utilizes an OAuth 2.0 [@!RFC6749] Authorization Server to authorize access. The same OAuth 2.0 Authorization Server can protect one or more Credential Issuers. Wallets determine the Authorization Server a certain Credential Issuer relies on using the Credential Issuer's metadata.   
 
 All OAuth 2.0 Grant Types and extensions mechanisms can be used in conjunction with the credential issuance API. Aspects not defined in this specification are expected to follow [@!RFC6749]. 
 
@@ -516,7 +516,7 @@ The following are the extension parameters to the Token Request used in a Pre-au
 * `pre-authorized_code`: CONDITIONAL. The code representing the authorization to obtain Credentials of a certain type. This parameter is required if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 * `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Credential Offer. The string value MUST consist of maximum 8 numeric characters (the numbers 0 - 9). This parameter MUST only be used, if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 
-Requirements around how the client identifies and, if applicable, authenticates itself with the Aauthorization Server in the Token Request depends on the Grant Type.
+Requirements around how the client identifies and, if applicable, authenticates itself with the Authorization Server in the Token Request depends on the Grant Type.
 
 For the Authorization Code Grant Type, the requirement as described in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
 
@@ -957,7 +957,7 @@ The deferred Credential Response uses the `format` and `credential` parameters a
 
 ## Client Metadata {#client-metadata}
 
-This specification defines the following new Client Metadata parameter in addition to [@!RFC7591] for Wallets acting as OAuth 2.0client:
+This specification defines the following new Client Metadata parameter in addition to [@!RFC7591] for Wallets acting as OAuth 2.0 client:
 
 * `credential_offer_endpoint`: OPTIONAL. URL of the Credential Offer Endpoint of a Wallet. 
 
@@ -984,7 +984,7 @@ Credential Issuers publishing Metadata MUST make a JSON document available at th
 This specification defines the following Credential Issuer Metadata:
 
 * `credential_issuer`: REQUIRED. The Credential Issuer's identifier.
-* `authorization_server`: OPTIONAL. Identifier of the OAuth 2.0 Aauthorization Server (as defined in [@!RFC8414]) the Credential Issuer relies on for authorization. If this element is omitted, the entity providing the Credential Issuer is also acting as the AS, i.e. the Credential Issuer's identifier is used as the OAuth 2.0Issuer value to obtain the Aauthorization Server metadata as per [@!RFC8414]. 
+* `authorization_server`: OPTIONAL. Identifier of the OAuth 2.0 Authorization Server (as defined in [@!RFC8414]) the Credential Issuer relies on for authorization. If this element is omitted, the entity providing the Credential Issuer is also acting as the AS, i.e. the Credential Issuer's identifier is used as the OAuth 2.0 Issuer value to obtain the Authorization Server metadata as per [@!RFC8414]. 
 * `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
 * `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
 
@@ -1611,7 +1611,7 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
 
    -10
 
-   * introduced differentiation between Credential Issuer and Aauthorization Server 
+   * introduced differentiation between Credential Issuer and Authorization Server 
    * relaxed client identification requirements for Pre-authorized Code Grant Type
    * renamed issuance initiation endpoint to Credential Offer Endpoint
    * added `grants` structure to credential offer
@@ -1626,7 +1626,7 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
 
    -08
 
-   * reworked use of OAuth 2.0scopes to be more flexible for implementers
+   * reworked use of OAuth 2.0 scopes to be more flexible for implementers
    * added text on scope related error handling
    * changed media type of a Credential Request to application/json from application/x-www-form-urlencoded
    
