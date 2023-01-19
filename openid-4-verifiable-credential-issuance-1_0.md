@@ -453,8 +453,8 @@ Below is a non-normative example of a Pushed Authorization Request:
 
 ```
 POST /op/par HTTP/1.1
-    Host: as.example.com
-    Content-Type: application/x-www-form-urlencoded
+Host: as.example.com
+Content-Type: application/x-www-form-urlencoded
 
     response_type=code
     &client_id=CLIENT1234
@@ -530,9 +530,9 @@ Below is a non-normative example of a Token Request in an Authorization Code Flo
 
 ```
 POST /token HTTP/1.1
-  Host: server.example.com
-  Content-Type: application/x-www-form-urlencoded
-  Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+Host: server.example.com
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
   grant_type=authorization_code
   &code=SplxlOBeZQQYbYS6WxSbIA
@@ -545,8 +545,8 @@ Below is a non-normative example of a Token Request in a Pre-authorized Code Flo
 
 ```
 POST /token HTTP/1.1
-  Host: server.example.com
-  Content-Type: application/x-www-form-urlencoded
+Host: server.example.com
+Content-Type: application/x-www-form-urlencoded
 
   grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
   &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
@@ -570,8 +570,8 @@ Below is a non-normative example of a Token Response:
 
 ```
 HTTP/1.1 200 OK
-  Content-Type: application/json
-  Cache-Control: no-store
+Content-Type: application/json
+Cache-Control: no-store
 
   {
     "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ",
@@ -748,8 +748,8 @@ Below is a non-normative example of a Credential Response in a synchronous flow 
 
 ```
 HTTP/1.1 200 OK
-  Content-Type: application/json
-  Cache-Control: no-store
+Content-Type: application/json
+Cache-Control: no-store
 
 {
   "format": "jwt_vc_json",
@@ -763,8 +763,8 @@ Below is a non-normative example of a Credential Response in a deferred flow:
 
 ```
 HTTP/1.1 200 OK
-  Content-Type: application/json
-  Cache-Control: no-store
+Content-Type: application/json
+Cache-Control: no-store
 
 {
   "acceptance_token": "8xLOxBtZp8",
@@ -799,8 +799,8 @@ This is a non-normative example of a Credential Error Response:
 
 ```
 HTTP/1.1 400 Bad Request
-  Content-Type: application/json
-  Cache-Control: no-store
+Content-Type: application/json
+Cache-Control: no-store
 
 {
    "error": "invalid_request"
@@ -815,8 +815,8 @@ Below is a non-normative example of a Credential Response when the Credential Is
 
 ```
 HTTP/1.1 400 Bad Request
-  Content-Type: application/json
-  Cache-Control: no-store
+Content-Type: application/json
+Cache-Control: no-store
 
 {
   "error": "invalid_or_missing_proof",
@@ -888,8 +888,8 @@ Below is a non-normative example of a Batch Credential Response in a synchronous
 
 ```
 HTTP/1.1 200 OK
-  Content-Type: application/json
-  Cache-Control: no-store
+Content-Type: application/json
+Cache-Control: no-store
 
 {
   "credential_responses": [{
@@ -909,8 +909,8 @@ Below is a non-normative example of a Batch Credential Response that contains Cr
 
 ```
 HTTP/1.1 200 OK
-  Content-Type: application/json
-  Cache-Control: no-store
+Content-Type: application/json
+Cache-Control: no-store
 
 {
    "credential_responses":[
