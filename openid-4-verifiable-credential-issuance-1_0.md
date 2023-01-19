@@ -148,7 +148,7 @@ The issuance can have multiple characteristics, which can be combined depending 
 
 The following sub-sections illusterate some of the authorization flows supported by this specification.
 
-## Authorized Code Flow (#authorized-code-flow)
+## Authorized Code Flow {#authorization-code-flow}
 
 Below is a diagram of a Credential issuance using the Authorization Code flow, using grant type `authorization_code` as defined in [@!RFC6749].
 
