@@ -78,7 +78,7 @@ Entity that receives, stores, presents, and manages Credentials and key material
 
 Verifier
 
-Entity that verifies the Credential to make a decision regarding providing a service to the End-User. Also called Relying Party (RP) or Client. During presentation of Credentials, Verifier acts as an OAuth 2.0 Client towards the Wallet acting as an OAuth 2.0 Authorization Server.
+The entity that requests, receives and validates Verifiable Presentations. During presentation of Credentials, Verifier acts as an OAuth 2.0 Client towards the Wallet that is acting as an OAuth 2.0 Authorization Server. The Verifier is a specific case of OAuth 2.0 Client, just like Relying Party (RP) in [@OpenID.Core].
 
 Credential Issuer
 
@@ -107,8 +107,6 @@ Both the Credential and the Batch Credential Endpoints have the (optional) abili
 Every Credential Issuer utilizes an OAuth 2.0 [@!RFC6749] Authorization Server to authorize access. The same OAuth 2.0 Authorization Server can protect one or more Credential Issuers. Wallets determine the Authorization Server a certain Credential Issuer relies on using the Credential Issuer's metadata.   
 
 All OAuth 2.0 Grant Types and extensions mechanisms can be used in conjunction with the credential issuance API. Aspects not defined in this specification are expected to follow [@!RFC6749]. 
-
-When using the Grant Type `authorization_code`, it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent Authorization Code interception attacks and Pushed Authorization Requests [@RFC9126] to ensure integrity and authenticity of the Authorization Request.
 
 Existing OAuth 2.0 mechanisms are extended as following:
 
@@ -150,9 +148,9 @@ The issuance can have multiple characteristics, which can be combined depending 
 
 The following sub-sections illusterate some of the authorization flows supported by this specification.
 
-## Authorization Code Flow
+## Authorization Code Flow {#authorization-code-flow}
 
-Below is a diagram of a Credential issuance using the Authorization Code Flow. 
+Below is a diagram of a Credential issuance using the Authorization Code flow, using grant type `authorization_code` as defined in [@!RFC6749].
 
 The diagram is based on a Wallet initiated flow illustrated in a use case in (#use-case-1) and does not illustrate all of the optional features. 
 
@@ -202,7 +200,9 @@ If the Credential Issuer requires more time to issue a Credential, the Credentia
 
 If the Issuer wants to issue multiple Credentials in one response, the Issuer MAY support the Batch Credential Endpoint and the Wallet MAY send a Batch Credential Request to the Batch Credential Endpoint as defined in (#batch-credential-endpoint).
 
-Note: this flow is based on OAuth 2.0 and the Authorization Code Grant Type, but it can be used with other Grant Types as well. 
+With grant type `authorization_code`, it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks and Pushed Authorization Requests [@RFC9126] to ensure integrity and authenticity of the authorization request.
+
+Note: this flow is based on OAuth 2.0 and the Authorization Code Grant type, but it can be used with other grant types as well. 
 
 ## Pre-Authorized Code Flow {#pre-authz-code-flow}
 
