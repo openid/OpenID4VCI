@@ -1104,9 +1104,9 @@ The action leading to the Wallet performing another Credential Request can also 
 
 ## Relationship between the Credential Issuer Identifier in the metadata and the Issuer Identifier in the Issued Credential
 
-Credential Issuer Identifier is always a URL using the `https` scheme as defined in (#credential-issuer-identifier). Depending on a Credential format, issuer identifier in the issued Credential is not always a URL using the `https` scheme, and can take other forms, such as a DID in a [@VC_DATA] format, or a binary value in a `Subject` component of an mDL document signer certificate in a [@ISO.18013-5] format.
+Credential Issuer Identifier is always a URL using the `https` scheme as defined in (#credential-issuer-identifier). Depending on the Credential format, issuer identifier in the issued Credential is not always a URL using the `https` scheme, and can take other forms, such as a DID in a [@VC_DATA] format, or a binary value in a `Subject` component of an mDL document signer certificate in a [@ISO.18013-5] format.
 
-When issuer identifier in the issued Credential is a DID, below is a non-exhaustive list of mechanisms how Credential Issuer MAY provide binding to the Credential Issuer Identifier:
+When the issuer identifier in the issued Credential is a DID, below is a non-exhaustive list of mechanisms how Credential Issuer MAY provide binding to the Credential Issuer Identifier:
 
 1. Use [@DIF.Well-Known_DID] Specification to provide binding between a DID and a certain domain.
 1. If the issuer identifier in the issued Credential is an object, add to the object `credential_issuer` Claim as defined in {#credential-issuer-identifier}.
