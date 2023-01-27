@@ -117,7 +117,7 @@ This specification defines an API for credential issuance provided by a Credenti
 * An optional Batch Credential Endpoint from which multiple Credentials can be issued in one request. See (#batch-credential-endpoint).
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of credentials (#deferred-credential-issuance). 
 * An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow. See (#issuance_initiation_endpoint).
-* A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing. See (##credential-issuer-metadata)
+* A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing. See (#credential-issuer-metadata)
 
 Both the Credential and the Batch Credential Endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both requests therefore allow to convey a proof of posession for the key material. Multiple proof types are supported. 
 
