@@ -123,17 +123,17 @@ Both the Credential and the Batch Credential Endpoints have the (optional) abili
 
 ## OAuth 2.0
 
-Every Credential Issuer utilizes an OAuth 2.0 [@!RFC6749] Authorization Server to authorize access. The same OAuth 2.0 Authorization Server can protect one or more Credential Issuers. Wallets determine the Authorization Server a certain Credential Issuer relies on using the Credential Issuer's metadata.   
+Every Credential Issuer utilizes an OAuth 2.0 [@!RFC6749] Authorization Server to authorize access. The same OAuth 2.0 Authorization Server can protect one or more Credential Issuers. Wallets determine the Authorization Server a certain Credential Issuer relies on using the Credential Issuer's metadata (see (#credential-issuer-metadata)).   
 
 All OAuth 2.0 Grant Types and extensions mechanisms can be used in conjunction with the credential issuance API. Aspects not defined in this specification are expected to follow [@!RFC6749]. 
 
 Existing OAuth 2.0 mechanisms are extended as following:
 
-* A new Grant Type "Pre-authorized Code" is defined to facilitate a certain class of issuance flow (#pre-authz-code-flow).
-* A new authorization details [@!I-D.ietf-oauth-rar] type is defined to convey the details about the Credentials (including formats and types) the Wallet wants to obtain (#authorization-details). 
-* Client Metadata: new metadata parameter is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (#client-metadata).
-* Authorization Endpoint: An additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated credential offer (#credential-authz-request). 
-* Token Endpoint: an optional response parameter is added to the Token Endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential Endpoint (#token-response). 
+* A new Grant Type "Pre-authorized Code" along with additional token response paramters `authorization_pending` and `interval` is defined to facilitate flows where the preparation of the credential issuance is conducted before the actual OAuth flow starts (#pre-authz-code-flow).
+* A new authorization details [@!I-D.ietf-oauth-rar] type `openid_credential` is defined to convey the details about the Credentials (including formats and types) the Wallet wants to obtain (#authorization-details). 
+* Client Metadata: a new metadata parameter `credential_offer_endpoint` is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (#client-metadata).
+* Authorization Endpoint: An additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated credential offer (#credential-authz-request). Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Verifiable Presentations from the calling Wallet in the course of Authorization Request processing. 
+* Token Endpoint: optional response parameters `c_nonce` and `c_nonce_expires_in` are added to the Token Endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential Endpoint (#token-response). 
 
 ## Core Concepts
 
@@ -171,9 +171,7 @@ The following sub-sections illusterate some of the authorization flows supported
 
 Below is a diagram of a Credential issuance using the Authorization Code flow, using grant type `authorization_code` as defined in [@!RFC6749].
 
-The diagram is based on a Wallet initiated flow illustrated in a use case in (#use-case-1) and does not illustrate all of the optional features. 
-
-ToDo: discuss if need to illustrate the verifier... per use-case-1
+The diagram shows how a Wallet initiated flow as described in use case (#use-case-1) is implemented with the Credential Issuance API defined in this specification. Note that the diagram and does not illustrate all of the optional features of this specification. 
 
 !---
 ~~~ ascii-art
@@ -182,25 +180,24 @@ ToDo: discuss if need to illustrate the verifier... per use-case-1
 +--------------+   +-----------+                                         +-------------+  
         |    interacts   |                                                      |
         |--------------->|                                                      |
-        |                | -----                                                |
-        |                |      |  Obtains Issuer's Credential Issuer metadata             |
-        |                | <----                                                |
+        |                |  (1) Obtains Issuer's Credential Issuer metadata     |
+        |                |<---------------------------------------------------->|
         |                |                                                      |
-        |                |  (1) Authorization Request                |
+        |                |  (2) Authorization Request                           |
         |                |      (type(s) of Credentials to be issued)           |
         |                |----------------------------------------------------->|
         |                |                                                      |
         |   User Authentication / Consent                                       |
         |                |                                                      |
-        |                |  (2)   Authorization Response (code)                 |
+        |                |  (3)   Authorization Response (code)                 |
         |                |<-----------------------------------------------------|
         |                |                                                      |
-        |                |  (3) Token Request (code)                            |
+        |                |  (4) Token Request (code)                            |
         |                |----------------------------------------------------->| 
         |                |      Token Response (access_token)                   |
         |                |<-----------------------------------------------------|    
         |                |                                                      |
-        |                |  (4) Credential Request (access_token, proof(s))     |
+        |                |  (5) Credential Request (access_token, proof(s))     |
         |                |----------------------------------------------------->| 
         |                |      Credential Response                             |
         |                |      (credential(s) OR acceptance_token)             |
@@ -209,11 +206,17 @@ ToDo: discuss if need to illustrate the verifier... per use-case-1
 !---
 Figure: Issuance using Authorization code flow 
 
-(1) The Wallet sends an Authorization Request to the Credential Issuer's Authorization Endpoint. Issuer returns Authorization Response with the Authorization Code upon successfully authenticating and obtaining consent from the End-User. This step happens in the frontchannel, by redirecting the End-User via the User Agent. This step is defined in (#authorization_endpoint).
+(1) The wallet uses the Credential Issuer's metadata (#credential-issuer-metadata) to learn what credential types and formats the Credential Issuer supports and to determine the issuer URL of the OAuth authorization server the Credential Issuer relies on. Note in this example, the Credential Issuer also provides the OAuth Authorization Server. This specification enables deployments where the Credential Issuer API and the Authorization Server are different services, perhaps even provided by different entities.  
 
-(2) The Wallet sends a Token Request to the Credential Issuer's Token Endpoint with the Authorization Code obtained in step (2). The Credential Issuer returns an Access Token in the Token Request upon successfully validating Authorization Code. This step happens in the backchannel using server to server communication. This step is defined in (#token_endpoint).
+(2) The Wallet sends an Authorization Request to the Authorization Endpoint. The Authorization Endpoint processes the Authorization Request, which typically includes user authentication and gathering of user consent. 
 
-(3) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and (optionally) the proof of possession of the public key to which the the issued VC shall be bound. Upon successfully validating Access Token and proof, the Credential Issuer returns a VC in the Credential Response if it is able to issue a Credential right away. This step is defined in (#credential-endpoint).
+(3) The Authorization Endpoint returns an Authorization Response with the Authorization Code upon successfully processing the Authorization Request. 
+
+Note that steps (2) and (3) happens in the frontchannel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization_endpoint).
+
+(4) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in step (3). The Token Endpoint returns an Access Token in the Token Response upon successfully validating Authorization Code. This step happens in the backchannel using server to server communication. This step is defined in (#token_endpoint).
+
+(5) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and (optionally) the proof of possession of the public key to which the the issued VC shall be bound to. Upon successfully validating Access Token and proof, the Credential Issuer returns a VC in the Credential Response if it is able to issue a Credential right away. This step is defined in (#credential-endpoint).
 
 If the Credential Issuer requires more time to issue a Credential, the Credential Issuer MAY return an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued Credential as defined in (#deferred-credential-issuance).
 
@@ -221,7 +224,7 @@ If the Issuer wants to issue multiple Credentials in one response, the Issuer MA
 
 With grant type `authorization_code`, it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks and Pushed Authorization Requests [@RFC9126] to ensure integrity and authenticity of the authorization request.
 
-Note: this flow is based on OAuth 2.0 and the Authorization Code Grant type, but it can be used with other grant types as well. 
+Note: this flow is based on OAuth 2.0 and the Authorization Code Grant type, but this specification can be used with other OAuth grant types as well. 
 
 ## Pre-Authorized Code Flow {#pre-authz-code-flow}
 
