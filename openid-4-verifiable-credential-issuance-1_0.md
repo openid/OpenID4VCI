@@ -810,7 +810,10 @@ The following additional error codes are specified:
 
 * `unsupported_credential_type`: requested credential type is not supported
 * `unsupported_credential_format`:  requested credential format is not supported
-* `invalid_or_missing_proof` - Credential Request did not contain a `proof`, or `proof` was invalid, i.e. it was not bound to a Credential Issuer provided nonce
+* `missing_proof`: Credential Request did not contain a `proof`, and one is
+  required in order to issue the requested credential
+* `invalid_proof`: The `proof` provided was invalid, e.g., it was not bound to a
+  nonce provided by the Credential Issuer
 
 This is a non-normative example of a Credential Error Response:
 
@@ -836,7 +839,7 @@ HTTP/1.1 400 Bad Request
   Cache-Control: no-store
 
 {
-  "error": "invalid_or_missing_proof"
+  "error": "invalid_proof"
   "error_description":
        "Credential Issuer requires proof to be bound to a Credential Issuer provided nonce."
   "c_nonce": "8YE9hCnyV2",
