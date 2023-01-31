@@ -52,7 +52,7 @@ Access to this API is authorized using OAuth 2.0 [@!RFC6749], i.e. the Wallet us
 
 # Terminology
 
-This specification uses the terms "Access Token", "Authorization Endpoint", "Authorization Request", "Authorization Response", "Authorization Code Grant", "Authorization Server", "Client", "Client Authentication", "Client Identifier", "Grant Type", "Refresh Token", "Token Endpoint", Token Request" and "Token Response" defined by OAuth 2.0 [@!RFC6749], the terms "End-User", "Entity", and "Request Object" as defined by OpenID Connect Core [@!OpenID.Core], the term "JSON Web Token (JWT)" defined by JSON Web Token (JWT) [@!7519], the term "JOSE Header" defined by JSON Web Signature (JWS) [@!RFC7515], and the term "Base64url Encoding" defined by The Base16, Base32, and Base64 Data Encodings [@!RFC4648].
+This specification uses the terms "Access Token", "Authorization Endpoint", "Authorization Request", "Authorization Response", "Authorization Code Grant", "Authorization Server", "Client", "Client Authentication", "Client Identifier", "Grant Type", "Refresh Token", "Token Endpoint", Token Request" and "Token Response" defined by OAuth 2.0 [@!RFC6749], the terms "End-User", "Entity", and "Request Object" as defined by OpenID Connect Core [@!OpenID.Core], the term "JSON Web Token (JWT)" defined by JSON Web Token (JWT) [@!RFC7519], the term "JOSE Header" and "Base64url Encoding" defined by JSON Web Signature (JWS) [@!RFC7515].
 
 This specification also defines the following terms. In the case where a term has a definition that differs, the definition below is authoritative.
 
