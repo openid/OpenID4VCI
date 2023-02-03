@@ -534,7 +534,7 @@ The following are the extension parameters to the Token Request used in a Pre-Au
 * `pre-authorized_code`: CONDITIONAL. The code representing the authorization to obtain Credentials of a certain type. This parameter is required if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 * `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Credential Offer. The string value MUST consist of maximum 8 numeric characters (the numbers 0 - 9). This parameter MUST only be used, if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 
-Requirements around how the Verifier identifies and, if applicable, authenticates itself with the Wallet in the Token Request depends on the Grant Type.
+Requirements around how the Wallet identifies and, if applicable, authenticates itself with the Authorization Server in the Token Request depends on the Grant Type.
 
 For the Authorization Code Grant Type, the requirement as described in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
 
