@@ -2,14 +2,16 @@
     {
         "type": "openid_credential",
         "format": "jwt_vc_json",
-        "types": [
-            "VerifiableCredential",
-            "UniversityDegreeCredential"
-        ],
-        "credentialSubject": {
-            "given_name": {},
-            "last_name": {},
-            "degree": {}
+        "credential_definition": {
+            "type": [
+                "VerifiableCredential",
+                "UniversityDegreeCredential"
+            ],
+            "credentialSubject": {
+                "given_name": {},
+                "last_name": {},
+                "degree": {}
+            }
         }
     }
 ]

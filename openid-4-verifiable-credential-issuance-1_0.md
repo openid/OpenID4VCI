@@ -674,7 +674,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
    "format":"jwt_vc_json",
-   "types":[
+   "type":[
       "VerifiableCredential",
       "UniversityDegreeCredential"
    ],
@@ -875,7 +875,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
    "credential_requests":[
       {
          "format":"jwt_vc_json",
-         "types":[
+         "type":[
             "VerifiableCredential",
             "UniversityDegreeCredential"
          ],
@@ -1438,7 +1438,7 @@ The Credential format identifier is `jwt_vc_json`.
 
 The following additional Credential Issuer metadata are defined for this Credential format. 
 
-* `types`: REQUIRED. JSON array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
+* `type`: REQUIRED. JSON array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
 * `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
     * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
     * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
@@ -1455,7 +1455,8 @@ The following is a non-normative example of an object comprising `credentials_su
 
 The following additional claims are defined for this Credential format. 
 
-* `types`: REQUIRED. JSON array as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the Wallet shall request in the subsequent Credential Request.
+* `credential_definition`: REQUIRED. JSON object containing the detailed description of the credential type. It consists at least of the following sub claims:
+  * `type`: REQUIRED. JSON array as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the Wallet shall request in the subsequent Credential Request.
 
 The following is a non-normative example of an object comprising `credentials_supported` parameter of Credential format `jwt_vc_json`.
 
@@ -1465,8 +1466,9 @@ The following is a non-normative example of an object comprising `credentials_su
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
 
-* `types`: REQUIRED. JSON array as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the Wallet requests authorization for at the issuer.
-* `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. This object indicates the claims the Wallet would like to turn up in the credential to be issued. 
+* `credential_definition`: REQUIRED. JSON object containing the detailed description of the credential type. It consists at least of the following sub claims:
+  * `type`: REQUIRED. JSON array as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the Wallet requests authorization for at the issuer.
+  * `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. This object indicates the claims the Wallet would like to turn up in the credential to be issued. 
 
 The following is a non-normative example of an authorization details object with Credential format `jwt_vc_json`.
 
@@ -1476,8 +1478,9 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.  
 
-* `types`: REQUIRED. JSON array as defined in (#authorization_jwt_vc_json). The credential issued by the issuer MUST at least contain the values listed in this claim. 
-* `credentialSubject`: OPTIONAL. A JSON object as defined in (#authorization_jwt_vc_json). This object determines the optional claims to be added to the credential to be issued. 
+* `credential_definition`: REQUIRED. JSON object containing the detailed description of the credential type. It consists at least of the following sub claims:
+  * `type`: REQUIRED. JSON array as defined in (#authorization_jwt_vc_json). The credential issued by the issuer MUST at least contain the values listed in this claim. 
+  * `credentialSubject`: OPTIONAL. A JSON object as defined in (#authorization_jwt_vc_json). This object determines the optional claims to be added to the credential to be issued. 
 
 The following is a non-normative example of a Credential Request with Credential format `jwt_vc_json`.
 
@@ -1530,7 +1533,7 @@ Note that Data Integrity used to be called Linked Data Proofs, hence "ldp" in th
 The following additional Credential Issuer metadata are defined for this Credential format. 
 
 * `@context`: REQUIRED. JSON array as defined in [@VC_DATA], Section 4.1.
-* `types`: REQUIRED. JSON array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
+* `type`: REQUIRED. JSON array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
 * `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
     * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
     * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
@@ -1551,7 +1554,7 @@ The following additional claims are defined for this Credential format.
 
 * `credential_definition`: REQUIRED. JSON object containing (and isolating) the detailed description of the credential type. This object MUST be processed using full JSON-LD processing. It consists of the following sub claims:
     * `@context`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc)
-    * `types`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc). This claim contains the type values the Wallet shall request in the subsequent Credential Request. 
+    * `type`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc). This claim contains the type values the Wallet shall request in the subsequent Credential Request. 
 
 The following is a non-normative example of a Credential Offer of type `ldp_vc`.
 
