@@ -756,17 +756,17 @@ Here is another example JWT not only proving possession of a private key but als
 
 #### `cwt` Proof Type
 
-The CWT MUST contain the following elements:
-  * in the COSE header,
-    * `content type`: REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the proof CWT.
-    * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry. MUST NOT be an identifier for a symmetric algorithm (MAC).
-    * `kid`: CONDITIONAL. The key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
-    * `COSE_Key`: CONDITIONAL. ??? Is there a COSE header value for presenting a key? JWT header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
-    * `x5c`: CONDITIONAL. ??? Is there a COSE header value for presenting a cert? JWT header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element may be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
-  * in the content of the message, 
-    * `aud`: REQUIRED (text string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
-    * `iat`: REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519].
-    * `nonce`: REQUIRED (text string). ??? RFC8392 does not define a nonce claim. How do we cope with this? The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the credential issuer.
+The CWT MUST contain the following elements :
+  * in the COSE header (see [@!RFC8152], Section 3.1.),
+    * Label 1 (alg): REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry. MUST NOT be an identifier for a symmetric algorithm (MAC).
+    * Label 3 (content type): REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the proof CWT.
+    * Label 4 (kid): CONDITIONAL. The key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
+    * Claim Key `cose_key`: CONDITIONAL (byte string). COSE key material the new Credential shall be bound to. MUST NOT be present if `x5chain` is present.
+    * Claim Key `x5chain`: CONDITIONAL (byte string). A certificate or certificate chain corresponding to the key used to sign the CWT.
+  * in the content of the message (see [@!RFC8392], Section 4), 
+    * Claim Key 3 (aud): REQUIRED (text string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
+    * Claim Key 6 (iat): REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519].
+    * Claim Key `nonce`: REQUIRED (text string). The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the credential issuer.
 
 ## Credential Response {#credential-response}
 
