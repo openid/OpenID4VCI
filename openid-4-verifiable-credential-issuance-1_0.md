@@ -46,7 +46,7 @@ This specification defines an API for the issuance of Verifiable Credentials.
 
 This specification defines an API that is used to issue verifiable credentials. W3C formats [@VC_DATA] as well as other Credential formats, like [@ISO.18013-5], are supported. 
 
-Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. However, in contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the Credential type) and is bound to a certain holder, e.g trough cryptographic holder binding. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential Issuer. This specification caters for those differences.
+Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. However, in contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the Credential type) and is bound to a certain holder, e.g. through cryptographic holder binding. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential Issuer. This specification caters for those differences.
 
 Access to this API is authorized using OAuth 2.0 [@!RFC6749], i.e. the Wallet uses OAuth 2.0 to obtain authorization to receive verifiable credentials. This way the issuance process can benefit from the proven security, simplicity, and flexibility of OAuth 2.0 and existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) can be extended to become Credential Issuers. 
 
@@ -95,7 +95,7 @@ Cryptographic Holder Binding:
 Claim-based Holder Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proofing certain claims, e.g. name and date of birth, for example by presenting another Verifiable Credential. Claim-based Holder Binding allows long term, cross-device use of a credential as it does not depend on cryptographic key material stored on a certain device. One example of such a Verifiable Credential could be a Diploma.
 
-Biometrics-based holder Binding:
+Biometrics-based Holder Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential by demonstrating a certain biometric trait, such as finger print or face. One example of a Verifiable Credential with biometric holder binding is a mobile drivers license [@ISO.18013-5], which contains a portrait of the holder.
 
 Wallet:
@@ -151,13 +151,13 @@ At its core, this specification is Credential format agnostic and allows impleme
 The specification achieves this by defining the following:
 
 * Extension points to add Credential format specific parameters or claims in the Credential Issuer metadata, Credential Offer, Authorization Request, Credential Request and Batch Credential Request,
-* Credential format identifiers to identify Credential format specific set of parameters and claims to be applied at each extention point. This set of Credential format specific set of parameters and claims is referred to as a "Credential Format Profile" in this specification.
+* Credential format identifiers to identify Credential format specific set of parameters and claims to be applied at each extension point. This set of Credential format specific set of parameters and claims is referred to as a "Credential Format Profile" in this specification.
 
 This specification defines Credential Format Profiles for W3C Verifiable Credentials as defined in [@VC_DATA] and ISO/IEC 18013-5 mDL as defined in [@ISO.18013-5] in (#format_profiles) that contain Credential Format specific parameters to be included at each extension point defined in this specification. Other specifications or deployments can define their own Credential Format Profiles using above-mentioned extension points.
 
 The issuance can have multiple characteristics, which can be combined depending on the use-cases: 
 
-* Authorization Code Flow or Pre-Authorized Code Flow: the Credential Issuer can obtain user information to turn into a verifiable Credential using user authentication and consent at the Credential Issuer's Authorization Endpoint (Authorization Code Flow), or using out of bound mechanisms outside of the issuance flow (Pre-Authorized Code Flow)
+* Authorization Code Flow or Pre-Authorized Code Flow: the Credential Issuer can obtain user information to turn into a Verifiable Credential using user authentication and consent at the Credential Issuer's Authorization Endpoint (Authorization Code Flow), or using out of bound mechanisms outside of the issuance flow (Pre-Authorized Code Flow)
 * Wallet initiated or Issuer initiated: the request from the Wallet can be sent to the Credential Issuer without any gesture from the Credential Issuer (Wallet Initiated), or following the communication from the Credential Issuer (Issuer Initiated).
 * Same-device or Cross-device: the Credential Issuer's user experience (website or an app) can reside on the same device, or on different devices with the Wallet to which the Credential is issued.
 * Just-in-time or Deferred: the Credential Issuer can issue the Credential directly in response to the Credential Request (just-in-time), or requires time and needs the Wallet to come back to retrieve Credential (deferred).
@@ -168,7 +168,7 @@ The following sub-sections illusterate some of the authorization flows supported
 
 Below is a diagram of a Credential issuance using the Authorization Code flow, using grant type `authorization_code` as defined in [@!RFC6749].
 
-The diagram shows how a Wallet initiated flow as described in use case (#use-case-1) is implemented with the Credential Issuance API defined in this specification. Note that the diagram and does not illustrate all of the optional features of this specification. 
+The diagram shows how a Wallet initiated flow as described in use case (#use-case-1) is implemented with the Credential Issuance API defined in this specification. Note that the diagram does not illustrate all of the optional features of this specification. 
 
 !---
 ~~~ ascii-art
@@ -204,13 +204,13 @@ The diagram shows how a Wallet initiated flow as described in use case (#use-cas
 !---
 Figure: Issuance using Authorization code flow 
 
-(1) The wallet uses the Credential Issuer's metadata (#credential-issuer-metadata) to learn what credential types and formats the Credential Issuer supports and to determine the issuer URL of the OAuth authorization server the Credential Issuer relies on. Note in this example, the Credential Issuer also provides the OAuth Authorization Server. This specification enables deployments where the Credential Issuer API and the Authorization Server are different services, perhaps even provided by different entities.  
+(1) The Wallet uses the Credential Issuer's metadata (#credential-issuer-metadata) to learn what credential types and formats the Credential Issuer supports and to determine the issuer URL of the OAuth authorization server the Credential Issuer relies on. Note in this example, the Credential Issuer also provides the OAuth Authorization Server. This specification enables deployments where the Credential Issuer API and the Authorization Server are different services, perhaps even provided by different entities.  
 
 (2) The Wallet sends an Authorization Request to the Authorization Endpoint. The Authorization Endpoint processes the Authorization Request, which typically includes user authentication and gathering of user consent. 
 
 (3) The Authorization Endpoint returns an Authorization Response with the Authorization Code upon successfully processing the Authorization Request. 
 
-Note that steps (2) and (3) happens in the frontchannel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization_endpoint).
+Note that steps (2) and (3) happen in the frontchannel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization_endpoint).
 
 (4) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in step (3). The Token Endpoint returns an Access Token in the Token Response upon successfully validating Authorization Code. This step happens in the backchannel using server to server communication. This step is defined in (#token_endpoint).
 
@@ -226,7 +226,7 @@ Note: this flow is based on OAuth 2.0 and the Authorization Code Grant type, but
 
 ## Pre-Authorized Code Flow {#pre-authz-code-flow}
 
-Figure 2 is a diagram of a Credential issuance using the Pre-Authorized Code Flow. In this flow, before initiating the flow with the Wallet, the Credential Issuer first conducts the steps required to prepare the Credential issuance, e.g. user authentication and authorization. Consequently, the Pre-Authorized Code is sent by the Credential Issuer to the Wallet. This flow does not use the Authorization Endpoint, and The Wallet exchanges the Pre-Authorized Code for the Access Token directly at the Token Endpoint. Access Toke is than used to request Credential issuance at the Credential Endpoint. See (#use-case-4) for a use case.
+Figure 2 is a diagram of a Credential issuance using the Pre-Authorized Code Flow. In this flow, before initiating the flow with the Wallet, the Credential Issuer first conducts the steps required to prepare the Credential issuance, e.g. user authentication and authorization. Consequently, the Pre-Authorized Code is sent by the Credential Issuer to the Wallet. This flow does not use the Authorization Endpoint, and The Wallet exchanges the Pre-Authorized Code for the Access Token directly at the Token Endpoint. Access Token is then used to request Credential issuance at the Credential Endpoint. See (#use-case-4) for a use case.
 
 How the End-User provides information required for the issuance of a requested Credential to the Credential Issuer and the business processes conducted by the Credential Issuer to prepare a Credential are out of scope of this specification.
 
@@ -265,19 +265,19 @@ The diagram is based on a Credential Issuer initiated flow illustrated in a use 
 !---
 Figure: Issuance using Pre-Authorized code flow 
 
-(1) the Credential Issuer successfully obtains consent and user data required for the issuance of a requested Credential from the End-User using Issuer specific business process.
+(1) The Credential Issuer successfully obtains consent and user data required for the issuance of a requested Credential from the End-User using Issuer specific business process.
 
 (2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example as a QR code or as a deeplink. 
 
 (3) The Wallet uses information from the Credential Offer to obtain the Credential Issuer's metadata including details about the Credential that this Credential Issuer wants to issue. This step is defined in (#issuance_initiation_endpoint).
 
-(4) The Wallet sends the Pre-Authorized Code obtained in step (1) to the Token Request. If the Credential Issuer required so, the Wallet sends a PIN, it has previously obtained from the user with the request, This step is defined in (#token_endpoint).  
+(4) The Wallet sends the Pre-Authorized Code obtained in step (2) to the Token Request. If the Credential Issuer required so, the Wallet sends a PIN it has previously obtained from the user with the request. This step is defined in (#token_endpoint).  
 
 (5) This step is the same as Step 5 in the Authorization Code Flow. 
 
 It is important to note that anyone who possesses a valid Pre-Authorized Code, without further security measures, would be able to receive a VC from the Credential Issuer. Implementers MUST implement mitigations most suitable to the use-case. 
 
-One such mechanism defined in this specification is the usage of PIN. If in the Credential Offer the Credential Issuer indicated that the PIN is required, the End-User is requested to type in a PIN sent via a channel different that the issuance Flow and the PIN is sent to the Credential Issuer in the Token Request. 
+One such mechanism defined in this specification is the usage of PIN. If in the Credential Offer the Credential Issuer indicated that the PIN is required, the End-User is requested to type in a PIN sent via a channel different than the issuance Flow and the PIN is sent to the Credential Issuer in the Token Request. 
 
 For more details and concrete mitigations, see (#security_considerations_pre-authz-code).
 
@@ -313,7 +313,7 @@ The following values are defined by this specification:
 * Grant Type `authorization_code`:
   * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the subsequent Authorization Request with the Credential Issuer to a context set up during previous steps. If the Wallet decides to use the Authorization Code Flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value. 
 * Grant Type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
-  * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. If the Wallet decides to use the Pre-Authorized Code Flow, this parameter value MUST be include in the subsequent Token Request with the Pre-Authorized Code Flow.
+  * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. If the Wallet decides to use the Pre-Authorized Code Flow, this parameter value MUST be included in the subsequent Token Request with the Pre-Authorized Code Flow.
   * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a Pre-Authorized Code Flow. Default is `false`. This PIN is intended to bind the Pre-Authorized Code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legit user. It is RECOMMENDED to send a PIN via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, a PIN value MUST be sent in the `user_pin` parameter with the respective Token Request. 
 
 The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two Credentials of different formats, one as JSON string ("UniversityDegree_JWT") and the other one as JSON object:
@@ -351,7 +351,7 @@ Note: The Credential Issuer SHOULD use a unique URI for each Credential Offer ut
 Below is a non-normative example of this fetch process:
 
 ```
-GET /credential-offer.jwt HTTP/1.1
+GET /credential_offer HTTP/1.1
 Host: server.example.com
 ```
 
@@ -363,7 +363,7 @@ Below is a non-normative example of the Credential Offer displayed by the Creden
 
 ```
 openid-credential-offer://?
-  credential_offer_uri=https%3A%2F%2Fserver%2Eexample%2Ecom%2Fcredential-offer.jwt
+  credential_offer_uri=https%3A%2F%2Fserver%2Eexample%2Ecom%2Fcredential-offer.json
 ```
 
 Below is a non-normative example of a response from the Credential Issuer that contains a Credential Offer Object used to encourage the Wallet to start an Authorization Code Flow:
@@ -461,7 +461,7 @@ This specification defines the following request parameters that can be supplied
 
 * `wallet_issuer`: OPTIONAL. JSON string containing the Wallet's OpenID Connect issuer URL. The Credential Issuer will use the discovery process as defined in [@!SIOPv2] to determine the Wallet's capabilities and endpoints. RECOMMENDED in Dynamic Credential Request.
 * `user_hint`: OPTIONAL. JSON string containing an opaque user hint the Wallet MAY use in subsequent callbacks to optimize the user's experience. RECOMMENDED in Dynamic Credential Request.
-* `issuer_state`: OPTIONAL. String value identifying a certain processing context at the Credential Issuer. A value for this parameter is typically passed in an issuance initation request from the Credential Issuer to the Wallet (see ((#issuance_initiation_request)). This request parameter is used to pass the `issuer_state` value back to the Credential Issuer. 
+* `issuer_state`: OPTIONAL. String value identifying a certain processing context at the Credential Issuer. A value for this parameter is typically passed in an issuance initation request from the Credential Issuer to the Wallet (see (#issuance_initiation_request)). This request parameter is used to pass the `issuer_state` value back to the Credential Issuer. 
 
 Note: When processing the Authorization Request, the Credential Issuer MUST take into account that the `issuer_state` is not guaranteed to originate from this Credential Issuer in all circumstances. It could have been injected by an attacker. 
 
@@ -476,12 +476,12 @@ POST /op/par HTTP/1.1
 Host: as.example.com
 Content-Type: application/x-www-form-urlencoded
 
-    response_type=code
-    &client_id=CLIENT1234
-    &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
-    &code_challenge_method=S256
-    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-    &authorization_details=...
+response_type=code
+&client_id=CLIENT1234
+&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
+&code_challenge_method=S256
+&redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+&authorization_details=...
 ```
 
 ### Dynamic Credential Request
@@ -504,7 +504,7 @@ Below is a non-normative example of a successful Authorization Response:
 
 ```
 HTTP/1.1 302 Found
-  Location: https://Wallet.example.org/cb?
+Location: https://Wallet.example.org/cb?
     code=SplxlOBeZQQYbYS6WxSbIA
 ```
 
@@ -554,11 +554,10 @@ Host: server.example.com
 Content-Type: application/x-www-form-urlencoded
 Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
-  grant_type=authorization_code
-  &code=SplxlOBeZQQYbYS6WxSbIA
-  &code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
-  &redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb
-  
+grant_type=authorization_code
+&code=SplxlOBeZQQYbYS6WxSbIA
+&code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
+&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb  
 ```
 
 Below is a non-normative example of a Token Request in a Pre-Authorized Code Flow (without Client Authentication):
@@ -568,9 +567,9 @@ POST /token HTTP/1.1
 Host: server.example.com
 Content-Type: application/x-www-form-urlencoded
 
-  grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
-  &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
-  &user_pin=493536
+grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
+&pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
+&user_pin=493536
 ```
 
 ## Successful Token Response {#token-response}
