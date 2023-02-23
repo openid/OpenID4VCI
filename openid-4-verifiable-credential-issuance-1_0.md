@@ -289,7 +289,7 @@ This endpoint is used by a Credential Issuer in case it is already in an interac
 
 The Credential Issuer sends Credential Offer as an HTTP GET request or an HTTP redirect to the Credential Offer Endpoint URL defined in (#client-metadata).
 
-Credential Offer object which is a JSON object with the Credential Offer parameters, can be sent by value or by refernce.
+Credential Offer object which is a JSON object with the Credential Offer parameters, can be sent by value or by reference.
 
 Credential Offer contains a single URI query parameter `credential_offer` or `credential_offer_uri`:
 
