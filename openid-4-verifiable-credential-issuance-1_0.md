@@ -757,16 +757,16 @@ Here is another example JWT not only proving possession of a private key but als
 #### `cwt` Proof Type
 
 The CWT MUST contain the following elements :
-  * in the COSE header (see [@!RFC8152], Section 3.1.),
+  * in the COSE protected header (see [@!RFC8152], Section 3.1.),
     * Label 1 (alg): REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry. MUST NOT be an identifier for a symmetric algorithm (MAC).
     * Label 3 (content type): REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the proof CWT.
     * Label 4 (kid): CONDITIONAL. The key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
     * Claim Key `cose_key`: CONDITIONAL (byte string). COSE key material the new Credential shall be bound to. MUST NOT be present if `x5chain` is present.
-    * Claim Key `x5chain`: CONDITIONAL (byte string). A certificate or certificate chain corresponding to the key used to sign the CWT.
+    * Label 33 (x5chain): CONDITIONAL (byte string). As defined in [@!RFC9360], contains an ordered array of X.509 certificates corresponding to the key used to sign the CWT. MUST NOT be present if `cose_key` is present.
   * in the content of the message (see [@!RFC8392], Section 4), 
     * Claim Key 3 (aud): REQUIRED (text string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
     * Claim Key 6 (iat): REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519].
-    * Claim Key `nonce`: REQUIRED (text string). The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the credential issuer.
+    * Label 10 (nonce): REQUIRED (byte string). The value of this claim MUST be the `c_nonce` provided by the credential issuer.
 
 ## Credential Response {#credential-response}
 
