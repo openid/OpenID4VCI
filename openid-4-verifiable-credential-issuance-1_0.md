@@ -1490,32 +1490,6 @@ The following is a non-normative example of a Credential Response with Credentia
 
 <{{examples/credential_response_jwt_vc_json.txt}}
 
-### VC signed as a JWT, using JSON-LD
-
-#### Format Identifier
-
-The Credential format identifier is `jwt_vc_json-ld`.
-
-#### Credential Issuer Metadata
-
-The definitions in (#server_metadata_ldp_vc) apply for metadata of credentials of this type as well. 
-
-#### Credential Offer
-
-The definitions in (#issuer_initiated_issuance_ldp_vc) apply for credentials of this type as well. 
-
-#### Authorization Details
-
-The definitions in (#issuer_initiated_issuance_ldp_vc) apply for credentials of this type as well.
-
-#### Credential Request
-
-The definitions in (#credential_request_ldp_vc) apply for credentials of this type as well.
-
-#### Credential Response
-
-The definitions in (#credential_response_jwt_vc_json) apply for credentials of this type as well.
-
 ### VC secured using Data Integrity, using JSON-LD, with proof suite requiring Linked Data canonicalization
 
 #### Format Identifier
@@ -1583,6 +1557,32 @@ The value of the `credential` claim in the Credential Response MUST be a JSON ob
 The following is a non-normative example of a Credential Response with Credential format `ldp_vc`.
 
 <{{examples/credential_response_ldp_vc.txt}}
+
+### VC signed as a JWT, using JSON-LD
+
+#### Format Identifier
+
+The Credential format identifier is `jwt_vc_json-ld`.
+
+#### Credential Issuer Metadata
+
+The definitions in (#server_metadata_ldp_vc) apply for metadata of credentials of this type as well. 
+
+#### Credential Offer
+
+The definitions in (#issuer_initiated_issuance_ldp_vc) apply for credentials of this type as well. 
+
+#### Authorization Details
+
+The definitions in (#issuer_initiated_issuance_ldp_vc) apply for credentials of this type as well.
+
+#### Credential Request
+
+The definitions in (#credential_request_ldp_vc) apply for credentials of this type as well.
+
+#### Credential Response
+
+The definitions in (#credential_response_jwt_vc_json) apply for credentials of this type as well.
 
 ## ISO mDL
 
