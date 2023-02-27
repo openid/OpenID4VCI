@@ -766,7 +766,7 @@ The CWT MUST contain the following elements :
   * in the content of the message (see [@!RFC8392], Section 4), 
     * Claim Key 3 (aud): REQUIRED (text string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
     * Claim Key 6 (iat): REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519].
-    * Label 10 (nonce): REQUIRED (byte string). The value of this claim MUST be the `c_nonce` provided by the credential issuer.
+    * Claim Key 10 (Nonce): REQUIRED (byte string). The value of this claim MUST be the `c_nonce` provided by the credential issuer.
 
 ## Credential Response {#credential-response}
 
