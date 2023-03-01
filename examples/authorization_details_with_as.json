@@ -1,11 +1,15 @@
 [
    {
-      "type":"openid_credential",
-      "locations": ["https://credential-issuer.example.com"],
-      "format":"jwt_vc_json",
-      "types":[
-        "VerifiableCredential",
-        "UniversityDegreeCredential"
-      ]
+      "type": "openid_credential",
+      "locations": [
+         "https://credential-issuer.example.com"
+      ],
+      "format": "jwt_vc_json",
+      "credential_definition": {
+         "type": [
+            "VerifiableCredential",
+            "UniversityDegreeCredential"
+         ]
+      }
    }
 ]
