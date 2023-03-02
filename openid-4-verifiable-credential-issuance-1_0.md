@@ -1500,11 +1500,13 @@ The following is a non-normative example of a Credential Response with Credentia
 
 The Credential format identifier is `ldp_vc`.
 
+When the `format` value is `ldp_vc`, `credential_definition` object in Credential Offer, Authorization Details, and Credential Request, and the entire object in the `credentials_supported` parameter MAY be processed using JSON-LD rules. The rest of the Credential Offer, Authorization Details, Credential Request and Credential Issuer Metadata MUST NOT be processed using JSON-LD rules.
+
 Note that Data Integrity used to be called Linked Data Proofs, hence "ldp" in the Credential format identifier.
 
 #### Credential Issuer Metadata {#server_metadata_ldp_vc}
 
-The following additional Credential Issuer metadata are defined for this Credential format. 
+The following additional claims are defined as part of the object comprising `credentials_supported` metadata parameter when a `format` value is `ldp_vc`:
 
 * `@context`: REQUIRED. JSON array as defined in [@VC_DATA], Section 4.1.
 * `type`: REQUIRED. JSON array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
@@ -1565,6 +1567,8 @@ The following is a non-normative example of a Credential Response with Credentia
 #### Format Identifier
 
 The Credential format identifier is `jwt_vc_json-ld`.
+
+When the `format` value is `jwt_vc_json-ld`, `credential_definition` object in Credential Offer, Authorization Details, and Credential Request, and the entire object in the `credentials_supported` parameter MAY be processed using JSON-LD rules. The rest of the Credential Offer, Authorization Details, Credential Request and Credential Issuer Metadata MUST NOT be processed using JSON-LD rules.
 
 #### Credential Issuer Metadata
 
