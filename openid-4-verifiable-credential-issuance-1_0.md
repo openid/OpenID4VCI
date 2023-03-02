@@ -765,7 +765,7 @@ The CWT MUST contain the following elements :
   * in the content of the message (see [@!RFC8392], Section 4), 
     * Claim Key 3 (`aud`): REQUIRED (text string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
     * Claim Key 4 (`exp`): REQUIRED (integer or floating-point number). The value of this claim MUST be the expiration time on or after which the CWT MUST NOT be accepted. 
-    * Claim Key 10 (`Nonce`): REQUIRED (byte string). The value of this claim MUST be the `c_nonce` provided by the credential issuer.
+    * Claim Key 10 (`Nonce`): REQUIRED (byte string). The value of this claim MUST be the `c_nonce` provided by the Credential Issuer converted from string to bytes.
 
 ## Credential Response {#credential-response}
 
