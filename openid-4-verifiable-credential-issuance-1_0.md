@@ -680,7 +680,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
    ],
    "proof":{
       "proof_type":"jwt",
-      "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
+      "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
       xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
       0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
       NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
@@ -692,10 +692,10 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 This specification defines the following values for `proof_type`: 
 
-* `jwt`: A JWT [@!RFC7519] is used as proof of possession. When `proof_type` is `jwt`, a `proof` object MUST include a `jwt` claim containing a JWT defined in (#jwt-proof-type).
-* `cwt`: A CWT [@!RFC8392] is used as proof of possession. When `proof_type` is `cwt`, a `proof` object MUST include a `cwt` claim containing a CWT defined in (#cwt-proof-type).
+* `jwt`: objects of this type contain a single `jwt` element with a JWT [@!RFC7519] as proof of possession. 
+* `cwt`: objects of this type contain a single `cwt` element with a CWT [@!RFC8392] as proof of possession.
 
-#### `jwt` Proof Type {#jwt-proof-type}
+#### `jwt` Proof Type
 
 The JWT MUST contain the following elements:
   * in the JOSE header,
@@ -729,7 +729,7 @@ where the JWT looks like this:
 ```json
 {
   "alg": "ES256",
-  "kid": "did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1"
+  "kid":"did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1"
 }.
 {
   "iss": "s6BhdRkqt3",
@@ -744,7 +744,7 @@ Here is another example JWT not only proving possession of a private key but als
 ```json
 {
   "alg": "ES256",
-  "x5c": [<key certificate + certificate chain for attestation>]
+  "x5c":[<key certificate + certificate chain for attestation>]
 }.
 {
   "iss": "s6BhdRkqt3",
@@ -754,7 +754,7 @@ Here is another example JWT not only proving possession of a private key but als
 }
 ```
 
-#### `cwt` Proof Type {#cwt-proof-type}
+#### `cwt` Proof Type
 
 The CWT MUST contain the following elements :
   * in the COSE protected header (see [@!RFC8152], Section 3.1.),
