@@ -756,7 +756,7 @@ The following claims are used in the Credential Response:
 
 * `format`: REQUIRED. JSON string denoting the format of the issued Credential.
 * `credential`: OPTIONAL. Contains issued Credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the Credential format. See (#format_profiles) for the Credential format specific encoding requirements.
-* `acceptance_token`: OPTIONAL. A JSON string containing a security token subsequently used to obtain a Credential. MUST be present when `credential` is not returned.
+* `transaction_id`: OPTIONAL. A JSON string identifiying a deferred issuance transaction. This claim is contained in the response, if the issuer was unable to immediately issue the credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). MUST be present when `credential` is not returned.
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent credential requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
@@ -787,7 +787,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "acceptance_token": "8xLOxBtZp8",
+  "transaction_id": "8xLOxBtZp8",
   "c_nonce": "wlbQc6pCJp",
   "c_nonce_expires_in": 86400  
 }
@@ -935,7 +935,7 @@ Cache-Control: no-store
 {
    "credential_responses":[
       {
-         "acceptance_token":"8xLOxBtZp8"
+         "transaction_id":"8xLOxBtZp8"
       },
       {
          "format":"jwt_vc_json",
@@ -957,21 +957,63 @@ The Batch Credential Request either succeessfully issues all requested credentia
 
 This endpoint is used to issue a Credential previously requested at the Credential Endpoint or Batch Credential Endpoint in case the Credential Issuer was not able to immediately issue this Credential. 
 
+The Deferred Endpoint requires the Wallet to present an Access Token valid for the Credential previously requested at the Credential Endpoint or Batch Credential Endpoint. 
+
+Communication with the Deferred Credential Endpoint MUST utilize TLS. 
+
 ## Deferred Credential Request {#deferred-credential_request}
 
-This is an HTTP POST request, which accepts an `acceptance_token` as the only parameter. The `acceptance_token` parameter MUST be sent as Access Token in the HTTP header as shown in the following example.
+The Deferred Credential Request is a HTTP POST request. 
+
+The following claims are used in the Batch Credential Response:
+
+* `transaction_id`: REQUIRED. JSON String identifying a deferred issuance transaction. 
 
 ```
-POST /credential_deferred HTTP/1.1
 Host: server.example.com
-Content-Type: application/x-www-form-urlencoded
-Authorization: BEARER 8xLOxBtZp8
+Content-Type: application/json
+Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+{
+   "transaction_id":"8xLOxBtZp8"
+}
 
 ```
 
 ## Deferred Credential Response {#deferred-credential_response}
 
 The deferred Credential Response uses the `format` and `credential` parameters as defined in (#credential-response). 
+
+## Deferred Credential Error Response {#deferred-credential_error_response}
+
+When the Deferred Credential Request is invalid or unauthorized or the credential is not available yet, the Credential Issuer constructs the error response as defined in this section.
+
+The following additional clarifications are provided for the following parameters already defined in section 3.1 of [@!RFC6750]:
+
+`invalid_request`:
+
+- Credential Request was malformed, e.g. the parameter `transaction_id` is missing or malformed.
+
+`invalid_token`:
+
+- Credential Request contains the wrong Access Token or the Access Token is missing
+
+The following additional error codes are specified:
+
+* `issuance_pending` - The credential issuance is still pending. The error response will also contain another claim `interval` determining the minimum amount of time in seconds that the Wallet SHOULD wait between requests to the Deferred Credential Endpoint.  If no value is provided, clients MUST use 5 as the default.
+* `invalid_transaction_id` - Deferred Credential Request contained an invalid `transaction_id`, i.e. it was not issued by the respective Credential Issuer or was already used to obtain the credential
+
+This is a non-normative example of a Credential Error Response:
+
+```
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+   "error": "invalid_request"
+}
+```
 
 # Metadata
 
@@ -1005,6 +1047,7 @@ This specification defines the following Credential Issuer Metadata:
 * `authorization_server`: OPTIONAL. Identifier of the OAuth 2.0 Authorization Server (as defined in [@!RFC8414]) the Credential Issuer relies on for authorization. If this element is omitted, the entity providing the Credential Issuer is also acting as the AS, i.e. the Credential Issuer's identifier is used as the OAuth 2.0 Issuer value to obtain the Authorization Server metadata as per [@!RFC8414]. 
 * `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
 * `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
+* `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
 
 The following parameter MUST be used to communicate the specifics of the Credential that the Credential Issuer supports issuance of:
 
@@ -1657,6 +1700,12 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -12 
+
+   * Changed Deferred Endpoint to require same access tokens as (batch) credential endpoint(s), renamed acceptance_token to transaction_id and changed it to a request parameter
+   * Added Deferred Endpoint error response section 
+   * Added Deferred Endpoint metadata
 
    -11
 
