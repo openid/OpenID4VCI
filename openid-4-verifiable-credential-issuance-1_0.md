@@ -328,7 +328,7 @@ Below is a non-normative example of a Credential Offer passed by value:
 
 ```
   GET /credential_offer?credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com
-  %22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22Verifiabl
+  %22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22type%22:%5B%22Verifiabl
   eCredential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22issuer_state%22:%22eyJhbGciOiJS
   U0Et...FYUaBy%22%7D
 ```
@@ -337,7 +337,7 @@ The following is a non-normative example of a Credential Offer that can be inclu
 
 ```
 openid-credential-offer://credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com
-%22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22VerifiableCr
+%22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22type%22:%5B%22VerifiableCr
 edential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22issuer_state%22:%22eyJhbGciOiJSU0Et...
 FYUaBy%22%7D
 ```
@@ -412,7 +412,7 @@ GET /authorize?
   &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
   &code_challenge_method=S256
   &authorization_details=%5B%7B%22type%22:%22openid_credential
-  %22,%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22Verifia
+  %22,%22format%22:%22jwt_vc_json%22,%22type%22:%5B%22Verifia
   bleCredential%22,%22UniversityDegreeCredential%22%5D%7D%5D
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 Host: https://server.example.com
