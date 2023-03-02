@@ -750,7 +750,9 @@ Here is another example JWT not only proving possession of a private key but als
 
 ## Credential Response {#credential-response}
 
-Credential Response can be Synchronous or Deferred. The Credential Issuer MAY be able to immediately issue a requested Credential and send it to the Client. In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send an `acceptance_token` parameter to the Client to be used later to receive a Credential when it is ready.
+Credential Response can be Synchronous or Deferred. The Credential Issuer MAY be able to immediately issue a requested Credential and send it to the Client. 
+
+In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send an `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code is 202 in such a case. 
 
 The following claims are used in the Credential Response:
 
@@ -782,7 +784,7 @@ Cache-Control: no-store
 Below is a non-normative example of a Credential Response in a deferred flow:
 
 ```
-HTTP/1.1 200 OK
+HTTP/1.1 202 OK
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -1703,7 +1705,7 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
 
    -12 
 
-   * Changed Deferred Endpoint to require same access tokens as (batch) credential endpoint(s), renamed acceptance_token to transaction_id and changed it to a request parameter
+   * Changed Deferred Endpoint to require same access tokens as (batch) credential endpoint(s), renamed acceptance_token to transaction_id and changed it to a request parameter, and return HTTP status 202 in case of deferred issuance
    * Added Deferred Endpoint error response section 
    * Added Deferred Endpoint metadata
 
