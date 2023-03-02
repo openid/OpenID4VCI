@@ -1545,7 +1545,7 @@ The following is a non-normative example of an object comprising `credentials_su
 The following additional claims are defined for this Credential format. 
 
 * `credential_definition`: REQUIRED. JSON object containing (and isolating) the detailed description of the credential type. This object MUST be processed using full JSON-LD processing. It consists of the following sub claims:
-    * `@context`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc),
+    * `@context`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc).
     * `type`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc). This claim contains the type values the Wallet shall request in the subsequent Credential Request. 
 
 The following is a non-normative example of a Credential Offer of type `ldp_vc`.
