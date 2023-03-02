@@ -813,8 +813,8 @@ The following additional error codes are specified:
 
 * `unsupported_credential_type`: requested credential type is not supported
 * `unsupported_credential_format`:  requested credential format is not supported
-* `invalid_proof`: The `proof` provided was invalid, for example:
-  * No proof was provided
+* `invalid_proof`: The `proof` in the Credential Request was invalid, for example:
+  * No proof was provided (the `proof` field was not present)
   * The provided proof was not bound to a nonce provided by the Credential Issuer
 
 This is a non-normative example of a Credential Error Response:
