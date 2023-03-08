@@ -269,9 +269,9 @@ Figure: Issuance using Pre-Authorized code flow
 
 (2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example as a QR code or as a deeplink. 
 
-(3) The Wallet uses information from the Credential Offer to obtain the Credential Issuer's metadata including details about the Credential that this Credential Issuer wants to issue. This step is defined in (#credential_offer_endpoint).
+(3) The Wallet uses information from the Credential Offer to obtain the Credential Issuer's metadata including details about the Credential that this Credential Issuer wants to issue. This step is defined in (#credential-issuer-metadata).
 
-(4) The Wallet sends the Pre-Authorized Code obtained in step (2) to the Token Request. If the Credential Issuer required so, the Wallet sends a PIN it has previously obtained from the user with the request. This step is defined in (#token_endpoint).  
+(4) The Wallet sends the Pre-Authorized Code obtained in step (2) in the Token Request to the Token Endpoint. The Wallet will send a PIN provided by the User, if it was required by the Credential Issuer. This step is defined in (#token_endpoint).  
 
 (5) This step is the same as Step 5 in the Authorization Code Flow. 
 
@@ -304,7 +304,7 @@ For security considerations, see (#credential-offer-security).
 
 Credential Offer object MAY contain the following parameters: 
 
-* `credential_issuer`: REQUIRED. The URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from. 
+* `credential_issuer`: REQUIRED. The URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from as defined in (#credential-issuer-identifier). The Wallet uses it to obtain the Credential Issuer's Metadata following the steps defined in (#credential-issuer-wellknown).
 * `credentials`: REQUIRED. A JSON array, where every entry is a JSON object or a JSON string. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `id` values in one of the objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the Wallet MUST resolve this string value to the respective object.
 * `grants`: OPTIONAL. A JSON object indicating to the Wallet the Grant Types the Credential Issuer's AS is prepared to process for this credential offer. Every grant is represented by a key and an object. The key value is the Grant Type identifier, the object MAY contain parameters either determining the way the Wallet MUST use the particular grant and/or parameters the Wallet MUST send with the respective request(s). If `grants` is not present or empty, the Wallet MUST determine the Grant Types the Credential Issuer's AS supports using the respective metadata. When multiple grants are present, it's at the Wallet’s discretion which one to use.
 
@@ -314,7 +314,7 @@ The following values are defined by this specification:
   * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the subsequent Authorization Request with the Credential Issuer to a context set up during previous steps. If the Wallet decides to use the Authorization Code Flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value. 
 * Grant Type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
   * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. If the Wallet decides to use the Pre-Authorized Code Flow, this parameter value MUST be included in the subsequent Token Request with the Pre-Authorized Code Flow.
-  * `user_pin_required`: OPTIONAL. Boolean value specifying whether the Credential Issuer expects presentation of a user PIN along with the Token Request in a Pre-Authorized Code Flow. Default is `false`. This PIN is intended to bind the Pre-Authorized Code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate user. It is RECOMMENDED to send a PIN via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, a PIN value MUST be sent in the `user_pin` parameter with the respective Token Request. 
+  * `user_pin_required`: OPTIONAL. Boolean value specifying whether the AS expects presentation of a user PIN along with the Token Request in a Pre-Authorized Code Flow. Default is `false`. This PIN is intended to bind the Pre-Authorized Code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate user. It is RECOMMENDED to send a PIN via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, a PIN value MUST be sent in the `user_pin` parameter with the respective Token Request. 
 
 The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two Credentials of different formats, one as JSON string ("UniversityDegree_JWT") and the other one as JSON object:
 
@@ -1557,7 +1557,7 @@ The following is a non-normative example of an object comprising `credentials_su
 The following additional claims are defined for this Credential format. 
 
 * `credential_definition`: REQUIRED. JSON object containing (and isolating) the detailed description of the credential type. This object MUST be processed using full JSON-LD processing. It consists of the following sub claims:
-    * `@context`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc)
+    * `@context`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc).
     * `type`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc). This claim contains the type values the Wallet shall request in the subsequent Credential Request. 
 
 The following is a non-normative example of a Credential Offer of type `ldp_vc`.
