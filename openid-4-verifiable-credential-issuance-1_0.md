@@ -693,6 +693,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 ### Proof Types {#proof_types}
 
 This specification defines the following values for `proof_type`:
+
 * `jwt`: objects of this type contain a single `jwt` element with a JWS [@!RFC7515] as proof of possession. The JWT MUST contain the following elements:
     * in the JOSE Header,
         * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the proof JWT as recommended in Section 3.11 of [@!RFC8725].
