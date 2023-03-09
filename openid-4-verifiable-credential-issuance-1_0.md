@@ -66,7 +66,7 @@ W3C Verifiable Credential:
 :  A Verifiable Credential compliant to the [@VC_DATA] specification.
 
 Presentation:
-: Data that is shared with a specific verifier, derived from one or more Verifiable Credentials that can be from the same or different Credential Issuers.
+: Data that is presented to a specific verifier, derived from one or more Verifiable Credentials that can be from the same or different Credential Issuers.
 
 Verifiable Presentation (VP):
 :  A Holder-signed Credential whose authenticity can be cryptographically verified to provide Cryptographic Holder Binding. Can be of any format used in the Issuer-Holder-Verifier Model, including, but not limited to those defined in [@VC_DATA] and [@ISO.18013-5].
@@ -84,7 +84,7 @@ Verifier:
 :  An entity that requests, receives and validates Verifiable Presentations. During presentation of Credentials, Verifier acts as an OAuth 2.0 Client towards the Wallet that is acting as an OAuth 2.0 Authorization Server. The Verifier is a specific case of OAuth 2.0 Client, just like Relying Party (RP) in [@OpenID.Core].
 
 Issuer-Holder-Verifier Model:
-:  A model for claims sharing where claims are issued in the form of Verifiable Credentials independent of the process of presenting them as Verifiable Presentation to the Verifiers. An issued Verifiable Credential can (but must not necessarily) be used multiple times.
+:  A model for exchanging claims, where claims are issued in the form of Verifiable Credentials independent of the process of presenting them as Verifiable Presentation to the Verifiers. An issued Verifiable Credential can (but must not necessarily) be used multiple times.
 
 Holder Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential.
@@ -1414,7 +1414,7 @@ An End-User comes across a verifier app that is requesting the End-User to prese
 
 An End-User comes across a verifier app that is requesting the End-User to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet then offers the End-User a list of Credential Issuers, which might be based on a Credential Issuer list curated by the Wallet provider. The End-User picks the university she graduated from and is sent to that university's user experience (web site or app).  
 
-The End-User logs in to the university, which determines that the respective user account is not verified yet. Among multiple identification options, the End-User chooses to present identity Credential from her Wallet. The End-User is sent back to the Wallet where she consents to share requested Credential(s) to the university. The End-User is sent back to the university user experience. Based on the presented Credential, the university completes the user verification, looks up user data in its database, and offers to issue a diploma as a verifiable Credential. 
+The End-User logs in to the university, which determines that the respective user account is not verified yet. Among multiple identification options, the End-User chooses to present identity Credential from her Wallet. The End-User is sent back to the Wallet where she consents to present requested Credential(s) to the university. The End-User is sent back to the university user experience. Based on the presented Credential, the university completes the user verification, looks up user data in its database, and offers to issue a diploma as a verifiable Credential. 
 
 Upon providing consent, the End-User is sent back to the Wallet. The Wallet informs the user Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
 
