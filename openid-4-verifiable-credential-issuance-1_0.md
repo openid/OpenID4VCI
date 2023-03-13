@@ -630,9 +630,7 @@ Cache-Control: no-store
 }
 ```
 
-This specification introduces the new error code `authorization_pending`. This error code is used if the Authorization Server is waiting for an End-User interaction to complete. In such a case, the error response MAY also contain the new return parameter `interval`.
-
-* `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the Token Endpoint in the Pre-Authorized Code Flow.  If no value is provided, clients MUST use 5 as the default.
+This specification also uses the error code `authorization_pending` as defined in [@!RFC8628]. This error code is used if the Authorization Server is waiting for an End-User interaction to complete. In such a case, the error response MAY also contain the return parameter `interval`.
 
 Below is a non-normative example of an `authorization_pending` Token Error Response:
 
@@ -643,7 +641,7 @@ Cache-Control: no-store
 
 {
    "error": "authorization_pending",
-   "intervall": "15"
+   "interval": "15"
 }
 ```
 
