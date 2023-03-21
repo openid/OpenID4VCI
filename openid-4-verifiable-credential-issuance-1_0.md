@@ -759,7 +759,7 @@ The CWT MUST contain the following elements :
   * in the COSE protected header (see [@!RFC8152], Section 3.1.),
     * Label 1 (`alg`): REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry. MUST NOT be an identifier for a symmetric algorithm (MAC).
     * Label 3 (`content type`): REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the proof CWT.
-    * Claim Key (`COSE_Key`): CONDITIONAL (byte string). COSE key material the new Credential shall be bound to. MUST NOT be present if `x5chain` is present.
+    * (string-valued) Label `COSE_Key`: CONDITIONAL (byte string). COSE key material the new Credential shall be bound to. MUST NOT be present if `x5chain` is present.
     * Label 33 (`x5chain`): CONDITIONAL (byte string). As defined in [@!RFC9360], contains an ordered array of X.509 certificates corresponding to the key used to sign the CWT. MUST NOT be present if `COSE_Key` is present.
   * in the content of the message (see [@!RFC8392], Section 4), 
     * Claim Key 3 (`aud`): REQUIRED (text string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
