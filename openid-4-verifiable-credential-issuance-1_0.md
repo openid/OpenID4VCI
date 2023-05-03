@@ -130,8 +130,9 @@ All OAuth 2.0 Grant Types and extensions mechanisms can be used in conjunction w
 
 Existing OAuth 2.0 mechanisms are extended as following:
 
-* A new Grant Type "Pre-Authorized Code" along with additional token response paramters `authorization_pending` and `interval` is defined to facilitate flows where the preparation of the credential issuance is conducted before the actual OAuth flow starts (#pre-authz-code-flow).
+* A new Grant Type "Pre-Authorized Code" is defined to facilitate flows where the preparation of the credential issuance is conducted before the actual OAuth flow starts (#pre-authz-code-flow).
 * A new authorization details [@!I-D.ietf-oauth-rar] type `openid_credential` is defined to convey the details about the Credentials (including formats and types) the Wallet wants to obtain (#authorization-details). 
+* New token response error codes `authorization_pending` and `interval` are added to allow for deferred authorization of credential issuance. These error codes are supported for the "Pre-Authorized Code" and the "Authorization Code" grant type.
 * Client metadata is used to convey Wallet's metadata. A new metadata parameter `credential_offer_endpoint` is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (#client-metadata).
 * Authorization Endpoint: An additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated credential offer (#credential-authz-request). Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Verifiable Presentations from the calling Wallet in the course of Authorization Request processing. 
 * Token Endpoint: optional response parameters `c_nonce` and `c_nonce_expires_in` are added to the Token Endpoint, Credential Endpoint and Batch Credential Endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential Endpoint (#token-response). 
@@ -501,9 +502,13 @@ For non-normative examples of request and response, see section 11.6 in [@OpenID
 
 Note to the editors: need to sort out Credential Issuer's client_id with Wallet and potentially add example with `wallet_issuer` and `user_hint` 
 
-## Successful Authorization Response
+## Successful Authorization Response {#authorization_response}
 
 Authorization Responses MUST be made as defined in [@!RFC6749].
+
+This specification defines an additional response parameter: 
+
+* `interval`: OPTIONAL. The minimum amount of time in seconds that the Wallet SHOULD wait between polling requests to the token endpoint (in case the Authorization Server responds with error code `authorization_pending` - see (#token_error_response)). If no value is provided, Wallets MUST use 5 as the default.
 
 Below is a non-normative example of a successful Authorization Response:
 
@@ -639,7 +644,7 @@ This specification also uses the error codes `authorization_pending` and `slow_d
 
  `authorization_pending`:
 
-- This error code is used if the Authorization Server is waiting for an End-User interaction to complete. The Wallet SHOULD repeat the access token request to the token endpoint (a process known as polling). Before each new request, the Wallet MUST wait at least the number of seconds specified by the "interval" claim of the credential offer (see (#credential_offer_parameters)), or 5 seconds if none was provided, and respect any increase in the polling interval required by the "slow_down" error.
+- This error code is used if the Authorization Server is waiting for an End-User interaction to complete. The Wallet SHOULD repeat the access token request to the token endpoint (a process known as polling). Before each new request, the Wallet MUST wait at least the number of seconds specified by the `interval` claim of the credential offer (see (#credential_offer_parameters)) or the authorization response (see (#authorization_response)), or 5 seconds if none was provided, and respect any increase in the polling interval required by the "slow_down" error.
 
 `slow_down`:
 
@@ -1694,7 +1699,7 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
    -13 
 
    * Aligned deferred authorization with RFC 8628 and CIBA
-   
+
    -12
 
    * added CWT proof type
