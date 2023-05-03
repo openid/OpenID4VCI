@@ -1,5 +1,5 @@
 %%%
-title = "OpenID for Verifiable Credential Issuance - draft 12"
+title = "OpenID for Verifiable Credential Issuance - draft 13"
 abbrev = "openid-4-verifiable-credential-issuance"
 ipr = "none"
 workgroup = "OpenID Connect"
@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-12"
+value = "openid-4-verifiable-credential-issuance-1_0-13"
 status = "standard"
 
 [[author]]
@@ -1690,7 +1690,11 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
 # Document History
 
    [[ To be removed from the final specification ]]
+   
+   -13 
 
+   * Aligned deferred authorization with RFC 8628 and CIBA
+   
    -12
 
    * added CWT proof type
