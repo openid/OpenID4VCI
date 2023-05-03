@@ -644,7 +644,7 @@ This specification also uses the error codes `authorization_pending` and `slow_d
 
  `authorization_pending`:
 
-- This error code is used if the Authorization Server is waiting for an End-User interaction to complete. The Wallet SHOULD repeat the access token request to the token endpoint (a process known as polling). Before each new request, the Wallet MUST wait at least the number of seconds specified by the `interval` claim of the credential offer (see (#credential_offer_parameters)) or the authorization response (see (#authorization_response)), or 5 seconds if none was provided, and respect any increase in the polling interval required by the "slow_down" error.
+- This error code is used if the Authorization Server is waiting for an End-User interaction or downstream process to complete. The Wallet SHOULD repeat the access token request to the token endpoint (a process known as polling). Before each new request, the Wallet MUST wait at least the number of seconds specified by the `interval` claim of the credential offer (see (#credential_offer_parameters)) or the authorization response (see (#authorization_response)), or 5 seconds if none was provided, and respect any increase in the polling interval required by the "slow_down" error.
 
 `slow_down`:
 
