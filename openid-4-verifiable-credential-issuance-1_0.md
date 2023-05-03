@@ -315,6 +315,7 @@ The following values are defined by this specification:
 * Grant Type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
   * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. If the Wallet decides to use the Pre-Authorized Code Flow, this parameter value MUST be included in the subsequent Token Request with the Pre-Authorized Code Flow.
   * `user_pin_required`: OPTIONAL. Boolean value specifying whether the AS expects presentation of a user PIN along with the Token Request in a Pre-Authorized Code Flow. Default is `false`. This PIN is intended to bind the Pre-Authorized Code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate user. It is RECOMMENDED to send a PIN via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, a PIN value MUST be sent in the `user_pin` parameter with the respective Token Request. 
+  * `interval`: OPTIONAL. The minimum amount of time in seconds that the Wallet SHOULD wait between polling requests to the token endpoint (in case the Authorization Server responds with error code `authorization_pending` - see (#token_error_response)). If no value is provided, Wallets MUST use 5 as the default.
 
 The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two Credentials of different formats, one as JSON string ("UniversityDegree_JWT") and the other one as JSON object:
 
@@ -598,7 +599,7 @@ Cache-Control: no-store
   }
 ```
 
-## Token Error Response
+## Token Error Response {#token_error_response}
 
 If the Token Request is invalid or unauthorized, the Authorization Server constructs the error response as defined as in Section 5.2 of OAuth 2.0 [@!RFC6749].
 
@@ -630,20 +631,15 @@ Cache-Control: no-store
 }
 ```
 
-This specification also uses the error code `authorization_pending` as defined in [@!RFC8628]. This error code is used if the Authorization Server is waiting for an End-User interaction to complete. In such a case, the error response MAY also contain the return parameter `interval`.
+This specification also uses the error codes `authorization_pending` and `slow_down` as defined in [@!RFC8628]. 
 
-Below is a non-normative example of an `authorization_pending` Token Error Response:
+ `authorization_pending`:
 
-```json=
-HTTP/1.1 400 Bad Request
-Content-Type: application/json
-Cache-Control: no-store
+- This error code is used if the Authorization Server is waiting for an End-User interaction to complete. The Wallet SHOULD repeat the access token request to the token endpoint (a process known as polling). Before each new request, the Wallet MUST wait at least the number of seconds specified by the "interval" claim of the credential offer (see (#credential_offer_parameters)), or 5 seconds if none was provided, and respect any increase in the polling interval required by the "slow_down" error.
 
-{
-   "error": "authorization_pending",
-   "interval": "15"
-}
-```
+`slow_down`:
+
+- A variant of "authorization_pending", the authorization request is still pending and polling should continue, but the interval MUST be increased by 5 seconds for this and all subsequent requests.
 
 # Credential Endpoint {#credential-endpoint}
 
@@ -1106,7 +1102,7 @@ The Credential Issuer MUST ensure the release of any privacy-sensitive data in C
 The Pre-Authorized Code Flow is vulnerable to the replay of the Pre-Authorized Code, because by design it is not bound to a certain device (as the Authorization Code Flow does with PKCE). This means an attacker can replay at another device the Pre-Authorized Code meant for a victim, e.g., the attacker can scan the QR code while it is displayed on the victim’s screen, and thereby get access to the Credential. Such replay attacks must be prevented using other means. The design facilitates the following options: 
 
 * User PIN: the Credential Issuer might set up a PIN with the End-User (e.g. via text message or email), which needs to be presented in the Token Request.
-* Callback to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the End-User to confirm the originating device (device that displayed the QR code) that the Credential Issuer MAY proceed with the Credential issuance process. While the Credential Issuer reaches out to the End-User on the other device to get confirmation, the Credential Issuer returns an `authorization_pending` error code to the Wallet as described in (#token-response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the End-User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the End-User on the originating device more control over the issuance process.
+* Callback to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the End-User to confirm the originating device (device that displayed the QR code) that the Credential Issuer MAY proceed with the Credential issuance process. While the Credential Issuer reaches out to the End-User on the other device to get confirmation, the Credential Issuer's Authorization Server returns an error code `authorization_pending` or `slow_down` to the Wallet as described in (#token_error_response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the End-User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the End-User on the originating device more control over the issuance process.
 
 ### PIN Code Phishing
 
