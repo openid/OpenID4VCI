@@ -1,5 +1,5 @@
 %%%
-title = "OpenID for Verifiable Credential Issuance"
+title = "OpenID for Verifiable Credential Issuance - draft 12"
 abbrev = "openid-4-verifiable-credential-issuance"
 ipr = "none"
 workgroup = "OpenID Connect"
@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-11"
+value = "openid-4-verifiable-credential-issuance-1_0-12"
 status = "standard"
 
 [[author]]
@@ -49,6 +49,10 @@ This specification defines an API that is used to issue verifiable credentials. 
 Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. However, in contrast to the identity assertions, a verifiable credential follows a pre-defined schema (the Credential type) and is bound to a certain holder, e.g. through cryptographic holder binding. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential Issuer. This specification caters for those differences.
 
 Access to this API is authorized using OAuth 2.0 [@!RFC6749], i.e. the Wallet uses OAuth 2.0 to obtain authorization to receive verifiable credentials. This way the issuance process can benefit from the proven security, simplicity, and flexibility of OAuth 2.0 and existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) can be extended to become Credential Issuers. 
+
+## Requirements Notation and Conventions
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119 [@!RFC2119].
 
 # Terminology
 
@@ -293,7 +297,7 @@ Credential Offer object which is a JSON object with the Credential Offer paramet
 
 Credential Offer contains a single URI query parameter `credential_offer` or `credential_offer_uri`:
 
-* `credential_offer`: CONDITIONAL. A JSON object with the Credential Offer parameters. MUST NOT be present when `credential_offer_uri` parameter is present.
+* `credential_offer`: A JSON object with the Credential Offer parameters. MUST NOT be present when `credential_offer_uri` parameter is present.
 * `credential_offer_uri`: A URL using the `https` scheme referencing a resource containing a JSON object with the Credential Offer parameters. MUST NOT be present when `credential_offer` parameter is present.
 
 The Credential Issuer MAY render a QR code containing the Credential Offer that can be scanned by the End-User using a Wallet, or a deeplink that the End-User can click.
@@ -534,7 +538,7 @@ Upon receiving a successful Authorization Response, a Token Request is made as d
 
 The following are the extension parameters to the Token Request used in a Pre-Authorized Code Flow:
 
-* `pre-authorized_code`: CONDITIONAL. The code representing the authorization to obtain Credentials of a certain type. This parameter is required if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
+* `pre-authorized_code`: The code representing the authorization to obtain Credentials of a certain type. This parameter MUST be present if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 * `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Credential Offer. The string value MUST consist of maximum 8 numeric characters (the numbers 0 - 9). This parameter MUST only be used, if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 
 Requirements around how the Wallet identifies and, if applicable, authenticates itself with the Authorization Server in the Token Request depends on the Grant Type.
@@ -682,14 +686,14 @@ Content-Type: application/json
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
-   "format":"jwt_vc_json",
-   "type":[
+   "format": "jwt_vc_json",
+   "type": [
       "VerifiableCredential",
       "UniversityDegreeCredential"
    ],
-   "proof":{
-      "proof_type":"jwt",
-      "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
+   "proof": {
+      "proof_type": "jwt",
+      "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
       xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
       0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOiIyMDE4LTA5LTE0VDIxOjE5OjEwWiIsIm5vbm
       NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
@@ -698,20 +702,24 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 ```
 ### Proof Types {#proof_types}
 
-This specification defines the following values for `proof_type`:
+This specification defines the following values for `proof_type`: 
+* `jwt`: A JWT [@!RFC7519] is used as proof of possession. When `proof_type` is `jwt`, a `proof` object MUST include a `jwt` claim containing a JWT defined in (#jwt-proof-type).
+* `cwt`: A CWT [@!RFC8392] is used as proof of possession. When `proof_type` is `cwt`, a `proof` object MUST include a `cwt` claim containing a CWT defined in (#cwt-proof-type).
 
-* `jwt`: objects of this type contain a single `jwt` element with a JWS [@!RFC7515] as proof of possession. The JWT MUST contain the following elements:
-    * in the JOSE Header,
-        * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the proof JWT as recommended in Section 3.11 of [@!RFC8725].
-        * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry. MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
-        * `kid`: CONDITIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
-        * `jwk`: CONDITIONAL. JOSE Header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
-        * `x5c`: CONDITIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element MAY be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
-    * in the JWT body, 
-        * `iss`: OPTIONAL (string). The value of this claim MUST be the `client_id` of the client making the credential request. This claim MUST be omitted if the Access Token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the Token Endpoint.
-        * `aud`: REQUIRED (string). The value of this claim MUST be the Credential Issuer URL of the Credential Issuer.
-        * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519].
-        * `nonce`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the Credential Issuer.
+#### `jwt` Proof Type {#jwt-proof-type}
+
+The JWT MUST contain the following elements:
+  * in the JOSE header,
+    * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the proof JWT as recommended in Section 3.11 of [@!RFC8725].
+    * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry. MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
+    * `kid`: `kid`: CONDITIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
+    * `jwk`: CONDITIONAL. JOSE Header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
+    * `x5c`: CONDITIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element MAY be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
+  * in the JWT body, 
+    * `iss`: OPTIONAL (string). The value of this claim MUST be the `client_id` of the client making the credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a pre-authorized code flow through anonymous access to the token endpoint.
+    * `aud`: REQUIRED (string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
+    * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519]. 
+    * `nonce`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the credential issuer.
 
 The Credential Issuer MUST validate that the `proof` is actually signed by a key identified in the JOSE Header.
 
@@ -732,7 +740,7 @@ where the JWT looks like this:
 ```json
 {
   "alg": "ES256",
-  "kid":"did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1"
+  "kid": "did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1"
 }.
 {
   "iss": "s6BhdRkqt3",
@@ -747,7 +755,7 @@ Here is another example JWT not only proving possession of a private key but als
 ```json
 {
   "alg": "ES256",
-  "x5c":[<key certificate + certificate chain for attestation>]
+  "x5c": [<key certificate + certificate chain for attestation>]
 }.
 {
   "iss": "s6BhdRkqt3",
@@ -756,6 +764,19 @@ Here is another example JWT not only proving possession of a private key but als
   "nonce": "tZignsnFbp"
 }
 ```
+
+#### `cwt` Proof Type {#cwt-proof-type}
+
+The CWT MUST contain the following elements :
+  * in the COSE protected header (see [@!RFC8152], Section 3.1.),
+    * Label 1 (`alg`): REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry. MUST NOT be an identifier for a symmetric algorithm (MAC).
+    * Label 3 (`content type`): REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the proof CWT.
+    * (string-valued) Label `COSE_Key`: CONDITIONAL (byte string). COSE key material the new Credential shall be bound to. MUST NOT be present if `x5chain` is present.
+    * Label 33 (`x5chain`): CONDITIONAL (byte string). As defined in [@!RFC9360], contains an ordered array of X.509 certificates corresponding to the key used to sign the CWT. MUST NOT be present if `COSE_Key` is present.
+  * in the content of the message (see [@!RFC8392], Section 4), 
+    * Claim Key 3 (`aud`): REQUIRED (text string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
+    * Claim Key 6 (`iat`): REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the proof was issued. 
+    * Claim Key 10 (`Nonce`): REQUIRED (byte string). The value of this claim MUST be the `c_nonce` provided by the Credential Issuer converted from string to bytes.
 
 ## Credential Response {#credential-response}
 
@@ -1669,6 +1690,10 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -12
+
+   * added CWT proof type
 
    -11
 
