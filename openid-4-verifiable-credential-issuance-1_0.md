@@ -1428,7 +1428,7 @@ Note that VCs secured using Data Integrity MAY NOT necessarily use JSON-LD and M
 
 Distinct Credential formats identifiers, extension parameters/claims and processing rules are defined for each of the above-mentioned Credential formats.
 
-### VC signed as a JWT, not using JSON-LD
+### VC signed as a JWT, not using JSON-LD {#vc-jwt}
 
 #### Format Identifier
 
@@ -1503,7 +1503,7 @@ The following is a non-normative example of a Credential Response with Credentia
 
 The Credential format identifier is `ldp_vc`.
 
-When the `format` value is `ldp_vc`, `credential_definition` object in Credential Offer, Authorization Details, and Credential Request, and Credential Issuer metadata MAY be processed using JSON-LD rules. The rest of the Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata MUST NOT be processed using JSON-LD rules.
+When the `format` value is `ldp_vc`, `credential_definition` object in Credential Offer, Authorization Details, and Credential Request, and Credential Issuer metadata MAY be processed using JSON-LD rules. The rest of the Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata MUST NOT be processed using JSON-LD rules. When JSON-LD processing is used, implementations MUST define an `@context` value to be used to communicate the requirements.
 
 Note that Data Integrity used to be called Linked Data Proofs, hence "ldp" in the Credential format identifier.
 
@@ -1515,12 +1515,8 @@ The following additional claims are defined as part of the object comprising `cr
   * `@context`: REQUIRED. JSON array as defined in [@VC_DATA], Section 4.1.
   * `type`: REQUIRED. JSON array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
   * `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
-      * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
-      * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
-      * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
-          * `name`: OPTIONAL. String value of a display name for the claim.
-          * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier.
-* `order`: OPTIONAL. An array of `credentialSubject.[claim name].display.name` values that lists them in the order they should be displayed by the Wallet.
+
+It is recommended to define an `@context` value to communicate additional information such as which claims are mandatory-to-be-issued, type of claim value (i.e., string, number, etc.), display properties of a credential and the order of the claim values when displayed as in (#vc-jwt).
 
 The following is a non-normative example of an object comprising `credentials_supported` parameter of Credential format `ldp_vc`.
 
