@@ -696,12 +696,14 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 ### Proof Types {#proof_types}
 
 This specification defines the following values for `proof_type`: 
+
 * `jwt`: A JWT [@!RFC7519] is used as proof of possession. When `proof_type` is `jwt`, a `proof` object MUST include a `jwt` claim containing a JWT defined in (#jwt-proof-type).
 * `cwt`: A CWT [@!RFC8392] is used as proof of possession. When `proof_type` is `cwt`, a `proof` object MUST include a `cwt` claim containing a CWT defined in (#cwt-proof-type).
 
 #### `jwt` Proof Type {#jwt-proof-type}
 
 The JWT MUST contain the following elements:
+
   * in the JOSE header,
     * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the proof JWT as recommended in Section 3.11 of [@!RFC8725].
     * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry. MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
@@ -761,6 +763,7 @@ Here is another example JWT not only proving possession of a private key but als
 #### `cwt` Proof Type {#cwt-proof-type}
 
 The CWT MUST contain the following elements :
+
   * in the COSE protected header (see [@!RFC8152], Section 3.1.),
     * Label 1 (`alg`): REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry. MUST NOT be an identifier for a symmetric algorithm (MAC).
     * Label 3 (`content type`): REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the proof CWT.
