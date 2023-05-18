@@ -46,7 +46,7 @@ This specification defines an API for the issuance of Verifiable Credentials.
 
 This specification defines an API that is used to issue Verifiable Credentials. W3C formats [@VC_DATA] as well as other Credential formats, like [@ISO.18013-5], are supported. 
 
-Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. However, in contrast to the identity assertions, a Verifiable Credential follows a pre-defined schema (the Credential type) and is bound to a certain holder, e.g. through Cryptographic Holder Binding. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential Issuer. This specification caters for those differences.
+Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. However, in contrast to the identity assertions, a Verifiable Credential follows a pre-defined schema (the Credential type) and is bound to a certain holder, e.g., through Cryptographic Holder Binding. This allows secure direct presentation of the Credential from the End-User to the RP, without involvement of the Credential Issuer. This specification caters for those differences.
 
 Access to this API is authorized using OAuth 2.0 [@!RFC6749], i.e. the Wallet uses OAuth 2.0 to obtain authorization to receive Verifiable Credentials. This way the issuance process can benefit from the proven security, simplicity, and flexibility of OAuth 2.0 and existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) can be extended to become Credential Issuers. 
 
@@ -97,7 +97,7 @@ Cryptographic Holder Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proving control over the same private key during the issuance and presentation. Mechanism might depend on the Credential Format. For example, in `jwt_vc_json` Credential Format, a VC with Cryptographic Holder Binding contains a public key or a reference to a public key that matches to the private key controlled by the Holder.
 
 Claim-based Holder Binding:
-:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proofing certain claims, e.g. name and date of birth, for example by presenting another Verifiable Credential. Claim-based Holder Binding allows long term, cross-device use of a credential as it does not depend on cryptographic key material stored on a certain device. One example of such a Verifiable Credential could be a Diploma.
+:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proofing certain claims, e.g., name and date of birth, for example by presenting another Verifiable Credential. Claim-based Holder Binding allows long term, cross-device use of a credential as it does not depend on cryptographic key material stored on a certain device. One example of such a Verifiable Credential could be a Diploma.
 
 Biometrics-based Holder Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential by demonstrating a certain biometric trait, such as finger print or face. One example of a Verifiable Credential with Biometrics-based Holder Binding is a mobile drivers license [@ISO.18013-5], which contains a portrait of the holder.
@@ -230,7 +230,7 @@ Note: this flow is based on OAuth 2.0 and the Authorization Code Grant type, but
 
 ## Pre-Authorized Code Flow {#pre-authz-code-flow}
 
-Figure 2 is a diagram of a Credential issuance using the Pre-Authorized Code Flow. In this flow, before initiating the flow with the Wallet, the Credential Issuer first conducts the steps required to prepare the Credential issuance, e.g. user authentication and authorization. Consequently, the Pre-Authorized Code is sent by the Credential Issuer to the Wallet. This flow does not use the Authorization Endpoint, and The Wallet exchanges the Pre-Authorized Code for the Access Token directly at the Token Endpoint. Access Token is then used to request Credential issuance at the Credential Endpoint. See (#use-case-4) for a use case.
+Figure 2 is a diagram of a Credential issuance using the Pre-Authorized Code Flow. In this flow, before initiating the flow with the Wallet, the Credential Issuer first conducts the steps required to prepare the Credential issuance, e.g., user authentication and authorization. Consequently, the Pre-Authorized Code is sent by the Credential Issuer to the Wallet. This flow does not use the Authorization Endpoint, and The Wallet exchanges the Pre-Authorized Code for the Access Token directly at the Token Endpoint. Access Token is then used to request Credential issuance at the Credential Endpoint. See (#use-case-4) for a use case.
 
 How the End-User provides information required for the issuance of a requested Credential to the Credential Issuer and the business processes conducted by the Credential Issuer to prepare a Credential are out of scope of this specification.
 
@@ -661,7 +661,7 @@ For cryptographic binding, the Client has the following options to provide crypt
 
 ## Credential Request {#credential_request}
 
-A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the "application/json" media type.
+A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
 * `format`: REQUIRED. Format of the Credential to be issued. This Credential format identifier determines further parameters required to determine the type and (optionally) the content of the credential to be issued. Credential Format Profiles consisting of the Credential format specific set of parameters are defined in (#format_profiles).
 * `proof`: OPTIONAL. JSON object containing proof of possession of the key material the issued Credential shall be bound to. The specification envisions use of different types of proofs for different cryptographic schemes. The `proof` object MUST contain a `proof_type` claim of type JSON string denoting the concrete proof type. This type determines the further claims in the proof object and its respective processing rules. Proof types are defined in (#proof_types). 
@@ -776,15 +776,17 @@ The CWT MUST contain the following elements :
 
 ## Credential Response {#credential-response}
 
-Credential Response can be Synchronous or Deferred. The Credential Issuer MAY be able to immediately issue a requested Credential and send it to the Client. 
+Credential Response can be just-in-time or deferred. The Credential Issuer MAY be able to immediately issue a requested Credential and send it to the Client.
 
-In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send an `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code is 202 in such a case. 
+`application/json` media type MUST be used.
+
+In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send a `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code MUST be 202 (section 10.2.3 of [@!RFC2616]).
 
 The following claims are used in the Credential Response:
 
 * `format`: REQUIRED. JSON string denoting the format of the issued Credential.
 * `credential`: OPTIONAL. Contains issued Credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the Credential format. See (#format_profiles) for the Credential format specific encoding requirements.
-* `transaction_id`: OPTIONAL. A JSON string identifiying a deferred issuance transaction. This claim is contained in the response, if the issuer was unable to immediately issue the credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). MUST be present when `credential` is not returned.
+* `transaction_id`: OPTIONAL. A JSON string identifiying a Deferred Issuance transaction. This claim is contained in the response, if the issuer was unable to immediately issue the credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). MUST be present when `credential` parameter is not returned.
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent credential requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
@@ -792,7 +794,7 @@ The `format` Claim determines the Credential format and encoding of the credenti
 
 Credential formats expressed as binary data MUST be base64url-encoded and returned as a JSON string.
 
-Below is a non-normative example of a Credential Response in a synchronous flow for a credential in JWT VC format (JSON encoded):
+Below is a non-normative example of a Credential Response in a just-in-time issuance flow for a credential in JWT VC format (JSON encoded):
 
 ```
 HTTP/1.1 200 OK
@@ -835,7 +837,7 @@ The following additional clarifications are provided for the following parameter
 
 `invalid_token`:
 
-- Credential Request contains the wrong Access Token or the Access Token is missing
+- Credential Request contains the wrong Access Token or the Access Token is missing.
 
 The following additional error codes are specified:
 
@@ -889,7 +891,7 @@ The client can request issuance of multiple Credentials of certain types and for
 
 ## Batch Credential Request {#batch-credential_request}
 
-The Batch Credential Endpoint allows a client to send multiple Credential Request objects (see (#credential_request)) to request the issuance of multiple credential at once.
+The Batch Credential Endpoint allows a client to send multiple Credential Request objects (see (#credential_request)) to request the issuance of multiple credential at once. `application/json` media type MUST be used.
 
 The following claims are used in the Batch Credential Request:
 
@@ -930,13 +932,15 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Batch Credential Response {#batch-credential_response}
 
+Successful Batch Credential Response MUST contain all of the requested credentials. `application/json` media type MUST be used. 
+
 The following claims are used in the Batch Credential Response:
 
 * `credential_responses`: REQUIRED. JSON array that contains Credential Response objects as defined in (#credential_request) and/or Deferred Credential Response objects as defined in (#deferred-credential_request). Every entry of the array corresponds to the Credential Request object at the same array index in the `credential_requests` parameter of the Batch Credential Request.
 * `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response). 
 * `c_nonce_expires_in`: OPTIONAL. The `c_nonce_expires_in` as defined in (#credential-response). 
 
-Below is a non-normative example of a Batch Credential Response in a synchronous flow:
+Below is a non-normative example of a Batch Credential Response in a just-in-time issuance flow:
 
 ```
 HTTP/1.1 200 OK
@@ -981,11 +985,11 @@ Cache-Control: no-store
 
 ## Batch Credential Error Response {#batch-credential_error_response}
 
-The Batch Credential Endpoint MUST respond with an HTTP 400 (Bad Request) status code (unless specified otherwise) in case of an error.
+The Batch Credential Endpoint MUST respond with an HTTP 400 (Bad Request) status code in case of an error, unless specified otherwise.
 
 Error codes extensions defined in (#credential-error-response) apply.
 
-The Batch Credential Request either succeessfully issues all requested credentials or fails entirely if there is even one credential failed to be issued.
+The Batch Credential Request MUST fail entirely if there is even one credential failed to be issued. `transaction_id` MUST NOT be returned.
 
 When the Credential Issuer requires `proof` objects to be present in the Batch Credential Request, but does not receive them, it will return a Batch Credential Error Response with a `c_nonce` using `invalid_or_missing_proof` error code as defined in (#issuer-provided-nonce).
 
@@ -993,17 +997,17 @@ When the Credential Issuer requires `proof` objects to be present in the Batch C
 
 This endpoint is used to issue a Credential previously requested at the Credential Endpoint or Batch Credential Endpoint in case the Credential Issuer was not able to immediately issue this Credential. 
 
-The Deferred Endpoint requires the Wallet to present an Access Token valid for the Credential previously requested at the Credential Endpoint or Batch Credential Endpoint. 
+The Wallet MUST present to the Deferred Endpoint an Access Token valid for the issuance of the Credential previously requested at the Credential Endpoint or the Batch Credential Endpoint. 
 
 Communication with the Deferred Credential Endpoint MUST utilize TLS. 
 
 ## Deferred Credential Request {#deferred-credential_request}
 
-The Deferred Credential Request is a HTTP POST request. 
+The Deferred Credential Request is an HTTP POST request. `application/json` media type MUST be used.
 
 The following claims are used in the Batch Credential Response:
 
-* `transaction_id`: REQUIRED. JSON String identifying a deferred issuance transaction. 
+* `transaction_id`: REQUIRED. JSON String identifying a Deferred Issuance transaction. 
 
 ```
 Host: server.example.com
@@ -1018,17 +1022,19 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Deferred Credential Response {#deferred-credential_response}
 
-The deferred Credential Response uses the `format` and `credential` parameters as defined in (#credential-response). 
+The deferred Credential Response uses the `format` and `credential` parameters as defined in (#credential-response).
+
+`application/json` media type MUST be used.
 
 ## Deferred Credential Error Response {#deferred-credential_error_response}
 
-When the Deferred Credential Request is invalid or unauthorized or the credential is not available yet, the Credential Issuer constructs the error response as defined in this section.
+When the Deferred Credential Request is invalid or unauthorized, or the credential is not available yet, the Credential Issuer constructs the error response as defined in this section.
 
 The following additional clarifications are provided for the following parameters already defined in section 3.1 of [@!RFC6750]:
 
 `invalid_request`:
 
-- Credential Request was malformed, e.g. the parameter `transaction_id` is missing or malformed.
+- Credential Request was malformed, e.g., the parameter `transaction_id` is missing or malformed.
 
 `invalid_token`:
 
@@ -1073,7 +1079,7 @@ The Credential Issuer's configuration can be retrieved using the Credential Issu
 
 Credential Issuers publishing metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer Identifier. If the Credential Issuer value contains a path component, any terminating `/` MUST be removed before appending `/.well-known/openid-credential-issuer`. 
 
-`openid-credential-issuer` MUST point to a JSON document compliant with this specification and MUST be returned using the `application/json` content type.
+The path formed following the steps above MUST point to a JSON document compliant with this specification. The document MUST be returned using the `application/json` media type.
 
 ### Credential Issuer Metadata Parameters
 
@@ -1097,7 +1103,7 @@ The following parameter MUST be used to communicate the specifics of the Credent
 
 This section defines the structure of the objects that appear in the `credentials_supported` metadata parameter.
 
-* `format`: REQUIRED. A JSON string identifying the format of this credential, e.g. `jwt_vc_json` or `ldp_vc`. Depending on the format value, the object contains further elements defining the type and (optionally) particular claims the credential MAY contain, and information how to display the credential. (#format_profiles) defines Credential Format Profiles introduced by this specification. 
+* `format`: REQUIRED. A JSON string identifying the format of this credential, e.g., `jwt_vc_json` or `ldp_vc`. Depending on the format value, the object contains further elements defining the type and (optionally) particular claims the credential MAY contain, and information how to display the credential. (#format_profiles) defines Credential Format Profiles introduced by this specification. 
 * `id`: OPTIONAL. A JSON string identifying the respective object. The value MUST be unique across all `credentials_supported` entries in the Credential Issuer Metadata.
 * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential as defined in (#credential-binding). Support for keys in JWK format [@!RFC7517] is indicated by the value `jwk`. Support for keys expressed as a COSE Key object [@!RFC8152] (for example, used in [@!ISO.18013-5]) is indicated by the value `cose_key`. When Cryptographic Binding Method is a DID, valid values MUST be a `did:` prefix followed by a method-name using a syntax as defined in Section 3.1 of [@!DID-Core], but without a `:`and method-specific-id. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in Section 13 of [@DID_Specification_Registries] is indicated by sending a DID without any method-name.
 
@@ -1139,15 +1145,15 @@ The following mechanisms in concert can be utilized to fulfill those objectives:
 
 **Key attestation** is a mechanism where the device or security element in a device asserts the key management policy to the application creating and using this key. The Android Operating System, for example, provides apps with a certificate including a certificate chain asserting that a particular key is managed, for example, by a hardware security module [ref]. The Wallet can provide this data along with the proof of possession in the Credential Request (see (#credential_request) for an example) to allow the Credential Issuer to validate the key management policy. This indeed requires the Credential Issuer to rely on the trust anchor of the certificate chain and the respective key management policy. Another variant of this concept is the use of a Qualified Electronic Signature as defined by the eIDAS regulation [ref]. This signatures won't reveal the concrete properties of the associated private key to the Credential Issuer. However, due to the regulatory regime of eIDAS the Credential Issuer can deduce that the signing service manages the private keys according to this regime and fulfills very high security requirements. As another example, FIDO2 allows RPs to obtain an attestation along with the public key from a FIDO authenticator. That implicitly asserts the key management policy since the assertion is bound to a certain authenticator model and its key management capabilities. 
 
-**App Attestation**: Key attestation, however, does not establish trust in the application storing the Credential and producing presentation of that Credential. App attestation as provided by mobile operating systems, e.g. iOS's DeviceCheck or Android's Safetynet, allows a server system to ensure it is communicating to a legitimate instance of its genuine app. Those mechanisms can be utilized to validate the internal integrity of the Wallet (as a whole).  
+**App Attestation**: Key attestation, however, does not establish trust in the application storing the Credential and producing presentation of that Credential. App attestation as provided by mobile operating systems, e.g., iOS's DeviceCheck or Android's Safetynet, allows a server system to ensure it is communicating to a legitimate instance of its genuine app. Those mechanisms can be utilized to validate the internal integrity of the Wallet (as a whole).  
 
 **Device Attestation**: Device Attestation attests the health of the device, on which the Wallet is running, as a whole. It prevents compromises such as a malicious third party application tampering with a Wallet that manages keys and Credentials, which cannot be captured only by obtaining app attestation of a Wallet.
 
 **Client Authentication** allows a Wallet to authenticate with a Credential Issuer. In order to securely authenticate, the Wallet needs to utilize a backend component managing the key material and processing the secure communication with the Credential Issuer. The Credential Issuer MAY establish trust with the Wallet based on its own auditing or a trusted 3rd party attestation of the conformance of the Wallet to a certain policy.  
 
-Directly using key, app and/or device attestations to prove certain capabilities towards a Credential Issuer is an obvious option. However, this at least requires platform mechanisms that issue signed assertions that 3rd parties can evaluate, which is not always the case (e.g. iOS's DeviceCheck). Also, such an approach creates dependencies on platform specific mechanisms, trust anchors, and platform specific identifiers (e.g. Android `apkPackageName`) and it reveals information about the internal design of a Wallet. Implementers should take these consequences into account. 
+Directly using key, app and/or device attestations to prove certain capabilities towards a Credential Issuer is an obvious option. However, this at least requires platform mechanisms that issue signed assertions that 3rd parties can evaluate, which is not always the case (e.g., iOS's DeviceCheck). Also, such an approach creates dependencies on platform specific mechanisms, trust anchors, and platform specific identifiers (e.g., Android `apkPackageName`) and it reveals information about the internal design of a Wallet. Implementers should take these consequences into account. 
 
-The approach recommended by this specification is that the Credential Issuer relies on the OAuth 2.0 Client Authentication to establish trust in the Wallet and leaves it to the Wallet to ensure its internal integrity using app and key attestation (if required). This establishes a clean separation between the different hemispheres and a uniform interface irrespectively of the Wallet's architecture (e.g. native vs web Wallet). Client Authentication can be performed with assertions registered with the Credential Issuer or with assertions issued to the Wallet by a 3rd party the Credential Issuer trusts for the purpose of Client Authentication.  
+The approach recommended by this specification is that the Credential Issuer relies on the OAuth 2.0 Client Authentication to establish trust in the Wallet and leaves it to the Wallet to ensure its internal integrity using app and key attestation (if required). This establishes a clean separation between the different hemispheres and a uniform interface irrespectively of the Wallet's architecture (e.g., native vs web Wallet). Client Authentication can be performed with assertions registered with the Credential Issuer or with assertions issued to the Wallet by a 3rd party the Credential Issuer trusts for the purpose of Client Authentication.  
 
 ## Credential Offer {#credential-offer-security}
 
@@ -1163,20 +1169,20 @@ The Credential Issuer MUST ensure the release of any privacy-sensitive data in C
 
 The Pre-Authorized Code Flow is vulnerable to the replay of the Pre-Authorized Code, because by design it is not bound to a certain device (as the Authorization Code Flow does with PKCE). This means an attacker can replay at another device the Pre-Authorized Code meant for a victim, e.g., the attacker can scan the QR code while it is displayed on the victim’s screen, and thereby get access to the Credential. Such replay attacks must be prevented using other means. The design facilitates the following options: 
 
-* User PIN: the Credential Issuer might set up a PIN with the End-User (e.g. via text message or email), which needs to be presented in the Token Request.
+* User PIN: the Credential Issuer might set up a PIN with the End-User (e.g., via text message or email), which needs to be presented in the Token Request.
 * Callback to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the End-User to confirm the originating device (device that displayed the QR code) that the Credential Issuer MAY proceed with the Credential issuance process. While the Credential Issuer reaches out to the End-User on the other device to get confirmation, the Credential Issuer returns an `authorization_pending` error code to the Wallet as described in (#token-response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the End-User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the End-User on the originating device more control over the issuance process.
 
 ### PIN Code Phishing
 
-An attacker might leverage the Credential issuance process and the user's trust into the Wallet to phish PIN codes sent out by a different service that grant attacker access to services other than Credential issuance. The attacker could setup a Credential Issuer site and in parallel to the issuance request trigger transmission of a PIN code to the user's phone from a service other than Credential issuance, e.g. from a payment service. The user would then be asked to enter this PIN into the Wallet and since the Wallet sends this PIN to the Token Endpoint of the Credential Issuer (the attacker), the attacker would get access to the PIN code, and access to that other service. 
+An attacker might leverage the Credential issuance process and the user's trust into the Wallet to phish PIN codes sent out by a different service that grant attacker access to services other than Credential issuance. The attacker could setup a Credential Issuer site and in parallel to the issuance request trigger transmission of a PIN code to the user's phone from a service other than Credential issuance, e.g., from a payment service. The user would then be asked to enter this PIN into the Wallet and since the Wallet sends this PIN to the Token Endpoint of the Credential Issuer (the attacker), the attacker would get access to the PIN code, and access to that other service. 
 
 In order to cope with that issue, the Wallet is RECOMMENDED to interact with trusted Credential Issuers only. In that case, the Wallet would not process a Credential Offer with an untrusted issuer URL. The Wallet MAY also show to the End-User the endpoint of the Credential Issuer it will be sending the PIN code to and ask the End-User for confirmation.
 
 ## Credential Lifecycle Management 
 
-the Credential Issuer is supposed to be responsible for the lifecycle of its Credentials. This means the Credential Issuer will invalidate Credentials if it deems appropriate, e.g. if it detects fraudulent behavior.
+the Credential Issuer is supposed to be responsible for the lifecycle of its Credentials. This means the Credential Issuer will invalidate Credentials if it deems appropriate, e.g., if it detects fraudulent behavior.
 
-The Wallet is supposed to detect signs of fraudulant behavior related to the Credential management in the Wallet (e.g. device rooting) and to act upon such signals. Options include Credential revocation at the Credential Issuer and/or invalidation of the key material used to cryptographically bind Credential to the identifier of the End-User possessing that Credential.  
+The Wallet is supposed to detect signs of fraudulant behavior related to the Credential management in the Wallet (e.g., device rooting) and to act upon such signals. Options include Credential revocation at the Credential Issuer and/or invalidation of the key material used to cryptographically bind Credential to the identifier of the End-User possessing that Credential.  
 
 # Implementation Considerations
 
