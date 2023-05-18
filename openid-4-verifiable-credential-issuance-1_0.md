@@ -331,19 +331,23 @@ Note that the examples throughout the specification use Credential Format specif
 Below is a non-normative example of a Credential Offer passed by value:
 
 ```
-  GET /credential_offer?credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com
-  %22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22Verifiabl
-  eCredential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22issuer_state%22:%22eyJhbGciOiJS
-  U0Et...FYUaBy%22%7D
+  GET /credential_offer?credential_offer=%7B%22credential_issuer%22:%22
+  https://credential-issuer.example.com%22,%22credentials%22:%5B%22UniversityDegree_JWT
+  %22,%7B%22format%22:%22mso_mdoc%22,%22doctype%22:%22org.iso.18013.5.1.mDL%22%7D%5D,%22
+  grants%22:%7B%22authorization_code%22:%7B%22issuer_state%22:%22eyJhbGciOiJSU0Et...FYUaBy
+  %22%7D,%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22
+  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22user_pin_required%22:true%7D%7D%7D
 ```
 
 The following is a non-normative example of a Credential Offer that can be included in a QR code or a deeplink used to invoke Wallet deployed as a native app:
 
 ```
-openid-credential-offer://credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com
-%22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22VerifiableCr
-edential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22issuer_state%22:%22eyJhbGciOiJSU0Et...
-FYUaBy%22%7D
+openid-credential-offer://credential_offer=%7B%22credential_issuer%22:%22
+  https://credential-issuer.example.com%22,%22credentials%22:%5B%22UniversityDegree_JWT
+  %22,%7B%22format%22:%22mso_mdoc%22,%22doctype%22:%22org.iso.18013.5.1.mDL%22%7D%5D,%22
+  grants%22:%7B%22authorization_code%22:%7B%22issuer_state%22:%22eyJhbGciOiJSU0Et...FYUaBy
+  %22%7D,%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22
+  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22user_pin_required%22:true%7D%7D%7D
 ```
 
 ### Sending Credential Offer by Reference Using `credential_offer_uri` Parameter
