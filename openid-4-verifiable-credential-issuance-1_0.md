@@ -1,5 +1,5 @@
 %%%
-title = "OpenID for Verifiable Credential Issuance - draft 12"
+title = "OpenID for Verifiable Credential Issuance - draft 13"
 abbrev = "openid-4-verifiable-credential-issuance"
 ipr = "none"
 workgroup = "OpenID Connect"
@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-12"
+value = "openid-4-verifiable-credential-issuance-1_0-13"
 status = "standard"
 
 [[author]]
@@ -130,8 +130,9 @@ All OAuth 2.0 Grant Types and extensions mechanisms can be used in conjunction w
 
 Existing OAuth 2.0 mechanisms are extended as following:
 
-* A new Grant Type "Pre-Authorized Code" along with additional token response parameters `authorization_pending` and `interval` is defined to facilitate flows where the preparation of the credential issuance is conducted before the actual OAuth 2.0 flow starts (#pre-authz-code-flow).
+* A new Grant Type "Pre-Authorized Code" is defined to facilitate flows where the preparation of the credential issuance is conducted before the actual OAuth flow starts (#pre-authz-code-flow).
 * A new authorization details [@!I-D.ietf-oauth-rar] type `openid_credential` is defined to convey the details about the Credentials (including formats and types) the Wallet wants to obtain (#authorization-details). 
+* New token response error codes `authorization_pending` and `slow_down` are added to allow for deferred authorization of credential issuance. These error codes are supported for the Pre-Authorized Code grant type.
 * Client metadata is used to convey Wallet's metadata. A new metadata parameter `credential_offer_endpoint` is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (#client-metadata).
 * Authorization Endpoint: An additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated credential offer (#credential-authz-request). Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Verifiable Presentations from the calling Wallet in the course of Authorization Request processing. 
 * Token Endpoint: optional response parameters `c_nonce` and `c_nonce_expires_in` are added to the Token Endpoint, Credential Endpoint and Batch Credential Endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential Endpoint (#token-response). 
@@ -319,6 +320,7 @@ The following values are defined by this specification:
 * Grant Type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
   * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single-use. If the Wallet decides to use the Pre-Authorized Code Flow, this parameter value MUST be included in the subsequent Token Request with the Pre-Authorized Code Flow.
   * `user_pin_required`: OPTIONAL. Boolean value specifying whether the AS expects presentation of a user PIN along with the Token Request in a Pre-Authorized Code Flow. Default is `false`. This PIN is intended to bind the Pre-Authorized Code to a certain transaction in order to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate user. It is RECOMMENDED to send a PIN via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, a PIN value MUST be sent in the `user_pin` parameter with the respective Token Request. 
+  * `interval`: OPTIONAL. The minimum amount of time in seconds that the Wallet SHOULD wait between polling requests to the token endpoint (in case the Authorization Server responds with error code `authorization_pending` - see (#token_error_response)). If no value is provided, Wallets MUST use 5 as the default.
 
 The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two Credentials of different formats, one as JSON string ("UniversityDegree_JWT") and the other one as JSON object:
 
@@ -331,19 +333,23 @@ Note that the examples throughout the specification use Credential Format specif
 Below is a non-normative example of a Credential Offer passed by value:
 
 ```
-  GET /credential_offer?credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com
-  %22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22Verifiabl
-  eCredential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22issuer_state%22:%22eyJhbGciOiJS
-  U0Et...FYUaBy%22%7D
+  GET /credential_offer?credential_offer=%7B%22credential_issuer%22:%22
+  https://credential-issuer.example.com%22,%22credentials%22:%5B%22UniversityDegree_JWT
+  %22,%7B%22format%22:%22mso_mdoc%22,%22doctype%22:%22org.iso.18013.5.1.mDL%22%7D%5D,%22
+  grants%22:%7B%22authorization_code%22:%7B%22issuer_state%22:%22eyJhbGciOiJSU0Et...FYUaBy
+  %22%7D,%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22
+  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22user_pin_required%22:true%7D%7D%7D
 ```
 
 The following is a non-normative example of a Credential Offer that can be included in a QR code or a deeplink used to invoke Wallet deployed as a native app:
 
 ```
-openid-credential-offer://credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com
-%22,%22credentials%22:%5B%7B%22format%22:%22jwt_vc_json%22,%22types%22:%5B%22VerifiableCr
-edential%22,%22UniversityDegreeCredential%22%5D%7D%5D,%22issuer_state%22:%22eyJhbGciOiJSU0Et...
-FYUaBy%22%7D
+openid-credential-offer://credential_offer=%7B%22credential_issuer%22:%22
+  https://credential-issuer.example.com%22,%22credentials%22:%5B%22UniversityDegree_JWT
+  %22,%7B%22format%22:%22mso_mdoc%22,%22doctype%22:%22org.iso.18013.5.1.mDL%22%7D%5D,%22
+  grants%22:%7B%22authorization_code%22:%7B%22issuer_state%22:%22eyJhbGciOiJSU0Et...FYUaBy
+  %22%7D,%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22
+  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22user_pin_required%22:true%7D%7D%7D
 ```
 
 ### Sending Credential Offer by Reference Using `credential_offer_uri` Parameter
@@ -500,7 +506,7 @@ For non-normative examples of request and response, see section 11.6 in [@OpenID
 
 Note to the editors: need to sort out Credential Issuer's client_id with Wallet and potentially add example with `wallet_issuer` and `user_hint` 
 
-## Successful Authorization Response
+## Successful Authorization Response {#authorization_response}
 
 Authorization Responses MUST be made as defined in [@!RFC6749].
 
@@ -585,10 +591,6 @@ In addition to the response parameters defined in [@!RFC6749], the AS MAY return
 
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
-* `authorization_pending`: OPTIONAL. JSON Boolean. In the Pre-Authorized Code Flow, the Token Request is still pending as the Credential Issuer is waiting for the End-User interaction to complete. The client SHOULD repeat the Token Request. Before each new request, the client MUST wait at least the number of seconds specified by the `interval` response parameter. ToDo: clarify boolean.
-* `interval`: OPTIONAL. The minimum amount of time in seconds that the client SHOULD wait between polling requests to the Token Endpoint in the Pre-Authorized Code Flow.  If no value is provided, clients MUST use 5 as the default.
-
-Upon receiving Pre-Authorized Code, the Credential Issuer MAY decide to interact with the End-User in the course of the Token Request processing, which might take some time. In such a case, the Credential Issuer SHOULD respond with the error `authorization_pending` and the new return parameter `interval`.
 
 Below is a non-normative example of a Token Response:
 
@@ -606,7 +608,7 @@ Cache-Control: no-store
   }
 ```
 
-## Token Error Response
+## Token Error Response {#token_error_response}
 
 If the Token Request is invalid or unauthorized, the Authorization Server constructs the error response as defined as in Section 5.2 of OAuth 2.0 [@!RFC6749].
 
@@ -637,6 +639,16 @@ Cache-Control: no-store
    "error": "invalid_request"
 }
 ```
+
+This specification also uses the error codes `authorization_pending` and `slow_down` as defined in [@!RFC8628] for the Pre-Authorized Code grant type. 
+
+ `authorization_pending`:
+
+- This error code is used if the Authorization Server is waiting for an End-User interaction or downstream process to complete. The Wallet SHOULD repeat the access token request to the token endpoint (a process known as polling). Before each new request, the Wallet MUST wait at least the number of seconds specified by the `interval` claim of the credential offer (see (#credential_offer_parameters)) or the authorization response (see (#authorization_response)), or 5 seconds if none was provided, and respect any increase in the polling interval required by the "slow_down" error.
+
+`slow_down`:
+
+- A variant of `authorization_pending` error code, the authorization request is still pending and polling should continue, but the interval MUST be increased by 5 seconds for this and all subsequent requests.
 
 # Credential Endpoint {#credential-endpoint}
 
@@ -705,10 +717,11 @@ This specification defines the following values for the `proof_type` property:
 #### `jwt` Proof Type {#jwt-proof-type}
 
 The JWT MUST contain the following elements:
+
   * in the JOSE header,
     * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the proof JWT as recommended in Section 3.11 of [@!RFC8725].
     * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry. MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
-    * `kid`: `kid`: CONDITIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
+    * `kid`: CONDITIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
     * `jwk`: CONDITIONAL. JOSE Header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
     * `x5c`: CONDITIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element MAY be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
   * in the JWT body, 
@@ -764,6 +777,7 @@ Here is another example JWT not only proving possession of a private key but als
 #### `cwt` Proof Type {#cwt-proof-type}
 
 The CWT MUST contain the following elements :
+
   * in the COSE protected header (see [@!RFC8152], Section 3.1.),
     * Label 1 (`alg`): REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry. MUST NOT be an identifier for a symmetric algorithm (MAC).
     * Label 3 (`content type`): REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the proof CWT.
@@ -776,13 +790,15 @@ The CWT MUST contain the following elements :
 
 ## Credential Response {#credential-response}
 
-Credential Response can be Synchronous or Deferred. The Credential Issuer MAY be able to immediately issue a requested Credential and send it to the Client. In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send an `acceptance_token` parameter to the Client to be used later to receive a Credential when it is ready.
+Credential Response can be Synchronous or Deferred. The Credential Issuer MAY be able to immediately issue a requested Credential and send it to the Client. 
+
+In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send an `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code is 202 in such a case. 
 
 The following claims are used in the Credential Response:
 
 * `format`: REQUIRED. JSON string denoting the format of the issued Credential.
 * `credential`: OPTIONAL. Contains issued Credential. MUST be present when `acceptance_token` is not returned. MAY be a JSON string or a JSON object, depending on the Credential format. See (#format_profiles) for the Credential format specific encoding requirements.
-* `acceptance_token`: OPTIONAL. A JSON string containing a security token subsequently used to obtain a Credential. MUST be present when `credential` is not returned.
+* `transaction_id`: OPTIONAL. A JSON string identifiying a deferred issuance transaction. This claim is contained in the response, if the issuer was unable to immediately issue the credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). MUST be present when `credential` is not returned.
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent credential requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
@@ -808,12 +824,12 @@ Cache-Control: no-store
 Below is a non-normative example of a Credential Response in a deferred flow:
 
 ```
-HTTP/1.1 200 OK
+HTTP/1.1 202 OK
 Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "acceptance_token": "8xLOxBtZp8",
+  "transaction_id": "8xLOxBtZp8",
   "c_nonce": "wlbQc6pCJp",
   "c_nonce_expires_in": 86400  
 }
@@ -965,7 +981,7 @@ Cache-Control: no-store
 {
    "credential_responses":[
       {
-         "acceptance_token":"8xLOxBtZp8"
+         "transaction_id":"8xLOxBtZp8"
       },
       {
          "format":"jwt_vc_json",
@@ -991,21 +1007,63 @@ When the Credential Issuer requires `proof` objects to be present in the Batch C
 
 This endpoint is used to issue a Credential previously requested at the Credential Endpoint or Batch Credential Endpoint in case the Credential Issuer was not able to immediately issue this Credential. 
 
+The Deferred Endpoint requires the Wallet to present an Access Token valid for the Credential previously requested at the Credential Endpoint or Batch Credential Endpoint. 
+
+Communication with the Deferred Credential Endpoint MUST utilize TLS. 
+
 ## Deferred Credential Request {#deferred-credential_request}
 
-This is an HTTP POST request, which accepts an `acceptance_token` as the only parameter. The `acceptance_token` parameter MUST be sent as Access Token in the HTTP header as shown in the following example.
+The Deferred Credential Request is a HTTP POST request. 
+
+The following claims are used in the Batch Credential Response:
+
+* `transaction_id`: REQUIRED. JSON String identifying a deferred issuance transaction. 
 
 ```
-POST /credential_deferred HTTP/1.1
 Host: server.example.com
-Content-Type: application/x-www-form-urlencoded
-Authorization: BEARER 8xLOxBtZp8
+Content-Type: application/json
+Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+{
+   "transaction_id":"8xLOxBtZp8"
+}
 
 ```
 
 ## Deferred Credential Response {#deferred-credential_response}
 
 The deferred Credential Response uses the `format` and `credential` parameters as defined in (#credential-response). 
+
+## Deferred Credential Error Response {#deferred-credential_error_response}
+
+When the Deferred Credential Request is invalid or unauthorized or the credential is not available yet, the Credential Issuer constructs the error response as defined in this section.
+
+The following additional clarifications are provided for the following parameters already defined in section 3.1 of [@!RFC6750]:
+
+`invalid_request`:
+
+- Credential Request was malformed, e.g. the parameter `transaction_id` is missing or malformed.
+
+`invalid_token`:
+
+- Credential Request contains the wrong Access Token or the Access Token is missing
+
+The following additional error codes are specified:
+
+* `issuance_pending` - The credential issuance is still pending. The error response will also contain another claim `interval` determining the minimum amount of time in seconds that the Wallet SHOULD wait between requests to the Deferred Credential Endpoint.  If no value is provided, clients MUST use 5 as the default.
+* `invalid_transaction_id` - Deferred Credential Request contained an invalid `transaction_id`, i.e. it was not issued by the respective Credential Issuer or was already used to obtain the credential
+
+This is a non-normative example of a Credential Error Response:
+
+```
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+   "error": "invalid_request"
+}
+```
 
 # Metadata
 
@@ -1039,6 +1097,7 @@ This specification defines the following Credential Issuer Metadata:
 * `authorization_server`: OPTIONAL. Identifier of the OAuth 2.0 Authorization Server (as defined in [@!RFC8414]) the Credential Issuer relies on for authorization. If this element is omitted, the entity providing the Credential Issuer is also acting as the AS, i.e. the Credential Issuer's identifier is used as the OAuth 2.0 Issuer value to obtain the Authorization Server metadata as per [@!RFC8414]. 
 * `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
 * `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
+* `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
 
 The following parameter MUST be used to communicate the specifics of the Credential that the Credential Issuer supports issuance of:
 
@@ -1119,7 +1178,7 @@ The Credential Issuer MUST ensure the release of any privacy-sensitive data in C
 The Pre-Authorized Code Flow is vulnerable to the replay of the Pre-Authorized Code, because by design it is not bound to a certain device (as the Authorization Code Flow does with PKCE). This means an attacker can replay at another device the Pre-Authorized Code meant for a victim, e.g., the attacker can scan the QR code while it is displayed on the victim’s screen, and thereby get access to the Credential. Such replay attacks must be prevented using other means. The design facilitates the following options: 
 
 * User PIN: the Credential Issuer might set up a PIN with the End-User (e.g. via text message or email), which needs to be presented in the Token Request.
-* Callback to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the End-User to confirm the originating device (device that displayed the QR code) that the Credential Issuer MAY proceed with the Credential issuance process. While the Credential Issuer reaches out to the End-User on the other device to get confirmation, the Credential Issuer returns an `authorization_pending` error code to the Wallet as described in (#token-response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the End-User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the End-User on the originating device more control over the issuance process.
+* Callback to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the End-User to confirm the originating device (device that displayed the QR code) that the Credential Issuer MAY proceed with the Credential issuance process. While the Credential Issuer reaches out to the End-User on the other device to get confirmation, the Credential Issuer's Authorization Server returns an error code `authorization_pending` or `slow_down` to the Wallet as described in (#token_error_response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the End-User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the End-User on the originating device more control over the issuance process.
 
 ### PIN Code Phishing
 
@@ -1686,9 +1745,16 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
 # Document History
 
    [[ To be removed from the final specification ]]
+   
+   -13 
 
-   -12
+   * Aligned deferred authorization with RFC 8628 and CIBA
 
+   -12 
+
+   * Changed Deferred Endpoint to require same access tokens as (batch) credential endpoint(s), renamed acceptance_token to transaction_id and changed it to a request parameter, and return HTTP status 202 in case of deferred issuance
+   * Added Deferred Endpoint error response section 
+   * Added Deferred Endpoint metadata
    * added CWT proof type
 
    -11
