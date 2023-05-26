@@ -165,7 +165,7 @@ The issuance can have multiple characteristics, which can be combined depending 
 * Authorization Code Flow or Pre-Authorized Code Flow: the Credential Issuer can obtain user information to turn into a Verifiable Credential using user authentication and consent at the Credential Issuer's Authorization Endpoint (Authorization Code Flow), or using out of bound mechanisms outside of the issuance flow (Pre-Authorized Code Flow)
 * Wallet initiated or Issuer initiated: the request from the Wallet can be sent to the Credential Issuer without any gesture from the Credential Issuer (Wallet Initiated), or following the communication from the Credential Issuer (Issuer Initiated).
 * Same-device or Cross-device: the Credential Issuer's user experience (website or an app) can reside on the same device, or on different devices with the Wallet to which the Credential is issued.
-* Immideate or Deferred: the Credential Issuer can issue the Credential directly in response to the Credential Request (immideate), or requires time and needs the Wallet to come back to retrieve Credential (deferred).
+* Immediate or Deferred: the Credential Issuer can issue the Credential directly in response to the Credential Request (immediate), or requires time and needs the Wallet to come back to retrieve Credential (deferred).
 
 The following sub-sections illusterate some of the authorization flows supported by this specification.
 
@@ -790,7 +790,7 @@ The CWT MUST contain the following elements :
 
 ## Credential Response {#credential-response}
 
-Credential Response can be immideate or deferred. The Credential Issuer MAY be able to immediately issue a requested Credential and send it to the Client.
+Credential Response can be immediate or deferred. The Credential Issuer MAY be able to immediately issue a requested Credential and send it to the Client.
 
 In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send an `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code is 202 in such a case.
 
@@ -810,7 +810,7 @@ The `format` Claim determines the Credential format and encoding of the credenti
 
 Credential formats expressed as binary data MUST be base64url-encoded and returned as a JSON string.
 
-Below is a non-normative example of a Credential Response in a immideate issuance flow for a credential in JWT VC format (JSON encoded):
+Below is a non-normative example of a Credential Response in a immediate issuance flow for a credential in JWT VC format (JSON encoded):
 
 ```
 HTTP/1.1 200 OK
@@ -956,7 +956,7 @@ The following claims are used in the Batch Credential Response:
 * `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response). 
 * `c_nonce_expires_in`: OPTIONAL. The `c_nonce_expires_in` as defined in (#credential-response). 
 
-Below is a non-normative example of a Batch Credential Response in a immideate issuance flow:
+Below is a non-normative example of a Batch Credential Response in a immediate issuance flow:
 
 ```
 HTTP/1.1 200 OK
