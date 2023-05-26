@@ -141,13 +141,15 @@ Existing OAuth 2.0 mechanisms are extended as following:
 
 The Wallet sends one Credential Request per individual Credential to the Credential Endpoint. The Wallet MAY use the same Access Token to send multiple Credential Requests to request issuance of the following:
 
-* multiple Credentials of different types bound to the same proof, or
-* multiple Credentials of the same type bound to different proofs.
+* multiple Credentials of different types/doctypes bound to the same proof, or
+* multiple Credentials of the same type/doctype bound to different proofs, or
+* multiple Credentials of the different types/doctypes bound to different proofs.
 
-The Wallet MAY send one Batch Credential Request to the Batch Credential Endpoint to request the following:
+The Wallet MAY send one Batch Credential Request to the Batch Credential Endpoint to request the following in the Batch Credential Response:
 
-* multiple Credentials of different types bound to the same proof, or 
-* multiple Credentials of the same type bound to different proofs in the Batch Credential Response.
+* multiple Credentials of different types/doctypes bound to the same proof, or 
+* multiple Credentials of the same type/doctype bound to different proofs, or
+* multiple Credentials of different types/doctypes bound to different proofs.
 
 In the course of the authorization process, the Credential Issuer MAY also request Credential presentation as means to authenticate or identify the End-User during the issuance flow as illustrated in a use case in (#use-case-2).
 
@@ -215,7 +217,7 @@ Figure: Issuance using Authorization code flow
 
 (3) The Authorization Endpoint returns an Authorization Response with the Authorization Code upon successfully processing the Authorization Request. 
 
-Note that steps (2) and (3) happen in the frontchannel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization_endpoint).
+Note: steps (2) and (3) happen in the frontchannel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization_endpoint).
 
 (4) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in step (3). The Token Endpoint returns an Access Token in the Token Response upon successfully validating Authorization Code. This step happens in the backchannel using server to server communication. This step is defined in (#token_endpoint).
 
@@ -326,7 +328,7 @@ The following non-normative example shows a Credential Offer object where the Cr
 
 <{{examples/credential_offer_multiple_credentials.json}}
 
-Note that the examples throughout the specification use Credential Format specific parameters defined in the Credential Format Profiles that can be found in (#format_profiles).
+Note: the examples throughout the specification use Credential Format specific parameters defined in the Credential Format Profiles that can be found in (#format_profiles).
 
 ### Sending Credential Offer by Value Using `credential_offer` Parameter
 
@@ -664,7 +666,7 @@ If the Access Token is valid for requesting issuance of multiple Credentials, it
 
 Issued Credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the Credential. Cryptographic binding allows the Verifier to verify during the presentation of a Credential that the End-User presenting a Credential is the same End-User to whom that Credential was issued. For non-cryptographic type of binding and Credentials issued without any binding, see Implementation Considerations sections (#claim-based-binding) and (#no-binding). 
 
-Note that claims in the Credential are usually about the End-User who possesses it, but can be about another entity.
+Note: claims in the Credential are usually about the End-User who possesses it, but can be about another entity.
 
 For cryptographic binding, the Client has the following options to provide cryptographic binding material for a requested Credential as defined in (#credential_request):
 
@@ -1525,7 +1527,7 @@ This specification therefore differentiates the following three Credential forma
 * VC signed as a JWT, using JSON-LD (`jwt_vc_json-ld`)
 * VC secured using Data Integrity, using JSON-LD, with proof suite requiring Linked Data canonicalization (`ldp_vc`)
 
-Note that VCs secured using Data Integrity MAY NOT necessarily use JSON-LD and MAY NOT necessarily use proof suites requiring Linked Data canonicalization. Credential Format Profiles for them MAY be defined in the future versions of this specification.
+Note: VCs secured using Data Integrity MAY NOT necessarily use JSON-LD and MAY NOT necessarily use proof suites requiring Linked Data canonicalization. Credential Format Profiles for them MAY be defined in the future versions of this specification.
 
 Distinct Credential formats identifiers, extension parameters/claims and processing rules are defined for each of the above-mentioned Credential formats.
 
@@ -1601,7 +1603,7 @@ The following is a non-normative example of a Credential Response with Credentia
 
 The Credential format identifier is `ldp_vc`.
 
-Note that Data Integrity used to be called Linked Data Proofs, hence "ldp" in the Credential format identifier.
+Note: Data Integrity used to be called Linked Data Proofs, hence "ldp" in the Credential format identifier.
 
 #### Credential Issuer Metadata {#server_metadata_ldp_vc}
 
