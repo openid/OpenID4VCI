@@ -792,6 +792,8 @@ The CWT MUST contain the following elements :
 
 Credential Response can be immideate or deferred. The Credential Issuer MAY be able to immediately issue a requested Credential and send it to the Client.
 
+In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send an `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code is 202 in such a case.
+
 `application/json` media type MUST be used.
 
 In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send a `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code MUST be 202 (section 10.2.3 of [@!RFC2616]).
