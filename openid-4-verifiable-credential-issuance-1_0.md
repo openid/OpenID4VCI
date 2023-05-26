@@ -794,7 +794,7 @@ Credential Response can be immediate or deferred. The Credential Issuer MAY be a
 
 In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send an `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code is 202 in such a case.
 
-`application/json` media type MUST be used.
+Credential Response MUST be sent using `application/json` media type.
 
 In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send a `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code MUST be 202 (section 10.2.3 of [@!RFC2616]).
 
@@ -907,7 +907,7 @@ The client can request issuance of multiple Credentials of certain types and for
 
 ## Batch Credential Request {#batch-credential_request}
 
-The Batch Credential Endpoint allows a client to send multiple Credential Request objects (see (#credential_request)) to request the issuance of multiple credential at once. `application/json` media type MUST be used.
+The Batch Credential Endpoint allows a client to send multiple Credential Request objects (see (#credential_request)) to request the issuance of multiple credential at once. Batch Credential Request MUST be sent using `application/json` media type.
 
 The following claims are used in the Batch Credential Request:
 
@@ -948,7 +948,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Batch Credential Response {#batch-credential_response}
 
-Successful Batch Credential Response MUST contain all of the requested credentials. `application/json` media type MUST be used. 
+Successful Batch Credential Response MUST contain all of the requested credentials. Batch Credential Response MUST be sent using `application/json` media type.
 
 The following claims are used in the Batch Credential Response:
 
@@ -1019,7 +1019,7 @@ Communication with the Deferred Credential Endpoint MUST utilize TLS.
 
 ## Deferred Credential Request {#deferred-credential_request}
 
-The Deferred Credential Request is an HTTP POST request. `application/json` media type MUST be used.
+The Deferred Credential Request is an HTTP POST request. It MUST be sent using `application/json` media type.
 
 The following claims are used in the Batch Credential Response:
 
@@ -1038,9 +1038,9 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Deferred Credential Response {#deferred-credential_response}
 
-The deferred Credential Response uses the `format` and `credential` parameters as defined in (#credential-response).
+The Deferred Credential Response uses the `format` and `credential` parameters as defined in (#credential-response).
 
-`application/json` media type MUST be used.
+Deferred Credential Response MUST be sent using `application/json` media type.
 
 ## Deferred Credential Error Response {#deferred-credential_error_response}
 
