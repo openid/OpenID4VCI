@@ -1656,6 +1656,7 @@ The following is a non-normative example of an authorization details object with
 The following additional parameters are defined for Credential Requests and this Credential format.  
 
 * `credential_definition`: REQUIRED. JSON object containing the detailed description of the credential type. It consists at least of the following sub claims:
+  * `@context`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc).
   * `type`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc). The credential issued by the Credential Issuer MUST at least contain the values listed in this claim.
   * `credentialSubject`: OPTIONAL. A JSON object as defined in (#authorization_ldp_vc).
 
