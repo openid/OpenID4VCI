@@ -173,7 +173,7 @@ The following sub-sections illusterate some of the authorization flows supported
 
 ## Authorization Code Flow {#authorization-code-flow}
 
-Below is a diagram of a Credential issuance using the Authorization Code flow, using grant type `authorization_code` as defined in [@!RFC6749].
+Below is a diagram of a Credential issuance using the Authorization Code Flow, using grant type `authorization_code` as defined in [@!RFC6749].
 
 The diagram shows how a Wallet initiated flow as described in use case (#use-case-1) is implemented with the Credential Issuance API defined in this specification. Note that the diagram does not illustrate all of the optional features of this specification. 
 
@@ -209,7 +209,7 @@ The diagram shows how a Wallet initiated flow as described in use case (#use-cas
         |                |<---------------------------------------------------|             
 ~~~
 !---
-Figure: Issuance using Authorization code flow 
+Figure: Issuance using Authorization Code Flow 
 
 (1) The Wallet uses the Credential Issuer's metadata (#credential-issuer-metadata) to learn what credential types and formats the Credential Issuer supports and to determine the issuer URL of the OAuth 2.0 Authorization Server the Credential Issuer relies on. Note in this example, the Credential Issuer also provides the OAuth 2.0 Authorization Server. This specification enables deployments where the Credential Issuer API and the Authorization Server are different services, perhaps even provided by different entities.  
 
@@ -270,7 +270,7 @@ The diagram is based on a Credential Issuer initiated flow illustrated in a use 
         |                |<---------------------------------------------------|             
 ~~~
 !---
-Figure: Issuance using Pre-Authorized code flow 
+Figure: Issuance using Pre-Authorized Code Flow 
 
 (1) The Credential Issuer successfully obtains consent and user data required for the issuance of a requested Credential from the End-User using Issuer specific business process.
 
@@ -618,12 +618,12 @@ The following additional clarifications are provided for some of the error codes
 
 `invalid_request`:
 
-- the Authorization Server does not expect a PIN in the pre-authorized flow but the client provides a PIN
-- the Authorization Server expects a PIN in the pre-authorized flow but the client does not provide a PIN
+- the Authorization Server does not expect a PIN in the Pre-Authorized Code Flow but the client provides a PIN
+- the Authorization Server expects a PIN in the Pre-Authorized Code Flow but the client does not provide a PIN
 
 `invalid_grant`:
 
-- the Authorization Server expects a PIN in the pre-authorized flow but the client provides the wrong PIN
+- the Authorization Server expects a PIN in the Pre-Authorized Code Flow but the client provides the wrong PIN
 - the End-User provides the wrong Pre-Authorized Code or the Pre-Authorized Code has expired
 
 `invalid_client`:
@@ -721,13 +721,13 @@ This specification defines the following values for the `proof_type` property:
 The JWT MUST contain the following elements:
 
   * in the JOSE header,
-    * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the proof JWT as recommended in Section 3.11 of [@!RFC8725].
     * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry. MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
+    * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the proof JWT as recommended in Section 3.11 of [@!RFC8725].
     * `kid`: CONDITIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
     * `jwk`: CONDITIONAL. JOSE Header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
     * `x5c`: CONDITIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element MAY be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
   * in the JWT body, 
-    * `iss`: OPTIONAL (string). The value of this claim MUST be the `client_id` of the client making the credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a pre-authorized code flow through anonymous access to the token endpoint.
+    * `iss`: OPTIONAL (string). The value of this claim MUST be the `client_id` of the client making the credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
     * `aud`: REQUIRED (string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
     * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519]. 
     * `nonce`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the credential issuer.
@@ -786,6 +786,7 @@ The CWT MUST contain the following elements :
     * (string-valued) Label `COSE_Key`: CONDITIONAL (byte string). COSE key material the new Credential shall be bound to. MUST NOT be present if `x5chain` is present.
     * Label 33 (`x5chain`): CONDITIONAL (byte string). As defined in [@!RFC9360], contains an ordered array of X.509 certificates corresponding to the key used to sign the CWT. MUST NOT be present if `COSE_Key` is present.
   * in the content of the message (see [@!RFC8392], Section 4), 
+    * Claim Key 1 (`iss`): OPTIONAL (text string). The value of this claim MUST be the `client_id` of the client making the credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
     * Claim Key 3 (`aud`): REQUIRED (text string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
     * Claim Key 6 (`iat`): REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the proof was issued. 
     * Claim Key 10 (`Nonce`): REQUIRED (byte string). The value of this claim MUST be the `c_nonce` provided by the Credential Issuer converted from string to bytes.
@@ -1146,7 +1147,7 @@ Note: The Client MAY use other mechanisms to obtain information about the Verifi
 
 ## OAuth 2.0 Authorization Server Metadata
 
-This specification also defines a new OAuth 2.0 Authorization Server metadata [@!RFC8414] parameter to publish whether the AS that the Credential Issuer relies on for authorization, supports anonymous Token Requests with the Pre-authorized Grant Type. It is defined as follows:
+This specification also defines a new OAuth 2.0 Authorization Server metadata [@!RFC8414] parameter to publish whether the AS that the Credential Issuer relies on for authorization, supports anonymous Token Requests with the Pre-Authorized Grant Type. It is defined as follows:
 
 * `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A JSON Boolean indicating whether the issuer accepts a Token Request with a Pre-Authorized Code but without a client id. The default is `false`. 
 
