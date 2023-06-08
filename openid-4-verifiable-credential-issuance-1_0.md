@@ -1546,13 +1546,13 @@ The following additional Credential Issuer metadata are defined for this Credent
 
 * `credential_definition`: REQUIRED. JSON object containing the detailed description of the credential type. It consists at least of the following two sub claims:
   * `type`: REQUIRED. JSON array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
-  * `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
+  * `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim name values offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
       * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
       * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
       * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
           * `name`: OPTIONAL. String value of a display name for the claim.
           * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier.
-* `order`: OPTIONAL. An array of `credentialSubject.[claim name].display.name` values that lists them in the order they should be displayed by the Wallet.
+* `order`: OPTIONAL. An array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
 The following is a non-normative example of an object comprising `credentials_supported` parameter of Credential format `jwt_vc_json`.
 
@@ -1620,7 +1620,13 @@ The following additional claims are defined as part of the object comprising `cr
 * `credential_definition`: REQUIRED. JSON object containing the detailed description of the credential type. It consists at least of the following three sub claims:
   * `@context`: REQUIRED. JSON array as defined in [@VC_DATA], Section 4.1.
   * `type`: REQUIRED. JSON array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
-  * `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
+  * `credentialSubject`: OPTIONAL. A JSON object containing a list of key value pairs, where the key identifies the claim name values offered in the Credential. The value MAY be a dictionary, which allows to represent the full (potentially deeply nested) structure of the verifiable credential to be issued. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
+      * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
+      * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
+      * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
+          * `name`: OPTIONAL. String value of a display name for the claim.
+          * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier.
+* `order`: OPTIONAL. An array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
 It is recommended to define an `@context` value to communicate additional information such as which claims are mandatory-to-be-issued, type of claim value (i.e., string, number, etc.), display properties of a credential and the order of the claim values when displayed as in (#vc-jwt).
 
@@ -1711,13 +1717,13 @@ The Credential format identifier is `mso_mdoc`.
 The following additional Credential Issuer metadata are defined for this Credential format. 
 
 * `doctype`: REQUIRED. JSON string identifying the credential type. 
-* `claims`: OPTIONAL. A JSON object containing a list of key value pairs, where the key is a certain `namespace` as defined in [@!ISO.18013-5] (or any profile of it), and the value is a JSON object. This object also contains a list of key value pairs, where the key is a claim that is defined in the respective namespace and is offered in the Credential. The value is a JSON object detailing the specifics of the claim with a following non-exhaustive list of parameters that MAY be included:
+* `claims`: OPTIONAL. A JSON object containing a list of key value pairs, where the key is a certain `namespace` as defined in [@!ISO.18013-5] (or any profile of it), and the value is a JSON object. This object also contains a list of key value pairs, where the key is a claim name value that is defined in the respective namespace and is offered in the Credential. The value is a JSON object detailing the specifics of the claim with a following non-exhaustive list of parameters that MAY be included:
     * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
     * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
     * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
         * `name`: OPTIONAL. String value of a display name for the claim.
         * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object with the same language identifier.
-* `order`: OPTIONAL. An array of `claims.display.name` values that lists them in the order they should be displayed by the Wallet.
+* `order`: OPTIONAL. An array of namespaced claim name values that lists them in the order they should be displayed by the Wallet. The values MUST be two strings separated by a tilde ('~') character, where the first string is a namespace value and a second is a claim name value. For example, `org.iso.18013.5.1~given_name".
 
 The following is a non-normative example of an object comprising `credentials_supported` parameter of Credential format `mso_mdoc`.
 
