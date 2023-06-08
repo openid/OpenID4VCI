@@ -1608,7 +1608,7 @@ The Credential format identifier is `ldp_vc`.
 
 When the `format` value is `ldp_vc`, entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules. 
 
-`@context` value in the `credential_definition` object SHOULD be used by the Wallet to check whether it supports a certain VC or not. Full JSON-LD processing MUST apply only to the Credential issued by the Credential Issuer.
+`@context` value in the `credential_definition` object could be used by the Wallet to check whether it supports a certain VC or not. If necessary, the Wallet could apply JSON-LD processing to the Credential issued by the Credential Issuer.
 
 Note: Data Integrity used to be called Linked Data Proofs, hence "ldp" in the Credential format identifier.
 
@@ -1675,7 +1675,7 @@ The Credential format identifier is `jwt_vc_json-ld`.
 
 When the `format` value is `jwt_vc_json-ld`, entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules.
 
-`@context` value in the `credential_definition` object SHOULD be used by the Wallet to check whether it supports a certain VC or not. Full JSON-LD processing MUST apply only to the Credential issued by the Credential Issuer.
+`@context` value in the `credential_definition` object could be used by the Wallet to check whether it supports a certain VC or not. If necessary, the Wallet could apply JSON-LD processing to the Credential issued by the Credential Issuer.
 
 #### Credential Issuer Metadata
 
