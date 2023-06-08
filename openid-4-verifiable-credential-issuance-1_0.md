@@ -1606,7 +1606,9 @@ The following is a non-normative example of a Credential Response with Credentia
 
 The Credential format identifier is `ldp_vc`.
 
-When the `format` value is `ldp_vc`, `credential_definition` object in Credential Offer, Authorization Details, and Credential Request, and Credential Issuer metadata MAY be processed using JSON-LD rules. The rest of the Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata MUST NOT be processed using JSON-LD rules. When JSON-LD processing is used, implementations MUST define an `@context` value to be used to communicate the requirements.
+When the `format` value is `ldp_vc`, entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules. 
+
+`@context` value in the `credential_definition` object SHOULD be used by the Wallet to check whether it supports a certain VC or not. Full JSON-LD processing MUST apply only to the Credential issued by the Credential Issuer.
 
 Note: Data Integrity used to be called Linked Data Proofs, hence "ldp" in the Credential format identifier.
 
@@ -1629,7 +1631,7 @@ The following is a non-normative example of an object comprising `credentials_su
 
 The following additional claims are defined for this Credential format. 
 
-* `credential_definition`: REQUIRED. JSON object containing (and isolating) the detailed description of the credential type. This object MUST be processed using full JSON-LD processing. It consists of the following sub claims:
+* `credential_definition`: REQUIRED. JSON object containing (and isolating) the detailed description of the credential type. It consists of the following sub claims:
     * `@context`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc).
     * `type`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc). This claim contains the type values the Wallet shall request in the subsequent Credential Request. 
 
@@ -1671,7 +1673,9 @@ The following is a non-normative example of a Credential Response with Credentia
 
 The Credential format identifier is `jwt_vc_json-ld`.
 
-When the `format` value is `jwt_vc_json-ld`, `credential_definition` object in Credential Offer, Authorization Details, Credential Request, and Credential Issuer metadata MAY be processed using JSON-LD rules. The rest of the Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata MUST NOT be processed using JSON-LD rules.
+When the `format` value is `jwt_vc_json-ld`, entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules.
+
+`@context` value in the `credential_definition` object SHOULD be used by the Wallet to check whether it supports a certain VC or not. Full JSON-LD processing MUST apply only to the Credential issued by the Credential Issuer.
 
 #### Credential Issuer Metadata
 
