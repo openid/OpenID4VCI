@@ -1203,6 +1203,14 @@ the Credential Issuer is supposed to be responsible for the lifecycle of its Cre
 
 The Wallet is supposed to detect signs of fraudulant behavior related to the Credential management in the Wallet (e.g., device rooting) and to act upon such signals. Options include Credential revocation at the Credential Issuer and/or invalidation of the key material used to cryptographically bind Credential to the identifier of the End-User possessing that Credential.  
 
+## Proof replay
+
+If an adversary is able to get hold of a proof defined in (#proof_types), the adversary could replay that token at the same endpoint (the HTTP endpoint and method are enforced via the respective claims in the JWTs). To limit this, servers MUST only accept proofs for a limited time after their creation (preferably only for a relatively brief period on the order of seconds or minutes).
+
+Note: To accommodate for clock offsets, the Credential Issuer server MAY accept proofs that carry an `iat` time in the reasonably near future (on the order of seconds or minutes). Because clock skews between servers and clients may be large, servers MAY limit proof lifetimes by using server-provided nonce values containing the time at the server rather than comparing the client-supplied `iat` time to the time at the server. Nonces created in this way yield the same result even in the face of arbitrarily large clock skews.
+
+Server-provided nonces are an effective means for further reducing the chances for successful proof replay. Unlike cryptographic nonces, it is acceptable for clients to use the same nonce multiple times, and for the server to accept the same nonce multiple times.
+
 # Implementation Considerations
 
 ## Claim-based Binding of the Credential to the End-User possessing the Credential {#claim-based-binding}
