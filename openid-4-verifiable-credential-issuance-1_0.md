@@ -1562,7 +1562,7 @@ The following is a non-normative example of an object comprising `credentials_su
 
 #### Credential Offer
 
-The following additional claims are defined for this Credential format. 
+The following additional claims are defined for this Credential format to be added to the object entry of the `credentials` parameter defined in (#credential_offer_parameters).
 
 * `credential_definition`: REQUIRED. JSON object containing the detailed description of the credential type. It consists at least of the following sub claims:
   * `type`: REQUIRED. JSON array as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the Wallet shall request in the subsequent Credential Request.
@@ -1638,7 +1638,7 @@ The following is a non-normative example of an object comprising `credentials_su
 
 #### Credential Offer {#issuer_initiated_issuance_ldp_vc}
 
-The following additional claims are defined for this Credential format. 
+The following additional claims are defined for this Credential format to be added to the object entry of the `credentials` parameter defined in (#credential_offer_parameters).
 
 * `credential_definition`: REQUIRED. JSON object containing (and isolating) the detailed description of the credential type. It consists of the following sub claims:
     * `@context`: REQUIRED. JSON array as defined in (#server_metadata_ldp_vc).
@@ -1739,7 +1739,7 @@ The following is a non-normative example of an object comprising `credentials_su
 
 ### Credential Offer
 
-The following additional claims are defined for this Credential format. 
+The following additional claims are defined for this Credential format to be added to the object entry of the `credentials` parameter defined in (#credential_offer_parameters). 
 
 * `doctype`: REQUIRED. JSON string as defined in (#server_metadata_mso_mdoc). 
 
