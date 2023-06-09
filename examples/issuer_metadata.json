@@ -4,20 +4,52 @@
         {
             "id":"UniversityDegree_LDP",
             "format": "ldp_vc",
-            "@context": [
-                "https://www.w3.org/2018/credentials/v1",
-                "https://www.w3.org/2018/credentials/examples/v1"
-            ],
-            "types": [
-                "VerifiableCredential",
-                "UniversityDegreeCredential"
-            ],
             "cryptographic_binding_methods_supported": [
                 "did"
             ],
             "cryptographic_suites_supported": [
                 "Ed25519Signature2018"
             ],
+            "credential_definition": {
+                "@context": [
+                    "https://www.w3.org/2018/credentials/v1",
+                    "https://www.w3.org/2018/credentials/examples/v1"
+                ],
+                "types": [
+                    "VerifiableCredential",
+                    "UniversityDegreeCredential"
+                ],
+                "credentialSubject": {
+                    "given_name": {
+                        "display": [
+                            {
+                                "name": "Given Name",
+                                "locale": "en-US"
+                            },
+                            {
+                                "name": "名前",
+                                "locale": "ja-JP"
+                            }
+                        ]
+                    },
+                    "last_name": {
+                        "display": [
+                            {
+                                "name": "Surname",
+                                "locale": "en-US"
+                            }
+                        ]
+                    },
+                    "degree": {},
+                    "gpa": {
+                        "display": [
+                            {
+                                "name": "GPA"
+                            }
+                        ]
+                    }
+                }
+            },
             "display": [
                 {
                     "name": "University Credential",
@@ -39,50 +71,52 @@
                     "background_color": "#12107c",
                     "text_color": "#FFFFFF"
                 }
-            ],
-            "credentialSubject": {
-                "given_name": {
-                    "display": [
-                        {
-                            "name": "Given Name",
-                            "locale": "en-US"
-                        },
-                        {
-                            "name": "名前",
-                            "locale": "ja-JP"
-                        }
-                    ]
-                },
-                "last_name": {
-                    "display": [
-                        {
-                            "name": "Surname",
-                            "locale": "en-US"
-                        }
-                    ]
-                },
-                "degree": {},
-                "gpa": {
-                    "display": [
-                        {
-                            "name": "GPA"
-                        }
-                    ]
-                }
-            }
+            ]
         },
         {
             "format": "jwt_vc_json",
-            "types": [
-                "VerifiableCredential",
-                "UniversityDegreeCredential"
-            ],
             "cryptographic_binding_methods_supported": [
                 "did"
             ],
             "cryptographic_suites_supported": [
                 "ES256K"
             ],
+            "credential_definition": {
+                "types": [
+                    "VerifiableCredential",
+                    "UniversityDegreeCredential"
+                ],
+                "credentialSubject": {
+                    "given_name": {
+                        "display": [
+                            {
+                                "name": "Given Name",
+                                "locale": "en-US"
+                            },
+                            {
+                                "name": "名前",
+                                "locale": "ja-JP"
+                            }
+                        ]
+                    },
+                    "last_name": {
+                        "display": [
+                            {
+                                "name": "Surname",
+                                "locale": "en-US"
+                            }
+                        ]
+                    },
+                    "degree": {},
+                    "gpa": {
+                        "display": [
+                            {
+                                "name": "GPA"
+                            }
+                        ]
+                    }
+                }
+            },
             "display": [
                 {
                     "name": "University Credential",
@@ -105,36 +139,6 @@
                     "text_color": "#FFFFFF"
                 }
             ],
-            "credentialSubject": {
-                "given_name": {
-                    "display": [
-                        {
-                            "name": "Given Name",
-                            "locale": "en-US"
-                        },
-                        {
-                            "name": "名前",
-                            "locale": "ja-JP"
-                        }
-                    ]
-                },
-                "last_name": {
-                    "display": [
-                        {
-                            "name": "Surname",
-                            "locale": "en-US"
-                        }
-                    ]
-                },
-                "degree": {},
-                "gpa": {
-                    "display": [
-                        {
-                            "name": "GPA"
-                        }
-                    ]
-                }
-            }
         },
         {
             "format": "mso_mdoc",
