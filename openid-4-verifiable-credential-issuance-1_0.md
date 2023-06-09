@@ -1532,6 +1532,8 @@ Note: VCs secured using Data Integrity MAY NOT necessarily use JSON-LD and MAY N
 
 Distinct Credential formats identifiers, extension parameters/claims and processing rules are defined for each of the above-mentioned Credential formats.
 
+It is on purpose that the Credential Offer does not contain `credentialSubject` property, while Authorization Details and Credential Request do. This is because this property is meant to be used by the Wallet to specify which claims it is requesting to be issued out of all the claims the Credential Issuer is capable of issuing for this particular Credential (data minimization), while Credential Offer is a mere "invitation" from the Credential Issuer to the Wallet to start the issuance flow.
+
 ### VC signed as a JWT, not using JSON-LD {#vc-jwt}
 
 #### Format Identifier
