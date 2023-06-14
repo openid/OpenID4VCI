@@ -697,10 +697,12 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
    "format": "jwt_vc_json",
-   "type": [
-      "VerifiableCredential",
-      "UniversityDegreeCredential"
-   ],
+   "credential_definition": {}
+    "type": [
+        "VerifiableCredential",
+        "UniversityDegreeCredential"
+    ]
+   },
    "proof": {
       "proof_type": "jwt",
       "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
@@ -928,10 +930,12 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
    "credential_requests":[
       {
          "format":"jwt_vc_json",
-         "type":[
-            "VerifiableCredential",
-            "UniversityDegreeCredential"
-         ],
+         "credential_definition": {
+           "type":[
+             "VerifiableCredential",
+             "UniversityDegreeCredential"
+           ]
+         },
          "proof":{
             "proof_type":"jwt",
             "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZTpl...C_aZKPxgihac0aW9EkL1nOzM"
