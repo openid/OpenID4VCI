@@ -697,7 +697,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
    "format": "jwt_vc_json",
-   "credential_definition": {}
+   "credential_definition": {
     "type": [
         "VerifiableCredential",
         "UniversityDegreeCredential"
