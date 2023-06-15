@@ -730,7 +730,7 @@ The JWT MUST contain the following elements:
     * `iss`: OPTIONAL (string). The value of this claim MUST be the `client_id` of the client making the credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
     * `aud`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
     * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the key proof was issued using the syntax defined in [@!RFC7519]. 
-    * `nonce`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the credential issuer.
+    * `nonce`: OPTIONAL (string). The value type of this claim MUST be a string, where the value is a server-provided `c_nonce`. MUST be present when the Wallet received server-provided `c_nonce`.
 
 The Credential Issuer MUST validate that the `proof` is actually signed by a key identified in the JOSE Header.
 
@@ -789,7 +789,7 @@ The CWT MUST contain the following elements :
     * Claim Key 1 (`iss`): OPTIONAL (text string). The value of this claim MUST be the `client_id` of the client making the credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
     * Claim Key 3 (`aud`): REQUIRED (text string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
     * Claim Key 6 (`iat`): REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the key proof was issued. 
-    * Claim Key 10 (`Nonce`): REQUIRED (byte string). The value of this claim MUST be the `c_nonce` provided by the Credential Issuer converted from string to bytes.
+    * Claim Key 10 (`Nonce`): OPTIONAL (byte string). The value of this claim MUST be a server-provided `c_nonce` converted from string to bytes. MUST be present when the Wallet received server-provided `c_nonce`.
 
 ### Verifying Key Proof {#verifying-key-proof}
 
@@ -800,7 +800,7 @@ To validate a Key Proof, the Credential Issuer MUST ensure that:
 - the header parameter indicates a registered asymmetric digital signature algorithm, is not none, is supported by the application, and is acceptable per local policy,
 - the signature on the Key Proof verifies with the public key contained in the header parameter,
 - the header parameter does not contain a private key,
-- the nonce claim matches the Credential Issuer-provided nonce value,
+- the nonce claim matches the server-provided nonce value,
 - the creation time of the JWT, as determined by either the issuance time, or a server managed timestamp via the nonce claim, is within an acceptable window (see (#key-proof-replay)).
 
 These checks may be performed in any order.
