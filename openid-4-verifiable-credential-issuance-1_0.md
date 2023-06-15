@@ -721,7 +721,7 @@ This specification defines the following values for the `proof_type` property:
 The JWT MUST contain the following elements:
 
   * in the JOSE header,
-    * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry. MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
+    * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE.ALGS]. MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
     * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the proof JWT as recommended in Section 3.11 of [@!RFC8725].
     * `kid`: CONDITIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
     * `jwk`: CONDITIONAL. JOSE Header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
@@ -781,7 +781,7 @@ Here is another example JWT not only proving possession of a private key but als
 The CWT MUST contain the following elements :
 
   * in the COSE protected header (see [@!RFC8152], Section 3.1.),
-    * Label 1 (`alg`): REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry. MUST NOT be an identifier for a symmetric algorithm (MAC).
+    * Label 1 (`alg`): REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry [@IANA.COSE.ALGS]. MUST NOT be an identifier for a symmetric algorithm (MAC).
     * Label 3 (`content type`): REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the proof CWT.
     * (string-valued) Label `COSE_Key`: CONDITIONAL (byte string). COSE key material the new Credential shall be bound to. MUST NOT be present if `x5chain` is present.
     * Label 33 (`x5chain`): CONDITIONAL (byte string). As defined in [@!RFC9360], contains an ordered array of X.509 certificates corresponding to the key used to sign the CWT. MUST NOT be present if `COSE_Key` is present.
@@ -790,6 +790,20 @@ The CWT MUST contain the following elements :
     * Claim Key 3 (`aud`): REQUIRED (text string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
     * Claim Key 6 (`iat`): REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the proof was issued. 
     * Claim Key 10 (`Nonce`): REQUIRED (byte string). The value of this claim MUST be the `c_nonce` provided by the Credential Issuer converted from string to bytes.
+
+### Verifying Key Proof {#verifying-key-proof}
+
+To validate a Key Proof, the Credential Issuer MUST ensure that:
+
+- all required claims for that proof type are contained as defined in (#proof_types),
+- the Key Proof is explicitly typed using header parameters as defined for that proof type,
+- the header parameter indicates a registered asymmetric digital signature algorithm, is not none, is supported by the application, and is acceptable per local policy,
+- the signature on the Key Proof verifies with the public key contained in the header parameter,
+- the header parameter does not contain a private key,
+- the nonce claim matches the Credential Issuer-provided nonce value,
+- the creation time of the JWT, as determined by either the issuance time, or a server managed timestamp via the nonce claim, is within an acceptable window (see (#key-proof-replay)).
+
+These checks may be performed in any order.
 
 ## Credential Response {#credential-response}
 
@@ -1409,6 +1423,24 @@ TBD
             <organization> ISO/IEC JTC 1/SC 17 Cards and security devices for personal identification</organization>
           </author>
           <date year="2021"/>
+        </front>
+</reference>
+
+<reference anchor="IANA.JOSE.ALGS" target="https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms">
+        <front>
+          <title>JSON Web Signature and Encryption Algorithms</title>
+          <author>
+            <organization>IANA</organization>
+          </author>
+        </front>
+</reference>
+
+<reference anchor="IANA.COSE.ALGS" target="https://www.iana.org/assignments/cose/cose.xhtml#algorithms">
+        <front>
+          <title>COSE Algorithms</title>
+          <author>
+            <organization>IANA</organization>
+          </author>
         </front>
 </reference>
 
