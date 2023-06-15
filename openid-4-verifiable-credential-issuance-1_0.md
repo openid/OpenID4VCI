@@ -1205,7 +1205,9 @@ The Wallet is supposed to detect signs of fraudulant behavior related to the Cre
 
 ## Key Proof replay
 
-If an adversary is able to get hold of a key proof defined in (#proof_types), the adversary could replay that token at the same endpoint (the HTTP endpoint and method are enforced via the respective claims in the JWTs). To limit this, servers MUST only accept proofs for a limited time after their creation (preferably only for a relatively brief period on the order of seconds or minutes).
+If an adversary is able to get hold of a key proof defined in (#proof_types), the adversary could get a Credential issued that is bound to a key pair controlled by the victim. To limit this, servers MUST only accept proofs for a limited time after their creation (preferably only for a relatively brief period on the order of seconds or minutes).
+
+Note that for the attacker to be able to present to the Verifier a Credential bound to a replayed Key Proof, the attacker also needs to obtain the victim's private key. To limit this, servers are RECOMMENDED to check how the Wallet protects the private keys, using mechanisms such as Key Based Client Authentication defined in [@I-D.looker-oauth-attested-key-based-client-authentication].
 
 Note: To accommodate for clock offsets, the Credential Issuer server MAY accept proofs that carry an `iat` time in the reasonably near future (on the order of seconds or minutes). Because clock skews between servers and clients may be large, servers MAY limit key proof lifetimes by using server-provided nonce values containing the time at the server rather than comparing the client-supplied `iat` time to the time at the server. Nonces created in this way yield the same result even in the face of arbitrarily large clock skews.
 
