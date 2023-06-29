@@ -832,7 +832,7 @@ Cache-Control: no-store
 Below is a non-normative example of a Credential Response in a deferred flow:
 
 ```
-HTTP/1.1 202 OK
+HTTP/1.1 202 Accepted
 Content-Type: application/json
 Cache-Control: no-store
 
