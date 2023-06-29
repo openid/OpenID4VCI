@@ -1230,7 +1230,7 @@ Another use case is when the Credential Issuer uses cryptographic schemes that c
 
 The Credential Endpoint can be accessed multiple times by a Wallet using the same Access Token, even for the same Credential. The Credential Issuer determines if the subsequent successful requests will return the same or an updated Credential, such as having a new expiration time or using the most current End-User claims.
 
-The Credential Issuer MAY also decide that the current Access Token is no longer valid and a re-authentication or Token Refresh (see [@!RFC6749, section 6]) MAY be required under the Credential Issuer's discretion. The policies between the Credential Endpoint and the Authorization Server that MAY change the behavior of what is returned with a new Access Token are beyond the scope of this specification (see [@!RFC6749, section 7]).
+The Credential Issuer MAY also decide to no longer accept the Access Token and a re-authentication or Token Refresh (see [@!RFC6749], section 6) MAY be required at the Credential Issuer's discretion. The policies between the Credential Endpoint and the Authorization Server that MAY change the behavior of what is returned with a new Access Token are beyond the scope of this specification (see [@!RFC6749, section 7]).
 
 The action leading to the Wallet performing another Credential Request can also be triggered by a background process, or by the Credential Issuer using an out-of-band mechanism (SMS, email, etc.) to inform the End-User.
 
@@ -1244,6 +1244,24 @@ When the issuer identifier in the issued Credential is a DID, below is a non-exh
 1. If the issuer identifier in the issued Credential is an object, add to the object `credential_issuer` Claim as defined in (#credential-issuer-identifier).
 
 The Wallet MAY check the binding between Credential Issuer Identifier and the issuer identifier in the issued Credential.
+
+## Refreshing Issued Credentials
+
+After a Verifiable Credential has been issued to the Holder, claim values about the subject of a Credential, or a signature on the Credential may need to be updated. There are two possible mechanisms to do so.
+
+First, the Wallet may receive an updated version of a Credential from a Credential Endpoint or a Batch Credential Endpoint using a valid Access Token. This does not involve interaction with the End-User. If the Credential Issuer issued a Refresh Token to the Wallet, the Wallet would have to obtain a fresh Access Token by making a request to the Token Endpoint as defined in Section 6 of [@!RFC6749].
+
+Second, the Issuer can reissue the Credential by starting the issuance process from the beginning. This would involve interaction with the End-User. A Credential needs to be reissued if the Wallet does not have a valid Access Token or a valid Refresh Token. With this approach, when a new Credential is issued, the Wallet might need to check if it already has a Credential of the same type and, if necessary, delete the old Credential. Otherwise, the Wallet might end up with more than one Credential of the same type, without knowing which one is the latest.
+
+Credential Refresh can be initiated by the Wallet independently from the Credential Issuer, or the Credential Issuer can send a signal to the Wallet asking it to request Credential refresh. How the Credential Issuer sends such a signal is out of scope for this specification.
+
+It is up to the Credential Issuer whether to update both the signature and the claim values, or only the signature.
+
+## Protecting the Access Token
+
+Access Tokens represent End-User authorization and consent to issue certain Credential(s). Long lived Access Tokens giving access to credentials MUST not be issued unless sender-constrained. Access Tokens with lifetimes longer than 5 minutes are in general considered long lived.
+
+To sender-constrain Access Tokens, see the recommendations in Section 4.10.1 in [@!I-D.ietf-oauth-security-topics]. If Bearer Access Tokens are stored by the Wallet they MUST be stored in a secure manner, for example, encrypted using a key stored in a protected key store.
 
 # Privacy Considerations
 
