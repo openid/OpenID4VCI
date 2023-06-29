@@ -296,7 +296,7 @@ This endpoint is used by a Credential Issuer in case it is already in an interac
 
 ## Credential Offer {#credential_offer}
 
-The Credential Issuer sends Credential Offer as an HTTP GET request or an HTTP redirect to the Credential Offer Endpoint URL defined in (#client-metadata).
+The Credential Issuer sends Credential Offer as an HTTP GET request or an HTTP redirect to the Wallet's Credential Offer Endpoint defined in (#client-metadata).
 
 Credential Offer object which is a JSON object with the Credential Offer parameters, can be sent by value or by reference.
 
@@ -1085,9 +1085,13 @@ Cache-Control: no-store
 
 This specification defines the following new Client Metadata parameter in addition to [@!RFC7591] for Wallets acting as OAuth 2.0 client:
 
-* `credential_offer_endpoint`: OPTIONAL. URL of the Credential Offer Endpoint of a Wallet. 
+* `credential_offer_endpoint`: OPTIONAL. Credential Offer Endpoint of a Wallet.
 
-If the Credential Issuer is unable to perform discovery of the Credential Offer Endpoint URL, the following claimed URL is used: `openid-credential-offer://`.
+### Client Metadata Retrieval {#client-metadata-retrieval}
+
+How to obtain Client Metadata is out of scope of this specification. The profiles of this specification may define static Client Metadata values.
+
+If the Credential Issuer is unable to perform discovery of the Wallet's Credential Offer Endpoint, the following claimed URL is used: `openid-credential-offer://`.
 
 ## Credential Issuer Metadata {#credential-issuer-metadata}
 
