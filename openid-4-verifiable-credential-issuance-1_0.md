@@ -800,7 +800,7 @@ To validate a Key Proof, the Credential Issuer MUST ensure that:
 
 - all required claims for that proof type are contained as defined in (#proof_types),
 - the Key Proof is explicitly typed using header parameters as defined for that proof type,
-- the header parameter indicates a registered asymmetric digital signature algorithm, is not none, is supported by the application, and is acceptable per local policy,
+- the header parameter indicates a registered asymmetric digital signature algorithm, `alg` parameter value is not `none`, is supported by the application, and is acceptable per local policy,
 - the signature on the Key Proof verifies with the public key contained in the header parameter,
 - the header parameter does not contain a private key,
 - the nonce claim matches the server-provided nonce value,
