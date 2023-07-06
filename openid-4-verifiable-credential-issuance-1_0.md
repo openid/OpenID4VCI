@@ -227,7 +227,7 @@ Note: steps (2) and (3) happen in the frontchannel, by redirecting the End-User 
 
 If the Credential Issuer requires more time to issue a Credential, the Credential Issuer MAY return an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued Credential as defined in (#deferred-credential-issuance).
 
-If the Issuer wants to issue multiple Credentials in one response, the Issuer MAY support the Batch Credential Endpoint and the Wallet MAY send a Batch Credential Request to the Batch Credential Endpoint as defined in (#batch-credential-endpoint).
+If the Credential Issuer wants to issue multiple Credentials in one response, the Credential Issuer MAY support the Batch Credential Endpoint and the Wallet MAY send a Batch Credential Request to the Batch Credential Endpoint as defined in (#batch-credential-endpoint).
 
 With grant type `authorization_code`, it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks and Pushed Authorization Requests [@RFC9126] to ensure integrity and authenticity of the authorization request.
 
@@ -1220,7 +1220,7 @@ Note: For the attacker to be able to present to the Verifier a Credential bound 
 
 Note: To accommodate for clock offsets, the Credential Issuer server MAY accept proofs that carry an `iat` time in the reasonably near future (on the order of seconds or minutes). Because clock skews between servers and clients may be large, servers MAY limit key proof lifetimes by using server-provided nonce values containing the time at the server rather than comparing the client-supplied `iat` time to the time at the server. Nonces created in this way yield the same result even in the face of arbitrarily large clock skews.
 
-Server-provided nonces are an effective means for further reducing the chances for successful key proof replay by an attacker. A Wallet can keep using a certain nonce until the Issuer provides a fresh nonce. This way the Credential Issuer determines how often a certain nonce can be used. Servers MUST have a clear policy whether the same key proof can be presented multiple times and for how long, or whether each Credential Request MUST have a fresh key proof.
+Server-provided nonces are an effective means for further reducing the chances for successful key proof replay by an attacker. A Wallet can keep using a certain nonce until the Credential Issuer provides a fresh nonce. This way the Credential Issuer determines how often a certain nonce can be used. Servers MUST have a clear policy whether the same key proof can be presented multiple times and for how long, or whether each Credential Request MUST have a fresh key proof.
 
 # Implementation Considerations
 
@@ -1250,12 +1250,12 @@ The action leading to the Wallet performing another Credential Request can also 
 
 Credential Issuer Identifier is always a URL using the `https` scheme as defined in (#credential-issuer-identifier). Depending on the Credential format, the issuer identifier in the issued Credential is not always a URL using the `https` scheme. Some other forms that it can take are a DID included in the `issuer` property in a [@VC_DATA] format, or the `Subject` value of the document signer certificate included in the `x5chain` element in a [@ISO.18013-5] format.
 
-When the issuer identifier in the issued Credential is a DID, below is a non-exhaustive list of mechanisms how Credential Issuer MAY provide binding to the Credential Issuer Identifier:
+When the Issuer identifier in the issued Credential is a DID, below is a non-exhaustive list of mechanisms how the Credential Issuer MAY provide binding to the Credential Issuer Identifier:
 
 1. Use [@DIF.Well-Known_DID] Specification to provide binding between a DID and a certain domain.
-1. If the issuer identifier in the issued Credential is an object, add to the object `credential_issuer` Claim as defined in (#credential-issuer-identifier).
+1. If the Issuer identifier in the issued Credential is an object, add to the object `credential_issuer` Claim as defined in (#credential-issuer-identifier).
 
-The Wallet MAY check the binding between Credential Issuer Identifier and the issuer identifier in the issued Credential.
+The Wallet MAY check the binding between the Credential Issuer Identifier and the Issuer identifier in the issued Credential.
 
 ## Refreshing Issued Credentials
 
@@ -1263,7 +1263,7 @@ After a Verifiable Credential has been issued to the Holder, claim values about 
 
 First, the Wallet may receive an updated version of a Credential from a Credential Endpoint or a Batch Credential Endpoint using a valid Access Token. This does not involve interaction with the End-User. If the Credential Issuer issued a Refresh Token to the Wallet, the Wallet would have to obtain a fresh Access Token by making a request to the Token Endpoint as defined in Section 6 of [@!RFC6749].
 
-Second, the Issuer can reissue the Credential by starting the issuance process from the beginning. This would involve interaction with the End-User. A Credential needs to be reissued if the Wallet does not have a valid Access Token or a valid Refresh Token. With this approach, when a new Credential is issued, the Wallet might need to check if it already has a Credential of the same type and, if necessary, delete the old Credential. Otherwise, the Wallet might end up with more than one Credential of the same type, without knowing which one is the latest.
+Second, the Credential Issuer can reissue the Credential by starting the issuance process from the beginning. This would involve interaction with the End-User. A Credential needs to be reissued if the Wallet does not have a valid Access Token or a valid Refresh Token. With this approach, when a new Credential is issued, the Wallet might need to check if it already has a Credential of the same type and, if necessary, delete the old Credential. Otherwise, the Wallet might end up with more than one Credential of the same type, without knowing which one is the latest.
 
 Credential Refresh can be initiated by the Wallet independently from the Credential Issuer, or the Credential Issuer can send a signal to the Wallet asking it to request Credential refresh. How the Credential Issuer sends such a signal is out of scope for this specification.
 
