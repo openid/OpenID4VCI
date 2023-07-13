@@ -151,11 +151,11 @@
             ],
             "display": [
                 {
-                    "name": "Mobile Drivers License",
+                    "name": "Mobile Driving License",
                     "locale": "en-US",
                     "logo": {
                         "url": "https://examplestate.com/public/mdl.png",
-                        "alternative_text": "a square figure of a mobile drivers license"
+                        "alternative_text": "a square figure of a mobile driving license"
                     },
                     "background_color": "#12107c",
                     "text_color": "#FFFFFF"
