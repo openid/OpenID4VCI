@@ -276,7 +276,7 @@ Figure: Issuance using Pre-Authorized Code Flow
 
 (1) The Credential Issuer successfully obtains consent and user data required for the issuance of a requested Credential from the End-User using Issuer specific business process.
 
-(2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example as a QR code or as a deeplink. 
+(2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a link.
 
 (3) The Wallet uses information from the Credential Offer to obtain the Credential Issuer's metadata including details about the Credential that this Credential Issuer wants to issue. This step is defined in (#credential-issuer-metadata).
 
@@ -305,7 +305,7 @@ Credential Offer contains a single URI query parameter `credential_offer` or `cr
 * `credential_offer`: A JSON object with the Credential Offer parameters. MUST NOT be present when `credential_offer_uri` parameter is present.
 * `credential_offer_uri`: A URL using the `https` scheme referencing a resource containing a JSON object with the Credential Offer parameters. MUST NOT be present when `credential_offer` parameter is present.
 
-The Credential Issuer MAY render a QR code containing the Credential Offer that can be scanned by the End-User using a Wallet, or a deeplink that the End-User can click.
+The Credential Issuer MAY render a QR code containing the Credential Offer that can be scanned by the End-User using a Wallet, or a link that the End-User can click.
 
 For security considerations, see (#credential-offer-security).
 
@@ -345,7 +345,7 @@ Below is a non-normative example of a Credential Offer passed by value:
   pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22user_pin_required%22:true%7D%7D%7D
 ```
 
-The following is a non-normative example of a Credential Offer that can be included in a QR code or a deeplink used to invoke Wallet deployed as a native app:
+The following is a non-normative example of a Credential Offer that can be included in a QR code or a link used to invoke a Wallet deployed as a native app:
 
 ```
 openid-credential-offer://credential_offer=%7B%22credential_issuer%22:%22
