@@ -809,7 +809,7 @@ To validate a Key Proof, the Credential Issuer MUST ensure that:
 - the header parameter indicates a registered asymmetric digital signature algorithm, `alg` parameter value is not `none`, is supported by the application, and is acceptable per local policy,
 - the signature on the Key Proof verifies with the public key contained in the header parameter,
 - the header parameter does not contain a private key,
-- the nonce claim matches the server-provided nonce value,
+- the `nonce` claim (or Claim Key 10) matches the server-provided `c_nonce` value, if the server had previously provided a `c_nonce`,
 - the creation time of the JWT, as determined by either the issuance time, or a server managed timestamp via the nonce claim, is within an acceptable window (see (#key-proof-replay)).
 
 These checks may be performed in any order.
