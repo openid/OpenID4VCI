@@ -120,7 +120,7 @@ This specification defines an API for credential issuance provided by a Credenti
 * An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow. See (#credential_offer_endpoint).
 * A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing. See (#credential-issuer-metadata)
 
-Both the Credential and the Batch Credential Endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both requests therefore allow to convey a proof of posession for the key material. Multiple proof types are supported. 
+Both the Credential and the Batch Credential Endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both requests therefore allow to convey a proof of posession for the key material. Multiple key proof types are supported. 
 
 ## OAuth 2.0
 
@@ -227,7 +227,7 @@ Note: steps (2) and (3) happen in the frontchannel, by redirecting the End-User 
 
 If the Credential Issuer requires more time to issue a Credential, the Credential Issuer MAY return an Acceptance Token to the Wallet with the information when the Wallet can start sending Deferred Credential Request to obtain an issued Credential as defined in (#deferred-credential-issuance).
 
-If the Issuer wants to issue multiple Credentials in one response, the Issuer MAY support the Batch Credential Endpoint and the Wallet MAY send a Batch Credential Request to the Batch Credential Endpoint as defined in (#batch-credential-endpoint).
+If the Credential Issuer wants to issue multiple Credentials in one response, the Credential Issuer MAY support the Batch Credential Endpoint and the Wallet MAY send a Batch Credential Request to the Batch Credential Endpoint as defined in (#batch-credential-endpoint).
 
 With grant type `authorization_code`, it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks and Pushed Authorization Requests [@RFC9126] to ensure integrity and authenticity of the authorization request.
 
@@ -313,8 +313,8 @@ For security considerations, see (#credential-offer-security).
 
 Credential Offer object MAY contain the following parameters: 
 
-* `credential_issuer`: REQUIRED. The URL of the Credential Issuer, the Wallet is requested to obtain one or more Credentials from as defined in (#credential-issuer-identifier). The Wallet uses it to obtain the Credential Issuer's Metadata following the steps defined in (#credential-issuer-wellknown).
-* `credentials`: REQUIRED. A JSON array, where every entry is a JSON object or a JSON string. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `id` values in one of the objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the Wallet MUST resolve this string value to the respective object.
+* `credential_issuer`: REQUIRED. The URL of the Credential Issuer defined in (#credential-issuer-identifier), from which the Wallet is requested to obtain one or more Credentials. The Wallet uses it to obtain the Credential Issuer's Metadata following the steps defined in (#credential-issuer-wellknown).
+* `credentials`: REQUIRED. A JSON array, where every entry is a JSON object or a JSON string. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterising the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `scope` values in one of the objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the Wallet MUST resolve this string value to the respective object.
 * `grants`: OPTIONAL. A JSON object indicating to the Wallet the Grant Types the Credential Issuer's AS is prepared to process for this credential offer. Every grant is represented by a key and an object. The key value is the Grant Type identifier, the object MAY contain parameters either determining the way the Wallet MUST use the particular grant and/or parameters the Wallet MUST send with the respective request(s). If `grants` is not present or empty, the Wallet MUST determine the Grant Types the Credential Issuer's AS supports using the respective metadata. When multiple grants are present, it's at the Wallet’s discretion which one to use.
 
 The following values are defined by this specification: 
@@ -442,7 +442,13 @@ Note: applications MAY combine authorizarion details of type `openid_credential`
 
 In addition to a mechanism defined in (#credential-authz-request), Credential Issuers MAY support requesting authorization to issue a credential using OAuth 2.0 scope parameter.
 
-The concrete scope values and the mapping between a certain scope value and the credential type (and further parameters associated with the authorization to issue this credential type) is out of scope of this specification. Possible options include normative text in a profile of this specification defining scope values along with a description of their semantics or machine readable definitions in the Credential Issuer's metadata such as mapping a scope value to an equivalent authorization details object (see above).
+When the Wallet does not know which scope value to use to request issuance of a certain credential, it can discover it using the `scope` Credential Issuer metadata parameter defined in (#credential-metadata-object). When the flow started with the Credential Offer, the Wallet can use the information in the `credentials` Credential Offer parameter. When the entry of the `credentials` parameter is a string, it can be used as a scope value. When the entry of the `credentials` parameter is an object, it can be used to discover the desired scope value from the Credential Issuer metadata that can be obtained using `credential_issuer` Credential Offer parameter as defined in (#credential-issuer-wellknown).
+
+The Wallet can discover the scope values using other options such as normative text in a profile of this specification that defines scope values along with a description of their semantics.
+
+The concrete scope values are out of scope of this specification.
+
+The Wallet MAY combine scopes discovered from the Credential Issuer metadata with the scopes discovered from the Authorization Server metadata.
 
 It is RECOMMENDED to use collision-resistant scope values.
 
@@ -458,7 +464,7 @@ Below is a non-normative example of an Authorization Request using the scope `co
 ```
 GET /authorize?
   response_type=code
-  &scope=com.example.healthCardCredential
+  &scope=UniversityDegree_JWT
   &resource=https://credential-issuer.example.com
   &client_id=s6BhdRkqt3
   &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
@@ -680,15 +686,15 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 
 * `format`: REQUIRED. Format of the Credential to be issued. This Credential format identifier determines further parameters required to determine the type and (optionally) the content of the credential to be issued. Credential Format Profiles consisting of the Credential format specific set of parameters are defined in (#format_profiles).
 * `proof`: OPTIONAL. JSON object containing proof of possession of the key material the issued Credential shall be bound to.  The `proof` object MUST contain a following claim:
-    * `proof_type`: REQUIRED. JSON string denoting the proof type. The value of this claim determines other claims in the proof object and its respective processing rules. Proof types defined in this specification can be found in (#proof_types).
+    * `proof_type`: REQUIRED. JSON string denoting the key proof type. The value of this claim determines other claims in the key proof object and its respective processing rules. Key proof types defined in this specification can be found in (#proof_types).
 
 The `proof_type` claim is an extension point that enables the use of different types of proofs for different cryptographic schemes.
 
-The `proof` element MUST incorporate the Credential Issuer Identifier (audience), and a `c_nonce` value generated by the Authorization Server or the Credential Issuer to allow the Credential Issuer to detect replay. The way that data is incorporated depends on the proof type. In a JWT, for example, the `c_nonce` is conveyed in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the proof object and the Credential Issuer (the intended audience) is included as the `domain` element.
+The `proof` element MUST incorporate the Credential Issuer Identifier (audience), and a `c_nonce` value generated by the Authorization Server or the Credential Issuer to allow the Credential Issuer to detect replay. The way that data is incorporated depends on the key proof type. In a JWT, for example, the `c_nonce` is conveyed in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the key proof object and the Credential Issuer (the intended audience) is included as the `domain` element.
 
 Initial `c_nonce` value can be returned in a successful Token Response as defined in (#token-response), in a Credential Error Response as defined in (#issuer-provided-nonce), or in a Batch Credential Error Response as defined in (#batch-credential_error_response).
 
-Below is a non-normative example of a Credential Request for a credential in JWT VC format (JSON encoding) with a proof type `jwt`:
+Below is a non-normative example of a Credential Request for a credential in JWT VC format (JSON encoding) with a key proof type `jwt`:
 
 ```
 POST /credential HTTP/1.1
@@ -713,26 +719,26 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
    }
 }
 ```
-### Proof Types {#proof_types}
+### Key Proof Types {#proof_types}
 
 This specification defines the following values for the `proof_type` property: 
 * `jwt`: A JWT [@!RFC7519] is used as proof of possession. When `proof_type` is `jwt`, a `proof` object MUST include a `jwt` claim containing a JWT defined in (#jwt-proof-type).
 * `cwt`: A CWT [@!RFC8392] is used as proof of possession. When `proof_type` is `cwt`, a `proof` object MUST include a `cwt` claim containing a CWT defined in (#cwt-proof-type).
 
-#### `jwt` Proof Type {#jwt-proof-type}
+#### `jwt` Key Proof Type {#jwt-proof-type}
 
 The JWT MUST contain the following elements:
 
   * in the JOSE header,
     * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry. MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
-    * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the proof JWT as recommended in Section 3.11 of [@!RFC8725].
+    * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
     * `kid`: CONDITIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
     * `jwk`: CONDITIONAL. JOSE Header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
     * `x5c`: CONDITIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element MAY be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
   * in the JWT body, 
     * `iss`: OPTIONAL (string). The value of this claim MUST be the `client_id` of the client making the credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
-    * `aud`: REQUIRED (string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
-    * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the proof was issued using the syntax defined in [@!RFC7519]. 
+    * `aud`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
+    * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the key proof was issued using the syntax defined in [@!RFC7519]. 
     * `nonce`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a `c_nonce` provided by the credential issuer.
 
 The Credential Issuer MUST validate that the `proof` is actually signed by a key identified in the JOSE Header.
@@ -779,19 +785,19 @@ Here is another example JWT not only proving possession of a private key but als
 }
 ```
 
-#### `cwt` Proof Type {#cwt-proof-type}
+#### `cwt` Key Proof Type {#cwt-proof-type}
 
 The CWT MUST contain the following elements :
 
   * in the COSE protected header (see [@!RFC8152], Section 3.1.),
     * Label 1 (`alg`): REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry. MUST NOT be an identifier for a symmetric algorithm (MAC).
-    * Label 3 (`content type`): REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the proof CWT.
+    * Label 3 (`content type`): REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the key proof CWT.
     * (string-valued) Label `COSE_Key`: CONDITIONAL (byte string). COSE key material the new Credential shall be bound to. MUST NOT be present if `x5chain` is present.
     * Label 33 (`x5chain`): CONDITIONAL (byte string). As defined in [@!RFC9360], contains an ordered array of X.509 certificates corresponding to the key used to sign the CWT. MUST NOT be present if `COSE_Key` is present.
   * in the content of the message (see [@!RFC8392], Section 4), 
     * Claim Key 1 (`iss`): OPTIONAL (text string). The value of this claim MUST be the `client_id` of the client making the credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
-    * Claim Key 3 (`aud`): REQUIRED (text string). The value of this claim MUST be the Credential Issuer URL of credential issuer.
-    * Claim Key 6 (`iat`): REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the proof was issued. 
+    * Claim Key 3 (`aud`): REQUIRED (text string). The value of this claim MUST be the Credential Issuer Identifier.
+    * Claim Key 6 (`iat`): REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the key proof was issued. 
     * Claim Key 10 (`Nonce`): REQUIRED (byte string). The value of this claim MUST be the `c_nonce` provided by the Credential Issuer converted from string to bytes.
 
 ## Credential Response {#credential-response}
@@ -864,8 +870,8 @@ The following additional error codes are specified:
 * `unsupported_credential_type`: requested credential type is not supported
 * `unsupported_credential_format`:  requested credential format is not supported
 * `invalid_proof`: The `proof` in the Credential Request was invalid, for example:
-  * No proof was provided (the `proof` field was not present)
-  * The provided proof was not bound to a nonce provided by the Credential Issuer
+  * No key proof was provided (the `proof` field was not present)
+  * The provided key proof was not bound to a nonce provided by the Credential Issuer
 
 This is a non-normative example of a Credential Error Response:
 
@@ -881,11 +887,11 @@ Cache-Control: no-store
 
 ### Credential Issuer Provided Nonce {#issuer-provided-nonce}
 
-The Credential Issuer that requires the client to send a proof of possession of the key material for the Credential to be bound to (`proof`) MAY receive a Credential Request without such a proof or with an invalid proof. In such a case, the Credential Issuer MUST provide the client with a `c_nonce` defined in (#credential-response) in a Credential Error Response using `invalid_proof` error code defined in (#credential-error-response). 
+The Credential Issuer that requires the client to send a key proof of possession of the key material for the Credential to be bound to (`proof`) MAY receive a Credential Request without such a key proof or with an invalid key proof. In such a case, the Credential Issuer MUST provide the client with a `c_nonce` defined in (#credential-response) in a Credential Error Response using `invalid_proof` error code defined in (#credential-error-response). 
 
 The `c_nonce` value MUST be incorporated in the respective parameter in the `proof` object.
 
-Below is a non-normative example of a Credential Response when the Credential Issuer is requesting a Wallet to provide in a subsequent Credential Request a proof that is bound to a `c_nonce`:
+Below is a non-normative example of a Credential Response when the Credential Issuer is requesting a Wallet to provide in a subsequent Credential Request a key proof that is bound to a `c_nonce`:
 
 ```
 HTTP/1.1 400 Bad Request
@@ -895,7 +901,7 @@ Cache-Control: no-store
 {
   "error": "invalid_proof"
   "error_description":
-       "Credential Issuer requires proof to be bound to a Credential Issuer provided nonce.",
+       "Credential Issuer requires key proof to be bound to a Credential Issuer provided nonce.",
   "c_nonce": "8YE9hCnyV2",
   "c_nonce_expires_in": 86400  
 }
@@ -1111,7 +1117,7 @@ The path formed following the steps above MUST point to a JSON document complian
 
 This specification defines the following Credential Issuer Metadata:
 
-* `credential_issuer`: REQUIRED. The Credential Issuer's identifier.
+* `credential_issuer`: REQUIRED. The Credential Issuer's identifier as defined in (#credential-issuer-identifier).
 * `authorization_server`: OPTIONAL. Identifier of the OAuth 2.0 Authorization Server (as defined in [@!RFC8414]) the Credential Issuer relies on for authorization. If this element is omitted, the entity providing the Credential Issuer is also acting as the AS, i.e. the Credential Issuer's identifier is used as the OAuth 2.0 Issuer value to obtain the Authorization Server metadata as per [@!RFC8414]. 
 * `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components.
 * `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
@@ -1130,7 +1136,7 @@ The following parameter MUST be used to communicate the specifics of the Credent
 This section defines the structure of the objects that appear in the `credentials_supported` metadata parameter.
 
 * `format`: REQUIRED. A JSON string identifying the format of this credential, i.e., `jwt_vc_json` or `ldp_vc`. Depending on the format value, the object contains further elements defining the type and (optionally) particular claims the credential MAY contain, and information how to display the credential. (#format_profiles) defines Credential Format Profiles introduced by this specification. 
-* `id`: OPTIONAL. A JSON string identifying the respective object. The value MUST be unique across all `credentials_supported` entries in the Credential Issuer Metadata.
+* `scope`: OPTIONAL. A JSON string identifying the scope value that this Credential Issuer supports for this particular credential. The value can be the same accross multiple `credentials_supported` objects. The Authorization Server MUST be able to uniquely identify the Credential Issuer based on the scope value. The Wallet can use this value in the Authorization Request as defined in (#credential-request-using-type-specific-scope). Scope values in this Credential Issuer metadata MAY duplicate with those in the `scopes_supported` parameter of the Authorization Server.
 * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential as defined in (#credential-binding). Support for keys in JWK format [@!RFC7517] is indicated by the value `jwk`. Support for keys expressed as a COSE Key object [@!RFC8152] (for example, used in [@!ISO.18013-5]) is indicated by the value `cose_key`. When Cryptographic Binding Method is a DID, valid values MUST be a `did:` prefix followed by a method-name using a syntax as defined in Section 3.1 of [@!DID-Core], but without a `:`and method-specific-id. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in Section 13 of [@DID_Specification_Registries] is indicated by sending a DID without any method-name.
 * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptosuites for Credentials in `jwt_vc` format should use algorithm names defined in [IANA JOSE Algorithms Registry](https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms). Cryptosuites for Credentials in `ldp_vc` format should use signature suites names defined in [Linked Data Cryptographic Suite Registry](https://w3c-ccg.github.io/ld-cryptosuite-registry/).
 * `proof_types_supported`: OPTIONAL. A JSON array of case sensitive strings each of them representing `proof_type` that the Credential Issuer supports. Supported values include those defined in (#proof_types) or other values defined in a profile of this specification or elsewhere. If omitted, the default value is `jwt`. `proof_type` claim is defined in (#credential_request).
@@ -1145,6 +1151,8 @@ This section defines the structure of the objects that appear in the `credential
     * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
 
 It is dependent on the Credential format where the available claims will appear and how they are represented (see (#format_profiles)).
+
+The AS MUST be able to determine from the Issuer metadata what claims are disclosed with the requested credentials in order to be able to render a meaningful user consent.
 
 The following example shows a non-normative example of an object comprising `credentials_supported` parameter for a credential in JWT VC format (JSON encoding).
 
@@ -1210,6 +1218,18 @@ the Credential Issuer is supposed to be responsible for the lifecycle of its Cre
 
 The Wallet is supposed to detect signs of fraudulant behavior related to the Credential management in the Wallet (e.g., device rooting) and to act upon such signals. Options include Credential revocation at the Credential Issuer and/or invalidation of the key material used to cryptographically bind Credential to the identifier of the End-User possessing that Credential.  
 
+## Key Proof replay
+
+If an adversary is able to get hold of a key proof defined in (#proof_types), the adversary could get a Credential issued that is bound to a key pair controlled by the victim.
+
+Note: For the attacker to be able to present to the Verifier a Credential bound to a replayed Key Proof, the attacker also needs to obtain the victim's private key. To limit this, servers are RECOMMENDED to check how the Wallet protects the private keys, using mechanisms such as Key Based Client Authentication defined in [@I-D.looker-oauth-attestation-based-client-auth].
+
+`nonce` parameter is the primary countermeasure against key proof replay. To further narrow down the attack vector, the Credential Issuer SHOULD bind a unique `nonce` parameter to the respective Access Token.
+
+Note: To accommodate for clock offsets, the Credential Issuer server MAY accept proofs that carry an `iat` time in the reasonably near future (on the order of seconds or minutes). Because clock skews between servers and clients may be large, servers MAY limit key proof lifetimes by using server-provided nonce values containing the time at the server rather than comparing the client-supplied `iat` time to the time at the server. Nonces created in this way yield the same result even in the face of arbitrarily large clock skews.
+
+Server-provided nonces are an effective means for further reducing the chances for successful key proof replay by an attacker. A Wallet can keep using a certain nonce until the Credential Issuer provides a fresh nonce. This way the Credential Issuer determines how often a certain nonce can be used. Servers MUST have a clear policy whether the same key proof can be presented multiple times and for how long, or whether each Credential Request MUST have a fresh key proof.
+
 # Implementation Considerations
 
 ## Claim-based Binding of the Credential to the End-User possessing the Credential {#claim-based-binding}
@@ -1238,12 +1258,12 @@ The action leading to the Wallet performing another Credential Request can also 
 
 Credential Issuer Identifier is always a URL using the `https` scheme as defined in (#credential-issuer-identifier). Depending on the Credential format, the issuer identifier in the issued Credential is not always a URL using the `https` scheme. Some other forms that it can take are a DID included in the `issuer` property in a [@VC_DATA] format, or the `Subject` value of the document signer certificate included in the `x5chain` element in a [@ISO.18013-5] format.
 
-When the issuer identifier in the issued Credential is a DID, below is a non-exhaustive list of mechanisms how Credential Issuer MAY provide binding to the Credential Issuer Identifier:
+When the Issuer identifier in the issued Credential is a DID, below is a non-exhaustive list of mechanisms how the Credential Issuer MAY provide binding to the Credential Issuer Identifier:
 
 1. Use [@DIF.Well-Known_DID] Specification to provide binding between a DID and a certain domain.
-1. If the issuer identifier in the issued Credential is an object, add to the object `credential_issuer` Claim as defined in (#credential-issuer-identifier).
+1. If the Issuer identifier in the issued Credential is an object, add to the object `credential_issuer` Claim as defined in (#credential-issuer-identifier).
 
-The Wallet MAY check the binding between Credential Issuer Identifier and the issuer identifier in the issued Credential.
+The Wallet MAY check the binding between the Credential Issuer Identifier and the Issuer identifier in the issued Credential.
 
 ## Refreshing Issued Credentials
 
@@ -1251,7 +1271,7 @@ After a Verifiable Credential has been issued to the Holder, claim values about 
 
 First, the Wallet may receive an updated version of a Credential from a Credential Endpoint or a Batch Credential Endpoint using a valid Access Token. This does not involve interaction with the End-User. If the Credential Issuer issued a Refresh Token to the Wallet, the Wallet would have to obtain a fresh Access Token by making a request to the Token Endpoint as defined in Section 6 of [@!RFC6749].
 
-Second, the Issuer can reissue the Credential by starting the issuance process from the beginning. This would involve interaction with the End-User. A Credential needs to be reissued if the Wallet does not have a valid Access Token or a valid Refresh Token. With this approach, when a new Credential is issued, the Wallet might need to check if it already has a Credential of the same type and, if necessary, delete the old Credential. Otherwise, the Wallet might end up with more than one Credential of the same type, without knowing which one is the latest.
+Second, the Credential Issuer can reissue the Credential by starting the issuance process from the beginning. This would involve interaction with the End-User. A Credential needs to be reissued if the Wallet does not have a valid Access Token or a valid Refresh Token. With this approach, when a new Credential is issued, the Wallet might need to check if it already has a Credential of the same type and, if necessary, delete the old Credential. Otherwise, the Wallet might end up with more than one Credential of the same type, without knowing which one is the latest.
 
 Credential Refresh can be initiated by the Wallet independently from the Credential Issuer, or the Credential Issuer can send a signal to the Wallet asking it to request Credential refresh. How the Credential Issuer sends such a signal is out of scope for this specification.
 
@@ -1802,6 +1822,10 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
 
    [[ To be removed from the final specification ]]
    
+   -14
+
+   * renamed proof to key proof and added key proof replay security considerations
+
    -13 
 
    * Aligned deferred authorization with RFC 8628 and CIBA
