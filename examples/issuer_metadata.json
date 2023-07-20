@@ -32,7 +32,7 @@
                             }
                         ]
                     },
-                    "last_name": {
+                    "family_name": {
                         "display": [
                             {
                                 "name": "Surname",
@@ -99,7 +99,7 @@
                             }
                         ]
                     },
-                    "last_name": {
+                    "family_name": {
                         "display": [
                             {
                                 "name": "Surname",
@@ -185,7 +185,7 @@
                             }
                         ]
                     },
-                    "last_name": {
+                    "family_name": {
                         "display": [
                             {
                                 "name": "Surname",
