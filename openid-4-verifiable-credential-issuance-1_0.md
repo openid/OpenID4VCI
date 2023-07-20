@@ -100,7 +100,7 @@ Claim-based Holder Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proofing certain claims, e.g., name and date of birth, for example by presenting another Verifiable Credential. Claim-based Holder Binding allows long term, cross-device use of a credential as it does not depend on cryptographic key material stored on a certain device. One example of such a Verifiable Credential could be a Diploma.
 
 Biometrics-based Holder Binding:
-:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by demonstrating a certain biometric trait, such as finger print or face. One example of a Verifiable Credential with Biometrics-based Holder Binding is a mobile drivers license [@ISO.18013-5], which contains a portrait of the holder.
+:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by demonstrating a certain biometric trait, such as finger print or face. One example of a Verifiable Credential with Biometrics-based Holder Binding is a mobile driving license [@ISO.18013-5], which contains a portrait of the holder.
 
 Wallet:
 :  An entity used by the Holder to receive, store, present, and manage Verifiable Credentials and key material. There is no single deployment model of a Wallet: Verifiable Credentials and keys can both be stored/managed locally, or by using a remote self-hosted service, or a remote third-party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Authorization Server (see [@!RFC6749]) towards the Credential Verifier which acts as the OAuth 2.0 Client.
@@ -276,7 +276,7 @@ Figure: Issuance using Pre-Authorized Code Flow
 
 (1) The Credential Issuer successfully obtains consent and user data required for the issuance of a requested Credential from the End-User using Issuer specific business process.
 
-(2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example as a QR code or as a deeplink. 
+(2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a link.
 
 (3) The Wallet uses information from the Credential Offer to obtain the Credential Issuer's metadata including details about the Credential that this Credential Issuer wants to issue. This step is defined in (#credential-issuer-metadata).
 
@@ -305,7 +305,7 @@ Credential Offer contains a single URI query parameter `credential_offer` or `cr
 * `credential_offer`: A JSON object with the Credential Offer parameters. MUST NOT be present when `credential_offer_uri` parameter is present.
 * `credential_offer_uri`: A URL using the `https` scheme referencing a resource containing a JSON object with the Credential Offer parameters. MUST NOT be present when `credential_offer` parameter is present.
 
-The Credential Issuer MAY render a QR code containing the Credential Offer that can be scanned by the End-User using a Wallet, or a deeplink that the End-User can click.
+The Credential Issuer MAY render a QR code containing the Credential Offer that can be scanned by the End-User using a Wallet, or a link that the End-User can click.
 
 For security considerations, see (#credential-offer-security).
 
@@ -345,10 +345,10 @@ Below is a non-normative example of a Credential Offer passed by value:
   pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22user_pin_required%22:true%7D%7D%7D
 ```
 
-The following is a non-normative example of a Credential Offer that can be included in a QR code or a deeplink used to invoke Wallet deployed as a native app:
+The following is a non-normative example of a Credential Offer that can be included in a QR code or a link used to invoke a Wallet deployed as a native app:
 
 ```
-openid-credential-offer://credential_offer=%7B%22credential_issuer%22:%22
+openid-credential-offer://?credential_offer=%7B%22credential_issuer%22:%22
   https://credential-issuer.example.com%22,%22credentials%22:%5B%22UniversityDegree_JWT
   %22,%7B%22format%22:%22mso_mdoc%22,%22doctype%22:%22org.iso.18013.5.1.mDL%22%7D%5D,%22
   grants%22:%7B%22authorization_code%22:%7B%22issuer_state%22:%22eyJhbGciOiJSU0Et...FYUaBy
@@ -887,7 +887,7 @@ Cache-Control: no-store
 
 ### Credential Issuer Provided Nonce {#issuer-provided-nonce}
 
-The Credential Issuer that requires the client to send a key proof of possession of the key material for the Credential to be bound to (`proof`) MAY receive a Credential Request without such a key proof or with an invalid proof. In such a case, the Credential Issuer MUST provide the client with a `c_nonce` defined in (#credential-response) in a Credential Error Response using `invalid_or_missing_proof` error code defined in (#credential-error-response). 
+The Credential Issuer that requires the client to send a key proof of possession of the key material for the Credential to be bound to (`proof`) MAY receive a Credential Request without such a key proof or with an invalid key proof. In such a case, the Credential Issuer MUST provide the client with a `c_nonce` defined in (#credential-response) in a Credential Error Response using `invalid_proof` error code defined in (#credential-error-response). 
 
 The `c_nonce` value MUST be incorporated in the respective parameter in the `proof` object.
 
@@ -1019,7 +1019,7 @@ Error codes extensions defined in (#credential-error-response) apply.
 
 The Batch Credential Request MUST fail entirely if there is even one credential failed to be issued. `transaction_id` MUST NOT be returned in this case.
 
-When the Credential Issuer requires `proof` objects to be present in the Batch Credential Request, but does not receive them, it will return a Batch Credential Error Response with a `c_nonce` using `invalid_or_missing_proof` error code as defined in (#issuer-provided-nonce).
+When the Credential Issuer requires `proof` objects to be present in the Batch Credential Request, but does not receive them, it will return a Batch Credential Error Response with a `c_nonce` using `invalid_proof` error code as defined in (#issuer-provided-nonce).
 
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
@@ -1236,7 +1236,7 @@ Server-provided nonces are an effective means for further reducing the chances f
 
 Credentials not cryptographically bound to the identifier of the End-User possessing it (see (#credential-binding)), should be bound to the End-User possessing the Credential, based on the claims included in that Credential.
 
-In claim-based binding, no cryptographic binding material is provided. Instead, the issued Credential includes user claims that can be used by the Verifier to verify possession of the Credential by requesting presentation of existing forms of physical or digital identification that includes the same claims (e.g., a driver's license or other ID cards in person, or an online ID verification service).
+In claim-based binding, no cryptographic binding material is provided. Instead, the issued Credential includes user claims that can be used by the Verifier to verify possession of the Credential by requesting presentation of existing forms of physical or digital identification that includes the same claims (e.g., a driving license or other ID cards in person, or an online ID verification service).
 
 ## Binding of the Credential without Cryptographic Binding or Claim-based Binding {#no-binding}
 
