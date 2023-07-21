@@ -732,9 +732,11 @@ The JWT MUST contain the following elements:
   * in the JOSE header,
     * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry. MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
     * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
-    * `kid`: CONDITIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. MUST NOT be present if `jwk` or `x5c` is present.
-    * `jwk`: CONDITIONAL. JOSE Header containing the key material the new Credential shall be bound to. MUST NOT be present if `kid` or `x5c` is present.
-    * `x5c`: CONDITIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element MAY be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties. MUST NOT be present if `kid` or `jwk` is present.
+    * `kid`: CONDITIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. It MUST NOT be present if `jwk` is present.
+    * `jwk`: CONDITIONAL. JOSE Header containing the key material the new Credential shall be bound to. It MUST NOT be present if `kid` is present.
+    * `x5c`: OPTIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element MAY be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties.
+    * `trust_chain`: OPTIONAL. JOSE Header containing an [@!OpenID.Federation] Trust Chain. This element MAY be used to convey key attestation, metadata, metadata policies, federation Trust Marks and any other information related to a specific federation, if available in the chain. When used for signature verification, the header parameter `kid` MUST be present.
+
   * in the JWT body, 
     * `iss`: OPTIONAL (string). The value of this claim MUST be the `client_id` of the client making the credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
     * `aud`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
@@ -1494,6 +1496,32 @@ TBD
          <date month="Aug" year="2022"/>
         </front>
 </reference>
+
+<reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-connect-federation-1_0.html">
+        <front>
+          <title>OpenID Connect Federation 1.0></title>
+		  <author fullname="R. Hedberg, Ed.">
+            <organization>Independent</organization>
+          </author>
+          <author fullname="Michael B. Jones">
+            <organization>Independent</organization>
+          </author>
+          <author fullname="A. Solberg">
+            <organization>Sikt</organization>
+          </author>
+          <author fullname="John Bradley">
+            <organization>Yubico</organization>
+          </author>
+          <author fullname="G. De Marco">
+            <organization>Independent</organization>
+          </author>
+          <author fullname="V. Dzhuvinov">
+            <organization>Connect2id</organization>
+          </author>
+          <date day="24" month="March" year="2023"/>
+        </front>
+ </reference>
+
 
 # IANA Considerations
 
