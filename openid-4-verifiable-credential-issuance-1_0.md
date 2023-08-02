@@ -865,8 +865,6 @@ Cache-Control: no-store
 }
 ```
 
-Note: Consider using CIBA Ping/Push OR SSE Poll/Push. Another option would be the Client providing `client_notification_token` to the Credential Issuer, so that the Credential Issuer sends a Credential response upon successfully receiving a Credential Request and then no need for the client to bring an acceptance token, the Credential Issuer will send the Credential once it is issued in a response that includes `client_notification_token`. (consider SSE options)
-
 ### Credential Error Response {#credential-error-response}
 
 When the Credential Request is invalid or unauthorized, the Credential Issuer constructs the error response as defined in this section.
