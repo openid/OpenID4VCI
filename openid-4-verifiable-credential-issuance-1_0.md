@@ -1164,7 +1164,7 @@ This section defines the structure of the objects that appear in the `credential
     * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
     * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
 
-It is dependent on the Credential format where the available claims will appear and how they are represented; see (#format_profiles).
+It is dependent on the Credential format where the available claims will appear and how they are represented (see (#format_profiles)).
 
 The AS MUST be able to determine from the Issuer metadata what claims are disclosed with the requested credentials to be able to render a meaningful user consent.
 
