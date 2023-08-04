@@ -425,10 +425,12 @@ GET /authorize?
   &client_id=s6BhdRkqt3
   &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
   &code_challenge_method=S256
-  &authorization_details=%5B%7B%22type%22:%22openid_credential
-  %22,%22format%22:%22jwt_vc_json%22,%22type%22:%5B%22Verifia
-  bleCredential%22,%22UniversityDegreeCredential%22%5D%7D%5D
+  &authorization_details=%5B%7B%22type%22%3A+%22openid_credential%22
+    %2C+%22format%22%3A+%22jwt_vc_json%22%2C+%22credential_definition
+    %22%3A+%7B%22type%22%3A+%5B%22VerifiableCredential%22%2C+%22Unive
+    rsityDegreeCredential%22%5D%7D%7D%5D
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+  
 Host: https://server.example.com
 ```
 
