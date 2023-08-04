@@ -828,7 +828,7 @@ The following claims are used in the Credential Response:
 
 * `format`: REQUIRED. JSON string denoting the format of the issued Credential.
 * `credential`: OPTIONAL. Contains issued Credential. MUST be present when `transaction_id` is not returned. MAY be a JSON string or a JSON object, depending on the Credential format. See (#format_profiles) for the Credential format specific encoding requirements.
-* `transaction_id`: OPTIONAL. A JSON string identifiying a Deferred Issuance transaction. This claim is contained in the response, if the Credential Issuer was unable to immediately issue the credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). MUST be present when `credential` parameter is not returned.
+* `transaction_id`: OPTIONAL. A JSON string identifiying a Deferred Issuance transaction. This claim is contained in the response, if the Credential Issuer was unable to immediately issue the credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST be present when `credential` parameter is not returned. It MUST be invalidated after the credential for which it was meant was obtained by the Wallet.
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent credential requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 
@@ -1049,7 +1049,11 @@ The Deferred Credential Request is an HTTP POST request. It MUST be sent using `
 
 The following claims are used in the Batch Credential Response:
 
-* `transaction_id`: REQUIRED. JSON String identifying a Deferred Issuance transaction. 
+* `transaction_id`: REQUIRED. JSON String identifying a Deferred Issuance transaction.
+
+Credential Issuer MUST invalidate `transaction_id` after the credential for which it was meant was obtained by the Wallet.
+
+The following is a non-normative example of a Deferred Credential Request:
 
 ```
 Host: server.example.com
@@ -1085,7 +1089,7 @@ The following additional clarifications are provided for the following parameter
 The following additional error codes are specified:
 
 * `issuance_pending` - The credential issuance is still pending. The error response will also contain another claim `interval` determining the minimum amount of time in seconds that the Wallet SHOULD wait between requests to the Deferred Credential Endpoint.  If no value is provided, clients MUST use 5 as the default.
-* `invalid_transaction_id` - Deferred Credential Request contained an invalid `transaction_id`, i.e. it was not issued by the respective Credential Issuer or was already used to obtain the credential
+* `invalid_transaction_id` - Deferred Credential Request contained an invalid `transaction_id`, i.e. it was not issued by the respective Credential Issuer or was already used to obtain the Credential.
 
 This is a non-normative example of a Credential Error Response:
 
