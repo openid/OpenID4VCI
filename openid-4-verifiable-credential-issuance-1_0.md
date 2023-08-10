@@ -64,7 +64,7 @@ Credential:
 :  A set of one or more claims about a subject made by a Credential Issuer. Note that this definition of a term "credential" in this specification is different from that in [@!OpenID.Core] and [@!RFC6749].
 
 Verifiable Credential (VC):
-:  An Issuer-signed Credential whose authenticity can be cryptographically verified. It can be of any format used in the Issuer-Holder-Verifier Model, including, but not limited to those defined in [@VC_DATA] and [@ISO.18013-5].
+:  An Issuer-signed Credential whose integrity can be cryptographically verified. It can be of any format used in the Issuer-Holder-Verifier Model, including, but not limited to those defined in [@VC_DATA] and [@ISO.18013-5].
 
 W3C Verifiable Credential:
 :  A Verifiable Credential compliant to the [@VC_DATA] specification.
@@ -73,7 +73,7 @@ Presentation:
 : Data that is presented to a specific verifier, derived from one or more Verifiable Credentials that can be from the same or different Credential Issuers.
 
 Verifiable Presentation (VP):
-:  A Holder-signed Credential whose authenticity can be cryptographically verified to provide Cryptographic Holder Binding. Can be of any format used in the Issuer-Holder-Verifier Model, including, but not limited to those defined in [@VC_DATA] and [@ISO.18013-5].
+:  A Holder-signed Credential whose integrity can be cryptographically verified to provide Cryptographic Holder Binding. It can be of any format used in the Issuer-Holder-Verifier Model, including, but not limited to those defined in [@VC_DATA] and [@ISO.18013-5].
 
 W3C Verifiable Presentation:
 :  A Verifiable Presentations compliant to the [@VC_DATA] specification.
