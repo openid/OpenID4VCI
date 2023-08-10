@@ -689,6 +689,9 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 * `format`: REQUIRED. Format of the Credential to be issued. This Credential format identifier determines further parameters required to determine the type and (optionally) the content of the credential to be issued. Credential Format Profiles consisting of the Credential format specific set of parameters are defined in (#format_profiles).
 * `proof`: OPTIONAL. JSON object containing proof of possession of the key material the issued Credential shall be bound to.  The `proof` object MUST contain a following claim:
     * `proof_type`: REQUIRED. JSON string denoting the key proof type. The value of this claim determines other claims in the key proof object and its respective processing rules. Key proof types defined in this specification can be found in (#proof_types).
+* `credential_encryption_jwk`: OPTIONAL. A JSON object containing a single public key as a JWK used for encrypting the Credential Response.
+* `credential_response_encryption_alg`: OPTIONAL. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] REQUIRED for encrypting Credential and/or Batch Credential Responses. The default, if omitted, is that no encryption is performed. If `credential_response_encryption_alg` is present, `credential_encryption_jwk` MUST be present.
+* `credential_response_encryption_enc`: OPTIONAL. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] REQUIRED for encrypting Credential Responses. If `credential_response_encryption_alg` is specified, the default for this value is `A256GCM`. When `credential_response_encryption_enc` is included, `credential_response_encryption_alg` MUST also be provided.
 
 The `proof_type` claim is an extension point that enables the use of different types of proofs for different cryptographic schemes.
 
@@ -720,6 +723,11 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
       NlIjoidFppZ25zbkZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
    }
 }
+
+The Client MAY request encrypted responses by providing its encryption parameters in the Credential Request.
+
+The Credential Issuer MAY require encrypted responses by including `require_credential_response_encryption` in the Credntial Issuer Metadata.
+
 ```
 ### Key Proof Types {#proof_types}
 
@@ -823,9 +831,11 @@ These checks may be performed in any order.
 
 Credential Response can be immediate or deferred. The Credential Issuer MAY be able to immediately issue a requested Credential and send it to the Client.
 
-Credential Response MUST be sent using the `application/json` media type.
-
 In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send a `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code MUST be 202 (section 10.2.3 of [@!RFC2616]).
+
+If the Client requested encrypted responses, the Credential Issuer MUST encode the claims in the Credential Reponse as a JWT with `credential_response_encryption_alg` and `credential_response_encryption_enc`. The JWT MUST be encrypted to the public key specified by `credential_encryption_jwk` in the Credential Request. If the Credential Response is encrypted, the media type of the reponse MUST bet set to `application/jwt`. If encryption was negotiated in the Credential Request and the Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
+
+If the Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
 
 The following claims are used in the Credential Response:
 
@@ -889,6 +899,7 @@ The following additional error codes are specified:
 * `invalid_proof`: The `proof` in the Credential Request was invalid, for example:
   * No key proof was provided (the `proof` field was not present)
   * The provided key proof was not bound to a nonce provided by the Credential Issuer
+* `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
 
 This is a non-normative example of a Credential Error Response:
 
@@ -1143,6 +1154,9 @@ This specification defines the following Credential Issuer Metadata:
 * `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components.
 * `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
 * `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
+* `credential_response_encryption_alg_values_supported`: OPTIONAL. JSON array containing a list of the JWE [@!RFC7516] encryption algorithms (`alg` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
+* `credential_response_encryption_enc_values_supported`: OPTIONAL. JSON array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
+* `require_credential_response_encryption`: OPTIONAL. If `require_credential_response_encryption` is `true`, the Credential Issuer requires additional encryption on top of TLS for the Credential Response and expects encryption parameters to be present in the Credential Request and/or Batch Credential Request. If `require_credential_response_encryption` is `false` or omitted, the Credential Issuer indicates that no additional Credential Response encryption is required. If `require_credential_response_encryption` is `true`, `credential_response_encryption_alg_values_supported` MUST also be provided.
 
 The following parameter MUST be used to communicate the specifics of the Credential that the Credential Issuer supports issuance of:
 
