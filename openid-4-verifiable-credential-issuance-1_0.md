@@ -1265,6 +1265,12 @@ Note: To accommodate for clock offsets, the Credential Issuer server MAY accept 
 
 Server-provided nonces are an effective means for further reducing the chances for successful key proof replay by an attacker. A Wallet can keep using a certain nonce until the Credential Issuer provides a fresh nonce. This way the Credential Issuer determines how often a certain nonce can be used. Servers MUST have a clear policy whether the same key proof can be presented multiple times and for how long, or whether each Credential Request MUST have a fresh key proof.
 
+##  TLS Requirements
+
+Implementations MUST follow [@!BCP195].
+
+Whenever TLS is used, a TLS server certificate check MUST be performed, per [@!RFC6125].
+
 # Implementation Considerations
 
 ## Claim-based Binding of the Credential to the End-User possessing the Credential {#claim-based-binding}
@@ -1392,6 +1398,16 @@ TBD
     </author>
    <date day="1" month="January" year="2023"/>
   </front>
+</reference>
+
+<reference anchor="BCP195" target="https://www.rfc-editor.org/info/bcp195">
+        <front>
+          <title>BCP195</title>
+          <author>
+            <organization>IETF</organization>
+          </author>
+          <date year="2022"/>
+        </front>
 </reference>
 
 <reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
