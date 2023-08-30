@@ -221,7 +221,7 @@ Figure: Issuance using Authorization Code Flow
 
 Note: Steps (2) and (3) happen in the front channel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization_endpoint).
 
-(4) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in step (3). The Token Endpoint returns an Access Token in the Token Response upon successfully validating Authorization Code. This step happens in the backchannel using server-to-server communication. This step is defined in (#token_endpoint).
+(4) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in step (3). The Token Endpoint returns an Access Token in the Token Response upon successfully validating Authorization Code. This step happens in the back-channel communication (direct communication between two systems using HTTP requests and responses without using redirects through an intermediary such as a browser). This step is defined in (#token_endpoint).
 
 (5) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and (optionally) the proof of possession of the public key to which the issued VC shall be bound to. Upon successfully validating Access Token and proof, the Credential Issuer returns a VC in the Credential Response if it can issue a Credential right away. This step is defined in (#credential-endpoint).
 
@@ -311,7 +311,7 @@ For security considerations, see (#credential-offer-security).
 
 ### Credential Offer Parameters {#credential_offer_parameters}
 
-Credential Offer object MAY contain the following parameters:
+This specification defines the following parameters for the Credential Offer object:
 
 * `credential_issuer`: REQUIRED. The URL of the Credential Issuer, as defined in (#credential-issuer-identifier), from which the Wallet is requested to obtain one or more Credentials. The Wallet uses it to obtain the Credential Issuer's Metadata following the steps defined in (#credential-issuer-wellknown).
 * `credentials`: REQUIRED. A JSON array, where every entry is a JSON object or a JSON string. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterizing the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `scope` values in one of the objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the Wallet MUST resolve this string value to the respective object.
