@@ -388,6 +388,8 @@ Below is a non-normative example of a Credential Offer Object for a Pre-Authoriz
 
 <{{examples/credential_offer_by_reference.json}}
 
+When retrieving Credential Offer from the Credential Offer URL, `application/json` media type MUST be used. The Credential Offer cannot be signed and MUST NOT use `application/jwt` with `"alg": "none"`.
+
 ## Credential Offer Response
 
 The Wallet is not supposed to create a response. UX control stays with the Wallet after completion of the process. 
