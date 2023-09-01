@@ -5,8 +5,8 @@ I'm really glad you're reading this, because we need volunteer developers to hel
 Here are some important resources:
 
   * [Digital Credentials Protocols (DCP) Working Group Home Page](https://openid.net/wg/digital-credentials-protocols/) should give you a little background
-  * Mailing list: Join our [mailing list]([openid-specs-digital-credentials-protocols@lists.openid.net](http://lists.openid.net/mailman/listinfo/openid-specs-digital-credentials-protocols)) to ask questions or provide feedback
-  * Bugs? the [issue tracker](/openid/OpenID4VCI/issues) is where to report them
+  * Mailing list: Join our [mailing list](http://lists.openid.net/mailman/listinfo/openid-specs-digital-credentials-protocols) to ask questions or provide feedback
+  * Bugs? the issue tracker above is where to report them
 
 ## Intellectual Policy
 
