@@ -314,7 +314,9 @@ For security considerations, see (#credential-offer-security).
 This specification defines the following parameters for the Credential Offer object:
 
 * `credential_issuer`: REQUIRED. The URL of the Credential Issuer, as defined in (#credential-issuer-identifier), from which the Wallet is requested to obtain one or more Credentials. The Wallet uses it to obtain the Credential Issuer's Metadata following the steps defined in (#credential-issuer-wellknown).
-* `credentials`: REQUIRED. A JSON array, where every entry is a JSON object or a JSON string. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterizing the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `scope` values in one of the objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the Wallet MUST resolve this string value to the respective object.
+* `credentials`: REQUIRED. A JSON array, where every entry is a JSON string or a JSON object describing a credential the Wallet MAY request. If the entry is a string, the string value MUST be one of the `scope` values included in a `credentials_supported` Credential Issuer metadata parameter as defined in (#credential-metadata-object). When processing, the Wallet MUST resolve this string value to the respective object. If the entry is an object, the object contains the data related to a certain credential type. Each object contains the following parameters: 
+  * `format`: REQUIRED. JSON string determining the format of the credential.
+  * Parameters characterizing the type of the credential to be requested: REQUIRED. These parameters are specific to the credential format profile, some of which are defined in (#format_profiles).
 * `grants`: OPTIONAL. A JSON object indicating to the Wallet the Grant Types the Credential Issuer's AS is prepared to process for this Credential Offer. Every grant is represented by a name/value pair. The name is the Grant Type identifier; the value is a JSON object that contains parameters either determining the way the Wallet MUST use the particular grant and/or parameters the Wallet MUST send with the respective request(s). If `grants` is not present or empty, the Wallet MUST determine the Grant Types the Credential Issuer's AS supports using the respective metadata. When multiple grants are present, it is at the Wallet's discretion which one to use.
 
 The following values are defined by this specification: 
@@ -407,9 +409,10 @@ There are two possible ways to request issuance of a specific Credential type in
 The request parameter `authorization_details` defined in Section 2 of [@!RFC9396] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
 
 * `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
-* `format`: REQUIRED. JSON string representing the format in which the Credential is requested to be issued. This Credential format identifier determines further claims in the authorization details object specifically used to identify the Credential type to be issued. This specification defines Credential Format Profiles in (#format_profiles).  
+* `format`: REQUIRED. JSON string representing the format in which the Credential is requested to be issued.
+* Further parameters characterizing the type of the credential to be issued: REQUIRED. These parameters are specific to the credential format profile, some of which are defined in (#format_profiles).
 
-A non-normative example of an `authorization_details` object. 
+The following is a non-normative example of an `authorization_details` object:
 
 <{{examples/authorization_details.json}}
 
@@ -444,7 +447,9 @@ Note: Applications MAY combine authorization details of type `openid_credential`
 
 In addition to a mechanism defined in (#credential-authz-request), Credential Issuers MAY support requesting authorization to issue a credential using OAuth 2.0 scope parameter.
 
-When the Wallet does not know which scope value to use to request issuance of a certain credential, it can discover it using the `scope` Credential Issuer metadata parameter defined in (#credential-metadata-object). When the flow starts with a Credential Offer, the Wallet can use the information in the `credentials` Credential Offer parameter. When the entry of the `credentials` parameter is a string, it can be used as a scope value. When the entry of the `credentials` parameter is an object, it can be used to discover the desired scope value from the Credential Issuer metadata that can be obtained using `credential_issuer` Credential Offer parameter as defined in (#credential-issuer-wellknown).
+When the Wallet does not know which scope value to use to request issuance of a certain credential, it can discover it using the `scope` Credential Issuer metadata parameter defined in (#credential-metadata-object). When the flow starts with a Credential Offer, the Wallet can use the information in it as following:
+  * When the entry of the `credentials` Credential Offer parameter is a string, it can be directly used as a scope value.
+  * When the entry of the `credentials` Credential Offer parameter is an object, it can be used to discover the desired `scope` value from the Credential Issuer metadata that can be obtained using `credential_issuer` Credential Offer parameter as defined in (#credential-issuer-wellknown).
 
 The Wallet can discover the scope values using other options such as normative text in a profile of this specification that defines scope values along with a description of their semantics.
 
@@ -461,7 +466,7 @@ Credential Issuers MUST ignore unknown scope values in a request.
 
 If the Credential Issuer metadata contains an `authorization_server` property, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the AS to differentiate Credential Issuers.  
 
-Below is a non-normative example of an Authorization Request using the scope `com.example.healthCardCredential` that would be sent by the User Agent to the Authorization Server in response to an HTTP 302 redirect response by the Wallet (with line wraps within values for display purposes only):
+Below is a non-normative example of an Authorization Request using the scope `UniversityDegree_JWT` that would be sent by the User Agent to the Authorization Server in response to an HTTP 302 redirect response by the Wallet (with line wraps within values for display purposes only):
 
 ```
 GET /authorize?
@@ -602,6 +607,7 @@ In addition to the response parameters defined in [@!RFC6749], the AS MAY return
 
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
+* `identifiers`: OPTIONAL. JSON array of JSON strings that each identify a credential that can be issued using Access Token returned in the same response.
 
 Below is a non-normative example of a Token Response:
 
@@ -615,7 +621,8 @@ Cache-Control: no-store
     "token_type": "bearer",
     "expires_in": 86400,
     "c_nonce": "tZignsnFbp",
-    "c_nonce_expires_in": 86400
+    "c_nonce_expires_in": 86400,
+    "identifiers": [ "CivilEngineeringDegree-2023", "ElectricalEngineeringDegree-2023" ]
   }
 ```
 
@@ -689,6 +696,7 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 * `format`: REQUIRED. Format of the Credential to be issued. This Credential format identifier determines further parameters required to determine the type and (optionally) the content of the credential to be issued. Credential Format Profiles consisting of the Credential format specific set of parameters are defined in (#format_profiles).
 * `proof`: OPTIONAL. JSON object containing proof of possession of the key material the issued Credential shall be bound to.  The `proof` object MUST contain a following claim:
     * `proof_type`: REQUIRED. JSON string denoting the key proof type. The value of this claim determines other claims in the key proof object and its respective processing rules. Key proof types defined in this specification can be found in (#proof_types).
+* `identifier`: OPTIONAL. JSON string that identifies a credential that is being requested to be issued. It MUST be present if Credential Issuer returned `identifiers` parameter the Token Response.
 * `credential_encryption_jwk`: OPTIONAL. A JSON object containing a single public key as a JWK used for encrypting the Credential Response.
 * `credential_response_encryption_alg`: OPTIONAL. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] REQUIRED for encrypting Credential and/or Batch Credential Responses. The default, if omitted, is that no encryption is performed. If `credential_response_encryption_alg` is present, `credential_encryption_jwk` MUST be present.
 * `credential_response_encryption_enc`: OPTIONAL. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] REQUIRED for encrypting Credential Responses. If `credential_response_encryption_alg` is specified, the default for this value is `A256GCM`. When `credential_response_encryption_enc` is included, `credential_response_encryption_alg` MUST also be provided.
@@ -721,7 +729,8 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
       xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
       0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOjE1MzY5NTk5NTksIm5vbmNlIjoidFppZ25zbk
       ZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
-   }
+   },
+   "identifier": "CivilEngineeringDegree-2023"
 }
 
 The Client MAY request encrypted responses by providing its encryption parameters in the Credential Request.
@@ -1189,7 +1198,7 @@ It is dependent on the Credential format where the available claims will appear 
 
 The AS MUST be able to determine from the Issuer metadata what claims are disclosed with the requested credentials to be able to render a meaningful user consent.
 
-The following example shows a non-normative example of an object comprising `credentials_supported` parameter for a credential in JWT VC format (JSON encoding).
+The following is a non-normative example of an object comprising `credentials_supported` parameter for a credential in JWT VC format (JSON encoding).
 
 <{{examples/credential_metadata_jwt_vc_json.json}}
 
