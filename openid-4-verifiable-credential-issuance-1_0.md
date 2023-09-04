@@ -735,6 +735,7 @@ This specification defines the following values for the `proof_type` property:
 
 * `jwt`: A JWT [@!RFC7519] is used as proof of possession. When `proof_type` is `jwt`, a `proof` object MUST include a `jwt` claim containing a JWT defined in (#jwt-proof-type).
 * `cwt`: A CWT [@!RFC8392] is used as proof of possession. When `proof_type` is `cwt`, a `proof` object MUST include a `cwt` claim containing a CWT defined in (#cwt-proof-type).
+* `ldp_vp_2.0`: A verifiable presentation signed using data integrity proof as defined in [@VC_DATA_2.0] and [@DI] specs must be used as a proof of possession. When `proof_type` is `ldp_vp_2.0`, a `proof` object MUST include a `ldp_vp` claim containing a [verifiable presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp_vp-proof-type).
 
 #### `jwt` Key Proof Type {#jwt-proof-type}
 
@@ -796,6 +797,49 @@ Here is another example JWT not only proving possession of a private key but als
   "iat": 1659145924,
   "nonce": "tZignsnFbp"
 }
+```
+
+#### `ldp_vp_2.0` Key Proof Type {#ldp_vp-proof-type}
+
+The verifiable presentation MUST contain the following elements:
+
+  * in the presentation itself,
+      * `holder`: OPTIONAL. MUST be equivalent to the DID in the `proof.verificationMethod` property.
+
+  * in the proof body, 
+      * `domain`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
+      * `challenge`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a server-provided `c_nonce`. MUST be present when the Wallet received server-provided `c_nonce`.
+
+The Credential Issuer MUST validate that the `proof` is actually signed by a key of the holder.
+
+Below is a non-normative example of a `proof` parameter:
+
+```json
+{
+  "proof_type": "ldp_vp_2.0",
+  "ldp_vp": {
+         "@context": [
+            "https://www.w3.org/2018/credentials/v1"
+         ],
+         "type": [
+            "VerifiablePresentation"
+         ],
+         "holder": "did:key:z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro",
+         "proof": [
+            {
+               "type": "DataIntegrityProof",
+               "cryptosuite": "eddsa-2022",
+               "proofPurpose": "authentication",
+               "verificationMethod": "did:key:z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro#z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro",
+               "created": "2023-03-01T14:56:29.280619Z",
+               "challenge": "82d4cb36-11f6-4273-b9c6-df1ac0ff17e9",
+               "domain": "did:web:audience.company.com",
+               "proofValue": "z5hrbHzZiqXHNpLq6i7zePEUcUzEbZKmWfNQzXcUXUrqF7bykQ7ACiWFyZdT2HcptF1zd1t7NhfQSdqrbPEjZceg7"
+            }
+         ]
+      }
+  }
+
 ```
 
 #### `cwt` Key Proof Type {#cwt-proof-type}
@@ -1374,6 +1418,68 @@ TBD
   </front>
 </reference>
 
+<reference anchor="VC_DATA_2.0" target="https://www.w3.org/TR/vc-data-model-2.0">
+  <front>
+    <title>Verifiable Credentials Data Model 2.0</title>
+    <author fullname="Manu Sporny">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Orie Steele">
+      <organization>Transmute</organization>
+    </author>
+    <author fullname="Oliver Terbu">
+      <organization>Spruce Systems, Inc.</organization>
+    </author>
+    <author fullname="Grant Noble">
+      <organization>ConsenSys</organization>
+    </author>
+    <author fullname="Gabe Cohen">
+      <organization>Block</organization>
+    </author>
+    <author fullname="Michael B. Jones">
+      <organization>independent</organization>
+    </author>
+    <author fullname="Dave Longley">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Daniel C. Burnett">
+      <organization>ConsenSys</organization>
+    </author>
+    <author fullname="Brent Zundel">
+      <organization>Evernym</organization>
+    </author>
+    <author fullname="Kyle Den Hartog">
+      <organization>MATTR</organization>
+    </author>
+    <author fullname="David Chadwick">
+      <organization>University of Kent</organization>
+    </author>
+   <date day="15" month="Aug" year="2023"/>
+  </front>
+</reference>
+
+<reference anchor="DI" target="https://w3c.github.io/vc-data-integrity/">
+  <front>
+    <title>Verifiable Credential Data Integrity 1.0</title>
+    <author fullname="Manu Sporny">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Dave Longley">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Greg Bernstein">
+      <organization>Invited Expert</organization>
+    </author>
+    <author fullname="Dmitri Zagidulin">
+      <organization>Invited Expert</organization>
+    </author>
+    <author fullname="Sebastian Crane">
+      <organization>Invited Expert</organization>
+    </author>
+   <date day="31" month="Aug" year="2023"/>
+  </front>
+</reference>
+
 <reference anchor="RFC6750" target="https://www.rfc-editor.org/rfc/rfc6750">
   <front>
     <title>The OAuth 2.0 Authorization Framework: Bearer Token Usage</title>
@@ -1787,6 +1893,10 @@ The following additional claims are defined for this Credential format to be add
 The following is a non-normative example of a Credential Offer of type `ldp_vc`:
 
 <{{examples/credential_offer_ldp_vc.json}}
+
+For better suiting the W3C Data Integrity Proof ecosystem the following non-normative example displays a credential request with the proof of posession type `ldp_vp` which uses a verifiable presentation.
+
+<{{examples/credential_request_ldp_vc_vp.json}}
 
 #### Authorization Details {#authorization_ldp_vc}
 
