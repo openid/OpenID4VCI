@@ -20,7 +20,7 @@ jobs:
           - uses: actions/upload-artifact@v3
             with:
                 # Artifact name
-                name: OID4CI # optional
+                name: output # optional
                 # Destination path
                 path: ./openid-4-verifiable-credential-issuance*.html # optional
     
