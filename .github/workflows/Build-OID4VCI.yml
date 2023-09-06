@@ -1,11 +1,12 @@
 name: OID4VCI document push
 on:
   push:
-    paths:
-      - 'openid-4-verifiable-credential-issuance-1_0.md'
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-    compile:
+    compile-oid4vc:
         name: Compile site assets
         runs-on: ubuntu-latest
         steps:
@@ -19,6 +20,30 @@ jobs:
           - uses: actions/upload-artifact@v3
             with:
                 # Artifact name
-                name: OID4CI # optional
+                name: output # optional
                 # Destination path
                 path: ./openid-4-verifiable-credential-issuance*.html # optional
+    
+    publish-to-pages:
+      name: Publish to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      needs: [ compile-oid4vc]
+      runs-on: ubuntu-latest
+      permissions:
+        pages: write
+        id-token: write
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+      steps:
+        - name: Download artifact
+          uses: actions/download-artifact@v2
+          with:
+            name: output
+        - name: Upload pages artifact
+          uses: actions/upload-pages-artifact@v1
+          with:
+            path: .
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v2
