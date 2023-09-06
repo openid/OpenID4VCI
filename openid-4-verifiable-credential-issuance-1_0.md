@@ -607,9 +607,11 @@ In addition to the response parameters defined in [@!RFC6749], the AS MAY return
 
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
-* `identifiers`: OPTIONAL. JSON array of JSON strings that each identify a credential that can be issued using Access Token returned in the same response.
+* `identifiers`: OPTIONAL. JSON array of JSON strings that each identify a credential that can be issued using Access Token returned in the same response. MUST NOT be used when `authorization_details` parameter was used to request issuance of a certain Credential type as defined in (#authorization-details). 
+* `authorization_details`: REQUIRED when `authorization_details` parameter was used to request issuance of a certain Credential type as defined in (#authorization-details). A JSON array of objects as defined in Section 7 of [@!RFC9396]. MUST NOT be used when `scope` parameter was used to request issuance of a certain Credential type as defined in (#credential-request-using-type-specific-scope). In addition to the parameters received from the Wallet, the AS MAY return the following parameter:
+  * `identifiers`: OPTIONAL. JSON array of JSON strings that each identify a credential that can be issued using Access Token returned in the same response.
 
-Below is a non-normative example of a Token Response:
+Below is a non-normative example of a Token Response when `scope` parameter was used to request issuance of a certain Credential type:
 
 ```
 HTTP/1.1 200 OK
@@ -623,6 +625,35 @@ Cache-Control: no-store
     "c_nonce": "tZignsnFbp",
     "c_nonce_expires_in": 86400,
     "identifiers": [ "CivilEngineeringDegree-2023", "ElectricalEngineeringDegree-2023" ]
+  }
+```
+
+Below is a non-normative example of a Token Response when `authorization_details` parameter was used to request issuance of a certain Credential type:
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+
+  {
+    "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ",
+    "token_type": "bearer",
+    "expires_in": 86400,
+    "c_nonce": "tZignsnFbp",
+    "c_nonce_expires_in": 86400,
+    "authorization_details": [
+      {
+        "type": "openid_credential",
+        "format": "jwt_vc_json",
+        "credential_definition": {
+          "type": [
+              "VerifiableCredential",
+              "UniversityDegreeCredential"
+          ]
+        },
+        "identifiers": [ "CivilEngineeringDegree-2023", "ElectricalEngineeringDegree-2023" ]
+      }
+    ]
   }
 ```
 
