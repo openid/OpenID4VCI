@@ -25,7 +25,6 @@ jobs:
                 path: ./openid-4-verifiable-credential-issuance*.html # optional
     
     publish-to-pages:
-      if: github.ref == 'refs/heads/main'
       needs: [ compile-oid4vc]
       runs-on: ubuntu-latest
       permissions:
