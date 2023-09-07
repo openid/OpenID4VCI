@@ -1089,7 +1089,7 @@ Deferred Credential Response MUST be sent using the `application/json` media typ
 
 ## Deferred Credential Error Response {#deferred-credential_error_response}
 
-When the Deferred Credential Request is invalid or unauthorized, or the credential is not available yet, the Credential Issuer constructs the error response as defined in (#credential-error-response).
+When the Deferred Credential Request is invalid or the credential is not available yet, the Credential Issuer constructs the error response as defined in (#credential-error-response).
 
 The following additional error codes are specified in addition to those already defined in (#credential-request-errors):
 
