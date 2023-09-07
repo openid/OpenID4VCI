@@ -801,7 +801,7 @@ Here is another example JWT not only proving possession of a private key but als
 
 #### `ldp_vp_2.0` Key Proof Type {#ldp_vp-proof-type}
 
-The verifiable presentation MUST contain the following elements:
+The verifiable presentation as defined by [@VC_DATA_2.0] signed using Data Integrity that are used as Key Proofs MUST contain the following elements:
 
   * in the presentation itself,
       * `holder`: OPTIONAL. MUST be equivalent to the DID in the `proof.verificationMethod` property.
