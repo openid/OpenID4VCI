@@ -118,6 +118,7 @@ This specification defines an API for credential issuance provided by a Credenti
 * An optional Batch Credential Endpoint from which multiple Credentials can be issued in one request (see (#batch-credential-endpoint)).
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of credentials (see (#deferred-credential-issuance)).
 * An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow (see (#credential_offer_endpoint)).
+* An optional mechanism for the Wallet to notify the Credential Issuer of a status of the issued credential being stored by the Wallet.
 * A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing (see (#credential-issuer-metadata)).
 
 Both the Credential and the Batch Credential Endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both requests therefore enable conveying proof of possession for the key material. Multiple key proof types are supported.
@@ -207,7 +208,7 @@ The diagram shows how a Wallet-initiated flow use case as described in (#use-cas
         |                |  (5) Credential Request (access_token, proof(s))   |
         |                |--------------------------------------------------->| 
         |                |      Credential Response                           |
-        |                |      (credential(s) OR transaction_id)           |
+        |                |      (credential(s) OR transaction_id)             |
         |                |<---------------------------------------------------|             
 ~~~
 !---
@@ -663,7 +664,7 @@ This specification also uses the error codes `authorization_pending` and `slow_d
 
 # Credential Endpoint {#credential-endpoint}
 
-The Credential Endpoint issues a Credential as approved by the End-User upon presentation of a valid Access Token representing this approval. 
+The Credential Endpoint issues a Credential as approved by the End-User upon presentation of a valid Access Token representing this approval. Support for this endpoint is REQUIRED.
 
 Communication with the Credential Endpoint MUST utilize TLS. 
 
@@ -937,7 +938,7 @@ Cache-Control: no-store
 
 # Batch Credential Endpoint {#batch-credential-endpoint}
 
-The Batch Credential Endpoint issues multiple Credentials in one Batch Credential Response as approved by the End-User upon presentation of a valid Access Token representing this approval.
+The Batch Credential Endpoint issues multiple Credentials in one Batch Credential Response as approved by the End-User upon presentation of a valid Access Token representing this approval. Support for this endpoint is OPTIONAL.
 
 Communication with the Batch Credential Endpoint MUST utilize TLS. 
 
@@ -1051,7 +1052,7 @@ When the Credential Issuer requires `proof` objects to be present in the Batch C
 
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
-This endpoint is used to issue a Credential previously requested at the Credential Endpoint or Batch Credential Endpoint in case the Credential Issuer was not able to immediately issue this Credential. 
+This endpoint is used to issue a Credential previously requested at the Credential Endpoint or Batch Credential Endpoint in case the Credential Issuer was not able to immediately issue this Credential. Support for this endpoint is OPTIONAL.
 
 The Wallet MUST present to the Deferred Endpoint an Access Token valid for the issuance of the Credential previously requested at the Credential Endpoint or the Batch Credential Endpoint. 
 
@@ -1117,6 +1118,53 @@ Cache-Control: no-store
 }
 ```
 
+# Callback Endpoint {#callback_endpoint}
+
+This endpoint is used to receive notification from the Wallet whether credential has been successfully stored in the Wallet or not. Support for this endpoint is OPTIONAL.
+
+This endpoint can be used after the Credential Issuer has sent Credential Response or Batch Credential Response. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the credential has been accepted and successully stored by the Wallet, rejected by the Wallet, or errors and other unforeseen circumstances have occurred during the Wallet's processing.
+
+Communication with the Callback Endpoint MUST utilize TLS.
+
+## Callback from the Wallet
+
+The Wallet sends a callback to the Callback Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
+
+* `status`: REQUIRED. Status whether the credential issuance was successful or not. The value MUST be either `success` or `error`.
+* `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description`` parameter MUST NOT include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
+
+Below is a non-normative example of a callback when credential issuance was successful:
+
+```
+POST /callback HTTP/1.1
+Host: server.example.com
+Content-Type: application/json
+{
+  "status": "success"
+}
+```
+
+Below is a non-normative example of a callback when credential issuance was unsuccessful:
+
+```
+POST /callback HTTP/1.1
+Host: server.example.com
+Content-Type: application/json
+{
+  "status": "error"
+  "error_description": "..."
+}
+```
+
+## Response from the Credential Issuer
+The Credential Issuer MUST respond with the HTTP response with a 200 (OK) status code using the `text/plain` media type:
+```
+HPPT/1.1 200 OK
+Content-Type: text/plain
+OK
+```
+
+
 # Metadata
 
 ## Client Metadata {#client-metadata}
@@ -1151,9 +1199,10 @@ This specification defines the following Credential Issuer Metadata:
 
 * `credential_issuer`: REQUIRED. The Credential Issuer's identifier, as defined in (#credential-issuer-identifier).
 * `authorization_server`: OPTIONAL. Identifier of the OAuth 2.0 Authorization Server (as defined in [@!RFC8414]) the Credential Issuer relies on for authorization. If this element is omitted, the entity providing the Credential Issuer is also acting as the AS, i.e., the Credential Issuer's identifier is used as the OAuth 2.0 Issuer value to obtain the Authorization Server metadata as per [@!RFC8414].
-* `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components.
-* `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
-* `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
+* `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint as defined in (#credential_request). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components.
+* `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint as defined in (#batch-credential-endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
+* `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint as defined in (#deferred-credential-issuance). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
+* `callback_endpoint`: OPTIONAL. URL of the Credential Issuer's Callback Endpoint as defined in (#callback_endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Callback Endpoint.
 * `credential_response_encryption_alg_values_supported`: OPTIONAL. JSON array containing a list of the JWE [@!RFC7516] encryption algorithms (`alg` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
 * `credential_response_encryption_enc_values_supported`: OPTIONAL. JSON array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
 * `require_credential_response_encryption`: OPTIONAL. If `require_credential_response_encryption` is `true`, the Credential Issuer requires additional encryption on top of TLS for the Credential Response and expects encryption parameters to be present in the Credential Request and/or Batch Credential Request. If `require_credential_response_encryption` is `false` or omitted, the Credential Issuer indicates that no additional Credential Response encryption is required. If `require_credential_response_encryption` is `true`, `credential_response_encryption_alg_values_supported` MUST also be provided.
