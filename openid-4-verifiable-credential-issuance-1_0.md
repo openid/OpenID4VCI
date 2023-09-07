@@ -884,9 +884,9 @@ When the Credential Request is invalid or unauthorized, the Credential Issuer co
 
 #### Authorization Errors {#authorization-errors}
 
-If the Credential Request does not contain an Access Token that enables issuance of a requested credential, the Credential Endpoint MUST return an error response as defined in section 3 of [@!RFC6750].
+If the Credential Request does not contain an Access Token that enables issuance of a requested credential, the Credential Endpoint returns an authorization error response such as defined in section 3 of [@!RFC6750].
 
-For the errors specific to the Credential Request such as those caused by `type`, `format`, `proof` or encryption parameters in the request, error codes parameters defined in (#credential-request-errors) SHOULD be used instead of a generic `invalid_request` parameter defined in section 3.1 of [@!RFC6750].
+For the errors specific to the Credential Request such as those caused by `type`, `format`, `proof`, or encryption parameters in the request, error codes parameters defined in (#credential-request-errors) SHOULD be used instead of a generic `invalid_request` parameter defined in section 3.1 of [@!RFC6750].
 
 #### Credential Request Errors {#credential-request-errors}
 
@@ -902,7 +902,7 @@ If the Credential Request is requesting for the issuance of a credential not sup
 
 The usage of these parameters takes precedence over the `invalid_request` parameter defined in (#authorization-errors), since they provide more details about the errors.
 
-The following is a non-normative example of a Credential Error Response an unsupported credential format was requested:
+The following is a non-normative example of a Credential Error Response where an unsupported credential format was requested:
 
 ```
 HTTP/1.1 400 Bad Request
