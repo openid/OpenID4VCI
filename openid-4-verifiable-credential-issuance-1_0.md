@@ -1328,9 +1328,9 @@ To sender-constrain Access Tokens, see the recommendations in Section 4.10.1 in 
 
 ## Data Minimization in the Issued Credential
 
-It is on purpose that the Credential Offer does not contain `credentialSubject` nor `claims` properties (other Credential Format Profiles may define other values for this property), while Authorization Details and Credential Request do. This is because these properties are meant to be used by the Wallet to specify which claims it is requesting to be issued out of all the claims the Credential Issuer is capable of issuing for this particular credential. Credential Offer is a mere "invitation" from the Credential Issuer to the Wallet to start the issuance flow.
+It is on purpose that the Credential Offer does not contain `credentialSubject` nor `claims` properties (other Credential Format Profiles may define other names for this property), while Authorization Details and Credential Request do. This is because these properties are meant to be used by the Wallet to specify which claims it is requesting to be issued out of all the claims the Credential Issuer is capable of issuing for this particular credential. Credential Offer is a mere "invitation" from the Credential Issuer to the Wallet to start the issuance flow.
 
-The Wallet MUST NOT use these properties to request claims that are not part of the claims contained in a particular credential type.
+The Wallet MUST NOT use these properties to request claims that are not part of the claims contained in a particular credential type or claims not authorized by the respective Access Token (in case of a Credential Request).
 
 {backmatter}
 
