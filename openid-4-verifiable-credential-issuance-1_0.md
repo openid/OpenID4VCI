@@ -314,7 +314,7 @@ For security considerations, see (#credential-offer-security).
 This specification defines the following parameters for the Credential Offer object:
 
 * `credential_issuer`: REQUIRED. The URL of the Credential Issuer, as defined in (#credential-issuer-identifier), from which the Wallet is requested to obtain one or more Credentials. The Wallet uses it to obtain the Credential Issuer's Metadata following the steps defined in (#credential-issuer-wellknown).
-* `credentials`: REQUIRED. A JSON array, where every entry is a JSON string or a JSON object describing a credential the Wallet may request. If the entry is a string, the string value MUST be one of the `scope` values included in a `credentials_supported` Credential Issuer metadata parameter as defined in (#credential-metadata-object). When processing, the Wallet MUST resolve this string value to the respective object. If the entry is an object, the object contains the data related to a certain credential type. Each object contains the following parameters: 
+* `credentials`: REQUIRED. A JSON array, where every entry is a JSON string or a JSON object describing a credential the Wallet may request. If the entry is a string, the string value MUST be one of the `identifier` values included in a `credentials_supported` Credential Issuer metadata parameter as defined in (#credential-metadata-object). The Wallet MUST use this value to obtain part of a Credential Issuer metadata that is specific to a credential being offered as defined in (#partial_metadata_retrieval). If the entry is an object, the object contains the data related to a certain credential type. Each object contains the following parameters: 
   * `format`: REQUIRED. JSON string determining the format of the credential.
   * Parameters characterizing the type of the credential to be requested: REQUIRED. These parameters are specific to the credential format profile, some of which are defined in (#format_profiles).
 * `grants`: OPTIONAL. A JSON object indicating to the Wallet the Grant Types the Credential Issuer's AS is prepared to process for this Credential Offer. Every grant is represented by a name/value pair. The name is the Grant Type identifier; the value is a JSON object that contains parameters either determining the way the Wallet MUST use the particular grant and/or parameters the Wallet MUST send with the respective request(s). If `grants` is not present or empty, the Wallet MUST determine the Grant Types the Credential Issuer's AS supports using the respective metadata. When multiple grants are present, it is at the Wallet's discretion which one to use.
@@ -1184,6 +1184,13 @@ The Credential Issuer's configuration can be retrieved using the Credential Issu
 Credential Issuers publishing metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer Identifier. If the Credential Issuer value contains a path component, any terminating `/` MUST be removed before appending `/.well-known/openid-credential-issuer`. 
 
 The path formed following the steps above MUST point to a JSON document compliant with this specification. The document MUST be returned using the `application/json` media type.
+
+#### Partial Credential Issuer Metadata Retrieval {#partial_metadata_retrieval}
+
+The Wallet can retrieve obtain part of the `credentials_supported` credential issuer metadata that is about a particular credential in one of the following ways:
+
+  1. The Wallet first obtains full Credential Issuer Metadata. Then it uses keys such as `identifier` parameter value to identify a relevant entry in the `credentials_supported` parameter.
+  2. The Wallet appends an `identifier` parameter as a query parameter to the /.well-known/ endpoint of the Credential Issuer metadata. The Issuer returns parameters that are common to all of the credentials and the entry in the `credentials_supported` parameter that corresponds to the credential identified in the query parameter. 
 
 ### Credential Issuer Metadata Parameters {#credential-issuer-parameters}
 
