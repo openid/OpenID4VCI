@@ -1119,7 +1119,7 @@ Communication with the Callback Endpoint MUST utilize TLS.
 
 ## Callback from the Wallet {#callback}
 
-The Wallet sends a callback to the Callback Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
+The Wallet sends an HTTP POST request to the Callback Endpoint with the following parameters in the entity-body and using the `application/json` media type.
 
 * `issuer_state`: REQUIRED if the `issuer_state` parameter was present in the Credential Offer (see (#credential_offer)).
 * `credentials`: A JSON array of objects, where each object consists of the following parameters:
@@ -1163,12 +1163,15 @@ Content-Type: application/json
 ```
 
 ## Response from the Credential Issuer
+<<<<<<< HEAD
 The Credential Issuer MUST respond with the HTTP response with a 200 (OK) status code using the `text/plain` media type:
 
+=======
+The Credential Issuer MUST respond with the HTTP status code 200 (OK) status code and use the `text/plain` media type:
+>>>>>>> 789280f95c300157ed3a14317d7b2c0fd5812803
 ```
 HTTP/1.1 200 OK
 Content-Type: text/plain
-OK
 ```
 
 
