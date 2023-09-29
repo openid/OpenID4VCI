@@ -380,6 +380,8 @@ Below is a non-normative example of a Credential Offer Object for a Pre-Authoriz
 
 <{{examples/credential_offer_by_reference.json}}
 
+When retrieving Credential Offer from the Credential Offer URL, `application/json` media type MUST be used. The Credential Offer cannot be signed and MUST NOT use `application/jwt` with `"alg": "none"`.
+
 ## Credential Offer Response
 
 The Wallet is not supposed to create a response. UX control stays with the Wallet after completion of the process. 
@@ -542,7 +544,7 @@ The Token Endpoint issues an Access Token and, optionally, a Refresh Token in ex
 
 Upon receiving a successful Authorization Response, a Token Request is made as defined in Section 4.1.3 of [@!RFC6749].
 
-The following are the extension parameters to the Token Request used in a Pre-Authorized Code Flow:
+The following are the extension parameters to the Token Request used in a Pre-Authorized Code Flow defined by this specification:
 
 * `pre-authorized_code`: The code representing the authorization to obtain Credentials of a certain type. This parameter MUST be present if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 * `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Credential Offer. The string value MUST consist of a maximum of eight numeric characters (the numbers 0 - 9). This parameter MUST only be used if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
@@ -551,7 +553,7 @@ Requirements around how the Wallet identifies and, if applicable, authenticates 
 
 For the Pre-Authorized Code Grant Type, authentication of the client is OPTIONAL, as described in Section 3.2.1 of OAuth 2.0 [@!RFC6749], and, consequently, the `client_id` parameter is only needed when a form of Client Authentication that relies on this parameter is used.
 
-If the Token Request contains an `authorization_details` parameter of type `openid_credential` and the Credential Issuer's metadata contains an `authorization_server` parameter, the `authorization_details` object MUST contain the Credential Issuer's identifier in the `locations` element. 
+If the Token Request contains an `authorization_details` parameter (as defined by [RFC@!9396]) of type `openid_credential` and the Credential Issuer's metadata contains an `authorization_server` parameter, the `authorization_details` object MUST contain the Credential Issuer's identifier in the `locations` element. 
 
 If the Token Request contains a scope value related to credential issuance and the Credential Issuer's metadata contains an `authorization_server` parameter, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the AS to differentiate Credential Issuers.
 
@@ -1746,7 +1748,7 @@ The following additional Credential Issuer metadata are defined for this Credent
 
 * `credential_definition`: REQUIRED. JSON object containing the detailed description of the credential type. It consists at least of the following two sub claims:
   * `type`: REQUIRED. JSON array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
-  * `credentialSubject`: OPTIONAL. A JSON object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value MAY be a dictionary, which enables representation of the full (potentially deeply nested) structure of the verifiable credential to be issued. The value is a JSON object detailing the specifics about the support for the claim with the following non-exhaustive list of parameters that MAY be included:
+  * `credentialSubject`: OPTIONAL. A JSON object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be a JSON object that includes a following non-exhaustive list of parameters defined by this specification:
       * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
       * `value_type`: OPTIONAL. String value determining the type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
       * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
@@ -1775,7 +1777,7 @@ The following additional claims are defined for authorization details of type `o
 
 * `credential_definition`: REQUIRED. JSON object containing the detailed description of the credential type. It consists at least of the following sub claims:
   * `type`: REQUIRED. JSON array as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the Wallet requests authorization for at the Credential Issuer.
-  * `credentialSubject`: OPTIONAL. A JSON object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value MAY be a dictionary, which enables representation of the full (potentially deeply nested) structure of the verifiable credential to be issued. This object indicates the claims the Wallet would like to turn up in the credential to be issued.
+  * `credentialSubject`: OPTIONAL. A JSON object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. The most deeply nested value MUST be an empty JSON object. This object indicates the claims the Wallet would like to turn up in the credential to be issued.
 
 The following is a non-normative example of an authorization details object with Credential format `jwt_vc_json`:
 
@@ -1820,7 +1822,7 @@ The following additional Credential Issuer metadata are defined for this Credent
 * `credential_definition`: REQUIRED. JSON object containing the detailed description of the credential type. It consists at least of the following three sub claims:
   * `@context`: REQUIRED. JSON array as defined in [@VC_DATA], Section 4.1.
   * `type`: REQUIRED. JSON array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
-  * `credentialSubject`: OPTIONAL. A JSON object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value MAY be a dictionary, which enables represention of the full (potentially deeply nested) structure of the verifiable credential to be issued. The value is a JSON object detailing the specifics about the support for the claim with a following non-exhaustive list of parameters that MAY be included:
+  * `credentialSubject`: OPTIONAL. A JSON object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be a JSON object that includes a following non-exhaustive list of parameters defined by this specification:
       * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
       * `value_type`: OPTIONAL. String value determining the type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
       * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
