@@ -986,7 +986,6 @@ The following claims are used in the Batch Credential Response:
 * `credential_responses`: REQUIRED. JSON array that contains Credential Response objects as defined in (#credential_request) and/or Deferred Credential Response objects as defined in (#deferred-credential_request). Every entry of the array corresponds to the Credential Request object at the same array index in the `credential_requests` parameter of the Batch Credential Request.
 * `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response). 
 * `c_nonce_expires_in`: OPTIONAL. The `c_nonce_expires_in` as defined in (#credential-response).
-* `callback_id`: OPTIONAL. A JSON string identifying all of the issued credentials that the Wallet includes in the callback as defined in (#callback).
 
 Below is a non-normative example of a Batch Credential Response in an immediate issuance flow:
 
