@@ -834,6 +834,7 @@ The following claims are used in the Credential Response:
 * `transaction_id`: OPTIONAL. A JSON string identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer was unable to immediately issue the credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST be present when the `credential` parameter is not returned. It MUST be invalidated after the credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent credential requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
+* `callback_id`: OPTIONAL. A JSON string identifying an issued credential that the Wallet includes in the callback as defined in (#callback).
 
 The `format` Claim determines the Credential format and encoding of the credential in the Credential Response. Details are defined in the Credential Format Profiles in (#format_profiles). 
 
@@ -984,7 +985,8 @@ The following claims are used in the Batch Credential Response:
 
 * `credential_responses`: REQUIRED. JSON array that contains Credential Response objects as defined in (#credential_request) and/or Deferred Credential Response objects as defined in (#deferred-credential_request). Every entry of the array corresponds to the Credential Request object at the same array index in the `credential_requests` parameter of the Batch Credential Request.
 * `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response). 
-* `c_nonce_expires_in`: OPTIONAL. The `c_nonce_expires_in` as defined in (#credential-response). 
+* `c_nonce_expires_in`: OPTIONAL. The `c_nonce_expires_in` as defined in (#credential-response).
+* `callback_id`: OPTIONAL. A JSON string identifying all of the issued credentials that the Wallet includes in the callback as defined in (#callback).
 
 Below is a non-normative example of a Batch Credential Response in an immediate issuance flow:
 
@@ -1109,18 +1111,21 @@ Cache-Control: no-store
 
 # Callback Endpoint {#callback_endpoint}
 
-This endpoint is used to receive notification from the Wallet whether credential has been successfully received in the Wallet or not. Support for this endpoint is OPTIONAL.
+This endpoint is used to receive notification from the Wallet whether credential has been successfully received in the Wallet or not. The Credential Issuer needs to return `callback_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL.
 
 This endpoint can be used after the Credential Issuer has sent Credential Response or Batch Credential Response. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the credential has been accepted and successully stored by the Wallet, rejected by the Wallet, or errors and other unforeseen circumstances have occurred during the Wallet's processing.
 
 Communication with the Callback Endpoint MUST utilize TLS.
 
-## Callback from the Wallet
+## Callback from the Wallet {#callback}
 
 The Wallet sends a callback to the Callback Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
-* `status`: REQUIRED. Status whether the credential issuance was successful or not. The value MUST be either `success` or `error`.
-* `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description`` parameter MUST NOT include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
+* `issuer_state`: REQUIRED if the `issuer_state` parameter was present in the Credential Offer (see (#credential_offer)).
+* `credentials`: A JSON array of objects, where each object consists of the following parameters:
+  * `callback_id`: REQUIED. A JSON string received in Credential Response or Batch Credential Response.
+  * `status`: REQUIRED. Status whether the credential issuance was successful or not. The value MUST be either `success` or `error`.
+  * `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description`` parameter MUST NOT include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
 
 Below is a non-normative example of a callback when credential issuance was successful:
 
@@ -1129,7 +1134,13 @@ POST /callback HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
 {
-  "status": "success"
+  "issuer_state": "eyJhbGciOiJSU0Et...FYUaBy",
+  "credentials": [
+    {
+    "callback_id": "3fwe98js",
+    "status": "success"
+    }
+  ]
 }
 ```
 
@@ -1140,13 +1151,20 @@ POST /callback HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
 {
-  "status": "error"
-  "error_description": "..."
+  "issuer_state": "eyJhbGciOiJSU0Et...FYUaBy",
+  "credentials": [
+    {
+    "callback_id": "3fwe98js",
+    "status": "error",
+    "error_description": "..."
+    }
+  ]
 }
 ```
 
 ## Response from the Credential Issuer
 The Credential Issuer MUST respond with the HTTP response with a 200 (OK) status code using the `text/plain` media type:
+
 ```
 HTTP/1.1 200 OK
 Content-Type: text/plain
