@@ -1146,11 +1146,10 @@ Content-Type: application/json
 ```
 
 ## Response from the Credential Issuer
-The Credential Issuer MUST respond with the HTTP response with a 200 (OK) status code using the `text/plain` media type:
+The Credential Issuer MUST respond with the HTTP status code 200 (OK) status code and use the `text/plain` media type:
 ```
 HTTP/1.1 200 OK
 Content-Type: text/plain
-OK
 ```
 
 
