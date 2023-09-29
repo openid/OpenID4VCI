@@ -1160,6 +1160,8 @@ This specification defines the following Credential Issuer Metadata:
 * `credential_response_encryption_enc_values_supported`: OPTIONAL. JSON array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
 * `require_credential_response_encryption`: OPTIONAL. If `require_credential_response_encryption` is `true`, the Credential Issuer requires additional encryption on top of TLS for the Credential Response and expects encryption parameters to be present in the Credential Request and/or Batch Credential Request. If `require_credential_response_encryption` is `false` or omitted, the Credential Issuer indicates that no additional Credential Response encryption is required. If `require_credential_response_encryption` is `true`, `credential_response_encryption_alg_values_supported` MUST also be provided.
 
+Note: When using relying on multiple Authorization Servers for authorization, Credential Issuer MUST be able to identify from which Authorization Server each Access Tokens is coming.
+
 The following parameter MUST be used to communicate the specifics of the Credential that the Credential Issuer supports issuance of:
 
 * `credentials_supported`: REQUIRED. A JSON array containing a list of JSON objects, each of them representing metadata about a separate credential type that the Credential Issuer can issue. The JSON objects in the array MUST conform to the structure defined in (#credential-metadata-object).
