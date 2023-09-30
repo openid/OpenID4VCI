@@ -1181,13 +1181,6 @@ Credential Issuers publishing metadata MUST make a JSON document available at th
 
 The path formed following the steps above MUST point to a JSON document compliant with this specification. The document MUST be returned using the `application/json` media type.
 
-#### Partial Credential Issuer Metadata Retrieval {#partial_metadata_retrieval}
-
-The Wallet can retrieve obtain part of the `credentials_supported` credential issuer metadata that is about a particular credential in one of the following ways:
-
-  1. The Wallet first obtains full Credential Issuer Metadata. Then it uses keys such as `identifier` parameter value to identify a relevant entry in the `credentials_supported` parameter.
-  2. The Wallet appends an `identifier` parameter as a query parameter to the /.well-known/ endpoint of the Credential Issuer metadata. The Issuer returns parameters that are common to all of the credentials and the entry in the `credentials_supported` parameter that corresponds to the credential identified in the query parameter. 
-
 ### Credential Issuer Metadata Parameters {#credential-issuer-parameters}
 
 This specification defines the following Credential Issuer Metadata:
