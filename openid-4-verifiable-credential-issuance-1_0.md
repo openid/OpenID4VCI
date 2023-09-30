@@ -603,9 +603,9 @@ In addition to the response parameters defined in [@!RFC6749], the AS MAY return
 
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
-* `identifiers`: OPTIONAL. JSON array of JSON strings that each identify a credential that can be issued using Access Token returned in this response. 
+* `c_identifiers`: OPTIONAL. JSON array of JSON strings that each identify a credential that can be issued using Access Token returned in this response. 
 * `authorization_details`: REQUIRED when `authorization_details` parameter was used to request issuance of a certain Credential type as defined in (#authorization-details). A JSON array of objects as defined in Section 7 of [@!RFC9396]. In addition to the parameters received from the Wallet, the AS MAY return the following parameter:
-  * `identifiers`: OPTIONAL. JSON array of JSON strings that each identify a credential that can be issued using Access Token returned in the same response.
+  * `c_identifiers`: OPTIONAL. JSON array of JSON strings that each identify a credential that can be issued using Access Token returned in the same response.
 
 Below is a non-normative example of a Token Response when `scope` parameter was used to request issuance of a certain Credential type:
 
@@ -720,10 +720,10 @@ For cryptographic binding, the Client has the following options to provide crypt
 
 A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
-* `format`: REQUIRED if `identifier` was not returned from the Token Response. Format of the Credential to be issued. This Credential format identifier determines further parameters required to determine the type and (optionally) the content of the credential to be issued. Credential Format Profiles consisting of the Credential format specific set of parameters are defined in (#format_profiles). When this parameter is used, `identifier` parameter MUST NOT be present.
+* `format`: REQUIRED if `c_identifier` was not returned from the Token Response. Format of the Credential to be issued. This Credential format identifier determines further parameters required to determine the type and (optionally) the content of the credential to be issued. Credential Format Profiles consisting of the Credential format specific set of parameters are defined in (#format_profiles). When this parameter is used, `c_identifier` parameter MUST NOT be present.
 * `proof`: OPTIONAL. JSON object containing proof of possession of the key material the issued Credential shall be bound to.  The `proof` object MUST contain a following claim:
     * `proof_type`: REQUIRED. JSON string denoting the key proof type. The value of this claim determines other claims in the key proof object and its respective processing rules. Key proof types defined in this specification can be found in (#proof_types).
-* `identifier`: REQUIRED if `identifier` was returned from the Token Response. JSON string that identifies a credential that is being requested to be issued. It MUST be present if Credential Issuer returned `identifiers` parameter the Token Response. When this parameter is used, `format` parameter and any other credential format specific set of parameters such as those defined in (#format_profiles) MUST NOT be present.
+* `c_identifier`: REQUIRED if `c_identifier` was returned from the Token Response. JSON string that identifies a credential that is being requested to be issued. It MUST be present if Credential Issuer returned `c_identifiers` parameter the Token Response. When this parameter is used, `format` parameter and any other credential format specific set of parameters such as those defined in (#format_profiles) MUST NOT be present.
 * `credential_encryption_jwk`: OPTIONAL. A JSON object containing a single public key as a JWK used for encrypting the Credential Response.
 * `credential_response_encryption_alg`: OPTIONAL. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] REQUIRED for encrypting Credential and/or Batch Credential Responses. The default, if omitted, is that no encryption is performed. If `credential_response_encryption_alg` is present, `credential_encryption_jwk` MUST be present.
 * `credential_response_encryption_enc`: OPTIONAL. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] REQUIRED for encrypting Credential Responses. If `credential_response_encryption_alg` is specified, the default for this value is `A256GCM`. When `credential_response_encryption_enc` is included, `credential_response_encryption_alg` MUST also be provided.
