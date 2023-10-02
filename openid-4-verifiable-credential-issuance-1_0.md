@@ -896,7 +896,7 @@ If the Credential Request is requesting for the issuance of a credential not sup
   * `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
   * `unsupported_credential_type`: Requested credential type is not supported.
   * `unsupported_credential_format`: Requested credential format is not supported.
-  * `invalid_proof`: The `proof` in the Credential Request was invalid. For example, No key proof was provided (the `proof` field was not present); the provided key proof was not bound to a nonce provided by the Credential Issuer, etc.
+  * `invalid_proof`: The `proof` in the Credential Request was invalid. For example, no key proof was provided (the `proof` field was not present); the provided key proof was not bound to a nonce provided by the Credential Issuer, etc.
   * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
 * `error_description`: OPTIONAL. A key at the top level of a JSON object, the value of which MUST be a human-readable ASCII [@!USASCII] text providing additional information, used to assist the client developer in understanding the error that occurred. Values for the `error_description` parameter MUST NOT include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
 
