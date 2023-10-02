@@ -16,7 +16,9 @@ jobs:
                 docker run \
                 -v /${{ github.workspace }}:/data danielfett/markdown2rfc \
                 openid-4-verifiable-credential-issuance-1_0.md
-                
+          - name: rename
+            run: |
+                mv ./openid-4-verifiable-credential-issuance-1_0*.html ./openid-4-verifiable-credential-issuance-1_0.html
           - uses: actions/upload-artifact@v3
             with:
                 # Artifact name
@@ -26,6 +28,7 @@ jobs:
     
     publish-to-pages:
       name: Publish to GitHub Pages
+      if: github.ref == 'refs/heads/main'
       needs: compile-oid4vc
       runs-on: ubuntu-latest
       permissions:
