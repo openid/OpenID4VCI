@@ -1127,7 +1127,7 @@ This endpoint is used to receive notification from the Wallet whether credential
 
 This endpoint can be used after the Credential Issuer has sent Credential Response or Batch Credential Response. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the credential has been accepted and successully stored by the Wallet, rejected by the Wallet, or errors and other unforeseen circumstances have occurred during the Wallet's processing.
 
-The Wallet MUST present to the Callback Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). Credential Issuer that requires this Callback MUST ensure Access Token issued by the Authorization Server is valid at the Callback Endpoint.
+The Wallet MUST present to the Callback Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). Credential Issuer that requires request to the Callback Endpoint MUST ensure Access Token issued by the Authorization Server is valid at the Callback Endpoint.
 
 Communication with the Callback Endpoint MUST utilize TLS.
 
@@ -1140,7 +1140,7 @@ The Wallet sends an HTTP POST request to the Callback Endpoint with the followin
   * `status`: REQUIRED. Status whether the credential issuance was successful or not. The value MUST be either `success`, `failure` or `rejected`.
   * `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description`` parameter MUST NOT include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
 
-Below is a non-normative example of a callback when credential issuance was successful:
+Below is a non-normative example of a callback request when credential issuance was successful:
 
 ```
 POST /callback HTTP/1.1
@@ -1157,7 +1157,7 @@ Content-Type: application/json
 }
 ```
 
-Below is a non-normative example of a callback when credential issuance was unsuccessful:
+Below is a non-normative example of a callback request when credential issuance was unsuccessful:
 
 ```
 POST /callback HTTP/1.1
@@ -1175,13 +1175,34 @@ Content-Type: application/json
 }
 ```
 
-## Response from the Credential Issuer
-The Credential Issuer MUST respond with the HTTP status code 200 (OK) and use the `text/plain` media type:
+## Successful Callback Request
+
+When the Credential Issuer has successfully received the callback request from the Wallet, it MUST respond with the HTTP status code 2xx and use the `text/plain` media type. The usage of the HTTP status code 204 (No Content) is RECOMMENDED.
+
 ```
 HTTP/1.1 200 OK
 Content-Type: text/plain
 ```
 
+## Callback Error Response
+
+If the callback request does not contain an Access Token or contains an invalid Access Token, the Callback Endpoint returns an authorization error response such as defined in section 3 of [@!RFC6750].
+
+`invalid_request` parameter defined in section 3.1 of [@!RFC6750] SHOULD be used in most cases other than when `callback_id` value is invalid. In the latter case, the following error code SHOULD be used as the value of the `error` parameter:
+
+* `invalid_callback_id`: The `callback_id` in the callback request was invalid.
+
+It is at the discretion of the Wallet whether to retry the request or not.
+
+The following is a non-normative example of a Callback Error Response where an invalid `callback_id` value was used:
+
+```
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Cache-Control: no-store
+{
+   "error": "invalid_callback_id"
+}
 
 # Metadata
 
