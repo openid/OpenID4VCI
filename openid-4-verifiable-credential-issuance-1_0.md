@@ -1127,6 +1127,8 @@ This endpoint is used to receive notification from the Wallet whether credential
 
 This endpoint can be used after the Credential Issuer has sent Credential Response or Batch Credential Response. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the credential has been accepted and successully stored by the Wallet, rejected by the Wallet, or errors and other unforeseen circumstances have occurred during the Wallet's processing.
 
+The Wallet MUST present to the Callback Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). Credential Issuer that requires this Callback MUST ensure Access Token issued by the Authorization Server is valid at the Callback Endpoint.
+
 Communication with the Callback Endpoint MUST utilize TLS.
 
 ## Callback from the Wallet {#callback}
