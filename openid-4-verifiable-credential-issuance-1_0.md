@@ -1129,6 +1129,11 @@ This endpoint can be used after the Credential Issuer has sent Credential Respon
 
 The Wallet MUST present to the Callback Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). Credential Issuer that requires request to the Callback Endpoint MUST ensure Access Token issued by the Authorization Server is valid at the Callback Endpoint.
 
+The callback from the Wallet is idempotent. The Credential Issuer MUST return success if it receives multiple identical calls from the Wallet for the same `callback_id`s.
+
+It is up to the Wallet whether to retry if the call to this endpoint fails. The Credential Issuer SHOULD have pre-determined the amount of time within with it expects the callback. It is up to the Credential Issuer how to interpret not receiving callback from the Wallet at all, despite providing `callback_id` in the Credential Response.
+The Wallet MUST present to the Callback Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). Credential Issuer that requires this Callback MUST ensure Access Token issued by the Authorization Server is valid at the Callback Endpoint.
+
 Communication with the Callback Endpoint MUST utilize TLS.
 
 ## Callback from the Wallet {#callback}
