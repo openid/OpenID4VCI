@@ -18,7 +18,7 @@ jobs:
                 openid-4-verifiable-credential-issuance-1_0.md
           - name: rename
             run: |
-                mv ./openid-4-verifiable-credential-issuance-1_0*.html ./openid-4-verifiable-credential-issuance-1_0.html
+                mv ./openid-4-verifiable-credential-issuance-1_0*.html ./openid-4-verifiable-credential-issuance-wg-draft.html
           - uses: actions/upload-artifact@v3
             with:
                 # Artifact name
