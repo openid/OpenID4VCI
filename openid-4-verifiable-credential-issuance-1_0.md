@@ -460,7 +460,7 @@ occurrence MUST be interpreted individually.
 
 Credential Issuers MUST ignore unknown scope values in a request.
 
-If the Credential Issuer metadata contains an `authorization_server` property, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the AS to differentiate Credential Issuers.  
+If the Credential Issuer metadata contains an `authorization_server` property, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value. This allows the AS to differentiate Credential Issuers.  
 
 Below is a non-normative example of an Authorization Request using the scope `UniversityDegree_JWT` that would be sent by the User Agent to the Authorization Server in response to an HTTP 302 redirect response by the Wallet (with line wraps within values for display purposes only):
 
@@ -601,13 +601,13 @@ Token Responses are made as defined in [@!RFC6749].
 
 In addition to the response parameters defined in [@!RFC6749], the AS MAY return the following parameters:
 
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
+* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used when creating a proof of possession of the key proof (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
-* `c_identifiers`: OPTIONAL. JSON array of JSON strings that each identify a credential that can be issued using Access Token returned in this response. This parameter is used to uniquely identify a credential beyond the combination of credential format and type. For example, when the Credential Issuer is issuing credentials of the same type, but with different subset of claims. This parameter MUST be used when `scope` parameter was used in the Authorization Request to request credential type of a credential that is being uniquely identified. When received, the Wallet MUST use these values together with an Access Token in the subsequent Credential Request(s).
-* `authorization_details`: REQUIRED when `authorization_details` parameter was used to request issuance of a certain Credential type as defined in (#authorization-details). A JSON array of objects as defined in Section 7 of [@!RFC9396]. In addition to the parameters received from the Wallet, the AS MAY return the following parameter:
-  * `c_identifiers`: OPTIONAL. JSON array of JSON strings that each identify a credential that can be issued using Access Token returned in this response. This parameter is used to uniquely identify a credential beyond the combination of credential format and type. For example, when Credential Issuer is issuing credentials of the same type, but with different subset of claims. This parameter MUST be used when `authorization_details` parameter was used in the Authorization Request to request credential type of a credential that is being uniquely identified. When received, the Wallet MUST use these values together with an Access Token in the subsequent Credential Request(s).
+* `c_identifiers`: OPTIONAL. JSON array of JSON strings that each identify a Credential that can be issued using Access Token returned in this response. This parameter is used to uniquely identify a Credential beyond the combination of Credential format and type. For example, when the Credential Issuer is issuing Credentials of the same type, but with different subset of claims. This parameter MUST be used when the `scope` parameter is used in the Authorization Request to request the type of a Credential that is being uniquely identified. When received, the Wallet MUST use these values together with an Access Token in the subsequent Credential Request(s).
+* `authorization_details`: REQUIRED when `authorization_details` parameter is used to request issuance of a certain Credential type as defined in (#authorization-details). A JSON array of objects as defined in Section 7 of [@!RFC9396]. In addition to the parameters received from the Wallet, the AS MAY return the following parameter:
+  * `c_identifiers`: OPTIONAL. JSON array of JSON strings that each identify a Credential that can be issued using Access Token returned in this response. This parameter is used to uniquely identify a Credential beyond the combination of Credential format and type. For example, when Credential Issuer is issuing Credentials of the same type, but with different subset of claims. This parameter MUST be used when `authorization_details` parameter is used in the Authorization Request to request Credential type of a Credential that is being uniquely identified. When received, the Wallet MUST use these values together with an Access Token in the subsequent Credential Request(s).
 
-Below is a non-normative example of a Token Response when `scope` parameter was used to request issuance of a certain Credential type:
+Below is a non-normative example of a Token Response when the `scope` parameter was used to request the issuance of a certain Credential type:
 
 ```
 HTTP/1.1 200 OK
@@ -720,12 +720,12 @@ For cryptographic binding, the Client has the following options to provide crypt
 
 A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
-* `format`: REQUIRED if `c_identifier` was not returned from the Token Response. Format of the Credential to be issued. This Credential format identifier determines further parameters required to determine the type and (optionally) the content of the credential to be issued. Credential Format Profiles consisting of the Credential format specific set of parameters are defined in (#format_profiles). When this parameter is used, `c_identifier` parameter MUST NOT be present.
-* `proof`: OPTIONAL. JSON object containing proof of possession of the key material the issued Credential shall be bound to.  The `proof` object MUST contain a following claim:
+* `format`: REQUIRED when the `c_identifier` was not returned from the Token Response. This parameter determines the format of the Credential to be issued, which may determine the type and any other information related to the Credential to be issued. Credential Format Profiles consisting of the Credential format specific set of parameters are defined in (#format_profiles). When this parameter is used, `c_identifier` parameter MUST NOT be present.
+* `proof`: OPTIONAL. JSON object containing proof of possession of the cryptographic key material the issued Credential shall be bound to.  The `proof` object MUST contain a following claim:
     * `proof_type`: REQUIRED. JSON string denoting the key proof type. The value of this claim determines other claims in the key proof object and its respective processing rules. Key proof types defined in this specification can be found in (#proof_types).
-* `c_identifier`: REQUIRED if `c_identifier` was returned from the Token Response. JSON string that identifies a credential that is being requested to be issued. It MUST be present if Credential Issuer returned `c_identifiers` parameter the Token Response. When this parameter is used, `format` parameter and any other credential format specific set of parameters such as those defined in (#format_profiles) MUST NOT be present.
+* `c_identifier`: REQUIRED if `c_identifier` was returned from the Token Response. JSON string that identifies a Credential that is being requested to be issued. It MUST be present if the Credential Issuer returned `c_identifiers` parameter in the Token Response. When this parameter is used, the `format` parameter and any other Credential format specific set of parameters such as those defined in (#format_profiles) MUST NOT be present.
 * `credential_encryption_jwk`: OPTIONAL. A JSON object containing a single public key as a JWK used for encrypting the Credential Response.
-* `credential_response_encryption_alg`: OPTIONAL. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] REQUIRED for encrypting Credential and/or Batch Credential Responses. The default, if omitted, is that no encryption is performed. If `credential_response_encryption_alg` is present, `credential_encryption_jwk` MUST be present.
+* `credential_response_encryption_alg`: OPTIONAL. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] REQUIRED for encrypting Credential and/or Batch Credential Responses. If omitted, no encryption is intended to be performed. When the `credential_response_encryption_alg` is present, the `credential_encryption_jwk` MUST be present.
 * `credential_response_encryption_enc`: OPTIONAL. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] REQUIRED for encrypting Credential Responses. If `credential_response_encryption_alg` is specified, the default for this value is `A256GCM`. When `credential_response_encryption_enc` is included, `credential_response_encryption_alg` MUST also be provided.
 
 The `proof_type` claim is an extension point that enables the use of different types of proofs for different cryptographic schemes.
@@ -1225,7 +1225,7 @@ It is dependent on the Credential format where the available claims will appear 
 
 The AS MUST be able to determine from the Issuer metadata what claims are disclosed with the requested credentials to be able to render a meaningful user consent.
 
-The following is a non-normative example of an object comprising `credentials_supported` parameter for a credential in JWT VC format (JSON encoding).
+The following is a non-normative example of an object comprising `credentials_supported` parameter for a Credential in JWT VC format (JSON encoding).
 
 <{{examples/credential_metadata_jwt_vc_json.json}}
 
