@@ -1123,7 +1123,7 @@ Cache-Control: no-store
 
 # Callback Endpoint {#callback_endpoint}
 
-This endpoint is used to receive notification from the Wallet whether Credential has been successfully received in the Wallet or not. The Credential Issuer needs to return `callback_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL.
+This endpoint is used by the Wallet to notify the Credential Issuer whether a credential has been successfully received or not. The Credential Issuer needs to return `callback_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL.
 
 This endpoint can be used after the Credential Issuer has sent Credential Response or Batch Credential Response. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the Credential has been accepted and successully stored by the Wallet, rejected by the Wallet, or errors and other unforeseen circumstances have occurred during the Wallet's processing.
 
