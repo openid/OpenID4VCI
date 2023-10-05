@@ -1894,7 +1894,7 @@ The following is a non-normative example of a Credential Offer of type `ldp_vc`:
 
 <{{examples/credential_offer_ldp_vc.json}}
 
-For better suiting the W3C Data Integrity Proof ecosystem the following non-normative example displays a credential request with the proof of posession type `ldp_vp` which uses a verifiable presentation.
+For better suiting the W3C Data Integrity Proof ecosystem the following non-normative example displays a Credential request with the proof of possession type set to `ldp_vp`, using a verifiable presentation.
 
 <{{examples/credential_request_ldp_vc_vp.json}}
 
