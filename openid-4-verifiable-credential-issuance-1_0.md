@@ -808,7 +808,7 @@ The verifiable presentation as defined by [@VC_DATA_2.0] signed using Data Integ
 
   * in the proof body, 
       * `domain`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
-      * `challenge`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a server-provided `c_nonce`. MUST be present when the Wallet received server-provided `c_nonce`.
+      * `challenge`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a server-provided `c_nonce`. It MUST be present when the Wallet received server-provided `c_nonce`.
 
 The Credential Issuer MUST validate that the `proof` is actually signed by a key of the holder.
 
