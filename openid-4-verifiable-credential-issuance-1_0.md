@@ -1179,7 +1179,7 @@ Content-Type: application/json
 
 ## Successful Callback Request
 
-When the Credential Issuer has successfully received the callback request from the Wallet, it MUST respond with the HTTP status code 2xx and use the `text/plain` media type. The usage of the HTTP status code 204 (No Content) is RECOMMENDED.
+When the Credential Issuer has successfully received the callback request from the Wallet, it MUST respond with the HTTP status code 2xx. The usage of the HTTP status code 204 (No Content) is RECOMMENDED.
 
 ```
 HTTP/1.1 200 OK
