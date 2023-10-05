@@ -890,7 +890,7 @@ For the errors specific to the Credential Request such as those caused by `type`
 
 #### Credential Request Errors {#credential-request-errors}
 
-If the Wallet is requesting the issuance of a credential that is not supported by the Credential Endpoint, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the response body::
+If the Wallet is requesting the issuance of a credential that is not supported by the Credential Endpoint, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the response body:
 
 * `error`: REQUIRED. A key at the top level of a JSON object, the value of which SHOULD be a single ASCII [@!USASCII] error code from the following:
   * `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
@@ -1089,7 +1089,7 @@ Deferred Credential Response MUST be sent using the `application/json` media typ
 
 ## Deferred Credential Error Response {#deferred-credential_error_response}
 
-When the Deferred Credential Request is invalid or the credential is not available yet, the Credential Issuer MUST construct the error response as defined in (#credential-error-response).
+When the Deferred Credential Request is invalid or the credential is not available yet, the Credential Issuer constructs the error response as defined in (#credential-error-response).
 
 The following additional error codes are specified in addition to those already defined in (#credential-request-errors):
 
