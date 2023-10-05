@@ -735,7 +735,7 @@ This specification defines the following values for the `proof_type` property:
 
 * `jwt`: A JWT [@!RFC7519] is used as proof of possession. When `proof_type` is `jwt`, a `proof` object MUST include a `jwt` claim containing a JWT defined in (#jwt-proof-type).
 * `cwt`: A CWT [@!RFC8392] is used as proof of possession. When `proof_type` is `cwt`, a `proof` object MUST include a `cwt` claim containing a CWT defined in (#cwt-proof-type).
-* `ldp_vp_2.0`: A verifiable presentation signed using data integrity proof as defined in [@VC_DATA_2.0] and [@DI] specs must be used as a proof of possession. When `proof_type` is `ldp_vp_2.0`, a `proof` object MUST include a `ldp_vp` claim containing a [verifiable presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp_vp-proof-type).
+* `ldp_vp_2.0`: A verifiable presentation signed using the data integrity proof defined in [@VC_DATA_2.0], and where the proof of possession MUST be done in accordance with [@DI]. When `proof_type` is set to `ldp_vp_2.0`, the `proof` object MUST include a `ldp_vp` claim containing a [verifiable presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp_vp-proof-type).
 
 #### `jwt` Key Proof Type {#jwt-proof-type}
 
