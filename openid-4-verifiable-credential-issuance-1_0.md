@@ -1150,6 +1150,8 @@ Below is a non-normative example of a callback request when credential issuance 
 POST /callback HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
+Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
 {
   "credentials": [
     {
@@ -1166,6 +1168,8 @@ Below is a non-normative example of a callback request when credential issuance 
 POST /callback HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
+Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
 {
   "credentials": [
     {
