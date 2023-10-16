@@ -463,7 +463,7 @@ Credential Issuers MUST ignore unknown scope values in a request.
 
 If the Credential Issuer metadata contains an `authorization_server` property, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value. This allows the AS to differentiate Credential Issuers.  
 
-Below is a non-normative example of an Authorization Request using the scope `UniversityDegree_JWT` that would be sent by the User Agent to the Authorization Server in response to an HTTP 302 redirect response by the Wallet (with line wraps within values for display purposes only):
+Below is a non-normative example of an Authorization Request provided by the Wallet to the Authorization Server using the scope `UniversityDegree_JWT` and in response to an HTTP 302 redirect. The line wraps within the values are intended for display purposes only:
 
 ```
 GET /authorize?
