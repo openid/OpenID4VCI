@@ -409,8 +409,7 @@ There are two possible ways to request issuance of a specific Credential type in
 The request parameter `authorization_details` defined in Section 2 of [@!RFC9396] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following parameters to be used with this authorization details type:
 
 * `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
-* `format`: REQUIRED. JSON string representing the format in which the Credential is requested to be issued.
-* Further parameters characterizing the type of the credential to be issued: REQUIRED. These parameters are specific to the credential format profile, some of which are defined in (#format_profiles).
+* `format`: REQUIRED. JSON string representing the format in which the Credential is requested to be issued. This Credential format identifier determines further claims in the authorization details object specifically used to identify the Credential type to be issued. This specification defines Credential Format Profiles in (#format_profiles).
 
 The following is a non-normative example of an `authorization_details` object:
 
