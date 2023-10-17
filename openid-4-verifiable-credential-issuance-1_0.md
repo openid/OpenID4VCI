@@ -819,7 +819,8 @@ Below is a non-normative example of a `proof` parameter:
   "proof_type": "ldp_vp_2.0",
   "ldp_vp": {
          "@context": [
-            "https://www.w3.org/2018/credentials/v1"
+             "https://www.w3.org/ns/credentials/v2",
+             "https://www.w3.org/ns/credentials/examples/v2"
          ],
          "type": [
             "VerifiablePresentation"
