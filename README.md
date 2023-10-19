@@ -1,4 +1,4 @@
-# openid-connect-4-credential-issuance
+# openid-4-verifiable-credential-issuance
 Specification to allow holders to request issuance of credentials and issuers to issue verifiable credentials.
 
 ### Current WG-Draft
