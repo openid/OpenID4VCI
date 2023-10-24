@@ -600,12 +600,14 @@ grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
 
 Token Responses are made as defined in [@!RFC6749].
 
+The AS might decide to authorize issuance of multiple instances for each Credential requested in the Authorization Request. Each Credential instance is described using the same entry in the `credentials_supported` Credential Issuer metadata, but contains different claim values or different subset of claims within the claimset identified by the Credential type.
+
 In addition to the response parameters defined in [@!RFC6749], the AS MAY return the following parameters:
 
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used when creating a proof of possession of the key proof (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
 * `authorization_details`: REQUIRED when `authorization_details` parameter is used to request issuance of a certain Credential type as defined in (#authorization-details). A JSON array of objects as defined in Section 7 of [@!RFC9396]. This specification defines the following parameter to be used with authorization details type `openid_credential` in the Token Response:
-  * `c_instance_identifiers`: OPTIONAL. JSON array of JSON strings that each uniquely identify a Credential instance that can be issued using Access Token returned in this response. Each Credential instance can be a unique Credential of the same format and type, but with different claim values or different subset of claims within the claimset identified by the Credential type. This parameter can also be used to simplify the Credential Request, since as defined in (#credential_request) `c_instance_identifier` parameter replaces `format` and any other Credential format specific parameters in the Credential Request. When received, the Wallet MUST use these values together with an Access Token in the subsequent Credential Request(s).
+  * `c_instance_identifiers`: OPTIONAL. JSON array of JSON strings that each uniquely identify a Credential instance that can be issued using Access Token returned in this response. Each Credential instance is a unique Credential described using the same entry in the `credentials_supported` Credential Issuer metadata, but can contain different claim values or different subset of claims within the claimset identified by the Credential type. This parameter can also be used to simplify the Credential Request, since as defined in (#credential_request) `c_instance_identifier` parameter replaces `format` and any other Credential format specific parameters in the Credential Request. When received, the Wallet MUST use these values together with an Access Token in the subsequent Credential Request(s).
 
 Note: Credential Instance identifier(s) cannot be used when `scope` parameter is used in the Authorization Request to request issuance of a Credential.
 
