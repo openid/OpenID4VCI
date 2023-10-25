@@ -1123,7 +1123,7 @@ Cache-Control: no-store
 
 # Callback Endpoint {#callback_endpoint}
 
-This endpoint is used by the Wallet to notify the Credential Issuer whether a credential has been successfully received or not. The Credential Issuer needs to return `callback_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL.
+This endpoint is used by the Wallet to notify the Credential Issuer whether a Credential has been successfully received or not. The Credential Issuer needs to return `callback_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL. The wallet MUST call this endpoint if the Credential Issuer supports it and provides a `callback_id`.
 
 This endpoint can be used after the Credential Issuer has sent Credential Response or Batch Credential Response. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the Credential has been accepted and successully stored by the Wallet, rejected by the Wallet, or errors and other unforeseen circumstances have occurred during the Wallet's processing.
 
@@ -1131,7 +1131,7 @@ The Wallet MUST present to the Callback Endpoint a valid Access Token issued at 
 
 The callback from the Wallet is idempotent. The Credential Issuer MUST return success if it receives multiple identical calls from the Wallet for the same `callback_id`s.
 
-It is up to the Wallet whether to retry if the call to this endpoint fails. The Credential Issuer SHOULD have pre-determined the amount of time within with it expects the callback. It is up to the Credential Issuer how to interpret not receiving callback from the Wallet at all, despite providing `callback_id` in the Credential Response.
+The Wallet MAY retry if the call to this endpoint fails for a temporary reason. The Credential Issuer SHOULD pre-determine the amount of time within which it expects the callback. Therefore, even a well-formed callback from the Wallet could fail if received by the Credential Issuer after this time period. The Credential Issuer may never receive the callback, meaning it is unknown whether the Wallet successfully stored the credential or not - it is left to the Credential Issuer to decide how to proceed in this case.
 
 Communication with the Callback Endpoint MUST utilize TLS.
 
@@ -1141,7 +1141,7 @@ The Wallet sends an HTTP POST request to the Callback Endpoint with the followin
 
 * `credentials`: A JSON array of objects, where each object consists of the following parameters:
   * `callback_id`: REQUIRED. A JSON string received in Credential Response or Batch Credential Response.
-  * `status`: REQUIRED. Status whether the credential issuance was successful or not. The value MUST be either `success`, `failure` or `rejected`. `rejected` is be used when unsuccessful credential issuance was caused by user action. In all other cases, `failure` is used.
+  * `status`: REQUIRED. Status whether the credential issuance was successful or not. It MUST be a case sensitive string whose value is either `success`, `failure` or `rejected`. `rejected` is be used when unsuccessful credential issuance was caused by user action. In all other cases, `failure` is used.
   * `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description`` parameter MUST NOT include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
 
 Below is a non-normative example of a callback request when credential issuance was successful:
