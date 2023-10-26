@@ -888,9 +888,9 @@ When the Credential Request is invalid or unauthorized, the Credential Issuer co
 
 If the Credential Request does not contain an Access Token that enables issuance of a requested Credential, the Credential Endpoint returns an authorization error response such as defined in section 3 of [@!RFC6750].
 
-For the errors specific to the Credential Request such as those caused by `type`, `format`, `proof`, or encryption parameters in the request, the error codes values defined in (#credential-request-errors) MUST be used instead of a generic `invalid_request` parameter defined in section 3.1 of [@!RFC6750].
-
 #### Credential Request Errors {#credential-request-errors}
+
+For the errors specific to the Credential Request such as those caused by `type`, `format`, `proof`, or encryption parameters in the request, the error codes values defined in this section MUST be used instead of a generic `invalid_request` parameter defined in section 3.1 of [@!RFC6750].
 
 If the Wallet is requesting the issuance of a Credential that is not supported by the Credential Endpoint, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the response body:
 
