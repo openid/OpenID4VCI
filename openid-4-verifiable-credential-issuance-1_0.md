@@ -118,7 +118,7 @@ This specification defines an API for credential issuance provided by a Credenti
 * An optional Batch Credential Endpoint from which multiple Credentials can be issued in one request (see (#batch-credential-endpoint)).
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of credentials (see (#deferred-credential-issuance)).
 * An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow (see (#credential_offer_endpoint)).
-* An optional mechanism for the Wallet to notify the Credential Issuer of the status of the credential received by the Wallet.
+* An optional mechanism for the Wallet to notify the Credential Issuer of the status of the Credential received by the Wallet.
 * A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing (see (#credential-issuer-metadata)).
 
 Both the Credential and the Batch Credential Endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both requests therefore enable conveying proof of possession for the key material. Multiple key proof types are supported.
@@ -316,7 +316,6 @@ This specification defines the following parameters for the Credential Offer obj
 
 * `credential_issuer`: REQUIRED. The URL of the Credential Issuer, as defined in (#credential-issuer-identifier), from which the Wallet is requested to obtain one or more Credentials. The Wallet uses it to obtain the Credential Issuer's Metadata following the steps defined in (#credential-issuer-wellknown).
 * `credentials`: REQUIRED. A JSON array, where every entry is a JSON object or a JSON string. If the entry is an object, the object contains the data related to a certain credential type the Wallet MAY request. Each object MUST contain a `format` Claim determining the format of the credential to be requested and further parameters characterizing the type of the credential to be requested as defined in (#format_profiles). If the entry is a string, the string value MUST be one of the `scope` values in one of the objects in the `credentials_supported` Credential Issuer metadata parameter. When processing, the Wallet MUST resolve this string value to the respective object.
-* `callback_session`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used at the Callback Endpoint to identify a browser session that led to the creation of Credential Offer. When received, the Wallet MUST include it in the Callback Request as defined in (#callback_endpoint).
 * `grants`: OPTIONAL. A JSON object indicating to the Wallet the Grant Types the Credential Issuer's AS is prepared to process for this Credential Offer. Every grant is represented by a name/value pair. The name is the Grant Type identifier; the value is a JSON object that contains parameters either determining the way the Wallet MUST use the particular grant and/or parameters the Wallet MUST send with the respective request(s). If `grants` is not present or empty, the Wallet MUST determine the Grant Types the Credential Issuer's AS supports using the respective metadata. When multiple grants are present, it is at the Wallet's discretion which one to use.
 
 The following values are defined by this specification: 
@@ -848,7 +847,7 @@ The following claims are used in the Credential Response:
 * `transaction_id`: OPTIONAL. A JSON string identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer was unable to immediately issue the credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST be present when the `credential` parameter is not returned. It MUST be invalidated after the credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent credential requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
-* `callback_id`: OPTIONAL. A JSON string identifying an issued credential that the Wallet includes in the callback as defined in (#callback).
+* `callback_id`: OPTIONAL. A JSON string identifying an issued Credential that the Wallet includes in the callback as defined in (#callback).
 
 The `format` Claim determines the Credential format and encoding of the credential in the Credential Response. Details are defined in the Credential Format Profiles in (#format_profiles). 
 
@@ -1124,16 +1123,15 @@ Cache-Control: no-store
 
 # Callback Endpoint {#callback_endpoint}
 
-This endpoint is used to receive notification from the Wallet whether credential has been successfully received in the Wallet or not. The Credential Issuer needs to return `callback_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL.
+This endpoint is used by the Wallet to notify the Credential Issuer whether a Credential has been successfully received or not. The Credential Issuer needs to return `callback_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL. The wallet MUST call this endpoint if the Credential Issuer supports it and provides a `callback_id`.
 
-This endpoint can be used after the Credential Issuer has sent Credential Response or Batch Credential Response. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the credential has been accepted and successully stored by the Wallet, rejected by the Wallet, or errors and other unforeseen circumstances have occurred during the Wallet's processing.
+This endpoint can be used after the Credential Issuer has sent Credential Response or Batch Credential Response. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the Credential has been accepted and successully stored by the Wallet, rejected by the Wallet, or errors and other unforeseen circumstances have occurred during the Wallet's processing.
 
 The Wallet MUST present to the Callback Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). Credential Issuer that requires request to the Callback Endpoint MUST ensure Access Token issued by the Authorization Server is valid at the Callback Endpoint.
 
 The callback from the Wallet is idempotent. The Credential Issuer MUST return success if it receives multiple identical calls from the Wallet for the same `callback_id`s.
 
-It is up to the Wallet whether to retry if the call to this endpoint fails. The Credential Issuer SHOULD have pre-determined the amount of time within with it expects the callback. It is up to the Credential Issuer how to interpret not receiving callback from the Wallet at all, despite providing `callback_id` in the Credential Response.
-The Wallet MUST present to the Callback Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). Credential Issuer that requires this Callback MUST ensure Access Token issued by the Authorization Server is valid at the Callback Endpoint.
+The Wallet MAY retry if the call to this endpoint fails for a temporary reason. The Credential Issuer SHOULD pre-determine the amount of time within which it expects the callback. Therefore, even a well-formed callback from the Wallet could fail if received by the Credential Issuer after this time period. The Credential Issuer may never receive the callback, meaning it is unknown whether the Wallet successfully stored the credential or not - it is left to the Credential Issuer to decide how to proceed in this case.
 
 Communication with the Callback Endpoint MUST utilize TLS.
 
@@ -1141,11 +1139,10 @@ Communication with the Callback Endpoint MUST utilize TLS.
 
 The Wallet sends an HTTP POST request to the Callback Endpoint with the following parameters in the entity-body and using the `application/json` media type.
 
-* `credentials`: REQUIRED. A JSON array of objects, where each object consists of the following parameters:
+* `credentials`: A JSON array of objects, where each object consists of the following parameters:
   * `callback_id`: REQUIRED. A JSON string received in Credential Response or Batch Credential Response.
-  * `status`: REQUIRED. Status whether the credential issuance was successful or not. The value MUST be either `success`, `failure` or `rejected`.
+  * `status`: REQUIRED. Status whether the credential issuance was successful or not. It MUST be a case sensitive string whose value is either `success`, `failure` or `rejected`. `rejected` is be used when unsuccessful credential issuance was caused by user action. In all other cases, `failure` is used.
   * `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description`` parameter MUST NOT include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
-* `callback_session`: REQUIRED when `callback_session` parameter was present in the Credential Offer. MUST NOT be present otherwise.
 
 Below is a non-normative example of a callback request when credential issuance was successful:
 
@@ -1153,8 +1150,9 @@ Below is a non-normative example of a callback request when credential issuance 
 POST /callback HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
+Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
 {
-  "issuer_state": "eyJhbGciOiJSU0Et...FYUaBy",
   "credentials": [
     {
     "callback_id": "3fwe98js",
@@ -1170,8 +1168,9 @@ Below is a non-normative example of a callback request when credential issuance 
 POST /callback HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
+Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
 {
-  "issuer_state": "eyJhbGciOiJSU0Et...FYUaBy",
   "credentials": [
     {
     "callback_id": "3fwe98js",
@@ -1184,11 +1183,12 @@ Content-Type: application/json
 
 ## Successful Callback Request
 
-When the Credential Issuer has successfully received the callback request from the Wallet, it MUST respond with the HTTP status code 2xx and use the `text/plain` media type. The usage of the HTTP status code 204 (No Content) is RECOMMENDED.
+When the Credential Issuer has successfully received the callback request from the Wallet, it MUST respond with the HTTP status code 2xx. The usage of the HTTP status code 204 (No Content) is RECOMMENDED.
+
+Below is a non-normative example of response to a successful callback request:
 
 ```
-HTTP/1.1 200 OK
-Content-Type: text/plain
+HTTP/1.1 204 No Content
 ```
 
 ## Callback Error Response
