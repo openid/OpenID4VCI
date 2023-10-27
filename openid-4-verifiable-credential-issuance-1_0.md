@@ -1952,6 +1952,10 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
 
    [[ To be removed from the final specification ]]
    
+   -19
+   
+   * added an option to return credential_identifier in Token Request authorization_details parameter that can be used to identify credentials with the same metadata but different claimset/claim values and/or simplify the credential request even when only one credential is being issued.
+
    -14
 
    * renamed proof to key proof and added key proof replay security considerations
