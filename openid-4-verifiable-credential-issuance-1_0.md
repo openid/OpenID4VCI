@@ -804,7 +804,7 @@ Here is another example JWT not only proving possession of a private key but als
 The verifiable presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] signed using Data Integrity that are used as Key Proofs MUST contain the following elements:
 
   * in the presentation itself,
-      * `holder`: OPTIONAL. MUST be equivalent to the verificationMethod identifier (e.g. DID) in the `proof.verificationMethod` property.
+      * `holder`: OPTIONAL. MUST be equivalent to the controller identifier (e.g. DID) for the verificationMethod identified by the `proof.verificationMethod` property.
 
   * in the proof body, 
       * `domain`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
