@@ -916,26 +916,27 @@ Cache-Control: no-store
 
 When the Credential Request is invalid or unauthorized, the Credential Issuer constructs the error response as defined in this section.
 
-The following additional clarifications are provided for the following parameters already defined in section 3.1 of [@!RFC6750]:
+#### Authorization Errors {#authorization-errors}
 
-`invalid_request`:
+If the Credential Request does not contain an Access Token that enables issuance of a requested Credential, the Credential Endpoint returns an authorization error response such as defined in section 3 of [@!RFC6750].
 
-- Credential Request was malformed. One or more of the parameters (i.e., `format`, `proof`) are missing or malformed.
+#### Credential Request Errors {#credential-request-errors}
 
-`invalid_token`:
+For the errors specific to the payload of the Credential Request such as those caused by `type`, `format`, `proof`, or encryption parameters in the request, the error codes values defined in this section MUST be used instead of a generic `invalid_request` parameter defined in section 3.1 of [@!RFC6750].
 
-* Credential Request contains the wrong Access Token or the Access Token is missing.
+If the Wallet is requesting the issuance of a Credential that is not supported by the Credential Endpoint, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the response body:
 
-The following additional error codes are specified:
+* `error`: REQUIRED. A key at the top level of a JSON object, the value of which SHOULD be a single ASCII [@!USASCII] error code from the following:
+  * `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
+  * `unsupported_credential_type`: Requested Credential type is not supported.
+  * `unsupported_credential_format`: Requested Credential format is not supported.
+  * `invalid_proof`: The `proof` in the Credential Request is invalid. The `proof` field is not present or the provided key proof is invalid or not bound to a nonce provided by the Credential Issuer.
+  * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
+* `error_description`: OPTIONAL. A key at the top level of a JSON object, whose value MUST be a human-readable ASCII [@!USASCII] text, providing any additional information used to assist the client implementers in understanding the occurred error. The values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
-* `unsupported_credential_type`: Requested credential type is not supported
-* `unsupported_credential_format`:  Requested credential format is not supported
-* `invalid_proof`: The `proof` in the Credential Request was invalid, for example:
-  * No key proof was provided (the `proof` field was not present)
-  * The provided key proof was not bound to a nonce provided by the Credential Issuer
-* `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
+The usage of these parameters takes precedence over the `invalid_request` parameter defined in (#authorization-errors), since they provide more details about the errors.
 
-This is a non-normative example of a Credential Error Response:
+The following is a non-normative example of a Credential Error Response where an unsupported Credential format was requested:
 
 ```
 HTTP/1.1 400 Bad Request
@@ -943,7 +944,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-   "error": "invalid_request"
+   "error": "unsupported_credential_format"
 }
 ```
 
@@ -1122,24 +1123,14 @@ Deferred Credential Response MUST be sent using the `application/json` media typ
 
 ## Deferred Credential Error Response {#deferred-credential_error_response}
 
-When the Deferred Credential Request is invalid or unauthorized, or the credential is not available yet, the Credential Issuer constructs the error response as defined in this section.
+When the Deferred Credential Request is invalid or the Credential is not available yet, the Credential Issuer constructs the error response as defined in (#credential-error-response).
 
-The following additional clarifications are provided for the following parameters already defined in section 3.1 of [@!RFC6750]:
+The following additional error codes are specified in addition to those already defined in (#credential-request-errors):
 
-`invalid_request`:
+* `issuance_pending` - The Credential issuance is still pending. The error response SHOULD also contain the `interval` member, determining the minimum amount of time in seconds that the Wallet needs to wait before providing a new request to the Deferred Credential Endpoint.  If `interval` member is missing or its value is not provided, the Wallet MUST use `5` as the default value.
+* `invalid_transaction_id` - The Deferred Credential Request contains an invalid `transaction_id`. This error occurs when the `transaction_id` was not issued by the respective Credential Issuer or it was already used to obtain the Credential.
 
-- Credential Request was malformed, e.g., the parameter `transaction_id` is missing or malformed.
-
-`invalid_token`:
-
-- Credential Request contains the wrong Access Token or the Access Token is missing.
-
-The following additional error codes are specified:
-
-* `issuance_pending` - The credential issuance is still pending. The error response will also contain another claim `interval` determining the minimum amount of time in seconds that the Wallet SHOULD wait between requests to the Deferred Credential Endpoint.  If no value is provided, clients MUST use 5 as the default.
-* `invalid_transaction_id` - Deferred Credential Request contained an invalid `transaction_id`, i.e., it was not issued by the respective Credential Issuer or was already used to obtain the Credential.
-
-This is a non-normative example of a Credential Error Response:
+This is a non-normative example of a Deferred Credential Error Response:
 
 ```
 HTTP/1.1 400 Bad Request
@@ -1147,7 +1138,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-   "error": "invalid_request"
+   "error": "invalid_transaction_id"
 }
 ```
 
@@ -1409,17 +1400,14 @@ TBD
   </front>
 </reference>
 
-<reference anchor="RFC6750" target="https://www.rfc-editor.org/rfc/rfc6750">
-  <front>
-    <title>The OAuth 2.0 Authorization Framework: Bearer Token Usage</title>
-    <author fullname="Dick Hardt">
-      <organization>Independent</organization>
-    </author>
-    <author fullname="Michael B. Jones">
-      <organization>Microsoft</organization>
-    </author>
-   <date month="October" year="2012"/>
-  </front>
+<reference anchor="USASCII">
+        <front>
+          <title>Coded Character Set -- 7-bit American Standard Code for Information Interchange</title>
+          <author>
+            <organization>American National Standards Institute</organization>
+          </author>
+          <date year="1986"/>
+        </front>
 </reference>
 
 <reference anchor="SIOPv2" target="https://openid.net/specs/openid-connect-self-issued-v2-1_0.html">
