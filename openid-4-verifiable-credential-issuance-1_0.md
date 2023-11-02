@@ -769,7 +769,7 @@ This specification defines the following values for the `proof_type` property:
 
 * `jwt`: A JWT [@!RFC7519] is used as proof of possession. When `proof_type` is `jwt`, a `proof` object MUST include a `jwt` claim containing a JWT defined in (#jwt-proof-type).
 * `cwt`: A CWT [@!RFC8392] is used as proof of possession. When `proof_type` is `cwt`, a `proof` object MUST include a `cwt` claim containing a CWT defined in (#cwt-proof-type).
-* `ldp_vp`: A verifiable presentation signed using the Data Integrity Proof defined in [@VC_DATA_2.0] or [@VC_DATA], and where the proof of possession MUST be done in accordance with [@DI]. When `proof_type` is set to `ldp_vp`, the `proof` object MUST include a `ldp_vp` claim containing a [verifiable presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp_vp-proof-type).
+* `ldp_vp`: A verifiable presentation signed using the Data Integrity Proof defined in [@VC_DATA_2.0] or [@VC_DATA], and where the proof of possession MUST be done in accordance with [@Data_Integrity]. When `proof_type` is set to `ldp_vp`, the `proof` object MUST include a `ldp_vp` claim containing a [verifiable presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp_vp-proof-type).
 
 #### `jwt` Key Proof Type {#jwt-proof-type}
 
@@ -1494,7 +1494,7 @@ TBD
   </front>
 </reference>
 
-<reference anchor="DI" target="https://w3c.github.io/vc-data-integrity/">
+<reference anchor="Data_Integrity" target="https://w3c.github.io/vc-data-integrity/">
   <front>
     <title>Verifiable Credential Data Integrity 1.0</title>
     <author fullname="Manu Sporny">
