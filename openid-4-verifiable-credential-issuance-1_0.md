@@ -328,7 +328,7 @@ The following values are defined by this specification:
   * `user_pin_description`: OPTIONAL. JSON String containing guidance for the Holder of the Wallet how to obtain the PIN, e.g. specifying over which communication channel the PIN is delivered. The Wallet is RECOMMENDED to display this description next to the PIN entry form to improve the user experience. The length of the JSON String MUST be limited to 300 characters. The `user_pin_description` does not support internationalization (i18n), however the Issuer may detect the Holder's language by previous communication or an HTTP Accept-Language header within an HTTP GET request for a  `credential_offer_uri`. When `user_pin_required` is `false`, this parameter MUST NOT be present.
   * `interval`: OPTIONAL. The minimum amount of time in seconds that the Wallet SHOULD wait between polling requests to the token endpoint (in case the Authorization Server responds with error code `authorization_pending` - see (#token_error_response)). If no value is provided, Wallets MUST use 5 as the default.
 
-The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two Credentials of different formats, one as JSON string ("UniversityDegree_JWT") and the other one as JSON object:
+The following non-normative example shows a Credential Offer object where the Credential Issuer offers the issuance of two Credentials of different formats, one as JSON string ("UniversityDegree_JWT") and the other one as JSON object:
 
 <{{examples/credential_offer_multiple_credentials.json}}
 
