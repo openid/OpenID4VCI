@@ -320,11 +320,13 @@ This specification defines the following parameters for the Credential Offer obj
 The following values are defined by this specification: 
 
 * Grant Type `authorization_code`:
-  * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the subsequent Authorization Request with the Credential Issuer to a context set up during previous steps. If the Wallet decides to use the Authorization Code Flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value. 
+  * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the subsequent Authorization Request with the Credential Issuer to a context set up during previous steps. If the Wallet decides to use the Authorization Code Flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value.
+  * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
 * Grant Type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
   * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single use. If the Wallet decides to use the Pre-Authorized Code Flow, this parameter value MUST be included in the subsequent Token Request with the Pre-Authorized Code Flow.
   * `user_pin_required`: OPTIONAL. Boolean value specifying whether the AS expects presentation of a user PIN along with the Token Request in a Pre-Authorized Code Flow. Default is `false`. This PIN is intended to bind the Pre-Authorized Code to a certain transaction to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate user. It is RECOMMENDED to send a PIN via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, a PIN value MUST be sent in the `user_pin` parameter with the respective Token Request.
-  * `interval`: OPTIONAL. The minimum amount of time in seconds that the Wallet SHOULD wait between polling requests to the token endpoint (in case the Authorization Server responds with error code `authorization_pending` - see (#token_error_response)). If no value is provided, Wallets MUST use 5 as the default.
+  * `interval`: OPTIONAL. The minimum amount of time in seconds that the Wallet SHOULD wait between polling requests to the token endpoint (in case the Authorization Server responds with error code `authorization_pending` - see (#token_error_response)). If no value is provided, Wallets MUST use `5` as the default.
+  * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
 
 The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two Credentials of different formats, one as JSON string ("UniversityDegree_JWT") and the other one as JSON object:
 
@@ -406,16 +408,16 @@ There are two possible ways to request issuance of a specific Credential type in
 
 ### Request Issuance of a Certain Credential Type using `authorization_details` Parameter {#authorization-details}
 
-The request parameter `authorization_details` defined in Section 2 of [@!RFC9396] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following elements to be used with this authorization details type:
+The request parameter `authorization_details` defined in Section 2 of [@!RFC9396] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following parameters to be used with this authorization details type:
 
-* `type` REQUIRED. JSON string that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
-* `format`: REQUIRED. JSON string representing the format in which the Credential is requested to be issued. This Credential format identifier determines further claims in the authorization details object specifically used to identify the Credential type to be issued. This specification defines Credential Format Profiles in (#format_profiles).  
+* `type` REQUIRED. String that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
+* `format`: REQUIRED. String representing the format in which the Credential is requested to be issued. This Credential format identifier determines further claims in the authorization details object specifically used to identify the Credential type to be issued. This specification defines Credential Format Profiles in (#format_profiles).
 
-A non-normative example of an `authorization_details` object. 
+The following is a non-normative example of an `authorization_details` object:
 
 <{{examples/authorization_details.json}}
 
-If the Credential Issuer metadata contains an `authorization_server` parameter, the authorization detail's `locations` common data field MUST be set to the Credential Issuer Identifier value. A non-normative example for a deployment where an AS protects multiple Credential Issuers would look like this:
+If the Credential Issuer metadata contains an `authorization_servers` parameter, the authorization detail's `locations` common data field MUST be set to the Credential Issuer Identifier value. A non-normative example for a deployment where an AS protects multiple Credential Issuers would look like this:
 
 <{{examples/authorization_details_with_as.json}}
 
@@ -461,9 +463,9 @@ occurrence MUST be interpreted individually.
 
 Credential Issuers MUST ignore unknown scope values in a request.
 
-If the Credential Issuer metadata contains an `authorization_server` property, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the AS to differentiate Credential Issuers.  
+If the Credential Issuer metadata contains an `authorization_servers` property, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the AS to differentiate Credential Issuers.  
 
-Below is a non-normative example of an Authorization Request using the scope `com.example.healthCardCredential` that would be sent by the User Agent to the Authorization Server in response to an HTTP 302 redirect response by the Wallet (with line wraps within values for display purposes only):
+Below is a non-normative example of an Authorization Request provided by the Wallet to the Authorization Server using the scope `UniversityDegree_JWT` and in response to an HTTP 302 redirect. The line wraps within the values are intended for display purposes only:
 
 ```
 GET /authorize?
@@ -564,9 +566,9 @@ Requirements around how the Wallet identifies and, if applicable, authenticates 
 
 For the Pre-Authorized Code Grant Type, authentication of the client is OPTIONAL, as described in Section 3.2.1 of OAuth 2.0 [@!RFC6749], and, consequently, the `client_id` parameter is only needed when a form of Client Authentication that relies on this parameter is used.
 
-If the Token Request contains an `authorization_details` parameter (as defined by [RFC@!9396]) of type `openid_credential` and the Credential Issuer's metadata contains an `authorization_server` parameter, the `authorization_details` object MUST contain the Credential Issuer's identifier in the `locations` element. 
+If the Token Request contains an `authorization_details` parameter (as defined by [RFC@!9396]) of type `openid_credential` and the Credential Issuer's metadata contains an `authorization_servers` parameter, the `authorization_details` object MUST contain the Credential Issuer's identifier in the `locations` element. 
 
-If the Token Request contains a scope value related to credential issuance and the Credential Issuer's metadata contains an `authorization_server` parameter, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the AS to differentiate Credential Issuers.
+If the Token Request contains a scope value related to credential issuance and the Credential Issuer's metadata contains an `authorization_servers` parameter, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the AS to differentiate Credential Issuers.
 
 When Pre-Authorized Grant Type is used, it is RECOMMENDED that the Credential Issuer issues an Access Token valid only for the Credentials indicated in the Credential Offer (see (#credential_offer)). The Wallet SHOULD obtain a separate Access Token if it wants to request issuance of any of the Credentials that were not included in the Credential Offer, but were discoverable from the Credential Issuer's `credentials_supported` metadata parameter.
 
@@ -600,12 +602,18 @@ grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
 
 Token Responses are made as defined in [@!RFC6749].
 
+The AS might decide to authorize issuance of multiple instances for each Credential requested in the Authorization Request. Each Credential instance is described using the same entry in the `credentials_supported` Credential Issuer metadata, but contains different claim values or different subset of claims within the claimset identified by the Credential description.
+
 In addition to the response parameters defined in [@!RFC6749], the AS MAY return the following parameters:
 
-* `c_nonce`: OPTIONAL. JSON string containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
+* `c_nonce`: OPTIONAL. String containing a nonce to be used when creating a proof of possession of the key proof (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. JSON integer denoting the lifetime in seconds of the `c_nonce`.
+* `authorization_details`: REQUIRED when `authorization_details` parameter is used to request issuance of a certain Credential type as defined in (#authorization-details). MUST NOT be used otherwise. An array of objects as defined in Section 7 of [@!RFC9396]. This specification defines the following parameter to be used with authorization details type `openid_credential` in the Token Response:
+  * `credential_identifiers`: OPTIONAL. Array of strings that each uniquely identify a Credential instance that can be issued using Access Token returned in this response. Each Credential instance is a unique Credential described using the same entry in the `credentials_supported` Credential Issuer metadata, but can contain different claim values or different subset of claims within the claimset identified by the Credential type. This parameter can also be used to simplify the Credential Request, since as defined in (#credential_request) `credential_identifier` parameter replaces `format` and any other Credential format specific parameters in the Credential Request. When received, the Wallet MUST use these values together with an Access Token in the subsequent Credential Request(s).
 
-Below is a non-normative example of a Token Response:
+Note: Credential Instance identifier(s) cannot be used when `scope` parameter is used in the Authorization Request to request issuance of a Credential.
+
+Below is a non-normative example of a Token Response when `authorization_details` parameter was used to request issuance of a certain Credential type:
 
 ```
 HTTP/1.1 200 OK
@@ -617,7 +625,20 @@ Cache-Control: no-store
     "token_type": "bearer",
     "expires_in": 86400,
     "c_nonce": "tZignsnFbp",
-    "c_nonce_expires_in": 86400
+    "c_nonce_expires_in": 86400,
+    "authorization_details": [
+      {
+        "type": "openid_credential",
+        "format": "jwt_vc_json",
+        "credential_definition": {
+          "type": [
+              "VerifiableCredential",
+              "UniversityDegreeCredential"
+          ]
+        },
+        "credential_identifiers": [ "CivilEngineeringDegree-2023", "ElectricalEngineeringDegree-2023" ]
+      }
+    ]
   }
 ```
 
@@ -688,11 +709,12 @@ For cryptographic binding, the Client has the following options to provide crypt
 
 A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
-* `format`: REQUIRED. Format of the Credential to be issued. This Credential format identifier determines further parameters required to determine the type and (optionally) the content of the credential to be issued. Credential Format Profiles consisting of the Credential format specific set of parameters are defined in (#format_profiles).
-* `proof`: OPTIONAL. JSON object containing proof of possession of the key material the issued Credential shall be bound to.  The `proof` object MUST contain a following claim:
-    * `proof_type`: REQUIRED. JSON string denoting the key proof type. The value of this claim determines other claims in the key proof object and its respective processing rules. Key proof types defined in this specification can be found in (#proof_types).
-* `credential_encryption_jwk`: OPTIONAL. A JSON object containing a single public key as a JWK used for encrypting the Credential Response.
-* `credential_response_encryption_alg`: OPTIONAL. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] REQUIRED for encrypting Credential and/or Batch Credential Responses. The default, if omitted, is that no encryption is performed. If `credential_response_encryption_alg` is present, `credential_encryption_jwk` MUST be present.
+* `format`: REQUIRED when the `credential_identifier` was not returned from the Token Response. MUST NOT be used otherwise. String that determines the format of the Credential to be issued, which may determine the type and any other information related to the Credential to be issued. Credential Format Profiles consisting of the Credential format specific set of parameters are defined in (#format_profiles). When this parameter is used, `credential_identifier` parameter MUST NOT be present.
+* `proof`: OPTIONAL. Object containing the proof of possession of the cryptographic key material the issued Credential would be bound to.  The `proof` object MUST contain a following claim:
+    * `proof_type`: REQUIRED. String denoting the key proof type. The value of this claim determines other claims in the key proof object and its respective processing rules. Key proof types defined in this specification can be found in (#proof_types).
+* `credential_identifier`: REQUIRED when `credential_identifier` was returned from the Token Response. MUST NOT be used otherwise. String that identifies a Credential that is being requested to be issued. When this parameter is used, the `format` parameter and any other Credential format specific set of parameters such as those defined in (#format_profiles) MUST NOT be present.
+* `credential_encryption_jwk`: OPTIONAL. An object containing a single public key as a JWK used for encrypting the Credential Response.
+* `credential_response_encryption_alg`: OPTIONAL. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] REQUIRED for encrypting Credential and/or Batch Credential Responses. If omitted, no encryption is intended to be performed. When the `credential_response_encryption_alg` is present, the `credential_encryption_jwk` MUST be present.
 * `credential_response_encryption_enc`: OPTIONAL. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] REQUIRED for encrypting Credential Responses. If `credential_response_encryption_alg` is specified, the default for this value is `A256GCM`. When `credential_response_encryption_enc` is included, `credential_response_encryption_alg` MUST also be provided.
 
 The `proof_type` claim is an extension point that enables the use of different types of proofs for different cryptographic schemes.
@@ -701,7 +723,7 @@ The `proof` element MUST incorporate the Credential Issuer Identifier (audience)
 
 Initial `c_nonce` value can be returned in a successful Token Response as defined in (#token-response), in a Credential Error Response as defined in (#issuer-provided-nonce), or in a Batch Credential Error Response as defined in (#batch-credential_error_response).
 
-Below is a non-normative example of a Credential Request for a credential in JWT VC format (JSON encoding) with a key proof type `jwt`:
+Below is a non-normative example of a Credential Request for a credential in [@ISO.18013-5] format using Credential format specific set of parameters and a key proof type `cwt`:
 
 ```
 POST /credential HTTP/1.1
@@ -710,13 +732,25 @@ Content-Type: application/json
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
-   "format": "jwt_vc_json",
-   "credential_definition": {
-    "type": [
-        "VerifiableCredential",
-        "UniversityDegreeCredential"
-    ]
-   },
+   "format":"mso_mdoc",
+   "doctype":"org.iso.18013.5.1.mDL",
+   "proof": {
+      "proof_type": "cwt",
+      "cwt": "..."
+   }
+}
+```
+
+Below is a non-normative example of a Credential Request for a credential in JWT VC format (JSON encoding) using Credential instance identifier and a key proof type `jwt`:
+
+```
+POST /credential HTTP/1.1
+Host: server.example.com
+Content-Type: application/json
+Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+{
+   "credential_identifier": "CivilEngineeringDegree-2023",
    "proof": {
       "proof_type": "jwt",
       "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
@@ -725,12 +759,12 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
       ZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
    }
 }
+```
 
 The Client MAY request encrypted responses by providing its encryption parameters in the Credential Request.
 
 The Credential Issuer MAY require encrypted responses by including `require_credential_response_encryption` in the Credntial Issuer Metadata.
 
-```
 ### Key Proof Types {#proof_types}
 
 This specification defines the following values for the `proof_type` property:
@@ -884,26 +918,27 @@ Cache-Control: no-store
 
 When the Credential Request is invalid or unauthorized, the Credential Issuer constructs the error response as defined in this section.
 
-The following additional clarifications are provided for the following parameters already defined in section 3.1 of [@!RFC6750]:
+#### Authorization Errors {#authorization-errors}
 
-`invalid_request`:
+If the Credential Request does not contain an Access Token that enables issuance of a requested Credential, the Credential Endpoint returns an authorization error response such as defined in section 3 of [@!RFC6750].
 
-- Credential Request was malformed. One or more of the parameters (i.e., `format`, `proof`) are missing or malformed.
+#### Credential Request Errors {#credential-request-errors}
 
-`invalid_token`:
+For the errors specific to the payload of the Credential Request such as those caused by `type`, `format`, `proof`, or encryption parameters in the request, the error codes values defined in this section MUST be used instead of a generic `invalid_request` parameter defined in section 3.1 of [@!RFC6750].
 
-* Credential Request contains the wrong Access Token or the Access Token is missing.
+If the Wallet is requesting the issuance of a Credential that is not supported by the Credential Endpoint, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the response body:
 
-The following additional error codes are specified:
+* `error`: REQUIRED. A key at the top level of a JSON object, the value of which SHOULD be a single ASCII [@!USASCII] error code from the following:
+  * `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
+  * `unsupported_credential_type`: Requested Credential type is not supported.
+  * `unsupported_credential_format`: Requested Credential format is not supported.
+  * `invalid_proof`: The `proof` in the Credential Request is invalid. The `proof` field is not present or the provided key proof is invalid or not bound to a nonce provided by the Credential Issuer.
+  * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
+* `error_description`: OPTIONAL. A key at the top level of a JSON object, whose value MUST be a human-readable ASCII [@!USASCII] text, providing any additional information used to assist the client implementers in understanding the occurred error. The values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
-* `unsupported_credential_type`: Requested credential type is not supported
-* `unsupported_credential_format`:  Requested credential format is not supported
-* `invalid_proof`: The `proof` in the Credential Request was invalid, for example:
-  * No key proof was provided (the `proof` field was not present)
-  * The provided key proof was not bound to a nonce provided by the Credential Issuer
-* `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
+The usage of these parameters takes precedence over the `invalid_request` parameter defined in (#authorization-errors), since they provide more details about the errors.
 
-This is a non-normative example of a Credential Error Response:
+The following is a non-normative example of a Credential Error Response where an unsupported Credential format was requested:
 
 ```
 HTTP/1.1 400 Bad Request
@@ -911,7 +946,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-   "error": "invalid_request"
+   "error": "unsupported_credential_format"
 }
 ```
 
@@ -1090,24 +1125,14 @@ Deferred Credential Response MUST be sent using the `application/json` media typ
 
 ## Deferred Credential Error Response {#deferred-credential_error_response}
 
-When the Deferred Credential Request is invalid or unauthorized, or the credential is not available yet, the Credential Issuer constructs the error response as defined in this section.
+When the Deferred Credential Request is invalid or the Credential is not available yet, the Credential Issuer constructs the error response as defined in (#credential-error-response).
 
-The following additional clarifications are provided for the following parameters already defined in section 3.1 of [@!RFC6750]:
+The following additional error codes are specified in addition to those already defined in (#credential-request-errors):
 
-`invalid_request`:
+* `issuance_pending` - The Credential issuance is still pending. The error response SHOULD also contain the `interval` member, determining the minimum amount of time in seconds that the Wallet needs to wait before providing a new request to the Deferred Credential Endpoint.  If `interval` member is missing or its value is not provided, the Wallet MUST use `5` as the default value.
+* `invalid_transaction_id` - The Deferred Credential Request contains an invalid `transaction_id`. This error occurs when the `transaction_id` was not issued by the respective Credential Issuer or it was already used to obtain the Credential.
 
-- Credential Request was malformed, e.g., the parameter `transaction_id` is missing or malformed.
-
-`invalid_token`:
-
-- Credential Request contains the wrong Access Token or the Access Token is missing.
-
-The following additional error codes are specified:
-
-* `issuance_pending` - The credential issuance is still pending. The error response will also contain another claim `interval` determining the minimum amount of time in seconds that the Wallet SHOULD wait between requests to the Deferred Credential Endpoint.  If no value is provided, clients MUST use 5 as the default.
-* `invalid_transaction_id` - Deferred Credential Request contained an invalid `transaction_id`, i.e., it was not issued by the respective Credential Issuer or was already used to obtain the Credential.
-
-This is a non-normative example of a Credential Error Response:
+This is a non-normative example of a Deferred Credential Error Response:
 
 ```
 HTTP/1.1 400 Bad Request
@@ -1115,7 +1140,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-   "error": "invalid_request"
+   "error": "invalid_transaction_id"
 }
 ```
 
@@ -1152,13 +1177,14 @@ The path formed following the steps above MUST point to a JSON document complian
 This specification defines the following Credential Issuer Metadata:
 
 * `credential_issuer`: REQUIRED. The Credential Issuer's identifier, as defined in (#credential-issuer-identifier).
-* `authorization_server`: OPTIONAL. Identifier of the OAuth 2.0 Authorization Server (as defined in [@!RFC8414]) the Credential Issuer relies on for authorization. If this element is omitted, the entity providing the Credential Issuer is also acting as the AS, i.e., the Credential Issuer's identifier is used as the OAuth 2.0 Issuer value to obtain the Authorization Server metadata as per [@!RFC8414].
+* `authorization_servers`: OPTIONAL. A JSON array of strings, where each string is an identifier of the OAuth 2.0 Authorization Server (as defined in [@!RFC8414]) the Credential Issuer relies on for authorization. If this parameter is omitted, the entity providing the Credential Issuer is also acting as the AS, i.e., the Credential Issuer's identifier is used as the OAuth 2.0 Issuer value to obtain the Authorization Server metadata as per [@!RFC8414]. When there are multiple entries in the array, the Wallet may be able to determine which AS to use by querying the metadata; for example, by examining the `grant_types_supported` values, the Wallet can filter the server to use based on the grant type it plans to use. When the Wallet is using `authorization_server` parameter in the Credential Offer as a hint to determine which AS to use out of multiple, the Wallet MUST NOT proceed with the flow if the `authorization_server` Credential Offer parameter value does not match any of the entries in the `authorization_servers` array.
 * `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components.
 * `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
 * `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint. This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
-* `credential_response_encryption_alg_values_supported`: OPTIONAL. JSON array containing a list of the JWE [@!RFC7516] encryption algorithms (`alg` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
-* `credential_response_encryption_enc_values_supported`: OPTIONAL. JSON array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
-* `require_credential_response_encryption`: OPTIONAL. If `require_credential_response_encryption` is `true`, the Credential Issuer requires additional encryption on top of TLS for the Credential Response and expects encryption parameters to be present in the Credential Request and/or Batch Credential Request. If `require_credential_response_encryption` is `false` or omitted, the Credential Issuer indicates that no additional Credential Response encryption is required. If `require_credential_response_encryption` is `true`, `credential_response_encryption_alg_values_supported` MUST also be provided.
+* `credential_response_encryption_alg_values_supported`: OPTIONAL. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`alg` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
+* `credential_response_encryption_enc_values_supported`: OPTIONAL. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
+* `require_credential_response_encryption`: OPTIONAL. Boolean value specifying whether the Credential Issuer requires additional encryption on top of TLS for the Credential Response and expects encryption parameters to be present in the Credential Request and/or Batch Credential Request, with `true` indicating support. When the value is `true`, `credential_response_encryption_alg_values_supported` parameter MUST also be provided.  If omitted, the default value is `false`.
+* `credential_identifiers_supported`: OPTIONAL. Boolean value specifying whether the Credential Issuer supports returning `credential_identifiers` parameter in the `authorization_details` Token Response parameter, with `true` indicating support. If omitted, the default value is `false`.
 * `display`: OPTIONAL. An array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
   * `name`: OPTIONAL. String value of a display name for the Credential Issuer.
   * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
@@ -1177,6 +1203,8 @@ This specification defines the following Credential Issuer Metadata:
       * `description`: OPTIONAL. String value of a description of the Credential.
       * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
       * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
+
+Note: It can be challenging for a Credential Issuer that accepts tokens from multiple Authorization Servers to introspect an Access Token to check the validity and determine the permissions granted. Some ways to achieve this are relying on Authorization Servers that use [@!RFC9068] or by the Credential Issuer understanding the proprietary Access Token structures of the Authorization Servers.
 
 Depending on the Credential format, additional parameters might be present in the `credentials_supported` object values, such as information about claims in the credential. For Credential format specific claims, see "Credential Issuer Metadata" subsections in (#format_profiles).
 
@@ -1367,17 +1395,14 @@ TBD
   </front>
 </reference>
 
-<reference anchor="RFC6750" target="https://www.rfc-editor.org/rfc/rfc6750">
-  <front>
-    <title>The OAuth 2.0 Authorization Framework: Bearer Token Usage</title>
-    <author fullname="Dick Hardt">
-      <organization>Independent</organization>
-    </author>
-    <author fullname="Michael B. Jones">
-      <organization>Microsoft</organization>
-    </author>
-   <date month="October" year="2012"/>
-  </front>
+<reference anchor="USASCII">
+        <front>
+          <title>Coded Character Set -- 7-bit American Standard Code for Information Interchange</title>
+          <author>
+            <organization>American National Standards Institute</organization>
+          </author>
+          <date year="1986"/>
+        </front>
 </reference>
 
 <reference anchor="SIOPv2" target="https://openid.net/specs/openid-connect-self-issued-v2-1_0.html">
@@ -1913,7 +1938,8 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
    -19
   
    * changed the structure of the `credentials_supported` parameter to a map from array of objects
-   * changed the structure of `credentials` parameter in Credential Offer to only be a string (no more objects) whose value is a key in the `credentials_supported` map
+   * changed the structure of `credentials` parameter in Credential Offer to only be a string (no more objects) whose value is a key in the `credentials_supported` map   
+   * added an option to return credential_identifier in Token Request authorization_details parameter that can be used to identify credentials with the same metadata but different claimset/claim values and/or simplify the credential request even when only one credential is being issued.
 
    -14
 
