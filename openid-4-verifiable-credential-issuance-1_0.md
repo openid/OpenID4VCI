@@ -562,7 +562,7 @@ Upon receiving a successful Authorization Response, a Token Request is made as d
 The following are the extension parameters to the Token Request used in a Pre-Authorized Code Flow defined by this specification:
 
 * `pre-authorized_code`: The code representing the authorization to obtain Credentials of a certain type. This parameter MUST be present if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
-* `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin` object was present in the Credential Offer. The string value MUST consist of a maximum of eight numeric characters (the numbers 0 - 9). This parameter MUST only be used if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
+* `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if a `user_pin` object was present in the Credential Offer (including if the object was empty). The string value MUST consist of a maximum of eight numeric characters (the numbers 0 - 9). This parameter MUST only be used if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 
 Requirements around how the Wallet identifies and, if applicable, authenticates itself with the Authorization Server in the Token Request depends on the Client type defined in Section 2.1 of [@!RFC6749] and the Client authentication method indicated in the `token_endpoint_auth_method` Client metadata. The requirement as described in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
 
