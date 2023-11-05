@@ -1713,7 +1713,7 @@ When the `format` value is `jwt_vc_json`, entire Credential Offer, Authorization
 
 The following additional Credential Issuer metadata are defined for this Credential format to be added to the `credentials_supported` parameter in addition to those defined in (#credential-metadata-object).
 
-* `credential_definition`: REQUIRED. Onject containing the detailed description of the credential type. It consists at least of the following two sub claims:
+* `credential_definition`: REQUIRED. Object containing the detailed description of the credential type. It consists at least of the following two sub claims:
   * `type`: REQUIRED. Array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
   * `credentialSubject`: OPTIONAL. An object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be an object that includes a following non-exhaustive list of parameters defined by this specification:
       * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
