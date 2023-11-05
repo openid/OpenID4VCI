@@ -323,9 +323,9 @@ The following values are defined by this specification:
   * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the subsequent Authorization Request with the Credential Issuer to a context set up during previous steps. If the Wallet decides to use the Authorization Code Flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value. 
 * Grant Type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
   * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single use. If the Wallet decides to use the Pre-Authorized Code Flow, this parameter value MUST be included in the subsequent Token Request with the Pre-Authorized Code Flow.
-  * `user_pin_required`: OPTIONAL. Boolean value specifying whether the AS expects presentation of a user PIN along with the Token Request in a Pre-Authorized Code Flow. Default is `false`. This PIN is intended to bind the Pre-Authorized Code to a certain transaction to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate user. It is RECOMMENDED to send the PIN via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, the PIN value MUST be sent in the `user_pin` parameter with the respective Token Request.
-  * `user_pin_length`: OPTIONAL. JSON Integer specifying the length of the PIN. This helps the Wallet to render the PIN screen and improve the user experience. When `user_pin_required` is `false`, this parameter MUST NOT be present.
-  * `user_pin_description`: OPTIONAL. JSON String containing guidance for the Holder of the Wallet how to obtain the PIN, e.g. specifying over which communication channel the PIN is delivered. The Wallet is RECOMMENDED to display this description next to the PIN entry form to improve the user experience. The length of the JSON String MUST be limited to 300 characters. The `user_pin_description` does not support internationalization (i18n), however the Issuer may detect the Holder's language by previous communication or an HTTP Accept-Language header within an HTTP GET request for a  `credential_offer_uri`. When `user_pin_required` is `false`, this parameter MUST NOT be present.
+  * `user_pin`: OPTIONAL. An object specifying whether the AS expects presentation of a user PIN along with the Token Request in a Pre-Authorized Code Flow. If the AS does not expect a user PIN, this object is absent, this is the default. The PIN is intended to bind the Pre-Authorized Code to a certain transaction to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate user. It is RECOMMENDED to send the PIN via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, the PIN value MUST be sent in the `user_pin` parameter with the respective Token Request. If no `length` or `description` is given, this object may be empty, indicating that a user PIN is required.
+    * `length`: OPTIONAL. Integer specifying the length of the user PIN. This helps the Wallet to render the PIN input screen and improve the user experience.
+    * `description`: OPTIONAL. String containing guidance for the Holder of the Wallet on how to obtain the PIN, e.g. describing over which communication channel the PIN is delivered. The Wallet is RECOMMENDED to display this description next to the PIN input screen to improve the user experience. The length of the String MUST NOT exceed 300 characters. The `description` does not support internationalization (i18n), however the Issuer may detect the Holder's language by previous communication or an HTTP Accept-Language header within an HTTP GET request for a  `credential_offer_uri`.
   * `interval`: OPTIONAL. The minimum amount of time in seconds that the Wallet SHOULD wait between polling requests to the token endpoint (in case the Authorization Server responds with error code `authorization_pending` - see (#token_error_response)). If no value is provided, Wallets MUST use 5 as the default.
 
 The following non-normative example shows a Credential Offer object where the Credential Issuer offers the issuance of two Credentials of different formats, one as JSON string ("UniversityDegree_JWT") and the other one as JSON object:
@@ -344,7 +344,7 @@ Below is a non-normative example of a Credential Offer passed by value:
   %22,%7B%22format%22:%22mso_mdoc%22,%22doctype%22:%22org.iso.18013.5.1.mDL%22%7D%5D,%22
   grants%22:%7B%22authorization_code%22:%7B%22issuer_state%22:%22eyJhbGciOiJSU0Et...FYUaBy
   %22%7D,%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22
-  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22user_pin_required%22:true%7D%7D%7D
+  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22user_pin%22:%7B%7D%7D%7D%7D
 ```
 
 The following is a non-normative example of a Credential Offer that can be included in a QR code or a link used to invoke a Wallet deployed as a native app:
@@ -355,7 +355,7 @@ openid-credential-offer://?credential_offer=%7B%22credential_issuer%22:%22
   %22,%7B%22format%22:%22mso_mdoc%22,%22doctype%22:%22org.iso.18013.5.1.mDL%22%7D%5D,%22
   grants%22:%7B%22authorization_code%22:%7B%22issuer_state%22:%22eyJhbGciOiJSU0Et...FYUaBy
   %22%7D,%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22
-  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22user_pin_required%22:true%7D%7D%7D
+  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22user_pin%22:%7B%7D%7D%7D%7D
 ```
 
 ### Sending Credential Offer by Reference Using `credential_offer_uri` Parameter
@@ -560,7 +560,7 @@ Upon receiving a successful Authorization Response, a Token Request is made as d
 The following are the extension parameters to the Token Request used in a Pre-Authorized Code Flow defined by this specification:
 
 * `pre-authorized_code`: The code representing the authorization to obtain Credentials of a certain type. This parameter MUST be present if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
-* `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin_required` was set to `true` in the Credential Offer. The string value MUST consist of a maximum of eight numeric characters (the numbers 0 - 9). This parameter MUST only be used if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
+* `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if `user_pin` object was present in the Credential Offer. The string value MUST consist of a maximum of eight numeric characters (the numbers 0 - 9). This parameter MUST only be used if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 
 Requirements around how the Wallet identifies and, if applicable, authenticates itself with the Authorization Server in the Token Request depends on the Client type defined in Section 2.1 of [@!RFC6749] and the Client authentication method indicated in the `token_endpoint_auth_method` Client metadata. The requirement as described in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
 
