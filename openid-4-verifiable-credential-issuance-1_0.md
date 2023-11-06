@@ -133,9 +133,9 @@ Existing OAuth 2.0 mechanisms are extended as following:
 * A new Grant Type "Pre-Authorized Code" is defined to facilitate flows where the preparation of the credential issuance is conducted before the actual OAuth flow starts (see (#pre-authz-code-flow)).
 * A new authorization details [@!RFC9396] type `openid_credential` is defined to convey the details about the Credentials (including formats and types) the Wallet wants to obtain (see (#authorization-details)).
 * New token response error codes `authorization_pending` and `slow_down` are added to allow for deferred authorization of credential issuance. These error codes are supported for the Pre-Authorized Code grant type.
-* Client metadata is used to convey Wallet's metadata. A new metadata parameter `credential_offer_endpoint` is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (see (#client-metadata)).
+* Client metadata is used to convey Wallet's metadata. A new metadata parameter `credential_offer_endpoint` is added to allow a Wallet (acting as OAuth 2.0 Client) to publish its Credential Offer Endpoint (see (#client-metadata)).
 * Authorization Endpoint: An additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated Credential Offer (see (#credential-authz-request)). Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Verifiable Presentations from the calling Wallet during Authorization Request processing.
-* Token Endpoint: optional response parameters `c_nonce` and `c_nonce_expires_in` are added to the Token Endpoint, Credential Endpoint and Batch Credential Endpoint to provide the client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential Endpoint (see (#token-response)).
+* Token Endpoint: optional response parameters `c_nonce` and `c_nonce_expires_in` are added to the Token Endpoint, Credential Endpoint and Batch Credential Endpoint to provide the Client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential Endpoint (see (#token-response)).
 
 ## Core Concepts
 
@@ -520,7 +520,7 @@ To enable dynamic callbacks of the Credential Issuer to the End-User's Wallet, t
 
 For non-normative examples of request and response, see section 11.6 in [@OpenID4VP].
 
-Note to the editors: We need to sort out Credential Issuer's client_id with the Wallet and potentially add an example with `wallet_issuer` and `user_hint`.
+Note to the editors: We need to sort out Credential Issuer's `client_id` with the Wallet and potentially add an example with `wallet_issuer` and `user_hint`.
 
 ## Successful Authorization Response {#authorization_response}
 
@@ -551,7 +551,7 @@ Location: https://client.example.net/cb?
 
 # Token Endpoint {#token_endpoint}
 
-The Token Endpoint issues an Access Token and, optionally, a Refresh Token in exchange for the Authorization Code that client obtained in a successful Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
+The Token Endpoint issues an Access Token and, optionally, a Refresh Token in exchange for the Authorization Code that Client obtained in a successful Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
 ## Token Request {#token_request}
 
@@ -564,7 +564,7 @@ The following are the extension parameters to the Token Request used in a Pre-Au
 
 Requirements around how the Wallet identifies and, if applicable, authenticates itself with the Authorization Server in the Token Request depends on the Client type defined in Section 2.1 of [@!RFC6749] and the Client authentication method indicated in the `token_endpoint_auth_method` Client metadata. The requirement as described in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
 
-For the Pre-Authorized Code Grant Type, authentication of the client is OPTIONAL, as described in Section 3.2.1 of OAuth 2.0 [@!RFC6749], and, consequently, the `client_id` parameter is only needed when a form of Client Authentication that relies on this parameter is used.
+For the Pre-Authorized Code Grant Type, authentication of the Client is OPTIONAL, as described in Section 3.2.1 of OAuth 2.0 [@!RFC6749], and, consequently, the `client_id` parameter is only needed when a form of Client Authentication that relies on this parameter is used.
 
 If the Token Request contains an `authorization_details` parameter (as defined by [RFC@!9396]) of type `openid_credential` and the Credential Issuer's metadata contains an `authorization_servers` parameter, the `authorization_details` object MUST contain the Credential Issuer's identifier in the `locations` element. 
 
@@ -650,17 +650,17 @@ The following additional clarifications are provided for some of the error codes
 
 `invalid_request`:
 
-- The Authorization Server does not expect a PIN in the Pre-Authorized Code Flow but the client provides a PIN.
-- The Authorization Server expects a PIN in the Pre-Authorized Code Flow but the client does not provide a PIN.
+- The Authorization Server does not expect a PIN in the Pre-Authorized Code Flow but the Client provides a PIN.
+- The Authorization Server expects a PIN in the Pre-Authorized Code Flow but the Client does not provide a PIN.
 
 `invalid_grant`:
 
-- The Authorization Server expects a PIN in the Pre-Authorized Code Flow but the client provides the wrong PIN.
+- The Authorization Server expects a PIN in the Pre-Authorized Code Flow but the Client provides the wrong PIN.
 - The End-User provides the wrong Pre-Authorized Code or the Pre-Authorized Code has expired.
 
 `invalid_client`:
 
-- The client tried to send a Token Request with a Pre-Authorized Code without Client ID but the Authorization Server does not support anonymous access.
+- The Client tried to send a Token Request with a Pre-Authorized Code without Client ID but the Authorization Server does not support anonymous access.
 
 Below is a non-normative example Token Error Response:
 
@@ -690,9 +690,9 @@ The Credential Endpoint issues a Credential as approved by the End-User upon pre
 
 Communication with the Credential Endpoint MUST utilize TLS. 
 
-The client can request issuance of a Credential of a certain type multiple times, e.g., to associate the Credential with different public keys/Decentralized Identifiers (DIDs) or to refresh a certain Credential.
+The Client can request issuance of a Credential of a certain type multiple times, e.g., to associate the Credential with different public keys/Decentralized Identifiers (DIDs) or to refresh a certain Credential.
 
-If the Access Token is valid for requesting issuance of multiple Credentials, it is at the client's discretion to decide the order in which to request issuance of multiple Credentials requested in the Authorization Request.
+If the Access Token is valid for requesting issuance of multiple Credentials, it is at the Client's discretion to decide the order in which to request issuance of multiple Credentials requested in the Authorization Request.
 
 ## Binding the Issued Credential to the Identifier of the End-User Possessing that Credential {#credential-binding}
 
@@ -785,7 +785,7 @@ The JWT MUST contain the following elements:
     * `trust_chain`: OPTIONAL. JOSE Header containing an [@!OpenID.Federation] Trust Chain. This element MAY be used to convey key attestation, metadata, metadata policies, federation Trust Marks and any other information related to a specific federation, if available in the chain. When used for signature verification, the header parameter `kid` MUST be present.
 
   * in the JWT body, 
-    * `iss`: OPTIONAL (string). The value of this claim MUST be the `client_id` of the client making the credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
+    * `iss`: OPTIONAL (string). The value of this claim MUST be the `client_id` of the Client making the credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
     * `aud`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
     * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the key proof was issued using the syntax defined in [@!RFC7519]. 
     * `nonce`: OPTIONAL (string). The value type of this claim MUST be a string, where the value is a server-provided `c_nonce`. MUST be present when the Wallet received server-provided `c_nonce`.
@@ -844,7 +844,7 @@ The CWT MUST contain the following elements:
     * (string-valued) Label `COSE_Key`: OPTIONAL (byte string). COSE key material the new Credential shall be bound to. It MUST NOT be present if `x5chain` is present.
     * Label 33 (`x5chain`): OPTIONAL (byte string). As defined in [@!RFC9360], contains an ordered array of X.509 certificates corresponding to the key used to sign the CWT. It MUST NOT be present if `COSE_Key` is present.
   * in the content of the message (see [@!RFC8392], Section 4), 
-    * Claim Key 1 (`iss`): OPTIONAL (text string). The value of this claim MUST be the `client_id` of the client making the credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
+    * Claim Key 1 (`iss`): OPTIONAL (text string). The value of this claim MUST be the `client_id` of the Client making the credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
     * Claim Key 3 (`aud`): REQUIRED (text string). The value of this claim MUST be the Credential Issuer Identifier.
     * Claim Key 6 (`iat`): REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the key proof was issued. 
     * Claim Key 10 (`Nonce`): OPTIONAL (byte string). The value of this claim MUST be a server-provided `c_nonce` converted from string to bytes. MUST be present when the Wallet received server-provided `c_nonce`.
@@ -934,7 +934,7 @@ If the Wallet is requesting the issuance of a Credential that is not supported b
   * `unsupported_credential_format`: Requested Credential format is not supported.
   * `invalid_proof`: The `proof` in the Credential Request is invalid. The `proof` field is not present or the provided key proof is invalid or not bound to a nonce provided by the Credential Issuer.
   * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
-* `error_description`: OPTIONAL. A key at the top level of a JSON object, whose value MUST be a human-readable ASCII [@!USASCII] text, providing any additional information used to assist the client implementers in understanding the occurred error. The values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
+* `error_description`: OPTIONAL. A key at the top level of a JSON object, whose value MUST be a human-readable ASCII [@!USASCII] text, providing any additional information used to assist the Client implementers in understanding the occurred error. The values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
 The usage of these parameters takes precedence over the `invalid_request` parameter defined in (#authorization-errors), since they provide more details about the errors.
 
@@ -952,7 +952,7 @@ Cache-Control: no-store
 
 ### Credential Issuer Provided Nonce {#issuer-provided-nonce}
 
-The Credential Issuer that requires the client to send a key proof of possession of the key material for the Credential to be bound to (`proof`) MAY receive a Credential Request without such a key proof or with an invalid key proof. In such a case, the Credential Issuer MUST provide the client with a `c_nonce` defined in (#credential-response) in a Credential Error Response using `invalid_proof` error code defined in (#credential-error-response). 
+The Credential Issuer that requires the Client to send a key proof of possession of the key material for the Credential to be bound to (`proof`) MAY receive a Credential Request without such a key proof or with an invalid key proof. In such a case, the Credential Issuer MUST provide the Client with a `c_nonce` defined in (#credential-response) in a Credential Error Response using `invalid_proof` error code defined in (#credential-error-response). 
 
 The `c_nonce` value MUST be incorporated in the respective parameter in the `proof` object.
 
@@ -978,11 +978,11 @@ The Batch Credential Endpoint issues multiple Credentials in one Batch Credentia
 
 Communication with the Batch Credential Endpoint MUST utilize TLS. 
 
-The client can request issuance of multiple Credentials of certain types and formats in one Batch Credential Request. This includes Credentials of the same type and multiple formats, different types and one format, or both. 
+The Client can request issuance of multiple Credentials of certain types and formats in one Batch Credential Request. This includes Credentials of the same type and multiple formats, different types and one format, or both. 
 
 ## Batch Credential Request {#batch-credential_request}
 
-The Batch Credential Endpoint allows a client to send multiple Credential Request objects (see (#credential_request)) to request the issuance of multiple credential at once. Batch Credential Request MUST be sent using the `application/json` media type.
+The Batch Credential Endpoint allows a Client to send multiple Credential Request objects (see (#credential_request)) to request the issuance of multiple credential at once. Batch Credential Request MUST be sent using the `application/json` media type.
 
 The following claims are used in the Batch Credential Request:
 
@@ -1148,7 +1148,7 @@ Cache-Control: no-store
 
 ## Client Metadata {#client-metadata}
 
-This specification defines the following new Client Metadata parameter in addition to [@!RFC7591] for Wallets acting as OAuth 2.0 client:
+This specification defines the following new Client Metadata parameter in addition to [@!RFC7591] for Wallets acting as OAuth 2.0 Client:
 
 * `credential_offer_endpoint`: OPTIONAL. Credential Offer Endpoint of a Wallet.
 
@@ -1220,7 +1220,7 @@ Note: The Client MAY use other mechanisms to obtain information about the Verifi
 
 This specification also defines a new OAuth 2.0 Authorization Server metadata [@!RFC8414] parameter to publish whether the AS that the Credential Issuer relies on for authorization supports anonymous Token Requests with the Pre-Authorized Grant Type. It is defined as follows:
 
-* `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A JSON Boolean indicating whether the Credential Issuer accepts a Token Request with a Pre-Authorized Code but without a client id. The default is `false`. 
+* `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A JSON Boolean indicating whether the Credential Issuer accepts a Token Request with a Pre-Authorized Code but without a `client_id`. The default is `false`. 
 
 # Security Considerations {#security-considerations}
 
@@ -1282,7 +1282,7 @@ Note: For the attacker to be able to present to the Verifier a Credential bound 
 
 `nonce` parameter is the primary countermeasure against key proof replay. To further narrow down the attack vector, the Credential Issuer SHOULD bind a unique `nonce` parameter to the respective Access Token.
 
-Note: To accommodate for clock offsets, the Credential Issuer server MAY accept proofs that carry an `iat` time in the reasonably near future (on the order of seconds or minutes). Because clock skews between servers and clients may be large, servers MAY limit key proof lifetimes by using server-provided nonce values containing the time at the server rather than comparing the client-supplied `iat` time to the time at the server. Nonces created in this way yield the same result even in the face of arbitrarily large clock skews.
+Note: To accommodate for clock offsets, the Credential Issuer server MAY accept proofs that carry an `iat` time in the reasonably near future (on the order of seconds or minutes). Because clock skews between servers and Clients may be large, servers MAY limit key proof lifetimes by using server-provided nonce values containing the time at the server rather than comparing the client-supplied `iat` time to the time at the server. Nonces created in this way yield the same result even in the face of arbitrarily large clock skews.
 
 Server-provided nonces are an effective means for further reducing the chances for successful key proof replay by an attacker. A Wallet can keep using a certain nonce until the Credential Issuer provides a fresh nonce. This way the Credential Issuer determines how often a certain nonce can be used. Servers MUST have a clear policy whether the same key proof can be presented multiple times and for how long, or whether each Credential Request MUST have a fresh key proof.
 
@@ -1963,7 +1963,7 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
    -10
 
    * introduced differentiation between Credential Issuer and Authorization Server 
-   * relaxed client identification requirements for Pre-Authorized Code Grant Type
+   * relaxed Client identification requirements for Pre-Authorized Code Grant Type
    * renamed issuance initiation endpoint to Credential Offer Endpoint
    * added `grants` structure to credential offer
 
