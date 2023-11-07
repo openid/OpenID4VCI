@@ -1939,6 +1939,7 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
    
    -19
   
+   * added `user_pin_description` and `user_pin_length` to Credential Offer
    * changed the structure of the `credentials_supported` parameter to a map from array of objects
    * changed the structure of `credentials` parameter in Credential Offer to only be a string (no more objects) whose value is a key in the `credentials_supported` map   
    * added an option to return credential_identifier in Token Request authorization_details parameter that can be used to identify credentials with the same metadata but different claimset/claim values and/or simplify the credential request even when only one credential is being issued.
