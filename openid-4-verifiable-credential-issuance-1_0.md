@@ -1720,11 +1720,6 @@ The following is a non-normative example of an object comprising `credentials_su
 
 #### Credential Offer
 
-The following additional claims are defined for this Credential format to be added to the object entry of the `credentials` parameter defined in (#credential_offer_parameters).
-
-* `credential_definition`: REQUIRED. Object containing the detailed description of the credential type. It consists at least of the following sub claims:
-  * `type`: REQUIRED. Array as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the Wallet shall request in the subsequent Credential Request.
-
 The following is a non-normative example of an object comprising `credentials_supported` parameter of Credential format `jwt_vc_json`:
 
 <{{examples/credential_offer_jwt_vc_json.json}}
@@ -1795,12 +1790,6 @@ The following is a non-normative example of an object comprising `credentials_su
 <{{examples/credential_metadata_ldp_vc.json}}
 
 #### Credential Offer {#issuer_initiated_issuance_ldp_vc}
-
-The following additional claims are defined for this Credential format to be added to the object entry of the `credentials` parameter defined in (#credential_offer_parameters).
-
-* `credential_definition`: REQUIRED. Object containing (and isolating) the detailed description of the credential type. It consists of the following sub claims:
-    * `@context`: REQUIRED. Array as defined in (#server_metadata_ldp_vc).
-    * `type`: REQUIRED. Array as defined in (#server_metadata_ldp_vc). This claim contains the type values the Wallet shall request in the subsequent Credential Request.
 
 The following is a non-normative example of a Credential Offer of type `ldp_vc`:
 
@@ -1896,10 +1885,6 @@ The following is a non-normative example of an object comprising `credentials_su
 <{{examples/credential_metadata_mso_mdoc.json}}
 
 ### Credential Offer
-
-The following additional claims are defined for this Credential format to be added to the object entry of the `credentials` parameter defined in (#credential_offer_parameters). 
-
-* `doctype`: REQUIRED. String as defined in (#server_metadata_mso_mdoc). 
 
 The following is a non-normative example of a Credential Offer of type `mso_mdoc`:
 
