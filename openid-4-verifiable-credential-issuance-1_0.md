@@ -181,12 +181,14 @@ The diagram shows how a Wallet-initiated flow use case as described in (#use-cas
 
 !---
 ~~~ ascii-art
-+--------------+   +-----------+                                    +-------------------+
-| User         |   |   Wallet  |                                    | Credential Issuer |
-+--------------+   +-----------+                                    +-------------------+  
++------+           +-----------+                                    +-------------------+
+| User |           |   Wallet  |                                    | Credential Issuer |
++------+           +-----------+                                    +-------------------+  
+    |                    |                                                    |
+    | (1a) User selects  |                                                    |
+    |      Credential    |  (1b) Credential Offer (credential metadata)       |
+    |------------------->|<---------------------------------------------------|
         |                |                                                    |
-        |    interacts   |                                                    |
-        |--------------->|                                                    |
         |                |  (1) Obtains Issuer's Credential Issuer metadata   |
         |                |<-------------------------------------------------->|
         |                |                                                    |
@@ -207,7 +209,7 @@ The diagram shows how a Wallet-initiated flow use case as described in (#use-cas
         |                |  (5) Credential Request (access_token, proof(s))   |
         |                |--------------------------------------------------->| 
         |                |      Credential Response                           |
-        |                |      (credential(s) OR transaction_id)           |
+        |                |      (credential(s) OR transaction_id)             |
         |                |<---------------------------------------------------|             
 ~~~
 !---
