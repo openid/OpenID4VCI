@@ -1720,7 +1720,7 @@ The following is a non-normative example of an object comprising `credentials_su
 
 #### Credential Offer
 
-The following is a non-normative example of an object comprising `credentials_supported` parameter of Credential format `jwt_vc_json`:
+The following is a non-normative example of a Credential Offer of format `jwt_vc_json`:
 
 <{{examples/credential_offer_jwt_vc_json.json}}
 
@@ -1791,7 +1791,7 @@ The following is a non-normative example of an object comprising `credentials_su
 
 #### Credential Offer {#issuer_initiated_issuance_ldp_vc}
 
-The following is a non-normative example of a Credential Offer of type `ldp_vc`:
+The following is a non-normative example of a Credential Offer of format `ldp_vc`:
 
 <{{examples/credential_offer_ldp_vc.json}}
 
@@ -1886,7 +1886,7 @@ The following is a non-normative example of an object comprising `credentials_su
 
 ### Credential Offer
 
-The following is a non-normative example of a Credential Offer of type `mso_mdoc`:
+The following is a non-normative example of a Credential Offer of format `mso_mdoc`:
 
 <{{examples/credential_offer_mso_doc.json}}
 
