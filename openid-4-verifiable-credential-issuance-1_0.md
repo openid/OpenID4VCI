@@ -1940,7 +1940,7 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
    * changed the structure of the `credentials_supported` parameter to a map from array of objects
    * changed the structure of `credentials` parameter in Credential Offer to only be a string (no more objects) whose value is a key in the `credentials_supported` map   
    * added an option to return credential_identifier in Token Request authorization_details parameter that can be used to identify credentials with the same metadata but different claimset/claim values and/or simplify the credential request even when only one credential is being issued.
-   * renamte credential_identifier to credential_dataset_identifier
+   * rename `credential_identifier` to `credential_dataset_identifier`.
 
    -14
 
