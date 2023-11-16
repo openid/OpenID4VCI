@@ -153,7 +153,7 @@ The Wallet MAY send one Batch Credential Request to the Batch Credential Endpoin
 * multiple Credentials of the same type/doctype bound to different proofs, or
 * multiple Credentials of different types/doctypes bound to different proofs.
 
-In the course of the authorization process, the Credential Issuer MAY also request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as illustrated in a use case in (#use-case-2).
+In the course of the authorization process, the Credential Issuer MAY also request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as illustrated in a use case in (#use-case-5).
 
 At its core, this specification is Credential format agnostic and allows implementers to leverage specific capabilities of Credential formats of their choice. Multiple Credential formats can be used within the same transaction. 
 
@@ -175,9 +175,12 @@ The following subsections illustrate some of the authorization flows supported b
 
 ## Authorization Code Flow {#authorization-code-flow}
 
-Below is a diagram of a Credential issuance using the Authorization Code Flow, using grant type `authorization_code` as defined in [@!RFC6749].
+The Authorization Code Flow uses the grant type `authorization_code` as defined in [@!RFC6749] to issue Credentials.
 
-The diagram shows how a Wallet-initiated flow use case as described in (#use-case-1) is implemented with the Credential Issuance API defined in this specification. Note that the diagram does not illustrate all the optional features of this specification.
+Figure 1 shows two options how the Credential Issuance API defined in this specification can be implemented:
+* a Wallet-initiated flow as described in (#use-case-4) or (#use-case-6)
+* an Issuer-initiated flow as described in (#use-case-1)
+Note that the diagram does not illustrate all the optional features of this specification.
 
 !---
 ~~~ ascii-art
@@ -186,64 +189,66 @@ The diagram shows how a Wallet-initiated flow use case as described in (#use-cas
 +------+           +-----------+                                    +-------------------+  
     |                    |                                                    |
     | (1a) User selects  |                                                    |
-    |      Credential    |  (1b) Credential Offer (credential metadata)       |
+    |      Credential    |  (1b) Credential Offer (credential type)           |
     |------------------->|<---------------------------------------------------|
-        |                |                                                    |
-        |                |  (1) Obtains Issuer's Credential Issuer metadata   |
-        |                |<-------------------------------------------------->|
-        |                |                                                    |
-        |                |  (2) Authorization Request                         |
-        |                |      (type(s) of Credentials to be issued)         |
-        |                |--------------------------------------------------->|
-        |                |                                                    |
-        |   User Authentication / Consent                                     |
-        |                |                                                    |
-        |                |  (3)   Authorization Response (code)               |
-        |                |<---------------------------------------------------|
-        |                |                                                    |
-        |                |  (4) Token Request (code)                          |
-        |                |--------------------------------------------------->| 
-        |                |      Token Response (access_token)                 |
-        |                |<---------------------------------------------------|    
-        |                |                                                    |
-        |                |  (5) Credential Request (access_token, proof(s))   |
-        |                |--------------------------------------------------->| 
-        |                |      Credential Response                           |
-        |                |      (credential(s) OR transaction_id)             |
-        |                |<---------------------------------------------------|             
+    |                    |                                                    |
+    |                    |  (2) Obtains Issuer's Credential Issuer metadata   |
+    |                    |<-------------------------------------------------->|
+    |                    |                                                    |
+    |                    |  (3) Authorization Request                         |
+    |                    |      (type(s) of Credentials to be issued)         |
+    |                    |--------------------------------------------------->|
+    |                    |                                                    |
+    |           User Authentication / Consent                                 |
+    |                    |                                                    |
+    |                    |  (4)   Authorization Response (code)               |
+    |                    |<---------------------------------------------------|
+    |                    |                                                    |
+    |                    |  (5) Token Request (code)                          |
+    |                    |--------------------------------------------------->|
+    |                    |      Token Response (access_token)                 |
+    |                    |<---------------------------------------------------|
+    |                    |                                                    |
+    |                    |  (6) Credential Request (access_token, proof(s))   |
+    |                    |--------------------------------------------------->|
+    |                    |      Credential Response                           |
+    |                    |      (credential(s) OR transaction_id)             |
+    |                    |<---------------------------------------------------|
 ~~~
 !---
 Figure: Issuance using Authorization Code Flow 
 
-(1) The Wallet uses the Credential Issuer's metadata as described in (#credential-issuer-metadata) to learn what credential types and formats the Credential Issuer supports and to determine the issuer URL of the OAuth 2.0 Authorization Server the Credential Issuer relies on. Note in this example, the Credential Issuer also provides the OAuth 2.0 Authorization Server. This specification enables deployments where the Credential Issuer API and the Authorization Server are different services, perhaps even provided by different entities.
+(1a) The Wallet-initiated flow begins as the user requests a credential from a pre-configured list in the Wallet or as the user requires a credential for a presentation not available in his Wallet and the Wallet guides him to get a such a credential from a Credential Issuer.
 
-(2) The Wallet sends an Authorization Request to the Authorization Endpoint. The Authorization Endpoint processes the Authorization Request, which typically includes user authentication and gathering of user consent. 
+(1b) The Issuer-initiated flow begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a link. The Credential Offer contains the Credential Issuer's URL and the credential type(s).
 
-(3) The Authorization Endpoint returns an Authorization Response with the Authorization Code upon successfully processing the Authorization Request. 
+(2) The Wallet uses the Credential Issuer's URL to fetch its metadata as described in (#credential-issuer-metadata) to learn what credential types and formats the Credential Issuer supports and to determine the Authorization (OAuth 2.0 Authorization Server) and Credential Endpoints. This specification enables deployments where the Credential Issuer API and the Authorization Server are different services, perhaps even provided by different entities. Note in this example, the Credential Issuer also provides the OAuth 2.0 Authorization Server.
 
-Note: Steps (2) and (3) happen in the front channel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization_endpoint).
+(3) The Wallet sends an Authorization Request to the Authorization Endpoint. The Authorization Endpoint processes the Authorization Request, which typically includes user authentication and gathering of user consent.
 
-(4) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in step (3). The Token Endpoint returns an Access Token in the Token Response upon successfully validating Authorization Code. This step happens in the back-channel communication (direct communication between two systems using HTTP requests and responses without using redirects through an intermediary such as a browser). This step is defined in (#token_endpoint).
+Note: Steps (3) and (4) happen in the front channel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization_endpoint). The Authorization Server and the User Agent may exchange any further communication, the actual user authentication is out of scope for this specification.
 
-(5) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and (optionally) the proof of possession of the public key to which the issued VC shall be bound to. Upon successfully validating Access Token and proof, the Credential Issuer returns a VC in the Credential Response if it can issue a Credential right away. This step is defined in (#credential-endpoint).
+(4) The Authorization Endpoint returns an Authorization Response with the Authorization Code upon successfully processing the Authorization Request.
 
-If the Credential Issuer requires more time to issue a Credential, the Credential Issuer MAY return a `transaction_id` to the Wallet with information about when the Wallet can start sending a Deferred Credential Request to obtain an issued Credential, as defined in (#deferred-credential-issuance).
+(5) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in step (4). The Token Endpoint returns an Access Token in the Token Response upon successfully validating Authorization Code. This step happens in the back-channel communication (direct communication between two systems using HTTP requests and responses without using redirects through an intermediary such as a browser). This step is defined in (#token_endpoint).
 
-If the Credential Issuer wants to issue multiple Credentials in one response, the Credential Issuer MAY support the Batch Credential Endpoint and the Wallet MAY send a Batch Credential Request to the Batch Credential Endpoint as defined in (#batch-credential-endpoint).
+(6) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and (optionally) the proof of possession of the public key to which the issued (Verifiable) Credential shall be bound to. Upon successfully validating Access Token and proof, the Credential Issuer returns a Credential in the Credential Response. This step is defined in (#credential-endpoint).
 
-With grant type `authorization_code`, it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks and Pushed Authorization Requests [@RFC9126] to ensure integrity and authenticity of the authorization request.
+If the Credential Issuer requires more time to issue a Credential, the Credential Issuer may return a Transaction ID and a time interval to the Wallet in the Credential Response. After the specified time has passed, the Wallet may send a Deferred Credential Request with the Transaction ID to obtain a Credential, as defined in (#deferred-credential-issuance).
+
+If the Credential Issuer wants to issue multiple Credentials in one response, the Credential Issuer may support the Batch Credential Endpoint and the Wallet may send a Batch Credential Request to the Batch Credential Endpoint as defined in (#batch-credential-endpoint).
 
 Note: This flow is based on OAuth 2.0 and the Authorization Code Grant type, but this specification can be used with other OAuth 2.0 grant types as well.
 
 ## Pre-Authorized Code Flow {#pre-authz-code-flow}
 
-Figure 2 is a diagram of a Credential issuance using the Pre-Authorized Code Flow. In this flow, before initiating the flow with the Wallet, the Credential Issuer first conducts the steps required to prepare the Credential issuance, e.g., user authentication and authorization. Consequently, the Pre-Authorized Code is sent by the Credential Issuer to the Wallet. This flow does not use the Authorization Endpoint, and The Wallet exchanges the Pre-Authorized Code for the Access Token directly at the Token Endpoint. Access Token is then used to request Credential issuance at the Credential Endpoint. See (#use-case-4) for a use case.
+Figure 2 is a diagram of a Credential issuance using the Pre-Authorized Code Flow. In this flow, before initiating the flow with the Wallet, the Credential Issuer first conducts the steps required to prepare the Credential issuance, e.g., user authentication and authorization. Consequently, the Pre-Authorized Code is sent by the Credential Issuer to the Wallet. This flow does not use the Authorization Endpoint, and The Wallet exchanges the Pre-Authorized Code for the Access Token directly at the Token Endpoint. Access Token is then used to request Credential issuance at the Credential Endpoint. See (#use-case-2) for a use case.
 
 How the End-User provides information required for the issuance of a requested Credential to the Credential Issuer and the business processes conducted by the Credential Issuer to prepare a Credential are out of scope of this specification.
 
 This flow uses the newly defined OAuth 2.0 Grant Type "urn:ietf:params:oauth:grant-type:pre-authorized_code".
 
-The diagram is based on a Credential Issuer initiated flow illustrated in a use case in (#use-case-4) and does not illustrate all the optional features.
+The diagram is based on a Credential Issuer initiated flow illustrated in a use case in (#use-case-2) and does not illustrate all the optional features.
 
 !---
 ~~~ ascii-art
@@ -251,21 +256,21 @@ The diagram is based on a Credential Issuer initiated flow illustrated in a use 
 | User         |   |   Wallet  |                                    | Credential Issuer |
 +--------------+   +-----------+                                    +-------------------+
         |                |                                                    |
-        |                |  (1) User provides  information required           |  
+        |                |  (1) User provides  information required           |
         |                |      for the issuance of a certain Credential      |
         |-------------------------------------------------------------------->|
         |                |                                                    |
         |                |  (2) Credential Offer (Pre-Authorized Code)        |
-        |                |<---------------------------------------------------|        
+        |                |<---------------------------------------------------|
         |                |  (3) Obtains Issuer's Credential Issuer metadata   |
         |                |<-------------------------------------------------->|
         |   interacts    |                                                    |
         |--------------->|                                                    |
         |                |                                                    |
         |                |  (4) Token Request (Pre-Authorized Code, pin)      |
-        |                |--------------------------------------------------->| 
+        |                |--------------------------------------------------->|
         |                |      Token Response (access_token)                 |
-        |                |<---------------------------------------------------|    
+        |                |<---------------------------------------------------|
         |                |                                                    |
         |                |  (5) Credential Request (access_token, proof(s))   |
         |                |--------------------------------------------------->| 
@@ -278,17 +283,17 @@ Figure: Issuance using Pre-Authorized Code Flow
 
 (1) The Credential Issuer successfully obtains consent and user data required for the issuance of a requested Credential from the End-User using Issuer-specific business process.
 
-(2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a link.
+(2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a link. The Credential Offer contains the Credential Issuer's URL, the credential type(s) and the pre-authorized code.
 
-(3) The Wallet uses information from the Credential Offer to obtain the Credential Issuer's metadata including details about the Credential that this Credential Issuer wants to issue. This step is defined in (#credential-issuer-metadata).
+(3) The Wallet uses the Credential Issuer's URL to fetch its metadata as described in (#credential-issuer-metadata) to obtain information on the offered credential types and formats and to determine the Authorization (OAuth 2.0 Authorization Server) and Credential Endpoints.
 
-(4) The Wallet sends the Pre-Authorized Code obtained in step (2) in the Token Request to the Token Endpoint. The Wallet will send a PIN provided by the User, if it was required by the Credential Issuer. This step is defined in (#token_endpoint).  
+(4) The Wallet sends the Pre-Authorized Code obtained in step (2) in the Token Request to the Token Endpoint. The Wallet will send a User PIN provided by the User, if it was required by the Credential Issuer. This step is defined in (#token_endpoint).
 
-(5) This step is the same as Step 5 in the Authorization Code Flow. 
+(5) This step is the same as Step 5 in the Authorization Code Flow.
 
 It is important to note that anyone who possesses a valid Pre-Authorized Code, without further security measures, would be able to receive a VC from the Credential Issuer. Implementers MUST implement mitigations most suitable to the use case.
 
-One such mechanism defined in this specification is the usage of PIN. If in the Credential Offer the Credential Issuer indicated that the PIN is required, the End-User is requested to type in a PIN sent via a channel different than the issuance Flow and the PIN is sent to the Credential Issuer in the Token Request. 
+One such mechanism defined in this specification is the usage of the User PIN. The Credential Issuer indicates the usage of User PIN in the Credential Offer and sends the User PIN to the End-User via a second channel different than the issuance flow. After the End-User provides the User PIN, his wallet sends the User PIN within the Token Request and the Authorization Server can verify the User PIN.
 
 For more details and concrete mitigations, see (#security_considerations_pre-authz-code).
 
@@ -402,6 +407,8 @@ The Wallet is not supposed to create a response. UX control stays with the Walle
 
 The Authorization Endpoint is used in the same manner as defined in [@!RFC6749], taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
+With grant type `authorization_code`, it is RECOMMENDED to use PKCE as defined in [@!RFC7636] to prevent authorization code interception attacks and Pushed Authorization Requests [@RFC9126] to ensure integrity and authenticity of the authorization request.
+
 ## Authorization Request {#credential-authz-request}
 
 An Authorization Request is an OAuth 2.0 Authorization Request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the Credential Endpoint as defined in (#credential-endpoint). 
@@ -514,7 +521,7 @@ response_type=code
 
 ### Dynamic Credential Request
 
-This step is OPTIONAL. After receiving an Authorization Request from the Client, the Credential Issuer MAY use this step to obtain additional Credentials from the End-User required to proceed with the authorization of the credential issuance. The Credential Issuer MAY obtain a Credential and utilize it to identify the End-User before issuing an additional credential. For a use case, see (#use-case-2).
+This step is OPTIONAL. After receiving an Authorization Request from the Client, the Credential Issuer MAY use this step to obtain additional Credentials from the End-User required to proceed with the authorization of the credential issuance. The Credential Issuer MAY obtain a Credential and utilize it to identify the End-User before issuing an additional credential. For a use case, see (#use-case-5).
 
 It is RECOMMENDED that the Credential Issuer use [@OpenID4VP] to dynamically request presentation of additional Credentials. From a protocol perspective, the Credential Issuer then acts as a verifier and sends a presentation request to the Wallet. The Client SHOULD have these Credentials obtained prior to starting a transaction with this Credential Issuer. 
 
@@ -1646,31 +1653,37 @@ The technology described in this specification was made available from contribut
 
 This is a non-exhaustive list of sample use cases.
 
-## Credential Offer - Same-Device {#use-case-3}
+## Credential Offer - Same-Device {#use-case-1}
 
 While browsing the university's home page, the End-User finds a link "request your digital diploma". The user clicks on this link and is being redirected to a digital Wallet. The Wallet notifies the End-User that a Credential Issuer offered to issue a diploma Credential. User confirms this inquiry and is taken to the university's Credential issuance service's user experience. After authenticating at the university and consenting to the issuance of a digital diploma, the End-User is sent back to the Wallet, where she can check the successful creation of the digital diploma.
 
-## Credential Offer - Cross-Device (with Information Pre-Submitted by the End-User) {#use-case-4}
+## Credential Offer - Cross-Device (with Information Pre-Submitted by the End-User) {#use-case-2}
 
 The End-User is starting a job at a new employer. An employer has requested the End-User to upload certain documents to the employee portal. A few days later, the End-User receives an email from the employer notifying her that the employee Credential is ready and asking her to scan a QR code to retrieve it. The End-User scans the QR code with her smartphone, which opens her Wallet. Meanwhile, the End-User has received a text message with a PIN code to her smartphone. After entering that PIN code in the Wallet for security reasons, the End-User confirms the Credential issuance, and receives Credential into the Wallet.
 
-## Credential Offer - Cross-Device & Deferred {#use-case-5}
+## Credential Offer - Cross-Device & Deferred {#use-case-3}
 
 The End-User wants to obtain a digital criminal record. She visits the local administration's office and requests the issuance of the official criminal record as a digital Credential. After presenting her ID document, she is asked to scan a QR code with her Wallet. She is being told that the actual issuance of the Credential will take some time due to necessary background checks by the authority. 
 
 In the Wallet, the End-User sees an indication that issuance of the digital record is under way. A few days later, the End-User receives a notification from her Wallet that requested Credential was successfully issued. When the End-User opens the Wallet, she is asked whether she wants to download the Credential. She confirms, and the new Credential is retrieved and stored in the Wallet.
 
-## Wallet Initiated Issuance during Presentation {#use-case-1}
+## Wallet Initiated Issuance during Presentation {#use-case-4}
 
 An End-User comes across a verifier app that is requesting the End-User to present a Credential, e.g., a driving license. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet selects a Credential Issuer capable of issuing the lacking Credential and, upon user consent, sends the End-User to the Credential Issuer's user experience (Web site or app). Upon being authenticated and providing consent to issue the Credential into her Wallet, the End-User is sent back to the Wallet. The Wallet informs the End-User that Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
 
-## Wallet Initiated Issuance during Presentation (Requires Presentation of Additional Credentials During Issuance) {#use-case-2}
+## Wallet Initiated Issuance during Presentation (Requires Presentation of Additional Credentials During Issuance) {#use-case-5}
 
 An End-User comes across a verifier app that is requesting the End-User to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet then offers the End-User a list of Credential Issuers, which might be based on a Credential Issuer list curated by the Wallet provider. The End-User picks the university she graduated from and is sent to that university's user experience (Web site or app).
 
 The End-User logs in to the university, which determines that the respective user account is not verified yet. Among multiple identification options, the End-User chooses to present a Credential from her Wallet. The End-User is sent back to the Wallet where she consents to present requested Credential(s) to the university. The End-User is sent back to the university user experience. Based on the presented Credential, the university completes the user verification, looks up user data in its database, and offers to issue a diploma as a Verifiable Credential. 
 
 Upon providing consent, the End-User is sent back to the Wallet. The Wallet informs the user Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
+
+## Wallet Initiated Issuance after Installation {#use-case-6}
+
+The End-User installs a new government-provided Wallet. To get things started, the Wallet offers a selection of Credentials, that the the End-User may obtain, e.g. a national identity credential, a mobile driving license or a public transport ticket. The corresponding Credential Issuers (and their URLs) are pre-configured by the Wallet Provider. By clicking on one these options, the Issuance process starts and the End-User is directed to the Credential Issuer's website for authentication.
+
+Wallet Providers may also provide a market place where Issuers can register to be found for Wallet-initiated flows.
 
 # Credential Format Profiles {#format_profiles}
 
