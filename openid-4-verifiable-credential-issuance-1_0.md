@@ -881,7 +881,7 @@ The following claims are used in the JSON-encoded Credential Response body:
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer was unable to immediately issue the credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST be present when the `credential` parameter is not returned. It MUST be invalidated after the credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. String containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent credential requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
-* * `callback_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the callback as defined in (#callback).
+* `ack_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the acknowledgement request as defined in (#acknowledgement).
 
 The `format` key determines the Credential format and encoding of the credential in the Credential Response. Details are defined in the Credential Format Profiles in (#format_profiles). 
 
@@ -1146,33 +1146,33 @@ Cache-Control: no-store
 }
 ```
 
-# Callback Endpoint {#callback_endpoint}
+# Acknowledgement Endpoint {#acknowledgement_endpoint}
 
-This endpoint is used by the Wallet to notify the Credential Issuer whether a Credential has been successfully received or not. The Credential Issuer needs to return `callback_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL. The wallet MUST call this endpoint if the Credential Issuer supports it and provides a `callback_id`.
+This endpoint is used by the Wallet to notify the Credential Issuer whether a Credential has been successfully received or not. The Credential Issuer needs to return `ack_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL. The wallet MUST call this endpoint if the Credential Issuer supports it and provides a `ack_id`.
 
 This endpoint can be used after the Credential Issuer has sent Credential Response or Batch Credential Response. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the Credential has been accepted and successully stored by the Wallet, rejected by the Wallet, or errors and other unforeseen circumstances have occurred during the Wallet's processing.
 
-The Wallet MUST present to the Callback Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). Credential Issuer that requires request to the Callback Endpoint MUST ensure Access Token issued by the Authorization Server is valid at the Callback Endpoint.
+The Wallet MUST present to the Acknowledgement Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). Credential Issuer that requires request to the Acknowledgement Endpoint MUST ensure Access Token issued by the Authorization Server is valid at the Acknowledgement Endpoint.
 
-The callback from the Wallet is idempotent. The Credential Issuer MUST return success if it receives multiple identical calls from the Wallet for the same `callback_id`s.
+The acknowledgement from the Wallet is idempotent. The Credential Issuer MUST return success if it receives multiple identical calls from the Wallet for the same `ack_id`s.
 
-The Wallet MAY retry if the call to this endpoint fails for a temporary reason. The Credential Issuer SHOULD pre-determine the amount of time within which it expects the callback. Therefore, even a well-formed callback from the Wallet could fail if received by the Credential Issuer after this time period. The Credential Issuer may never receive the callback, meaning it is unknown whether the Wallet successfully stored the credential or not - it is left to the Credential Issuer to decide how to proceed in this case.
+The Wallet MAY retry if the call to this endpoint fails for a temporary reason. The Credential Issuer SHOULD pre-determine the amount of time within which it expects the acknowledgement. Therefore, even a well-formed acknowledgement from the Wallet could fail if received by the Credential Issuer after this time period. The Credential Issuer may never receive the acknowledgement, meaning it is unknown whether the Wallet successfully stored the credential or not - it is left to the Credential Issuer to decide how to proceed in this case.
 
-Communication with the Callback Endpoint MUST utilize TLS.
+Communication with the Acknowledgement Endpoint MUST utilize TLS.
 
-## Callback from the Wallet {#callback}
+## Acknowledgement from the Wallet {#acknowledgement}
 
-The Wallet sends an HTTP POST request to the Callback Endpoint with the following parameters in the entity-body and using the `application/json` media type.
+The Wallet sends an HTTP POST request to the Acknowledgement Endpoint with the following parameters in the entity-body and using the `application/json` media type.
 
 * `credentials`: A JSON array of objects, where each object consists of the following parameters:
-  * `callback_id`: REQUIRED. A JSON string received in Credential Response or Batch Credential Response.
+  * `ack_id`: REQUIRED. A JSON string received in Credential Response or Batch Credential Response.
   * `status`: REQUIRED. Status whether the credential issuance was successful or not. It MUST be a case sensitive string whose value is either `success`, `failure` or `rejected`. `rejected` is be used when unsuccessful credential issuance was caused by user action. In all other cases, `failure` is used.
   * `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description`` parameter MUST NOT include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
 
-Below is a non-normative example of a callback request when credential issuance was successful:
+Below is a non-normative example of an acknowledgement request when credential issuance was successful:
 
 ```
-POST /callback HTTP/1.1
+POST /acknowledgement HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
 Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
@@ -1180,17 +1180,17 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 {
   "credentials": [
     {
-    "callback_id": "3fwe98js",
+    "ack_id": "3fwe98js",
     "status": "success"
     }
   ]
 }
 ```
 
-Below is a non-normative example of a callback request when credential issuance was unsuccessful:
+Below is a non-normative example of an acknowledgement request when credential issuance was unsuccessful:
 
 ```
-POST /callback HTTP/1.1
+POST /acknowledgement HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
 Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
@@ -1198,7 +1198,7 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 {
   "credentials": [
     {
-    "callback_id": "3fwe98js",
+    "ack_id": "3fwe98js",
     "status": "error",
     "error_description": "..."
     }
@@ -1206,34 +1206,34 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 }
 ```
 
-## Successful Callback Request
+## Successful Acknowledgement Request
 
-When the Credential Issuer has successfully received the callback request from the Wallet, it MUST respond with the HTTP status code 2xx. The usage of the HTTP status code 204 (No Content) is RECOMMENDED.
+When the Credential Issuer has successfully received the acknowledgement request from the Wallet, it MUST respond with the HTTP status code 2xx. The usage of the HTTP status code 204 (No Content) is RECOMMENDED.
 
-Below is a non-normative example of response to a successful callback request:
+Below is a non-normative example of response to a successful acknowledgement request:
 
 ```
 HTTP/1.1 204 No Content
 ```
 
-## Callback Error Response
+## Acknowledgement Error Response
 
-If the callback request does not contain an Access Token or contains an invalid Access Token, the Callback Endpoint returns an authorization error response such as defined in section 3 of [@!RFC6750].
+If the acknowledgement request does not contain an Access Token or contains an invalid Access Token, the Acknowledgement Endpoint returns an authorization error response such as defined in section 3 of [@!RFC6750].
 
-`invalid_request` parameter defined in section 3.1 of [@!RFC6750] SHOULD be used in most cases other than when `callback_id` value is invalid. In the latter case, the following error code SHOULD be used as the value of the `error` parameter:
+`invalid_request` parameter defined in section 3.1 of [@!RFC6750] SHOULD be used in most cases other than when `ack_id` value is invalid. In the latter case, the following error code SHOULD be used as the value of the `error` parameter:
 
-* `invalid_callback_id`: The `callback_id` in the callback request was invalid.
+* `invalid_ack_id`: The `ack_id` in the acknowledgement request was invalid.
 
 It is at the discretion of the Wallet whether to retry the request or not.
 
-The following is a non-normative example of a Callback Error Response where an invalid `callback_id` value was used:
+The following is a non-normative example of an Acknowledgement Error Response where an invalid `ack_id` value was used:
 
 ```
 HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Cache-Control: no-store
 {
-   "error": "invalid_callback_id"
+   "error": "invalid_ack_id"
 }
 
 # Metadata
@@ -1273,7 +1273,7 @@ This specification defines the following Credential Issuer Metadata:
 * `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint as defined in (#credential_request). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components.
 * `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint as defined in (#batch-credential-endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
 * `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint as defined in (#deferred-credential-issuance). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
-* `credential_callback_endpoint`: OPTIONAL. URL of the Credential Issuer's Callback Endpoint as defined in (#callback_endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Callback Endpoint.
+* `credential_ack_endpoint`: OPTIONAL. URL of the Credential Issuer's Acknowledgement Endpoint as defined in (#acknowledgement_endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Acknowledgement Endpoint.
 * `credential_response_encryption_alg_values_supported`: OPTIONAL. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`alg` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
 * `credential_response_encryption_enc_values_supported`: OPTIONAL. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
 * `require_credential_response_encryption`: OPTIONAL. Boolean value specifying whether the Credential Issuer requires additional encryption on top of TLS for the Credential Response and expects encryption parameters to be present in the Credential Request and/or Batch Credential Request, with `true` indicating support. When the value is `true`, `credential_response_encryption_alg_values_supported` parameter MUST also be provided.  If omitted, the default value is `false`.
