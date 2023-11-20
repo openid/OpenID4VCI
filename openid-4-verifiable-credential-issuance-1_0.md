@@ -14,7 +14,7 @@ status = "standard"
 initials="T."
 surname="Lodderstedt"
 fullname="Torsten Lodderstedt"
-organization="yes.com"
+organization="sprind.org"
     [author.address]
     email = "torsten@lodderstedt.net"
 
