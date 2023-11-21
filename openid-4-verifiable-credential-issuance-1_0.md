@@ -1916,6 +1916,27 @@ The following is a non-normative example of a Credential Request with Credential
 
 The value of the `credential` claim in the Credential Response MUST be a string that is the base64url-encoded representation of the issued Credential.
 
+### IACA Certificate Metadata
+
+This profile defines an OpenID4VCI Credential Issuer Metadata parameter to publish Issuing Authority Certificate Authority (IACA) certificates.  These certificates are defined in ISO 18013-5 (mDL).  They are needed to verify mdoc certificate chains.  This parameter is:
+
+* `mdoc_iacas_uri`: A URL using the `https` scheme referencing a resource containing a JSON-encoded object containing IACA certificates.
+
+The contents of this resource is a JSON object containing an `iacas` element whose value is an array of objects.  Each object in the array contains a "certificate" member whose value is the base64-encoded DER representation of an IACA certificate.
+
+Below is a non-normative example of the contents an IACA certificates resource:
+
+```
+{
+  "iacas": [
+    {"certificate": "base64-encoded DER representation of an IACA certificate"},
+    ...
+  ]
+}
+```
+
+Other members MAY be defined and used in both the top-level object and the enclosed objects.
+
 # Document History
 
    [[ To be removed from the final specification ]]
