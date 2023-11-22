@@ -1630,7 +1630,7 @@ This specification registers the well-known URI defined in (#credential-issuer-w
 
 # Acknowledgements {#Acknowledgements}
 
-We would like to thank Alen Horvat, Andrii Deinega, Arjen van Veen, Brian Campbell, Christian Bormann, David Chadwick, Daniel Fett, Daniel McGrogan, David Waite, Gabe Cohen, George Fletcher, Giuseppe De Marco, Jacob Ideskog, Jacob Ward, Jeremie Miller, John Bradley, Joseph Heenan, Judith Kahrer, Kenichi Nakamura, Mark Dobrinic, Mark Haine, Markus Kreusch, Michael B. Jones, Nat Sakimura, Oliver Terbu, Paul Bastian, Pedro Felix, Richard Barnes, Roland Hedberg, Rolson Quadras, Takahiko Kawasaki, Timo Glasta, Tom Jones, Vittorio Bertocci for their valuable contributions to this specification.
+We would like to thank Alen Horvat, Andrii Deinega, Arjen van Veen, Brian Campbell, Christian Bormann, David Chadwick, Daniel Fett, Daniel McGrogan, David Waite, Gabe Cohen, George Fletcher, Giuseppe De Marco, Jacob Ideskog, Jacob Ward, Jeremie Miller, John Bradley, Joseph Heenan, Judith Kahrer, Kenichi Nakamura, Mark Dobrinic, Mark Haine, Markus Kreusch, Michael B. Jones, Nat Sakimura, Niels Klomp, Oliver Terbu, Paul Bastian, Pedro Felix, Richard Barnes, Roland Hedberg, Rolson Quadras, Takahiko Kawasaki, Timo Glasta, Tom Jones, Vittorio Bertocci for their valuable contributions to this specification.
 
 # Notices
 
