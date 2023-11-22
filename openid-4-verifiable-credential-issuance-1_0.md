@@ -1918,7 +1918,7 @@ The value of the `credential` claim in the Credential Response MUST be a string 
 
 ### IACA Certificate Metadata
 
-This profile defines an OpenID4VCI Credential Issuer Metadata parameter to publish Issuing Authority Certificate Authority (IACA) certificates.  These certificates are defined in ISO 18013-5 (mDL).  They are needed to verify mdoc certificate chains.  This parameter is:
+This profile defines an OpenID4VCI Credential Issuer Metadata parameter to publish Issuing Authority Certificate Authority (IACA) certificates.  These X.509 certificates are defined in ISO 18013-5 (mDL). They are needed to verify mdoc X.509 certificate chains. This parameter is:
 
 * `mdoc_iacas_uri`: A URL using the `https` scheme referencing a resource containing a JSON-encoded object containing IACA certificates.
 
