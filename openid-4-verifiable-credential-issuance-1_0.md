@@ -1167,7 +1167,7 @@ The Wallet sends an HTTP POST request to the Acknowledgement Endpoint with the f
 * `credentials`: A JSON array of objects, where each object consists of the following parameters:
   * `ack_id`: REQUIRED. A JSON string received in Credential Response or Batch Credential Response.
   * `status`: REQUIRED. Status whether the credential issuance was successful or not. It MUST be a case sensitive string whose value is either `success`, `failure` or `rejected`. `rejected` is be used when unsuccessful credential issuance was caused by user action. In all other cases, `failure` is used.
-  * `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description`` parameter MUST NOT include characters outside the set %x20-21 / %x23-5B / %x5D-7E.
+  * `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
 Below is a non-normative example of an acknowledgement request when credential issuance was successful:
 
