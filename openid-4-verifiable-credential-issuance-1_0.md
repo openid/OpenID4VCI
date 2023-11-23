@@ -1156,7 +1156,7 @@ The Wallet MUST present to the Acknowledgement Endpoint a valid Access Token iss
 
 The acknowledgement from the Wallet is idempotent. The Credential Issuer MUST return success if it receives multiple identical calls from the Wallet for the same `ack_id`s.
 
-The Wallet MAY retry if the call to this endpoint fails for a temporary reason. The Credential Issuer SHOULD pre-determine the amount of time within which it expects the acknowledgement. Therefore, even a well-formed acknowledgement from the Wallet could fail if received by the Credential Issuer after this time period. The Credential Issuer may never receive the acknowledgement, meaning it is unknown whether the Wallet successfully stored the credential or not - it is left to the Credential Issuer to decide how to proceed in this case.
+The Wallet MAY retry if the call to this endpoint fails for a temporary reason. The Credential Issuer SHOULD pre-determine the amount of time within which it expects the acknowledgement. Therefore, even a well-formed acknowledgement from the Wallet could fail if received by the Credential Issuer after this time period. The Credential Issuer may not receive the acknowledgement, meaning it is unknown whether the Wallet successfully stored the credential or not - it is left to the Credential Issuer to decide how to proceed in this case.
 
 Communication with the Acknowledgement Endpoint MUST utilize TLS.
 
@@ -1164,8 +1164,8 @@ Communication with the Acknowledgement Endpoint MUST utilize TLS.
 
 The Wallet sends an HTTP POST request to the Acknowledgement Endpoint with the following parameters in the entity-body and using the `application/json` media type.
 
-* `credentials`: A JSON array of objects, where each object consists of the following parameters:
-  * `ack_id`: REQUIRED. A JSON string received in Credential Response or Batch Credential Response.
+* `credentials`: Array of objects, where each object consists of the following parameters:
+  * `ack_id`: REQUIRED. String received in Credential Response or Batch Credential Response.
   * `status`: REQUIRED. Status whether the credential issuance was successful or not. It MUST be a case sensitive string whose value is either `success`, `failure` or `rejected`. `rejected` is be used when unsuccessful credential issuance was caused by user action. In all other cases, `failure` is used.
   * `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
