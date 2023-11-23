@@ -14,7 +14,7 @@ status = "standard"
 initials="T."
 surname="Lodderstedt"
 fullname="Torsten Lodderstedt"
-organization="yes.com"
+organization="sprind.org"
     [author.address]
     email = "torsten@lodderstedt.net"
 
@@ -1584,12 +1584,12 @@ TBD
 
 <reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-connect-federation-1_0.html">
         <front>
-          <title>OpenID Connect Federation 1.0></title>
+          <title>OpenID Federation 1.0</title>
 		  <author fullname="R. Hedberg, Ed.">
-            <organization>Independent</organization>
+            <organization>independent</organization>
           </author>
           <author fullname="Michael B. Jones">
-            <organization>Independent</organization>
+            <organization>Self-Issued Consulting</organization>
           </author>
           <author fullname="A. Solberg">
             <organization>Sikt</organization>
@@ -1597,15 +1597,15 @@ TBD
           <author fullname="John Bradley">
             <organization>Yubico</organization>
           </author>
-          <author fullname="G. De Marco">
-            <organization>Independent</organization>
+          <author fullname="Giuseppe De Marco">
+            <organization>independent</organization>
           </author>
-          <author fullname="V. Dzhuvinov">
+          <author fullname="Vladimir Dzhuvinov">
             <organization>Connect2id</organization>
           </author>
-          <date day="24" month="March" year="2023"/>
+          <date day="8" month="November" year="2023"/>
         </front>
- </reference>
+</reference>
 
 
 # IANA Considerations
