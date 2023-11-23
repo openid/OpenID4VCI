@@ -1,5 +1,5 @@
 %%%
-title = "OpenID for Verifiable Credential Issuance - draft 13"
+title = "OpenID for Verifiable Credential Issuance - draft 12"
 abbrev = "openid-4-verifiable-credential-issuance"
 ipr = "none"
 workgroup = "OpenID Connect"
@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-13"
+value = "openid-4-verifiable-credential-issuance-1_0-12"
 status = "standard"
 
 [[author]]
@@ -1920,16 +1920,13 @@ The value of the `credential` claim in the Credential Response MUST be a string 
 
    [[ To be removed from the final specification ]]
    
-   -13
+   -12
 
    * changed the structure of the `credentials_supported` parameter to a map from array of objects
    * changed the structure of `credentials` parameter in Credential Offer to only be a string (no more objects) whose value is a key in the `credentials_supported` map   
    * added an option to return credential_identifier in Token Request authorization_details parameter that can be used to identify credentials with the same metadata but different claimset/claim values and/or simplify the credential request even when only one credential is being issued.
    * renamed proof to key proof and added key proof replay security considerations
    * Aligned deferred authorization with RFC 8628 and CIBA
-
-   -12 
-
    * Changed Deferred Endpoint to require same access tokens as (batch) credential endpoint(s), renamed acceptance_token to transaction_id and changed it to a request parameter, and return HTTP status 202 in case of deferred issuance
    * Added Deferred Endpoint error response section 
    * Added Deferred Endpoint metadata
