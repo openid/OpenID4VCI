@@ -1718,12 +1718,6 @@ The following is a non-normative example of an object comprising `credentials_su
 
 <{{examples/credential_metadata_jwt_vc_json.json}}
 
-#### Credential Offer
-
-The following is a non-normative example of a Credential Offer of Credential format `jwt_vc_json`:
-
-<{{examples/credential_offer_jwt_vc_json.json}}
-
 #### Authorization Details {#authorization_jwt_vc_json}
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
@@ -1789,12 +1783,6 @@ The following is a non-normative example of an object comprising `credentials_su
 
 <{{examples/credential_metadata_ldp_vc.json}}
 
-#### Credential Offer {#issuer_initiated_issuance_ldp_vc}
-
-The following is a non-normative example of a Credential Offer of Credential format `ldp_vc`:
-
-<{{examples/credential_offer_ldp_vc.json}}
-
 #### Authorization Details {#authorization_ldp_vc}
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.  
@@ -1843,10 +1831,6 @@ When the `format` value is `jwt_vc_json-ld`, entire Credential Offer, Authorizat
 
 The definitions in (#server_metadata_ldp_vc) apply for metadata of credentials of this type as well. 
 
-#### Credential Offer
-
-The definitions in (#issuer_initiated_issuance_ldp_vc) apply for credentials of this type as well. 
-
 #### Authorization Details
 
 The definitions in (#issuer_initiated_issuance_ldp_vc) apply for credentials of this type as well.
@@ -1883,12 +1867,6 @@ The following additional Credential Issuer metadata are defined for this Credent
 The following is a non-normative example of an object comprising `credentials_supported` parameter of Credential format `mso_mdoc`:
 
 <{{examples/credential_metadata_mso_mdoc.json}}
-
-### Credential Offer
-
-The following is a non-normative example of a Credential Offer of Credential format `mso_mdoc`:
-
-<{{examples/credential_offer_mso_doc.json}}
 
 ### Authorization Details
 
