@@ -324,9 +324,9 @@ The following values are defined by this specification:
   * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
 * Grant Type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
   * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single use. If the Wallet decides to use the Pre-Authorized Code Flow, this parameter value MUST be included in the subsequent Token Request with the Pre-Authorized Code Flow.
-  * `user_pin`: OPTIONAL. An object specifying whether the AS expects presentation of a user PIN along with the Token Request in a Pre-Authorized Code Flow. If the AS does not expect a user PIN, this object is absent, this is the default. The PIN is intended to bind the Pre-Authorized Code to a certain transaction to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate user. It is RECOMMENDED to send the PIN via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, the PIN value MUST be sent in the `user_pin` parameter with the respective Token Request. If no `length` or `description` is given, this object may be empty, indicating that a user PIN is required.
-    * `length`: OPTIONAL. Integer specifying the length of the user PIN. This helps the Wallet to render the PIN input screen and improve the user experience.
-    * `description`: OPTIONAL. String containing guidance for the Holder of the Wallet on how to obtain the PIN, e.g. describing over which communication channel the PIN is delivered. The Wallet is RECOMMENDED to display this description next to the PIN input screen to improve the user experience. The length of the String MUST NOT exceed 300 characters. The `description` does not support internationalization (i18n), however the Issuer MAY detect the Holder's language by previous communication or an HTTP Accept-Language header within an HTTP GET request for a  `credential_offer_uri`.
+  * `tx_code`: OPTIONAL. An object specifying whether the AS expects presentation of a Transaction Code by the End-User along with the Token Request in a Pre-Authorized Code Flow. If the AS does not expect a Transaction Code, this object is absent, this is the default. The Transaction Code is intended to bind the Pre-Authorized Code to a certain transaction to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate End-User. It is RECOMMENDED to send the Transaction Code via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, the Transaction Code value MUST be sent in the `tx_code` parameter with the respective Token Request. If no `length` or `description` is given, this object may be empty, indicating that a Transaction Code is required.
+    * `length`: OPTIONAL. Integer specifying the length of the Transaction Code. This helps the Wallet to render the input screen and improve the user experience.
+    * `description`: OPTIONAL. String containing guidance for the Holder of the Wallet on how to obtain the Transaction Code, e.g. describing over which communication channel it is delivered. The Wallet is RECOMMENDED to display this description next to the Transaction Code input screen to improve the user experience. The length of the String MUST NOT exceed 300 characters. The `description` does not support internationalization (i18n), however the Issuer MAY detect the Holder's language by previous communication or an HTTP Accept-Language header within an HTTP GET request for a  `credential_offer_uri`.
   * `interval`: OPTIONAL. The minimum amount of time in seconds that the Wallet SHOULD wait between polling requests to the token endpoint (in case the Authorization Server responds with error code `authorization_pending` - see (#token_error_response)). If no value is provided, Wallets MUST use `5` as the default.
   * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
 
@@ -346,7 +346,7 @@ Below is a non-normative example of a Credential Offer passed by value:
   %22,%7B%22format%22:%22mso_mdoc%22,%22doctype%22:%22org.iso.18013.5.1.mDL%22%7D%5D,%22
   grants%22:%7B%22authorization_code%22:%7B%22issuer_state%22:%22eyJhbGciOiJSU0Et...FYUaBy
   %22%7D,%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22
-  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22user_pin%22:%7B%7D%7D%7D%7D
+  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22tx_code%22:%7B%7D%7D%7D%7D
 ```
 
 The following is a non-normative example of a Credential Offer that can be included in a QR code or a link used to invoke a Wallet deployed as a native app:
@@ -357,7 +357,7 @@ openid-credential-offer://?credential_offer=%7B%22credential_issuer%22:%22
   %22,%7B%22format%22:%22mso_mdoc%22,%22doctype%22:%22org.iso.18013.5.1.mDL%22%7D%5D,%22
   grants%22:%7B%22authorization_code%22:%7B%22issuer_state%22:%22eyJhbGciOiJSU0Et...FYUaBy
   %22%7D,%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22
-  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22user_pin%22:%7B%7D%7D%7D%7D
+  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22tx_code%22:%7B%7D%7D%7D%7D
 ```
 
 ### Sending Credential Offer by Reference Using `credential_offer_uri` Parameter
@@ -562,7 +562,7 @@ Upon receiving a successful Authorization Response, a Token Request is made as d
 The following are the extension parameters to the Token Request used in a Pre-Authorized Code Flow defined by this specification:
 
 * `pre-authorized_code`: The code representing the authorization to obtain Credentials of a certain type. This parameter MUST be present if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
-* `user_pin`: OPTIONAL. String value containing a user PIN. This value MUST be present if a `user_pin` object was present in the Credential Offer (including if the object was empty). The string value MUST consist of a maximum of eight numeric characters (the numbers 0 - 9). This parameter MUST only be used if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
+* `tx_code`: OPTIONAL. String value containing a Transaction Code. This value MUST be present if a `tx_code` object was present in the Credential Offer (including if the object was empty). The string value MUST consist of a maximum of eight numeric characters (the numbers 0 - 9). This parameter MUST only be used if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 
 Requirements around how the Wallet identifies and, if applicable, authenticates itself with the Authorization Server in the Token Request depends on the Client type defined in Section 2.1 of [@!RFC6749] and the Client authentication method indicated in the `token_endpoint_auth_method` Client metadata. The requirement as described in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
 
@@ -597,7 +597,7 @@ Content-Type: application/x-www-form-urlencoded
 
 grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
 &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
-&user_pin=493536
+&tx_code=493536
 ```
 
 ## Successful Token Response {#token-response}
@@ -1261,7 +1261,7 @@ The Credential Issuer MUST ensure the release of any privacy-sensitive data in C
 
 The Pre-Authorized Code Flow is vulnerable to the replay of the Pre-Authorized Code, because by design, it is not bound to a certain device (as the Authorization Code Flow does with PKCE). This means an attacker can replay at another device the Pre-Authorized Code meant for a victim, e.g., the attacker can scan the QR code while it is displayed on the victim's screen, and thereby get access to the Credential. Such replay attacks must be prevented using other means. The design facilitates the following options:
 
-* User PIN: the Credential Issuer might set up a PIN with the End-User (e.g., via text message or email) that needs to be presented in the Token Request.
+* Transaction Code: the Credential Issuer might set up a Transaction Code with the End-User (e.g., via text message or email) that needs to be presented in the Token Request.
 * Callback to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the End-User to confirm the originating device (device that displayed the QR code) that the Credential Issuer MAY proceed with the Credential issuance process. While the Credential Issuer reaches out to the End-User on the other device to get confirmation, the Credential Issuer's Authorization Server returns an error code `authorization_pending` or `slow_down` to the Wallet as described in (#token_error_response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the End-User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the End-User on the originating device more control over the issuance process.
 
 ### PIN Code Phishing
@@ -1939,7 +1939,7 @@ The value of the `credential` claim in the Credential Response MUST be a JSON st
    
    -19
   
-   * replaced `user_pin_required` in Credential Offer with a `user_pin` object that also now contains `description` and `length`
+   * replaced `user_pin_required` in Credential Offer with a `tx_code` object that also now contains `description` and `length`
    * changed the structure of the `credentials_supported` parameter to a map from array of objects
    * changed the structure of `credentials` parameter in Credential Offer to only be a string (no more objects) whose value is a key in the `credentials_supported` map   
    * added an option to return credential_identifier in Token Request authorization_details parameter that can be used to identify credentials with the same metadata but different claimset/claim values and/or simplify the credential request even when only one credential is being issued.
