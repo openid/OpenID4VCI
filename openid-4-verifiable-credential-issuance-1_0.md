@@ -1160,7 +1160,7 @@ If the Credential Issuer is unable to perform discovery of the Wallet's Credenti
 
 ## Credential Issuer Metadata {#credential-issuer-metadata}
 
-The Credential Issuer Metadata contains information on the Credential Issuer's techical capabilities, supported credentials and (internationalized) display information.
+The Credential Issuer Metadata contains information on the Credential Issuer's technical capabilities, supported credentials and (internationalized) display information.
 
 ### Credential Issuer Identifier {#credential-issuer-identifier}
 
@@ -1176,12 +1176,12 @@ To fetch the Credential Issuer Metadata, a requester MUST send a HTTP GET to the
 
 The Wallet is RECOMMENDED to send an Accept-Language Header in the HTTP GET request to indicate the particular languages he is interested in. The Credential Issuer is RECOMMENDED to send a subset of internationalized display data containing the requested languages and using the HTTP Content-Language Header. The Credential Issuer MAY ignore the Accept-Language Header and send all supported languages or a any chosen default subset.
 
-Below is a non-normative example of a Batch Credential Request:
+Below is a non-normative example of a Credential Issuer Metadata request:
 
 ```
 GET /.well-known/openid-credential-issuer HTTP/1.1
 Host: server.example.com
-Accept-Language: de-DE
+Accept-Language: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5
 ```
 
 ### Credential Issuer Metadata Parameters {#credential-issuer-parameters}
