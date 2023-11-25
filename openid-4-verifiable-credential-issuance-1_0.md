@@ -153,7 +153,7 @@ The Wallet MAY send one Batch Credential Request to the Batch Credential Endpoin
 * multiple Credentials of the same type/doctype bound to different proofs, or
 * multiple Credentials of different types/doctypes bound to different proofs.
 
-In the course of the authorization process, the Credential Issuer MAY also request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as illustrated in a use case in (#use-case-5).
+In the course of the authorization process, the Credential Issuer MAY also request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as illustrated in (#use-case-5).
 
 At its core, this specification is Credential format agnostic and allows implementers to leverage specific capabilities of Credential formats of their choice. Multiple Credential formats can be used within the same transaction. 
 
