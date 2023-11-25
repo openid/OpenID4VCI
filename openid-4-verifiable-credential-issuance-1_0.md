@@ -177,7 +177,7 @@ The following subsections illustrate some of the authorization flows supported b
 
 The Authorization Code Flow uses the grant type `authorization_code` as defined in [@!RFC6749] to issue Credentials.
 
-Figure 1 shows two options how the Credential Issuance API defined in this specification can be implemented:
+Figure 1 shows two options for how the Credential Issuance API defined in this specification can be implemented:
 * a Wallet-initiated flow as described in (#use-case-4) or (#use-case-6)
 * an Issuer-initiated flow as described in (#use-case-1)
 Note that the diagram does not illustrate all the optional features of this specification.
