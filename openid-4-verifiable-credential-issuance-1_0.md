@@ -1172,16 +1172,16 @@ The Credential Issuer's configuration can be retrieved using the Credential Issu
 
 Credential Issuers publishing metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer Identifier. If the Credential Issuer value contains a path component, any terminating `/` MUST be removed before appending `/.well-known/openid-credential-issuer`.
 
-To fetch the Credential Issuer Metadata, a requester MUST send a HTTP GET to the path formed following the steps above utilizing TLS. The Credential Issuer MUST return a JSON document compliant with this specification using the `application/json` media type and a HTTP Status Code 200.
+To fetch the Credential Issuer Metadata, a requester MUST send a HTTP request using the GET method and the path formed following the steps above. The URL used for this purpose MUST use the https scheme and SHOULD NOT contain query parameter. The Credential Issuer MUST return a JSON document compliant with this specification using the `application/json` media type and a HTTP Status Code 200.
 
-The Wallet is RECOMMENDED to send an Accept-Language Header in the HTTP GET request to indicate the particular languages he is interested in. The Credential Issuer is RECOMMENDED to send a subset of internationalized display data containing the requested languages and using the HTTP Content-Language Header. The Credential Issuer MAY ignore the Accept-Language Header and send all supported languages or a any chosen default subset.
+The Wallet is RECOMMENDED to send an `Accept-Language` Header in the HTTP GET request to indicate the particular languages it is interested in. The Credential Issuer is RECOMMENDED to send a subset of internationalized display data containing the requested languages and using the HTTP `Content-Language` Header. The requested language MUST use the values defined in [RFC3066]. The Credential Issuer MAY ignore the `Accept-Language` Header and send all supported languages or a any chosen default subset.
 
 Below is a non-normative example of a Credential Issuer Metadata request:
 
 ```
 GET /.well-known/openid-credential-issuer HTTP/1.1
 Host: server.example.com
-Accept-Language: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5
+Accept-Language: fr-ch, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5
 ```
 
 ### Credential Issuer Metadata Parameters {#credential-issuer-parameters}
