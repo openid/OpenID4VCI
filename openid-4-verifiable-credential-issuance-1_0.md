@@ -1,5 +1,5 @@
 %%%
-title = "OpenID for Verifiable Credential Issuance - draft 13"
+title = "OpenID for Verifiable Credential Issuance - draft 12"
 abbrev = "openid-4-verifiable-credential-issuance"
 ipr = "none"
 workgroup = "OpenID Connect"
@@ -7,14 +7,14 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-13"
+value = "openid-4-verifiable-credential-issuance-1_0-12"
 status = "standard"
 
 [[author]]
 initials="T."
 surname="Lodderstedt"
 fullname="Torsten Lodderstedt"
-organization="yes.com"
+organization="sprind.org"
     [author.address]
     email = "torsten@lodderstedt.net"
 
@@ -1584,12 +1584,12 @@ TBD
 
 <reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-connect-federation-1_0.html">
         <front>
-          <title>OpenID Connect Federation 1.0></title>
+          <title>OpenID Federation 1.0</title>
 		  <author fullname="R. Hedberg, Ed.">
-            <organization>Independent</organization>
+            <organization>independent</organization>
           </author>
           <author fullname="Michael B. Jones">
-            <organization>Independent</organization>
+            <organization>Self-Issued Consulting</organization>
           </author>
           <author fullname="A. Solberg">
             <organization>Sikt</organization>
@@ -1597,15 +1597,15 @@ TBD
           <author fullname="John Bradley">
             <organization>Yubico</organization>
           </author>
-          <author fullname="G. De Marco">
-            <organization>Independent</organization>
+          <author fullname="Giuseppe De Marco">
+            <organization>independent</organization>
           </author>
-          <author fullname="V. Dzhuvinov">
+          <author fullname="Vladimir Dzhuvinov">
             <organization>Connect2id</organization>
           </author>
-          <date day="24" month="March" year="2023"/>
+          <date day="8" month="November" year="2023"/>
         </front>
- </reference>
+</reference>
 
 
 # IANA Considerations
@@ -1921,22 +1921,13 @@ The value of the `credential` claim in the Credential Response MUST be a string 
 
    [[ To be removed from the final specification ]]
    
-   -19
-  
+   -12
+
    * changed the structure of the `credentials_supported` parameter to a map from array of objects
    * changed the structure of `credentials` parameter in Credential Offer to only be a string (no more objects) whose value is a key in the `credentials_supported` map   
    * added an option to return `credential_identifier` in Token Request `authorization_details` parameter that can be used to identify Credentials with the same metadata but different claimset/claim values and/or simplify the Credential request even when only one Credential is being issued.
-
-   -14
-
    * renamed proof to key proof and added key proof replay security considerations
-
-   -13 
-
    * Aligned deferred authorization with RFC 8628 and CIBA
-
-   -12 
-
    * Changed Deferred Endpoint to require same access tokens as (batch) Credential endpoint(s), renamed acceptance_token to transaction_id and changed it to a request parameter, and return HTTP status 202 in case of deferred issuance
    * Added Deferred Endpoint error response section 
    * Added Deferred Endpoint metadata
