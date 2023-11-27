@@ -175,7 +175,7 @@ The following subsections illustrate some of the authorization flows supported b
 
 ## Authorization Code Flow {#authorization-code-flow}
 
-The Authorization Code Flow uses the grant type `authorization_code` as defined in [@!RFC6749] to issue Credentials.
+The Authorization Code Flow uses the grant type `authorization_code` as defined in [@!RFC6749] to issue Access Tokens.
 
 Figure 1 shows the two flows that can be implemented for the issuance of the Credentials, as outlined in this specification:
 * **Wallet-initiated flow**, described in (#use-case-4) or (#use-case-6);
@@ -243,7 +243,7 @@ Note: This flow is based on OAuth 2.0 and the Authorization Code Grant type, but
 
 ## Pre-Authorized Code Flow {#pre-authz-code-flow}
 
-Figure 2 is a diagram of a Credential issuance using the Pre-Authorized Code Flow. In this flow, before initiating the flow with the Wallet, the Credential Issuer first conducts the steps required to prepare the Credential issuance, e.g., End-User authentication and authorization. Consequently, the Pre-Authorized Code is sent by the Credential Issuer to the Wallet. This flow does not use the Authorization Endpoint, and The Wallet exchanges the Pre-Authorized Code for the Access Token directly at the Token Endpoint. Access Token is then used to request Credential issuance at the Credential Endpoint. An use case is described in (#use-case-2).
+Figure 2 is a diagram of a Credential issuance using the Pre-Authorized Code Flow. In this flow, before initiating the flow with the Wallet, the Credential Issuer first conducts the steps required to prepare the Credential issuance, e.g., End-User authentication and authorization. Consequently, the Pre-Authorized Code is sent by the Credential Issuer to the Wallet. This flow does not use the Authorization Endpoint, and The Wallet exchanges the Pre-Authorized Code for the Access Token directly at the Token Endpoint. Access Token is then used to request Credential issuance at the Credential Endpoint. A use case is described in (#use-case-2).
 
 How the End-User provides information required for the issuance of a requested Credential to the Credential Issuer and the business processes conducted by the Credential Issuer to prepare a Credential are out of scope of this specification.
 
@@ -284,7 +284,7 @@ Figure: Issuance using Pre-Authorized Code Flow
 
 (1) The Credential Issuer successfully obtains consent and End-User data required for the issuance of a requested Credential from the End-User using Issuer-specific business process.
 
-(2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL, the Credential type(s) and the pre-authorized code.
+(2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL, the Credential type(s) and the Pre-Authorized Code.
 
 (3) The Wallet uses the Credential Issuer's URL to fetch its metadata as described in (#credential-issuer-metadata) to obtain information on the offered credential types and formats and to determine the Authorization (OAuth 2.0 Authorization Server) and Credential Endpoints.
 
