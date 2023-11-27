@@ -185,36 +185,36 @@ Please note that the diagram does not illustrate all the optional features defin
 
 !---
 ~~~ ascii-art
-+------+           +-----------+                                    +-------------------+
-| User |           |   Wallet  |                                    | Credential Issuer |
-+------+           +-----------+                                    +-------------------+  
-    |                    |                                                    |
-    | (1a) User selects  |                                                    |
-    |      Credential    |  (1b) Credential Offer (credential type)           |
-    |------------------->|<---------------------------------------------------|
-    |                    |                                                    |
-    |                    |  (2) Obtains Issuer's Credential Issuer metadata   |
-    |                    |<-------------------------------------------------->|
-    |                    |                                                    |
-    |                    |  (3) Authorization Request                         |
-    |                    |      (type(s) of Credentials to be issued)         |
-    |                    |--------------------------------------------------->|
-    |                    |                                                    |
-    |           User Authentication / Consent                                 |
-    |                    |                                                    |
-    |                    |  (4)   Authorization Response (code)               |
-    |                    |<---------------------------------------------------|
-    |                    |                                                    |
-    |                    |  (5) Token Request (code)                          |
-    |                    |--------------------------------------------------->|
-    |                    |      Token Response (access_token)                 |
-    |                    |<---------------------------------------------------|
-    |                    |                                                    |
-    |                    |  (6) Credential Request (access_token, proof(s))   |
-    |                    |--------------------------------------------------->|
-    |                    |      Credential Response                           |
-    |                    |      (credential(s) OR transaction_id)             |
-    |                    |<---------------------------------------------------|
++----------+        +-----------+                                    +-------------------+
+| End-User |        |   Wallet  |                                    | Credential Issuer |
++----------+        +-----------+                                    +-------------------+
+    |                     |                                                    |
+    | (1a) End-User       |                                                    |
+    |  selects Credential |  (1b) Credential Offer (credential type)           |
+    |-------------------->|<---------------------------------------------------|
+    |                     |                                                    |
+    |                     |  (2) Obtains Issuer's Credential Issuer metadata   |
+    |                     |<-------------------------------------------------->|
+    |                     |                                                    |
+    |                     |  (3) Authorization Request                         |
+    |                     |      (type(s) of Credentials to be issued)         |
+    |                     |--------------------------------------------------->|
+    |                     |                                                    |
+    |           User Authentication / Consent                                  |
+    |                     |                                                    |
+    |                     |  (4)   Authorization Response (code)               |
+    |                     |<---------------------------------------------------|
+    |                     |                                                    |
+    |                     |  (5) Token Request (code)                          |
+    |                     |--------------------------------------------------->|
+    |                     |      Token Response (access_token)                 |
+    |                     |<---------------------------------------------------|
+    |                     |                                                    |
+    |                     |  (6) Credential Request (access_token, proof(s))   |
+    |                     |--------------------------------------------------->|
+    |                     |      Credential Response                           |
+    |                     |      (credential(s) OR transaction_id)             |
+    |                     |<---------------------------------------------------|
 ~~~
 !---
 Figure: Issuance using Authorization Code Flow 
@@ -254,10 +254,10 @@ The following diagram is based on the Credential Issuer initiated flow, as illus
 !---
 ~~~ ascii-art
 +--------------+   +-----------+                                    +-------------------+
-| User         |   |   Wallet  |                                    | Credential Issuer |
+|   End-User   |   |   Wallet  |                                    | Credential Issuer |
 +--------------+   +-----------+                                    +-------------------+
         |                |                                                    |
-        |                |  (1) User provides  information required           |
+        |                |  (1) End-User provides  information required       |
         |                |      for the issuance of a certain Credential      |
         |-------------------------------------------------------------------->|
         |                |                                                    |
