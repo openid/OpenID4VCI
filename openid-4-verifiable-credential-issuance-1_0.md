@@ -213,7 +213,7 @@ Please note that the diagram does not illustrate all the optional features defin
     |                     |  (6) Credential Request (access_token, proof(s))   |
     |                     |--------------------------------------------------->|
     |                     |      Credential Response                           |
-    |                     |      (credential(s) OR transaction_id)             |
+    |                     |      (Credential(s) OR Transaction ID)             |
     |                     |<---------------------------------------------------|
 ~~~
 !---
