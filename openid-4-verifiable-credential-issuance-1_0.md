@@ -200,7 +200,7 @@ Please note that the diagram does not illustrate all the optional features defin
     |                     |      (type(s) of Credentials to be issued)         |
     |                     |--------------------------------------------------->|
     |                     |                                                    |
-    |           User Authentication / Consent                                  |
+    |           End-User Authentication / Consent                              |
     |                     |                                                    |
     |                     |  (4)   Authorization Response (code)               |
     |                     |<---------------------------------------------------|
