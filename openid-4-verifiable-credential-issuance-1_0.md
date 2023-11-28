@@ -1172,9 +1172,11 @@ The Credential Issuer's configuration can be retrieved using the Credential Issu
 
 Credential Issuers publishing metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer Identifier. If the Credential Issuer value contains a path component, any terminating `/` MUST be removed before appending `/.well-known/openid-credential-issuer`.
 
-To fetch the Credential Issuer Metadata, a requester MUST send a HTTP request using the GET method and the path formed following the steps above. The URL used for this purpose MUST use the https scheme and SHOULD NOT contain query parameter. The Credential Issuer MUST return a JSON document compliant with this specification using the `application/json` media type and a HTTP Status Code 200.
+Communication with the Credential Issuer Metadata Endpoint MUST utilize TLS.
 
-The Wallet is RECOMMENDED to send an `Accept-Language` Header in the HTTP GET request to indicate the particular languages it is interested in. The Credential Issuer is RECOMMENDED to send a subset of internationalized display data containing the requested languages and using the HTTP `Content-Language` Header. The requested language MUST use the values defined in [RFC3066]. The Credential Issuer MAY ignore the `Accept-Language` Header and send all supported languages or a any chosen default subset.
+To fetch the Credential Issuer Metadata, a requester MUST send a HTTP request using the GET method and the path formed following the steps above. The URL SHOULD NOT contain any query parameters. The Credential Issuer MUST return a JSON document compliant with this specification using the `application/json` media type and a HTTP Status Code 200.
+
+The Wallet is RECOMMENDED to send an `Accept-Language` Header in the HTTP GET request to indicate the particular language(s) it is interested in. The Credential Issuer is RECOMMENDED to send a subset of internationalized display data containing the requested language(s) and indicate the language(s) returned using the HTTP `Content-Language` Header. The requested language(s) MUST use the values defined in [@!RFC3066]. The Credential Issuer MAY ignore the `Accept-Language` Header and send all supported languages or any chosen default subset.
 
 Below is a non-normative example of a Credential Issuer Metadata request:
 
