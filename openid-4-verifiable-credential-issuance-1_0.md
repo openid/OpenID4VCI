@@ -221,9 +221,9 @@ Figure: Issuance using Authorization Code Flow
 
 (1a) The Wallet-initiated flow begins as the End-User requests a Credential from a pre-configured list of the Credentials ready to be issued or, in alternative, as the End-User requires a Credential not available yet in the Wallet and the Wallet gives guidance to the End-User to get the Credential from a Credential Issuer.
 
-(1b) The Issuer-initiated flow begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL and the Credential type(s).
+(1b) The Issuer-initiated flow begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL and the information about the Credential being offered.
 
-(2) The Wallet uses the Credential Issuer's unique identifier, in the form of HTTPs URL, to fetch the Credential Issuer metadata as described in (#credential-issuer-metadata). The metadata is required by the Wallet to learn the Credential types and formats the Credential Issuer supports; it is also required to determine the Authorization endpoint (OAuth 2.0 Authorization Server) and Credential endpoint required to start the request. This specification enables deployments where the Credential endpoint and the Authorization endpoint are provided by different entities. Please note that in this example the Credential Issuer and OAuth 2.0 Authorization Server correspond to the same entity.
+(2) The Wallet uses the Credential Issuer's unique identifier, in the form of HTTPs URL, to fetch the Credential Issuer metadata as described in (#credential-issuer-metadata). The metadata is required by the Wallet to learn the Credential types and formats the Credential Issuer supports; it is also required to determine the Authorization Endpoint (OAuth 2.0 Authorization Server) and Credential Endpoint required to start the request. This specification enables deployments where the Credential Endpoint and the Authorization Endpoint are provided by different entities. Please note that in this example the Credential Issuer and OAuth 2.0 Authorization Server correspond to the same entity.
 
 (3) The Wallet sends an Authorization Request to the Authorization Endpoint. The Authorization Endpoint processes the Authorization Request, which typically includes the End-User authentication and the gathering of the End-User consent.
 
@@ -233,11 +233,11 @@ Note: Steps (3) and (4) happen in the front channel, by redirecting the End-User
 
 (5) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in step (4). The Token Endpoint returns an Access Token in the Token Response upon successfully validating Authorization Code. This step happens in the back-channel communication (direct communication between two systems using HTTP requests and responses without using redirects through an intermediary such as a browser). This step is defined in (#token_endpoint).
 
-(6) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and (optionally) the proof of possession of the public key to which the issued (Verifiable) Credential shall be bound to. Upon successfully validating Access Token and proof, the Credential Issuer returns a Credential in the Credential Response. This step is defined in (#credential-endpoint).
+(6) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and (optionally) the proof of possession of the public key to which the issued Credential will be bound to. Upon successfully validating Access Token and proof, the Credential Issuer returns a Credential in the Credential Response. This step is defined in (#credential-endpoint).
 
 If the Credential Issuer requires more time to issue a Credential, the Credential Issuer may return a Transaction ID and a time interval to the Wallet in the Credential Response. After the specified time has passed, the Wallet may send a Deferred Credential Request with the Transaction ID to obtain a Credential, as defined in (#deferred-credential-issuance).
 
-If the Credential Issuer wants to issue multiple Credentials in one response, the Credential Issuer may support the Batch Credential Endpoint and the Wallet may send a Batch Credential Request to the Batch Credential Endpoint as defined in (#batch-credential-endpoint).
+If the Credential Issuer wants to issue multiple Credentials in one response, the Credential Issuer may support the Batch Credential Endpoint. In this case the Wallet may send a Batch Credential Request to the Batch Credential Endpoint, as defined in (#batch-credential-endpoint).
 
 Note: This flow is based on OAuth 2.0 and the Authorization Code Grant type, but this specification can be used with other OAuth 2.0 grant types as well.
 
@@ -284,11 +284,11 @@ Figure: Issuance using Pre-Authorized Code Flow
 
 (1) The Credential Issuer successfully obtains consent and End-User data required for the issuance of a requested Credential from the End-User using Issuer-specific business process.
 
-(2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL, the Credential type(s) and the Pre-Authorized Code.
+(2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL, the information about the Credential(s) being offered and the Pre-Authorized Code.
 
 (3) The Wallet uses the Credential Issuer's URL to fetch its metadata as described in (#credential-issuer-metadata) to obtain information on the offered credential types and formats and to determine the Authorization (OAuth 2.0 Authorization Server) and Credential Endpoints.
 
-(4) The Wallet sends the Pre-Authorized Code obtained in step (2) in the Token Request to the Token Endpoint. The Wallet will send a User PIN provided by the User, if it was required by the Credential Issuer. This step is defined in (#token_endpoint).
+(4) The Wallet sends the Pre-Authorized Code obtained in step (2) in the Token Request to the Token Endpoint. When a User PIN is required by the Credential Issuer, the Wallet sends the User PIN provided by the End-User. This step is defined in (#token_endpoint).
 
 (5) This step is the same as Step 5 in the Authorization Code Flow.
 
@@ -1682,7 +1682,7 @@ Upon providing consent, the End-User is sent back to the Wallet. The Wallet info
 
 ## Wallet Initiated Issuance after Installation {#use-case-6}
 
-The End-User installs a new government-provided Wallet. To get things started, the Wallet offers a selection of Credentials, that the the End-User may obtain, e.g. a national identity credential, a mobile driving license or a public transport ticket. The corresponding Credential Issuers (and their URLs) are pre-configured by the Wallet Provider. By clicking on one these options, the Issuance process starts and the End-User is directed to the Credential Issuer's website for authentication.
+The End-User installs a new Wallet and executes it. The Wallet offers to the End-User a selection of the Credentials the End-User may obtain, e.g. a national identity credential, a mobile driving license or a public transport ticket. The corresponding Credential Issuers (and their URLs) are pre-configured by the Wallet or follow some discovery processes that are out of scope for this specification. By clicking on one these options corresponding to the Credentials available for the issuance, the Issuance process starts with the flows supported by the Credential Issuer (Pre-Authorized Code flow or Auth Code flow).
 
 Wallet Providers may also provide a market place where Issuers can register to be found for Wallet-initiated flows.
 
