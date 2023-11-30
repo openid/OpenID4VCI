@@ -118,7 +118,7 @@ This specification defines an API for credential issuance provided by a Credenti
 * An optional Batch Credential Endpoint from which multiple Credentials can be issued in one request (see (#batch-credential-endpoint)).
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of credentials (see (#deferred-credential-issuance)).
 * An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow (see (#credential_offer_endpoint)).
-* An optional mechanism for the Wallet to notify the Credential Issuer of the status of the Credential received by the Wallet.
+* An optional mechanism for the Credential Issuer to receive from the Wallet the status of the Credential that it issued.
 * A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing (see (#credential-issuer-metadata)).
 
 Both the Credential and the Batch Credential Endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both requests therefore enable conveying proof of possession for the key material. Multiple key proof types are supported.
@@ -1148,11 +1148,11 @@ Cache-Control: no-store
 
 # Acknowledgement Endpoint {#acknowledgement_endpoint}
 
-This endpoint is used by the Wallet to notify the Credential Issuer whether a Credential has been successfully received or not. The Credential Issuer needs to return `ack_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL. The wallet MUST call this endpoint if the Credential Issuer supports it and provides a `ack_id`.
+This endpoint is used by the Wallet to notify the Credential Issuer whether a Credential has been successfully received or not. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the Credential has been accepted and successfully stored by the Wallet, rejected by the Wallet, or errors and other unforeseen circumstances have occurred during the Wallet's processing. The Credential Issuer needs to return `ack_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint by the Credential Issuer is OPTIONAL. The wallet MUST call this endpoint if the Credential Issuer supports it and provides a `ack_id`.
 
-This endpoint can be used after the Credential Issuer has sent Credential Response or Batch Credential Response. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the Credential has been accepted and successully stored by the Wallet, rejected by the Wallet, or errors and other unforeseen circumstances have occurred during the Wallet's processing.
+The Wallet MUST present to the Acknowledgement Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). 
 
-The Wallet MUST present to the Acknowledgement Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). Credential Issuer that requires request to the Acknowledgement Endpoint MUST ensure Access Token issued by the Authorization Server is valid at the Acknowledgement Endpoint.
+Note: A Credential Issuer that requires a request to the Acknowledgement Endpoint MUST ensure the Access Token issued by the Authorization Server is valid at the Acknowledgement Endpoint.
 
 The acknowledgement from the Wallet is idempotent. The Credential Issuer MUST return success if it receives multiple identical calls from the Wallet for the same `ack_id`s.
 
@@ -1160,13 +1160,13 @@ The Wallet MAY retry if the call to this endpoint fails for a temporary reason. 
 
 Communication with the Acknowledgement Endpoint MUST utilize TLS.
 
-## Acknowledgement from the Wallet {#acknowledgement}
+## Acknowledgement Request {#acknowledgement}
 
 The Wallet sends an HTTP POST request to the Acknowledgement Endpoint with the following parameters in the entity-body and using the `application/json` media type.
 
 * `credentials`: Array of objects, where each object consists of the following parameters:
   * `ack_id`: REQUIRED. String received in Credential Response or Batch Credential Response.
-  * `status`: REQUIRED. Status whether the credential issuance was successful or not. It MUST be a case sensitive string whose value is either `success`, `failure` or `rejected`. `rejected` is be used when unsuccessful credential issuance was caused by user action. In all other cases, `failure` is used.
+  * `status`: REQUIRED. Status whether the credential issuance was successful or not. It MUST be a case sensitive string whose value is either `success`, `failure` or `rejected`. `rejected` is to be used when the unsuccessful credential issuance was caused by a user action. In all other unsuccessful cases, `failure` is to be used.
   * `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
 Below is a non-normative example of an acknowledgement request when credential issuance was successful:
@@ -1199,14 +1199,14 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
   "credentials": [
     {
     "ack_id": "3fwe98js",
-    "status": "error",
+    "status": "failure",
     "error_description": "..."
     }
   ]
 }
 ```
 
-## Successful Acknowledgement Request
+## Successful Acknowledgement Response
 
 When the Credential Issuer has successfully received the acknowledgement request from the Wallet, it MUST respond with the HTTP status code 2xx. The usage of the HTTP status code 204 (No Content) is RECOMMENDED.
 
