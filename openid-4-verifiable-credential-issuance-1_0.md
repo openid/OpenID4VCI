@@ -841,7 +841,7 @@ When a W3C Verifiable Presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] si
 
   * `proof`: REQUIRED. The proof body of a W3C Verifiable Presentation. 
       * `domain`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
-      * `challenge`: REQUIRED (string). The value type of this claim MUST be a string, where the value is a server-provided `c_nonce`. It MUST be present when the Wallet received server-provided `c_nonce`.
+      * `challenge`: REQUIRED when the Credential Issuer has provided a `c_nonce`. MUST NOT be used otherwise. String, where the value is a server-provided `c_nonce`. It MUST be present when the Wallet received server-provided `c_nonce`.
 
 The Credential Issuer MUST validate that the `proof` is actually signed with a key in possession of the Holder.
 
