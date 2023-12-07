@@ -221,7 +221,7 @@ Figure: Issuance using Authorization Code Flow
 
 (1a) The Wallet-initiated flow begins as the End-User requests a Credential from a pre-configured list of the Credentials ready to be issued or, in alternative, it can be issuance during presentation, where the Wallet gives guidance to the End-User to get the Credential from a Credential Issuer based on the information received in the presentation request.
 
-(1b) The Issuer-initiated flow begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL and the information about the Credential being offered.
+(1b) The Issuer-initiated flow begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL and the information about the Credential being offered. This step is defined in (#credential_offer).
 
 (2) The Wallet uses the Credential Issuer's unique identifier, in the form of HTTPs URL, to fetch the Credential Issuer metadata as described in (#credential-issuer-metadata). The metadata is required by the Wallet to learn the Credential types and formats the Credential Issuer supports; it is also required to determine the Authorization Endpoint (OAuth 2.0 Authorization Server) and Credential Endpoint required to start the request. This specification enables deployments where the Credential Endpoint and the Authorization Endpoint are provided by different entities. Please note that in this example the Credential Issuer and OAuth 2.0 Authorization Server correspond to the same entity.
 
@@ -284,7 +284,7 @@ Figure: Issuance using Pre-Authorized Code Flow
 
 (1) The Credential Issuer successfully obtains consent and End-User data required for the issuance of a requested Credential from the End-User using Issuer-specific business process.
 
-(2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL, the information about the Credential(s) being offered and the Pre-Authorized Code.
+(2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL, the information about the Credential(s) being offered and the Pre-Authorized Code. This step is defined in (#credential_offer).
 
 (3) The Wallet uses the Credential Issuer's URL to fetch its metadata as described in (#credential-issuer-metadata) to obtain information on the offered credential types and formats and to determine the Authorization (OAuth 2.0 Authorization Server) and Credential Endpoints.
 
