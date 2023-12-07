@@ -141,13 +141,13 @@ Existing OAuth 2.0 mechanisms are extended as following:
 
 ### Multiple Credential Issuance
 
-Credentials issued at the Credential Endpoint or Batch Credential Endpoint can vary in their contents (the Credential Dataset), their format (including type and doctype, see (#format_profiles)) as well as in the key to which they are bound for Cryptographic Holder Binding. For multiple Credentials (either issued in multiple Credential Requests or at once at the Batch Credential Endpoint), the following combinations are possible:
+Credentials issued at the Credential Endpoint or Batch Credential Endpoint can vary in their contents (the Credential Dataset), their format (Credential Format and Credential Format Profile specific parameters) as well as in the key to which they are bound for Cryptographic Holder Binding. For multiple Credentials (either issued in multiple Credential Requests or at once at the Batch Credential Endpoint), the following combinations are possible:
 
 - Same Credential Dataset and format, but different keys
 - Different Credential Dataset and format, but same key
 - Different Credential Dataset and format and different keys
 
-(TODO: Say why Dataset is connected to format.)
+(TODO: Say why Dataset is connected to Credential Format.)
 
 (TODO: Discuss Batch vs. Single Credential Endpoint.)
 
