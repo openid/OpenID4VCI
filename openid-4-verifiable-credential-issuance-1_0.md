@@ -1922,6 +1922,8 @@ The value of the `credential` claim in the Credential Response MUST be a string 
 
 ## IETF SD-JWT VC
 
+This section defines a Credential Format Profile for Credentials complying with [@!I-D.ietf-oauth-sd-jwt-vc].
+
 ### Format Identifier
 
 The Credential format identifier is `vc+sd-jwt`.
@@ -1930,15 +1932,15 @@ The Credential format identifier is `vc+sd-jwt`.
 
 The following additional Credential Issuer metadata are defined for this Credential format to be added to the `credentials_supported` parameter in addition to those defined in (#credential-issuer-parameters).
 
-* `credential_definition`: REQUIRED. JSON object containing the detailed description of the credential type. It consists at least of the following three sub elements:
-    * `vct`: REQUIRED. JSON string designating the type of a credential as defined in [@!I-D.ietf-oauth-sd-jwt-vc], Section 4.2.2.1.
+* `credential_definition`: REQUIRED. JSON object containing the detailed description of the Credential type. It consists of the following sub elements:
+    * `vct`: REQUIRED. JSON string designating the type of a Credential as defined in [@!I-D.ietf-oauth-sd-jwt-vc].
     * `claims`: OPTIONAL. A JSON object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be a JSON object that includes a following non-exhaustive list of parameters defined by this specification:
         * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
         * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
         * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
             * `name`: OPTIONAL. String value of a display name for the claim.
             * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
-* `order`: OPTIONAL. An array of claims.display.name values that lists them in the order they should be displayed by the Wallet.
+* `order`: OPTIONAL. An array of `claims.display.name` values that lists them in the order they should be displayed by the Wallet.
 
 The following is a non-normative example of an object comprising `credentials_supported` parameter of Credential format `vc+sd-jwt`.
 
@@ -1954,7 +1956,7 @@ The following is a non-normative example of a Credential Offer of Credential for
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
 
-* `credential_definition`: REQUIRED.  JSON object containing the detailed description of the credential type. It MUST contain at least `vct` property as defined in (#server_metadata_vc_sd-jwt). It MAY contain `claims` property as defined in (#server_metadata_vc_sd-jwt).
+* `credential_definition`: REQUIRED.  JSON object containing the detailed description of the Credential type. It MUST contain at least `vct` property as defined in (#server_metadata_vc_sd-jwt). It MAY contain `claims` property as defined in (#server_metadata_vc_sd-jwt).
 
 The following is a non-normative example of an authorization details object with Credential format `vc+sd-jwt`.
 
@@ -1964,7 +1966,7 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.
 
-* `credential_definition`: REQUIRED. JSON object containing the detailed description of the credential type. It MUST contain at least `vct` property as defined in (#server_metadata_vc_sd-jwt). It MAY contain `claims` property as defined in (#server_metadata_vc_sd-jwt).
+* `credential_definition`: REQUIRED. JSON object containing the detailed description of the Credential type. It MUST contain at least `vct` property as defined in (#server_metadata_vc_sd-jwt). It MAY contain `claims` property as defined in (#server_metadata_vc_sd-jwt).
 
 The following is a non-normative example of a Credential Request with Credential format `vc+sd-jwt`.
 
