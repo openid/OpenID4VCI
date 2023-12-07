@@ -1176,7 +1176,12 @@ Communication with the Credential Issuer Metadata Endpoint MUST utilize TLS.
 
 To fetch the Credential Issuer Metadata, a requester MUST send a HTTP request using the GET method and the path formed following the steps above. The URL SHOULD NOT contain any query parameters. The Credential Issuer MUST return a JSON document compliant with this specification using the `application/json` media type and a HTTP Status Code 200.
 
-The Wallet is RECOMMENDED to send an `Accept-Language` Header in the HTTP GET request to indicate the particular language(s) it is interested in. The Credential Issuer is RECOMMENDED to send a subset of internationalized display data containing the requested language(s) and indicate the language(s) returned using the HTTP `Content-Language` Header. The requested language(s) MUST use the values defined in [@!RFC3066]. The Credential Issuer MAY ignore the `Accept-Language` Header and send all supported languages or any chosen default subset.
+The Wallet is RECOMMENDED to send an `Accept-Language` Header in the HTTP GET request to indicate the language(s) preferred for display. It is up to the Credential Issuer whether to
+
+* send a subset the metadata containing internationalized display data for one or all of the requested languages and indicate returned languages using the HTTP `Content-Language` Header.
+* ignore the `Accept-Language` Header and send all supported languages or any chosen default subset.
+
+The language(s) in HTTP `Accept-Language` and `Content-Language` Headers MUST use the values defined in [@!RFC3066]. 
 
 Below is a non-normative example of a Credential Issuer Metadata request:
 
