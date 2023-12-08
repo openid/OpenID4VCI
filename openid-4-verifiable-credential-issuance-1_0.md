@@ -225,7 +225,7 @@ Figure: Issuance using Authorization Code Flow
 
 (2) The Wallet uses the Credential Issuer's URL to fetch the Credential Issuer metadata as described in (#credential-issuer-metadata). The metadata is required by the Wallet to learn the Credential types and formats the Credential Issuer supports; it is also required to determine the Authorization Endpoint (OAuth 2.0 Authorization Server) and Credential Endpoint required to start the request. This specification enables deployments where the Credential Endpoint and the Authorization Endpoint are provided by different entities. Please note that in this example the Credential Issuer and OAuth 2.0 Authorization Server correspond to the same entity.
 
-(3) The Wallet sends an Authorization Request to the Authorization Endpoint. The Authorization Endpoint processes the Authorization Request, which typically includes the End-User authentication and the gathering of the End-User consent.
+(3) The Wallet sends an Authorization Request to the Authorization Endpoint. The Authorization Endpoint processes the Authorization Request, which typically includes the End-User authentication and the gathering of the End-User consent. The Authorization Request may be send as a Pushed Authorization Request.
 
 Note: Steps (3) and (4) happen in the front channel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization_endpoint). Since the End-User authentication is out of scope for this specification, the Authorization Server and the User Agent may exchange any further communication if required by the End-User authentication flow.
 
