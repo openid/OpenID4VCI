@@ -716,9 +716,10 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 * `proof`: OPTIONAL. Object containing the proof of possession of the cryptographic key material the issued Credential would be bound to.  The `proof` object MUST contain a following claim:
     * `proof_type`: REQUIRED. String denoting the key proof type. The value of this claim determines other claims in the key proof object and its respective processing rules. Key proof types defined in this specification can be found in (#proof_types).
 * `credential_identifier`: REQUIRED when `credential_identifier` was returned from the Token Response. MUST NOT be used otherwise. String that identifies a Credential that is being requested to be issued. When this parameter is used, the `format` parameter and any other Credential format specific set of parameters such as those defined in (#format_profiles) MUST NOT be present.
-* `credential_encryption_jwk`: OPTIONAL. An object containing a single public key as a JWK used for encrypting the Credential Response.
-* `credential_response_encryption_alg`: OPTIONAL. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] REQUIRED for encrypting Credential and/or Batch Credential Responses. If omitted, no encryption is intended to be performed. When the `credential_response_encryption_alg` is present, the `credential_encryption_jwk` MUST be present.
-* `credential_response_encryption_enc`: OPTIONAL. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] REQUIRED for encrypting Credential Responses. If `credential_response_encryption_alg` is specified, the default for this value is `A256GCM`. When `credential_response_encryption_enc` is included, `credential_response_encryption_alg` MUST also be provided.
+* `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If omitted, no encryption is intended to be performed.
+    * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
+    * `alg`: OPTIONAL. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] for encrypting Credential Responses. The default value is `xxx`.
+    * `enc`: OPTIONAL. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses. The default value is `A256GCM`.
 
 The `proof_type` claim is an extension point that enables the use of different types of proofs for different cryptographic schemes.
 
@@ -872,7 +873,7 @@ Credential Response can be immediate or deferred. The Credential Issuer MAY be a
 
 In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send a `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code MUST be 202 (section 10.2.3 of [@!RFC2616]).
 
-If the Client requested encrypted responses, the Credential Issuer MUST encode the information in the Credential Reponse as a JWT with `credential_response_encryption_alg` and `credential_response_encryption_enc`. The JWT MUST be encrypted using the public key specified by `credential_encryption_jwk` in the Credential Request. If the Credential Response is encrypted, the media type of the response MUST bet set to `application/jwt`. If encryption was negotiated in the Credential Request and the Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
+If the Client requested encrypted responses, the Credential Issuer MUST encode the information in the Credential Response as a JWT with `alg`, `enc` and using the public key specified by `jwk` from the `credential_response_encryption` object in the Credential Request. If the Credential Response is encrypted, the media type of the response MUST bet set to `application/jwt`. If encryption was negotiated in the Credential Request and the Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
 
 If the Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
 
