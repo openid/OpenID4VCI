@@ -413,8 +413,8 @@ There are two possible ways to request issuance of a specific Credential type in
 
 The request parameter `authorization_details` defined in Section 2 of [@!RFC9396] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following parameters to be used with this authorization details type:
 
-* `type` REQUIRED. String that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
-* `format`: REQUIRED. String representing the format in which the Credential is requested to be issued. This Credential format identifier determines further claims in the authorization details object specifically used to identify the Credential type to be issued. This specification defines Credential Format Profiles in (#format_profiles).
+* `type`: REQUIRED. String that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
+* `credential_description`: REQUIRED. String specifying the name of a Credential described in the `credentials_supported` from the Credential Issuer Metadata as described in (#credential-issuer-parameters). The referenced metadata object conveys the details, e.g. format, for the requested Credential issuance. This specification defines Credential Format specific Issuer Metadata in (#format_profiles).
 
 The following is a non-normative example of an `authorization_details` object:
 
@@ -432,10 +432,8 @@ GET /authorize?
   &client_id=s6BhdRkqt3
   &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
   &code_challenge_method=S256
-  &authorization_details=%5B%7B%22type%22%3A+%22openid_credential%22
-    %2C+%22format%22%3A+%22jwt_vc_json%22%2C+%22credential_definition
-    %22%3A+%7B%22type%22%3A+%5B%22VerifiableCredential%22%2C+%22Unive
-    rsityDegreeCredential%22%5D%7D%7D%5D
+  &authorization_details=%5B%7B%22type%22:%20%22openid_credential%22%0A%20%20%20%20,
+    %20%22credential_description%22:%20%22UniversityDegreeCredential%22%7D%5D
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
   
 Host: https://server.example.com
@@ -612,6 +610,7 @@ In addition to the response parameters defined in [@!RFC6749], the AS MAY return
 * `c_nonce`: OPTIONAL. String containing a nonce to be used when creating a proof of possession of the key proof (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
 * `authorization_details`: REQUIRED when `authorization_details` parameter is used to request issuance of a certain Credential type as defined in (#authorization-details). MUST NOT be used otherwise. An array of objects as defined in Section 7 of [@!RFC9396]. This specification defines the following parameter to be used with authorization details type `openid_credential` in the Token Response:
+  * `credential_description`: REQUIRED. String specifying the name of a Credential described in the `credentials_supported` from the Credential Issuer Metadata as described in (#credential-issuer-parameters). The referenced metadata object conveys the details, e.g. format, for the requested Credential issuance. This specification defines Credential Format specific Issuer Metadata in (#format_profiles).
   * `credential_identifiers`: OPTIONAL. Array of strings that each uniquely identify a Credential instance that can be issued using Access Token returned in this response. Each Credential instance is a unique Credential described using the same entry in the `credentials_supported` Credential Issuer metadata, but can contain different claim values or different subset of claims within the claimset identified by the Credential type. This parameter can also be used to simplify the Credential Request, since as defined in (#credential_request) `credential_identifier` parameter replaces `format` and any other Credential format specific parameters in the Credential Request. When received, the Wallet MUST use these values together with an Access Token in the subsequent Credential Request(s).
 
 Note: Credential Instance identifier(s) cannot be used when `scope` parameter is used in the Authorization Request to request issuance of a Credential.
@@ -632,13 +631,7 @@ Cache-Control: no-store
     "authorization_details": [
       {
         "type": "openid_credential",
-        "format": "jwt_vc_json",
-        "credential_definition": {
-          "type": [
-              "VerifiableCredential",
-              "UniversityDegreeCredential"
-          ]
-        },
+        "credential_description": "UniversityDegreeCredential",
         "credential_identifiers": [ "CivilEngineeringDegree-2023", "ElectricalEngineeringDegree-2023" ]
       }
     ]
@@ -1944,7 +1937,8 @@ The value of the `credential` claim in the Credential Response MUST be a string 
    [[ To be removed from the final specification ]]
    
    -13
-  
+
+   * changed `authorization_details` to use `credential_description` pointing to the name of a `credentials_supported` object in the Credential Issuer's Metadata
    * replaced `user_pin_required` in Credential Offer with a `tx_code` object that also now contains `description` and `length`
 
    -12
