@@ -414,7 +414,7 @@ There are two possible ways to request issuance of a specific Credential type in
 The request parameter `authorization_details` defined in Section 2 of [@!RFC9396] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following parameters to be used with this authorization details type:
 
 * `type`: REQUIRED. String that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
-* `credential_description`: REQUIRED. String specifying the name of a Credential described in the `credentials_supported` from the Credential Issuer Metadata as described in (#credential-issuer-parameters). The referenced metadata object conveys the details, e.g. format, for the requested Credential issuance. This specification defines Credential Format specific Issuer Metadata in (#format_profiles).
+* `credential_description`: REQUIRED. String specifying a unique identifier of the Credential being described in the `credentials_supported` map in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). The referenced object in the `credentials_supported` map conveys the details, e.g. format, for the requested Credential issuance. This specification defines Credential Format specific Issuer Metadata in (#format_profiles).
 
 The following is a non-normative example of an `authorization_details` object:
 
