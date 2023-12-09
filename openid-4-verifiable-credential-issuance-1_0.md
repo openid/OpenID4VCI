@@ -1207,6 +1207,7 @@ This specification defines the following Credential Issuer Metadata:
 * `credential_response_encryption_enc_values_supported`: OPTIONAL. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
 * `require_credential_response_encryption`: OPTIONAL. Boolean value specifying whether the Credential Issuer requires additional encryption on top of TLS for the Credential Response and expects encryption parameters to be present in the Credential Request and/or Batch Credential Request, with `true` indicating support. When the value is `true`, `credential_response_encryption_alg_values_supported` parameter MUST also be provided.  If omitted, the default value is `false`.
 * `credential_identifiers_supported`: OPTIONAL. Boolean value specifying whether the Credential Issuer supports returning `credential_identifiers` parameter in the `authorization_details` Token Response parameter, with `true` indicating support. If omitted, the default value is `false`.
+* `signed_credential_issuer_metadata`: OPTIONAL. String that is an entire signed JWT. This JWT can contain Credential Issuer metadata parameters as claims. The signed metadata MUST be digitally signed or MACed JWS using JSON Web Signature (JWS) [@!RFC7515] and MUST contain an `iat` (Issued At)claim and an `iss` (Issuer) claim denoting the party attesting to the claims in the signed metadata. This JWT can also be used to identify the actual Credential Issuer when it is using third party service provider as a domain to host its metadata file, in which case, the JWT SHOULD contain `sub` (Subject) claim denoting the third party service provider. If the Wallet supports signed metadata, metadata values conveyed in the signed JWT MUST take precedence over the corresponding values conveyed using plain JSON elements. A `signed_credential_issuer_metadata` metadata value SHOULD NOT appear as a claim in the JWT. Because metadata is only partially signed, the usage of DPoP [@!RFC9449] of MTLS [@!RFC8705] is RECOMMENDED to prevent an attacker from modifying the value of the Credential Endpoint to steal Access Tokens.
 * `display`: OPTIONAL. An array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
   * `name`: OPTIONAL. String value of a display name for the Credential Issuer.
   * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
@@ -1313,6 +1314,10 @@ Server-provided nonces are an effective means for further reducing the chances f
 Implementations MUST follow [@!BCP195].
 
 Whenever TLS is used, a TLS server certificate check MUST be performed, per [@!RFC6125].
+
+##
+
+DPoP or MTLS needs to be recommended because metadata is only partially signed and attacker could do MITM by changing the credential endpoint value as suggested.
 
 # Implementation Considerations
 
