@@ -1504,17 +1504,6 @@ TBD
   </front>
 </reference>
 
-<reference anchor="RFC6750" target="https://www.rfc-editor.org/rfc/rfc6750">
-  <front>
-    <title>The OAuth 2.0 Authorization Framework: Bearer Token Usage</title>
-    <author fullname="Dick Hardt">
-      <organization>Independent</organization>
-    </author>
-    <author fullname="Michael B. Jones">
-      <organization>Microsoft</organization>
-    </author>
-   <date month="October" year="2012"/>
-  </front>
 <reference anchor="USASCII">
         <front>
           <title>Coded Character Set -- 7-bit American Standard Code for Information Interchange</title>
