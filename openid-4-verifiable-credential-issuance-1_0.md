@@ -1315,10 +1315,6 @@ Implementations MUST follow [@!BCP195].
 
 Whenever TLS is used, a TLS server certificate check MUST be performed, per [@!RFC6125].
 
-##
-
-DPoP or MTLS needs to be recommended because metadata is only partially signed and attacker could do MITM by changing the credential endpoint value as suggested.
-
 # Implementation Considerations
 
 ## Claim-based Binding of the Credential to the End-User possessing the Credential {#claim-based-binding}
