@@ -1220,7 +1220,7 @@ This specification defines the following Credential Issuer Metadata:
       * `name`: REQUIRED. String value of a display name for the Credential.
       * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. Multiple `display` objects MAY be included for separate languages. There MUST be only one object for each language identifier.
       * `logo`: OPTIONAL. A JSON object with information about the logo of the Credential with a following non-exhaustive list of parameters that MAY be included:
-          * `url`: OPTIONAL. URL where the Wallet can obtain a logo of the Credential from the Credential Issuer.
+          * `uri`: OPTIONAL. String value that contains a URI where the Wallet can obtain a logo of the Credential from the Credential Issuer. Wallet needs to determine the scheme, since the URI value could use `https:` scheme, `data:` scheme, etc.
           * `alt_text`: OPTIONAL. String value of an alternative text of a logo image.
       * `description`: OPTIONAL. String value of a description of the Credential.
       * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
