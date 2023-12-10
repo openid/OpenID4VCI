@@ -774,6 +774,7 @@ This specification defines the following values for the `proof_type` property:
 
 * `jwt`: A JWT [@!RFC7519] is used as proof of possession. When `proof_type` is `jwt`, a `proof` object MUST include a `jwt` claim containing a JWT defined in (#jwt-proof-type).
 * `cwt`: A CWT [@!RFC8392] is used as proof of possession. When `proof_type` is `cwt`, a `proof` object MUST include a `cwt` claim containing a CWT defined in (#cwt-proof-type).
+* `ldp_vp`: A W3C Verifiable Presentation object signed using the Data Integrity Proof as defined in [@VC_DATA_2.0] or [@VC_DATA], and where the proof of possession MUST be done in accordance with [@Data_Integrity]. When `proof_type` is set to `ldp_vp`, the `proof` object MUST include a `ldp_vp` claim containing a [W3C Verifiable Presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp_vp-proof-type).
 
 #### `jwt` Key Proof Type {#jwt-proof-type}
 
@@ -835,6 +836,49 @@ Here is another example JWT not only proving possession of a private key but als
   "iat": 1659145924,
   "nonce": "tZignsnFbp"
 }
+```
+
+#### `ldp_vp` Key Proof Type {#ldp_vp-proof-type}
+
+When a W3C Verifiable Presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] signed using Data Integrity is used as Key Proof, it MUST contain the following elements:
+
+  * `holder`: OPTIONAL. MUST be equivalent to the controller identifier (e.g. DID) for the `verificationMethod` value identified by the `proof.verificationMethod` property.
+
+  * `proof`: REQUIRED. The proof body of a W3C Verifiable Presentation. 
+      * `domain`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
+      * `challenge`: REQUIRED when the Credential Issuer has provided a `c_nonce`. MUST NOT be used otherwise. String, where the value is a server-provided `c_nonce`. It MUST be present when the Wallet received server-provided `c_nonce`.
+
+The Credential Issuer MUST validate that the `proof` is actually signed with a key in possession of the Holder.
+
+Below is a non-normative example of a `proof` parameter:
+
+```json
+{
+  "proof_type": "ldp_vp",
+  "ldp_vp": {
+         "@context": [
+             "https://www.w3.org/ns/credentials/v2",
+             "https://www.w3.org/ns/credentials/examples/v2"
+         ],
+         "type": [
+            "VerifiablePresentation"
+         ],
+         "holder": "did:key:z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro",
+         "proof": [
+            {
+               "type": "DataIntegrityProof",
+               "cryptosuite": "eddsa-2022",
+               "proofPurpose": "authentication",
+               "verificationMethod": "did:key:z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro#z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro",
+               "created": "2023-03-01T14:56:29.280619Z",
+               "challenge": "82d4cb36-11f6-4273-b9c6-df1ac0ff17e9",
+               "domain": "did:web:audience.company.com",
+               "proofValue": "z5hrbHzZiqXHNpLq6i7zePEUcUzEbZKmWfNQzXcUXUrqF7bykQ7ACiWFyZdT2HcptF1zd1t7NhfQSdqrbPEjZceg7"
+            }
+         ]
+      }
+  }
+
 ```
 
 #### `cwt` Key Proof Type {#cwt-proof-type}
@@ -1417,6 +1461,68 @@ TBD
   </front>
 </reference>
 
+<reference anchor="VC_DATA_2.0" target="https://www.w3.org/TR/vc-data-model-2.0">
+  <front>
+    <title>Verifiable Credentials Data Model 2.0</title>
+    <author fullname="Manu Sporny">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Orie Steele">
+      <organization>Transmute</organization>
+    </author>
+    <author fullname="Oliver Terbu">
+      <organization>Spruce Systems, Inc.</organization>
+    </author>
+    <author fullname="Grant Noble">
+      <organization>ConsenSys</organization>
+    </author>
+    <author fullname="Gabe Cohen">
+      <organization>Block</organization>
+    </author>
+    <author fullname="Michael B. Jones">
+      <organization>independent</organization>
+    </author>
+    <author fullname="Dave Longley">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Daniel C. Burnett">
+      <organization>ConsenSys</organization>
+    </author>
+    <author fullname="Brent Zundel">
+      <organization>Evernym</organization>
+    </author>
+    <author fullname="Kyle Den Hartog">
+      <organization>MATTR</organization>
+    </author>
+    <author fullname="David Chadwick">
+      <organization>University of Kent</organization>
+    </author>
+   <date day="15" month="Aug" year="2023"/>
+  </front>
+</reference>
+
+<reference anchor="Data_Integrity" target="https://w3c.github.io/vc-data-integrity/">
+  <front>
+    <title>Verifiable Credential Data Integrity 1.0</title>
+    <author fullname="Manu Sporny">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Dave Longley">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Greg Bernstein">
+      <organization>Invited Expert</organization>
+    </author>
+    <author fullname="Dmitri Zagidulin">
+      <organization>Invited Expert</organization>
+    </author>
+    <author fullname="Sebastian Crane">
+      <organization>Invited Expert</organization>
+    </author>
+   <date day="31" month="Aug" year="2023"/>
+  </front>
+</reference>
+
 <reference anchor="USASCII">
         <front>
           <title>Coded Character Set -- 7-bit American Standard Code for Information Interchange</title>
@@ -1818,6 +1924,7 @@ The following is a non-normative example of a Credential Offer of Credential for
 
 <{{examples/credential_offer_ldp_vc.json}}
 
+
 #### Authorization Details {#authorization_ldp_vc}
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.  
@@ -1843,6 +1950,10 @@ The following additional parameters are defined for Credential Requests and this
 The following is a non-normative example of a Credential Request with Credential format `ldp_vc`:
 
 <{{examples/credential_request_ldp_vc.json}}
+
+The following is a non-normative example of a Credential request with the key proof type `ldp_vp`:
+
+<{{examples/credential_request_ldp_vc_vp.json}}
 
 #### Credential Response
 
