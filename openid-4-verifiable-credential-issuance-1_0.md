@@ -118,7 +118,7 @@ This specification defines an API for credential issuance provided by a Credenti
 * An optional Batch Credential Endpoint from which multiple Credentials can be issued in one request (see (#batch-credential-endpoint)).
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of credentials (see (#deferred-credential-issuance)).
 * An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow (see (#credential_offer_endpoint)).
-* An optional mechanism for the Credential Issuer to receive from the Wallet the status of the Credential that it issued.
+* An optional mechanism for the Credential Issuer to require the Wallet to send the status of the Credential that has been issued.
 * A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing (see (#credential-issuer-metadata)).
 
 Both the Credential and the Batch Credential Endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both requests therefore enable conveying proof of possession for the key material. Multiple key proof types are supported.
@@ -1090,7 +1090,7 @@ When the Credential Issuer requires `proof` objects to be present in the Batch C
 
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
-This endpoint is used to issue a Credential previously requested at the Credential Endpoint or Batch Credential Endpoint in case the Credential Issuer was not able to immediately issue this Credential. Support for this endpoint is OPTIONAL.
+This endpoint is used to issue a Credential previously requested at the Credential Endpoint or Batch Credential Endpoint in cases where the Credential Issuer was not able to immediately issue this Credential. Support for this endpoint is OPTIONAL.
 
 The Wallet MUST present to the Deferred Endpoint an Access Token valid for the issuance of the Credential previously requested at the Credential Endpoint or the Batch Credential Endpoint. 
 
@@ -1148,7 +1148,7 @@ Cache-Control: no-store
 
 # Acknowledgement Endpoint {#acknowledgement_endpoint}
 
-This endpoint is used by the Wallet to notify the Credential Issuer whether a Credential has been successfully received or not. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the Credential has been accepted and successfully stored by the Wallet, rejected by the Wallet, or errors and other unforeseen circumstances have occurred during the Wallet's processing. The Credential Issuer needs to return `ack_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint by the Credential Issuer is OPTIONAL. The wallet MUST call this endpoint if the Credential Issuer supports it and provides a `ack_id`.
+This endpoint is used by the Wallet to notify the Credential Issuer whether a Credential has been successfully received or not. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the Credential has been accepted and successfully stored by the Wallet, rejected by the Wallet, or errors or other unforeseen circumstances have occurred during the Wallet's processing. The Credential Issuer needs to return the `ack_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint by the Credential Issuer is OPTIONAL. The wallet MUST call this endpoint if the Credential Issuer supports it and provides an `ack_id`.
 
 The Wallet MUST present to the Acknowledgement Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). 
 
