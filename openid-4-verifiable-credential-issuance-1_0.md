@@ -718,8 +718,8 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 * `credential_identifier`: REQUIRED when `credential_identifier` was returned from the Token Response. MUST NOT be used otherwise. String that identifies a Credential that is being requested to be issued. When this parameter is used, the `format` parameter and any other Credential format specific set of parameters such as those defined in (#format_profiles) MUST NOT be present.
 * `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If omitted, encryption is not performed.
     * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
-    * `alg`: OPTIONAL. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] for encrypting Credential Responses. The default value is `xxx`.
-    * `enc`: OPTIONAL. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses. The default value is `A256GCM`.
+    * `alg`: REQUIRED. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] for encrypting Credential Responses.
+    * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
 
 The `proof_type` claim is an extension point that enables the use of different types of proofs for different cryptographic schemes.
 
