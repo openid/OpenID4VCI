@@ -3,7 +3,7 @@
         "type": "openid_credential",
         "format": "vc+sd-jwt",
         "credential_definition": {
-            "vct": "IdentityCredential"
+            "vct": "IdentityCredentialExampleInOID4VCI"
         }
     }
 ]
