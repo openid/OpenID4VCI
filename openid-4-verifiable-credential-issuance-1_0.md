@@ -1250,7 +1250,7 @@ This specification also defines a new OAuth 2.0 Authorization Server metadata [@
 
 Credential Issuers often want to know what Wallet they are issuing Credentials to and how private keys are managed for the following reasons:
 
-* The Credential Issuer MAY want to ensure that private keys are properly protected from exfiltration and replay to prevent an adversary from impersonating the legitimate Credential holder by presenting her Credential.
+* The Credential Issuer MAY want to ensure that private keys are properly protected from exfiltration and replay to prevent an adversary from impersonating the legitimate Credential holders by presenting their Credentials.
 * The Credential Issuer MAY also want to ensure that the Wallet managing the Credentials adheres to certain policies and, potentially, was audited and approved under a certain regulatory and/or commercial scheme.
 
 The following mechanisms in concert can be utilized to fulfill those objectives:
@@ -1672,7 +1672,7 @@ While browsing the university's home page, the End-User finds a link "request yo
 
 ## Credential Offer - Cross-Device (with Information Pre-Submitted by the End-User) {#use-case-4}
 
-The End-User is starting a job at a new employer. An employer has requested the End-User to upload certain documents to the employee portal. A few days later, the End-User receives an email from the employer notifying her that the employee Credential is ready and asking her to scan a QR code to retrieve it. The End-User scans the QR code with her smartphone, which opens her Wallet. Meanwhile, the End-User has received a text message with a Transaction Code to her smartphone. After entering that Transaction Code in the Wallet for security reasons, the End-User confirms the Credential issuance, and receives Credential into the Wallet.
+The End-User is starting a job at a new employer. The employer requests the End-User to upload specific documents to the employee portal. After a few days, the End-User receives an email from the employer indicating that the employee Credential is prepared and instructing to scan a QR code for its retrieval. The End-User scans the QR code with the smartphone, which opens the Wallet. Meanwhile, the End-User has received a text message with a Transaction Code to the smartphone. After entering that Transaction Code in the Wallet for security reasons, the End-User confirms the Credential issuance, and receives Credential into the Wallet.
 
 ## Credential Offer - Cross-Device & Deferred {#use-case-5}
 
@@ -1682,7 +1682,7 @@ The End-User, during the usage of the Wallet, notices a sign that the issuance o
 
 ## Wallet Initiated Issuance during Presentation {#use-case-1}
 
-An End-User comes across a verifier app that is requesting the End-User to present a Credential, e.g., a driving license. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet selects a Credential Issuer capable of issuing the lacking Credential and, upon End-User consent, sends the End-User to the Credential Issuer's End-User experience (Web site or app). Upon being authenticated and providing consent to issue the Credential into her Wallet, the End-User is sent back to the Wallet. The Wallet informs the End-User that Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
+An End-User comes across a verifier app that is requesting the End-User to present a Credential, e.g., a driving license. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet selects a Credential Issuer capable of issuing the lacking Credential and, upon End-User consent, sends the End-User to the Credential Issuer's End-User experience (Web site or app). Once authenticated and consent is provided for the issuance of the Credential into the Wallet, the End-User is redirected back to the Wallet. The Wallet informs the End-User that Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
 
 ## Wallet Initiated Issuance during Presentation (Requires Presentation of Additional Credentials During Issuance) {#use-case-2}
 
