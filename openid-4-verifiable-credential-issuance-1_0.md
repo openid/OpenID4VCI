@@ -1267,9 +1267,10 @@ HTTP/1.1 204 No Content
 
 If the acknowledgement request does not contain an Access Token or contains an invalid Access Token, the Acknowledgement Endpoint returns an authorization error response such as defined in section 3 of [@!RFC6750].
 
-`invalid_request` parameter defined in section 3.1 of [@!RFC6750] SHOULD be used in most cases other than when `ack_id` value is invalid. In the latter case, the following error code SHOULD be used as the value of the `error` parameter:
+`invalid_request` parameter defined in section 3.1 of [@!RFC6750] SHOULD be used in most cases other than when `ack_id` value is invalid. In the latter case, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the JSON-encoded response body:
 
-* `invalid_ack_id`: The `ack_id` in the acknowledgement request was invalid.
+* `error`: REQUIRED. A key at the top level of the object, the value of which SHOULD be the following ASCII [@!USASCII] error code:
+  * `invalid_ack_id`: The `ack_id` in the acknowledgement request was invalid.
 
 It is at the discretion of the Wallet whether to retry the request or not.
 
