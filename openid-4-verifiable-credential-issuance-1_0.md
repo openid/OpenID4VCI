@@ -220,7 +220,7 @@ Please note that the diagram does not illustrate all the optional features defin
 !---
 Figure: Issuance using Authorization Code Flow 
 
-(1a) The Wallet-initiated flow begins as the End-User requests a Credential from a pre-configured list of the Credentials ready to be issued or, in alternative, it can be issuance during presentation, where the Wallet gives guidance to the End-User to get the Credential from a Credential Issuer based on the information received in the presentation request.
+(1a) The Wallet-initiated flow begins as the End-User requests a Credential via the Wallet from the Credential Issuer. The End-User either selects a Credential from a pre-configured list of Credentials ready to be issued, or, alternatively, the Wallet gives guidance to the End-User to select a Credential from a Credential Issuer based on the information it received in the presentation request from a Verifier.
 
 (1b) The Issuer-initiated flow begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL and the information about the Credential being offered. This step is defined in (#credential_offer).
 
