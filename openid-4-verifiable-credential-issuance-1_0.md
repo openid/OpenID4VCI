@@ -118,7 +118,7 @@ This specification defines an API for Credential issuance provided by a Credenti
 * An optional Batch Credential Endpoint from which multiple Credentials can be issued in one request (see (#batch-credential-endpoint)).
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of Credentials (see (#deferred-credential-issuance)).
 * An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow (see (#credential_offer_endpoint)).
-* An optional mechanism for the Credential Issuer to require the Wallet to send the status of the Credential that has been issued.
+* An optional mechanism for the Credential Issuer to receive from the Wallet the status of the Credential that has been issued.
 * A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing (see (#credential-issuer-metadata)).
 
 Both the Credential and the Batch Credential Endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both requests therefore enable conveying proof of possession for the key material. Multiple key proof types are supported.
@@ -1195,7 +1195,7 @@ Cache-Control: no-store
 
 # Acknowledgement Endpoint {#acknowledgement_endpoint}
 
-This endpoint is used by the Wallet to notify the Credential Issuer whether a Credential has been successfully received or not. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the Credential has been accepted and successfully stored by the Wallet, rejected by the Wallet, or errors or other unforeseen circumstances have occurred during the Wallet's processing. The Credential Issuer needs to return the `ack_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint by the Credential Issuer is OPTIONAL. The wallet MUST call this endpoint if the Credential Issuer supports it and provides an `ack_id`.
+This endpoint is used by the Wallet to notify the Credential Issuer whether a Credential has been successfully received or not. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the Credential has been accepted and successfully stored by the Wallet, rejected by the Wallet, or errors or other unforeseen circumstances have occurred during the Wallet's processing. The Credential Issuer needs to return the `ack_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL.
 
 The Wallet MUST present to the Acknowledgement Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). 
 
@@ -1213,7 +1213,7 @@ The Wallet sends an HTTP POST request to the Acknowledgement Endpoint with the f
 
 * `credentials`: Array of objects, where each object consists of the following parameters:
   * `ack_id`: REQUIRED. String received in Credential Response or Batch Credential Response.
-  * `status`: REQUIRED. Status whether the credential issuance was successful or not. It MUST be a case sensitive string whose value is either `success`, `failure` or `rejected`. `rejected` is to be used when the unsuccessful credential issuance was caused by a user action. In all other unsuccessful cases, `failure` is to be used.
+  * `status`: REQUIRED. Status whether the credential issuance was successful or not. It MUST be a case sensitive string whose value is either `success`, `failure` or `deleted`. `success` is to be used when Credential was successfully stored in the Wallet. `deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `failure` is to be used.
   * `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
 Below is a non-normative example of an acknowledgement request when credential issuance was successful:
