@@ -331,34 +331,22 @@ The following values are defined by this specification:
   * `interval`: OPTIONAL. The minimum amount of time in seconds that the Wallet SHOULD wait between polling requests to the token endpoint (in case the Authorization Server responds with error code `authorization_pending` - see (#token_error_response)). If no value is provided, Wallets MUST use `5` as the default.
   * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
   
-The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two Credentials of different formats, one as a string ("UniversityDegree_JWT") and the other one as an object:
+The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two different Credentials (which may be even of different formats):
 
 <{{examples/credential_offer_multiple_credentials.json}}
-
-Note: The examples throughout the specification use Credential Format specific parameters defined in the Credential Format Profiles that can be found in (#format_profiles).
 
 ### Sending Credential Offer by Value Using `credential_offer` Parameter
 
 Below is a non-normative example of a Credential Offer passed by value:
 
 ```
-  GET /credential_offer?credential_offer=%7B%22credential_issuer%22:%22
-  https://credential-issuer.example.com%22,%22credentials%22:%5B%22UniversityDegree_JWT
-  %22,%7B%22format%22:%22mso_mdoc%22,%22doctype%22:%22org.iso.18013.5.1.mDL%22%7D%5D,%22
-  grants%22:%7B%22authorization_code%22:%7B%22issuer_state%22:%22eyJhbGciOiJSU0Et...FYUaBy
-  %22%7D,%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22
-  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22tx_code%22:%7B%7D%7D%7D%7D
+  GET /credential_offer?credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com%22,%22credentials%22:%5B%22UniversityDegree_JWT%22,%22org.iso.18013.5.1.mDL%22%5D,%22grants%22:%7B%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22pre-authorized_code%22:%22oaKazRN8I0IbtZ0C7JuMn5%22,%22tx_code%22:%7B%7D%7D%7D%7D
 ```
 
 The following is a non-normative example of a Credential Offer that can be included in a QR code or a link used to invoke a Wallet deployed as a native app:
 
 ```
-openid-credential-offer://?credential_offer=%7B%22credential_issuer%22:%22
-  https://credential-issuer.example.com%22,%22credentials%22:%5B%22UniversityDegree_JWT
-  %22,%7B%22format%22:%22mso_mdoc%22,%22doctype%22:%22org.iso.18013.5.1.mDL%22%7D%5D,%22
-  grants%22:%7B%22authorization_code%22:%7B%22issuer_state%22:%22eyJhbGciOiJSU0Et...FYUaBy
-  %22%7D,%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22
-  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22tx_code%22:%7B%7D%7D%7D%7D
+openid-credential-offer://?credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com%22,%22credentials%22:%5B%22org.iso.18013.5.1.mDL%22%5D,%22grants%22:%7B%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22pre-authorized_code%22:%22oaKazRN8I0IbtZ0C7JuMn5%22,%22tx_code%22:%7B%22input_mode%22:%22text%22,%22description%22:%22Please%20enter%20the%20serial%20number%20of%20your%20physical%20drivers%20license%22%7D%7D%7D%7D
 ```
 
 ### Sending Credential Offer by Reference Using `credential_offer_uri` Parameter
