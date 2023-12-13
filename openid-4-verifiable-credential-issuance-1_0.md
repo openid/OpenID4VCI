@@ -412,7 +412,7 @@ The Wallet is not supposed to create a response. UX control stays with the Walle
 
 The Authorization Endpoint is used in the same manner as defined in [@!RFC6749], taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
-When the grant type `authorization_code` is used, it is RECOMMENDED to use PKCE as defined in [@!RFC7636] and Pushed Authorization Requests as defined in [@RFC9126]. PKCE prevents the authorization code interception attacks, the Pushed Authorization Requests ensures the integrity and authenticity of the authorization request.
+When the grant type `authorization_code` is used, it is RECOMMENDED to use PKCE as defined in [@!RFC7636] and Pushed Authorization Requests as defined in [@RFC9126]. PKCE prevents authorization code interception attacks. Pushed Authorization Requests ensure the integrity and authenticity of the authorization request.
 
 ## Authorization Request {#credential-authz-request}
 
