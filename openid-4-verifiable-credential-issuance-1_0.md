@@ -873,7 +873,7 @@ Credential Response can be immediate or deferred. The Credential Issuer MAY be a
 
 In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send a `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code MUST be 202 (section 10.2.3 of [@!RFC2616]).
 
-If the Client requested encrypted responses, the Credential Issuer MUST encode the information in the Credential Response as a JWT using the `credential_response_encryption` parameter in the Credential Request. If the Credential Response is encrypted, the media type of the response MUST bet set to `application/jwt`. If encryption was negotiated in the Credential Request and the Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
+If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Credential Response as a JWT using the  parameters from the `credential_response_encryption` object. If the Credential Response is encrypted, the media type of the response MUST bet set to `application/jwt`. If encryption was requested in the Credential Request and the Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
 
 If the Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
 
