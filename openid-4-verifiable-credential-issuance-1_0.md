@@ -928,7 +928,7 @@ The following claims are used in the JSON-encoded Credential Response body:
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer was unable to immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST be present when the `credential` parameter is not returned. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. String containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
-* `ack_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the acknowledgement request as defined in (#acknowledgement).
+* `ack_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the acknowledgement request as defined in (#acknowledgement). This parameter MUST NOT be present if `credential` parameter is not present.
 
 The `format` key determines the Credential format and encoding of the credential in the Credential Response. Details are defined in the Credential Format Profiles in (#format_profiles). 
 
@@ -1201,7 +1201,7 @@ The Wallet MUST present to the Acknowledgement Endpoint a valid Access Token iss
 
 Note: A Credential Issuer that requires a request to the Acknowledgement Endpoint MUST ensure the Access Token issued by the Authorization Server is valid at the Acknowledgement Endpoint.
 
-The acknowledgement from the Wallet is idempotent. The Credential Issuer MUST return success if it receives multiple identical calls from the Wallet for the same `ack_id`s.
+The acknowledgement from the Wallet is idempotent. The Credential Issuer MUST return success even if it receives multiple identical calls from the Wallet for the same `ack_id`s.
 
 The Wallet MAY retry if the call to this endpoint fails for a temporary reason. The Credential Issuer SHOULD pre-determine the amount of time within which it expects the acknowledgement. Therefore, even a well-formed acknowledgement from the Wallet could fail if received by the Credential Issuer after this time period. The Credential Issuer may not receive the acknowledgement, meaning it is unknown whether the Wallet successfully stored the credential or not - it is left to the Credential Issuer to decide how to proceed in this case.
 
