@@ -1945,7 +1945,8 @@ The value of the `credential` claim in the Credential Response MUST be a string 
    [[ To be removed from the final specification ]]
    
    -13
-  
+
+   * grouped `credential_encryption_jwk`, `credential_response_encryption_alg` and `credential_response_encryption_enc` from Credential Request into a single `credential_response_encryption` object
    * replaced `user_pin_required` in Credential Offer with a `tx_code` object that also now contains `description` and `length`
 
    -12
