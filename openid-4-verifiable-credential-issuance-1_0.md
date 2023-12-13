@@ -1944,6 +1944,7 @@ The value of the `credential` claim in the Credential Response MUST be a string 
    -13
   
    * replaced `user_pin_required` in Credential Offer with a `tx_code` object that also now contains `description` and `length`
+   * reworked flow description in Overview section
 
    -12
 
