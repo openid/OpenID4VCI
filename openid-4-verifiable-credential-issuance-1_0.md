@@ -1664,10 +1664,30 @@ This specification registers the following URN in the IANA "OAuth URI" registry 
 
 This specification registers the following parameter names in the IANA "OAuth Parameters" registry [@!IANA.OAuth.Parameters] established by [@!RFC6749].
 
+* Parameter Name: wallet_issuer
+* Parameter Usage Location: authorization request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#credential-authz-request) of this specification
+
+* Parameter Name: user_hint
+* Parameter Usage Location: authorization request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#credential-authz-request) of this specification
+
 * Parameter Name: issuer_state
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential-authz-request) of this specification
+
+* Parameter Name: pre-authorized_code
+* Parameter Usage Location: token request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token_request) of this specification
+
+* Parameter Name: tx_code
+* Parameter Usage Location: token request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token_request) of this specification
 
 * Parameter Name: c_nonce
 * Parameter Usage Location: token response
