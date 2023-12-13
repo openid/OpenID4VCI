@@ -2,8 +2,6 @@
     {
         "type": "openid_credential",
         "format": "vc+sd-jwt",
-        "credential_definition": {
-            "vct": "IdentityCredentialExampleInOID4VCI"
-        }
+        "vct": "IdentityCredentialExampleInOID4VCI"
     }
 ]
