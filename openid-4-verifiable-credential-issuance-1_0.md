@@ -1833,7 +1833,7 @@ The definitions in (#server_metadata_ldp_vc) apply for metadata of credentials o
 
 #### Authorization Details
 
-The definitions in (#issuer_initiated_issuance_ldp_vc) apply for credentials of this type as well.
+The definitions in (#authorization_ldp_vc) apply for credentials of this type as well.
 
 #### Credential Request
 
