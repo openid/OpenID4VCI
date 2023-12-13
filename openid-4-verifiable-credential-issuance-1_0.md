@@ -716,7 +716,7 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 * `proof`: OPTIONAL. Object containing the proof of possession of the cryptographic key material the issued Credential would be bound to.  The `proof` object MUST contain a following claim:
     * `proof_type`: REQUIRED. String denoting the key proof type. The value of this claim determines other claims in the key proof object and its respective processing rules. Key proof types defined in this specification can be found in (#proof_types).
 * `credential_identifier`: REQUIRED when `credential_identifier` was returned from the Token Response. MUST NOT be used otherwise. String that identifies a Credential that is being requested to be issued. When this parameter is used, the `format` parameter and any other Credential format specific set of parameters such as those defined in (#format_profiles) MUST NOT be present.
-* `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If omitted, encryption is not performed.
+* `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If this request element is not present, the corresponding credential response returned is not encrypted.
     * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
     * `alg`: REQUIRED. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] for encrypting Credential Responses.
     * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
