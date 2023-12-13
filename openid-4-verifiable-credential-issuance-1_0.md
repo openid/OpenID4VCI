@@ -232,7 +232,7 @@ Note: Steps (3) and (4) happen in the front channel, by redirecting the End-User
 
 (4) The Authorization Endpoint returns the Authorization Response with the Authorization Code upon successfully processing the Authorization Request.
 
-(5) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in step (4). The Token Endpoint returns an Access Token in the Token Response upon successfully validating Authorization Code. This step happens in the back-channel communication (direct communication between two systems using HTTP requests and responses without using redirects through an intermediary such as a browser). This step is defined in (#token_endpoint).
+(5) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in step (4). The Token Endpoint returns an Access Token in the Token Response upon successfully validating the Authorization Code. This step happens in the back-channel communication (direct communication between two systems using HTTP requests and responses without using redirects through an intermediary such as a browser). This step is defined in (#token_endpoint).
 
 (6) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and (optionally) the proof of possession of the public key to which the issued Credential will be bound to. Upon successfully validating Access Token and proof, the Credential Issuer returns a Credential in the Credential Response. This step is defined in (#credential-endpoint).
 
