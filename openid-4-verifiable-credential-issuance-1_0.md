@@ -177,7 +177,7 @@ The following subsections illustrate some of the authorization flows supported b
 
 The Authorization Code Flow uses the grant type `authorization_code` as defined in [@!RFC6749] to issue Access Tokens.
 
-Figure 1 shows the Authorization Code Flows with the two variations that can be implemented for the issuance of the Credentials, as outlined in this specification:
+Figure 1 shows the Authorization Code Flows with the two variations that can be implemented for the issuance of Credentials, as outlined in this specification:
 * **Wallet-initiated variation**, described in (#use-case-4) or (#use-case-6);
 * **Issuer-initiated variation**, described in (#use-case-1).
 
