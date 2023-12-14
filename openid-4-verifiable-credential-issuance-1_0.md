@@ -432,8 +432,8 @@ GET /authorize?
   &client_id=s6BhdRkqt3
   &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
   &code_challenge_method=S256
-  &authorization_details=%5B%7B%22type%22:%20%22openid_credential%22%0A%20%20%20%20,
-    %20%22credentials_supported_id%22:%20%22UniversityDegreeCredential%22%7D%5D
+  &authorization_details=%5B%7B%22type%22%3A%20%22openid_credential%22%2C%20%22
+    credentials_supported_id%22%3A%20%22UniversityDegreeCredential%22%7D%5D
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
   
 Host: https://server.example.com
