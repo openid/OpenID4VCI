@@ -340,34 +340,22 @@ The following values are defined by this specification:
   * `interval`: OPTIONAL. The minimum amount of time in seconds that the Wallet SHOULD wait between polling requests to the token endpoint (in case the Authorization Server responds with error code `authorization_pending` - see (#token_error_response)). If no value is provided, Wallets MUST use `5` as the default.
   * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
   
-The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two Credentials of different formats, one as a string ("UniversityDegree_JWT") and the other one as an object:
+The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two different Credentials (which may be even of different formats):
 
 <{{examples/credential_offer_multiple_credentials.json}}
-
-Note: The examples throughout the specification use Credential Format specific parameters defined in the Credential Format Profiles that can be found in (#format_profiles).
 
 ### Sending Credential Offer by Value Using `credential_offer` Parameter
 
 Below is a non-normative example of a Credential Offer passed by value:
 
 ```
-  GET /credential_offer?credential_offer=%7B%22credential_issuer%22:%22
-  https://credential-issuer.example.com%22,%22credentials%22:%5B%22UniversityDegree_JWT
-  %22,%7B%22format%22:%22mso_mdoc%22,%22doctype%22:%22org.iso.18013.5.1.mDL%22%7D%5D,%22
-  grants%22:%7B%22authorization_code%22:%7B%22issuer_state%22:%22eyJhbGciOiJSU0Et...FYUaBy
-  %22%7D,%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22
-  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22tx_code%22:%7B%7D%7D%7D%7D
+  GET /credential_offer?credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com%22,%22credentials%22:%5B%22UniversityDegree_JWT%22,%22org.iso.18013.5.1.mDL%22%5D,%22grants%22:%7B%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22pre-authorized_code%22:%22oaKazRN8I0IbtZ0C7JuMn5%22,%22tx_code%22:%7B%7D%7D%7D%7D
 ```
 
 The following is a non-normative example of a Credential Offer that can be included in a QR code or a link used to invoke a Wallet deployed as a native app:
 
 ```
-openid-credential-offer://?credential_offer=%7B%22credential_issuer%22:%22
-  https://credential-issuer.example.com%22,%22credentials%22:%5B%22UniversityDegree_JWT
-  %22,%7B%22format%22:%22mso_mdoc%22,%22doctype%22:%22org.iso.18013.5.1.mDL%22%7D%5D,%22
-  grants%22:%7B%22authorization_code%22:%7B%22issuer_state%22:%22eyJhbGciOiJSU0Et...FYUaBy
-  %22%7D,%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22
-  pre-authorized_code%22:%22adhjhdjajkdkhjhdj%22,%22tx_code%22:%7B%7D%7D%7D%7D
+openid-credential-offer://?credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com%22,%22credentials%22:%5B%22org.iso.18013.5.1.mDL%22%5D,%22grants%22:%7B%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22pre-authorized_code%22:%22oaKazRN8I0IbtZ0C7JuMn5%22,%22tx_code%22:%7B%22input_mode%22:%22text%22,%22description%22:%22Please%20enter%20the%20serial%20number%20of%20your%20physical%20drivers%20license%22%7D%7D%7D%7D
 ```
 
 ### Sending Credential Offer by Reference Using `credential_offer_uri` Parameter
@@ -785,6 +773,7 @@ This specification defines the following values for the `proof_type` property:
 
 * `jwt`: A JWT [@!RFC7519] is used as proof of possession. When `proof_type` is `jwt`, a `proof` object MUST include a `jwt` claim containing a JWT defined in (#jwt-proof-type).
 * `cwt`: A CWT [@!RFC8392] is used as proof of possession. When `proof_type` is `cwt`, a `proof` object MUST include a `cwt` claim containing a CWT defined in (#cwt-proof-type).
+* `ldp_vp`: A W3C Verifiable Presentation object signed using the Data Integrity Proof as defined in [@VC_DATA_2.0] or [@VC_DATA], and where the proof of possession MUST be done in accordance with [@Data_Integrity]. When `proof_type` is set to `ldp_vp`, the `proof` object MUST include a `ldp_vp` claim containing a [W3C Verifiable Presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp_vp-proof-type).
 
 #### `jwt` Key Proof Type {#jwt-proof-type}
 
@@ -846,6 +835,49 @@ Here is another example JWT not only proving possession of a private key but als
   "iat": 1659145924,
   "nonce": "tZignsnFbp"
 }
+```
+
+#### `ldp_vp` Key Proof Type {#ldp_vp-proof-type}
+
+When a W3C Verifiable Presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] signed using Data Integrity is used as Key Proof, it MUST contain the following elements:
+
+  * `holder`: OPTIONAL. MUST be equivalent to the controller identifier (e.g. DID) for the `verificationMethod` value identified by the `proof.verificationMethod` property.
+
+  * `proof`: REQUIRED. The proof body of a W3C Verifiable Presentation. 
+      * `domain`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
+      * `challenge`: REQUIRED when the Credential Issuer has provided a `c_nonce`. MUST NOT be used otherwise. String, where the value is a server-provided `c_nonce`. It MUST be present when the Wallet received server-provided `c_nonce`.
+
+The Credential Issuer MUST validate that the `proof` is actually signed with a key in possession of the Holder.
+
+Below is a non-normative example of a `proof` parameter:
+
+```json
+{
+  "proof_type": "ldp_vp",
+  "ldp_vp": {
+         "@context": [
+             "https://www.w3.org/ns/credentials/v2",
+             "https://www.w3.org/ns/credentials/examples/v2"
+         ],
+         "type": [
+            "VerifiablePresentation"
+         ],
+         "holder": "did:key:z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro",
+         "proof": [
+            {
+               "type": "DataIntegrityProof",
+               "cryptosuite": "eddsa-2022",
+               "proofPurpose": "authentication",
+               "verificationMethod": "did:key:z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro#z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro",
+               "created": "2023-03-01T14:56:29.280619Z",
+               "challenge": "82d4cb36-11f6-4273-b9c6-df1ac0ff17e9",
+               "domain": "did:web:audience.company.com",
+               "proofValue": "z5hrbHzZiqXHNpLq6i7zePEUcUzEbZKmWfNQzXcUXUrqF7bykQ7ACiWFyZdT2HcptF1zd1t7NhfQSdqrbPEjZceg7"
+            }
+         ]
+      }
+  }
+
 ```
 
 #### `cwt` Key Proof Type {#cwt-proof-type}
@@ -1174,6 +1206,8 @@ If the Credential Issuer is unable to perform discovery of the Wallet's Credenti
 
 ## Credential Issuer Metadata {#credential-issuer-metadata}
 
+The Credential Issuer Metadata contains information on the Credential Issuer's technical capabilities, supported Credentials and (internationalized) display information.
+
 ### Credential Issuer Identifier {#credential-issuer-identifier}
 
 A Credential Issuer is identified by a case sensitive URL using the `https` scheme that contains scheme, host and, optionally, port number and path components, but no query or fragment components. 
@@ -1182,9 +1216,26 @@ A Credential Issuer is identified by a case sensitive URL using the `https` sche
 
 The Credential Issuer's configuration can be retrieved using the Credential Issuer Identifier.
 
-Credential Issuers publishing metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer Identifier. If the Credential Issuer value contains a path component, any terminating `/` MUST be removed before appending `/.well-known/openid-credential-issuer`. 
+Credential Issuers publishing metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer Identifier. If the Credential Issuer value contains a path component, any terminating `/` MUST be removed before appending `/.well-known/openid-credential-issuer`.
 
-The path formed following the steps above MUST point to a JSON document compliant with this specification. The document MUST be returned using the `application/json` media type.
+Communication with the Credential Issuer Metadata Endpoint MUST utilize TLS.
+
+To fetch the Credential Issuer Metadata, a requester MUST send a HTTP request using the GET method and the path formed following the steps above. The URL SHOULD NOT contain any query parameters. The Credential Issuer MUST return a JSON document compliant with this specification using the `application/json` media type and a HTTP Status Code 200.
+
+The Wallet is RECOMMENDED to send an `Accept-Language` Header in the HTTP GET request to indicate the language(s) preferred for display. It is up to the Credential Issuer whether to
+
+* send a subset the metadata containing internationalized display data for one or all of the requested languages and indicate returned languages using the HTTP `Content-Language` Header.
+* ignore the `Accept-Language` Header and send all supported languages or any chosen default subset.
+
+The language(s) in HTTP `Accept-Language` and `Content-Language` Headers MUST use the values defined in [@!RFC3066]. 
+
+Below is a non-normative example of a Credential Issuer Metadata request:
+
+```
+GET /.well-known/openid-credential-issuer HTTP/1.1
+Host: server.example.com
+Accept-Language: fr-ch, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5
+```
 
 ### Credential Issuer Metadata Parameters {#credential-issuer-parameters}
 
@@ -1406,6 +1457,68 @@ TBD
       <organization>University of Kent</organization>
     </author>
    <date day="19" month="Nov" year="2019"/>
+  </front>
+</reference>
+
+<reference anchor="VC_DATA_2.0" target="https://www.w3.org/TR/vc-data-model-2.0">
+  <front>
+    <title>Verifiable Credentials Data Model 2.0</title>
+    <author fullname="Manu Sporny">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Orie Steele">
+      <organization>Transmute</organization>
+    </author>
+    <author fullname="Oliver Terbu">
+      <organization>Spruce Systems, Inc.</organization>
+    </author>
+    <author fullname="Grant Noble">
+      <organization>ConsenSys</organization>
+    </author>
+    <author fullname="Gabe Cohen">
+      <organization>Block</organization>
+    </author>
+    <author fullname="Michael B. Jones">
+      <organization>independent</organization>
+    </author>
+    <author fullname="Dave Longley">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Daniel C. Burnett">
+      <organization>ConsenSys</organization>
+    </author>
+    <author fullname="Brent Zundel">
+      <organization>Evernym</organization>
+    </author>
+    <author fullname="Kyle Den Hartog">
+      <organization>MATTR</organization>
+    </author>
+    <author fullname="David Chadwick">
+      <organization>University of Kent</organization>
+    </author>
+   <date day="15" month="Aug" year="2023"/>
+  </front>
+</reference>
+
+<reference anchor="Data_Integrity" target="https://w3c.github.io/vc-data-integrity/">
+  <front>
+    <title>Verifiable Credential Data Integrity 1.0</title>
+    <author fullname="Manu Sporny">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Dave Longley">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Greg Bernstein">
+      <organization>Invited Expert</organization>
+    </author>
+    <author fullname="Dmitri Zagidulin">
+      <organization>Invited Expert</organization>
+    </author>
+    <author fullname="Sebastian Crane">
+      <organization>Invited Expert</organization>
+    </author>
+   <date day="31" month="Aug" year="2023"/>
   </front>
 </reference>
 
@@ -1738,13 +1851,6 @@ The following is a non-normative example of an object comprising `credentials_su
 
 <{{examples/credential_metadata_jwt_vc_json.json}}
 
-#### Credential Offer
-
-The following is a non-normative example of a Credential Offer of Credential format `jwt_vc_json`:
-
-
-<{{examples/credential_offer_jwt_vc_json.json}}
-
 #### Authorization Details {#authorization_jwt_vc_json}
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
@@ -1810,12 +1916,6 @@ The following is a non-normative example of an object comprising `credentials_su
 
 <{{examples/credential_metadata_ldp_vc.json}}
 
-#### Credential Offer {#issuer_initiated_issuance_ldp_vc}
-
-The following is a non-normative example of a Credential Offer of Credential format `ldp_vc`:
-
-<{{examples/credential_offer_ldp_vc.json}}
-
 #### Authorization Details {#authorization_ldp_vc}
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.  
@@ -1842,6 +1942,10 @@ The following is a non-normative example of a Credential Request with Credential
 
 <{{examples/credential_request_ldp_vc.json}}
 
+The following is a non-normative example of a Credential request with the key proof type `ldp_vp`:
+
+<{{examples/credential_request_ldp_vc_vp.json}}
+
 #### Credential Response
 
 The value of the `credential` claim in the Credential Response MUST be a JSON object. Credentials of this format MUST NOT be re-encoded.
@@ -1864,13 +1968,9 @@ When the `format` value is `jwt_vc_json-ld`, entire Credential Offer, Authorizat
 
 The definitions in (#server_metadata_ldp_vc) apply for metadata of Credentials of this type as well. 
 
-#### Credential Offer
-
-The definitions in (#issuer_initiated_issuance_ldp_vc) apply for Credentials of this type as well. 
-
 #### Authorization Details
 
-The definitions in (#issuer_initiated_issuance_ldp_vc) apply for Credentials of this type as well.
+The definitions in (#authorization_ldp_vc) apply for credentials of this type as well.
 
 #### Credential Request
 
@@ -1904,12 +2004,6 @@ The following additional Credential Issuer metadata are defined for this Credent
 The following is a non-normative example of an object comprising `credentials_supported` parameter of Credential format `mso_mdoc`:
 
 <{{examples/credential_metadata_mso_mdoc.json}}
-
-### Credential Offer
-
-The following is a non-normative example of a Credential Offer of Credential format `mso_mdoc`:
-
-<{{examples/credential_offer_mso_doc.json}}
 
 ### Authorization Details
 
@@ -1945,6 +2039,7 @@ The value of the `credential` claim in the Credential Response MUST be a string 
   
    * replaced `user_pin_required` in Credential Offer with a `tx_code` object that also now contains `description` and `length`
    * reworked flow description in Overview section
+   * removed Credential Offer examples from Credential format profiles
 
    -12
 
