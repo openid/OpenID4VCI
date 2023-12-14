@@ -213,7 +213,7 @@ The diagram shows how a Wallet-initiated flow use case as described in (#use-cas
 !---
 Figure: Issuance using Authorization Code Flow 
 
-(1) The Wallet uses the Credential Issuer's metadata as described in (#credential-issuer-metadata) to learn what Credential types and formats the Credential Issuer supports and to determine the issuer URL of the OAuth 2.0 Authorization Server the Credential Issuer relies on. In this example the Credential Issuer provides the OAuth 2.0 Authorization Server. However, this specification allows for configurations where the Credential Issuer API and the Authorization Server are separate services, potentially provided by different entities.
+(1) The Wallet uses the Credential Issuer's metadata as described in (#credential-issuer-metadata) to learn what Credential types and formats the Credential Issuer supports and to determine the issuer URL of the OAuth 2.0 Authorization Server the Credential Issuer relies on. In this example the Credential Issuer provides the OAuth 2.0 Authorization Server. However, this specification allows for deployments where the Credential Issuer API and the Authorization Server are separate services, potentially provided by different entities.
 
 (2) The Wallet sends an Authorization Request to the Authorization Endpoint. The Authorization Endpoint processes the Authorization Request, which typically includes End-User authentication and gathering of End-User consent. 
 
