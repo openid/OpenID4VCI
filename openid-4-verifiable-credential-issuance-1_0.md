@@ -1273,7 +1273,7 @@ If the acknowledgement request does not contain an Access Token or contains an i
   * `invalid_ack_id`: The `ack_id` in the acknowledgement request was invalid.
 
 It is at the discretion of the Wallet whether to retry the request or not.
-
+It is up to the Issuer to decide how to proceed after returning an error response.
 The following is a non-normative example of an Acknowledgement Error Response where an invalid `ack_id` value was used:
 
 ```
