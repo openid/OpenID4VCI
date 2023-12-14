@@ -1,6 +1,6 @@
 [
     {
         "type":"openid_credential",
-        "credential": "UniversityDegree_LDP_VC"
+        "credentials_supported_id": "UniversityDegree_LDP_VC"
     }
 ]

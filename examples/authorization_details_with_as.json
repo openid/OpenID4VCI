@@ -4,6 +4,6 @@
       "locations": [
          "https://credential-issuer.example.com"
       ],
-      "credential": "UniversityDegreeCredential"
+      "credentials_supported_id": "UniversityDegreeCredential"
    }
 ]

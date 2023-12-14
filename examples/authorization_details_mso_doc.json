@@ -1,6 +1,6 @@
 [
     {
         "type":"openid_credential",
-        "credential": "org.iso.18013.5.1.mDL"
+        "credentials_supported_id": "org.iso.18013.5.1.mDL"
     }
 ]
