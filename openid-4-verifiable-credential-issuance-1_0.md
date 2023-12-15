@@ -152,7 +152,19 @@ Credentials issued at the Credential Endpoint or Batch Credential Endpoint can v
 
 (TODO: Say how Dataset is connected to Credential Format.)
 
-(TODO: Discuss Batch vs. Single Credential Endpoint.)
+This specification allows for the issuance of Verifiable Credentials through two types of endpoints: the Single Credential Endpoint and the Batch Credential Endpoint.
+
+1. Single Credential Endpoint: This endpoint is used when a single Verifiable Credential is to be issued. The request to this endpoint includes the necessary parameters for the issuance of one credential. The response from this endpoint will contain the issued Verifiable Credential.
+
+2. Batch Credential Endpoint: This endpoint is used when multiple Verifiable Credentials need to be issued at once. The request to this endpoint includes the necessary parameters for the issuance of multiple credentials. The response from this endpoint will contain all the issued Verifiable Credentials.
+
+When dealing with multiple Credentials, the following combinations are possible:
+
+1. Multiple Credentials with different Credential Format bound to the same Cryptographic Holder Binding.
+2. Multiple Credentials with the same Credential Format bound to different Cryptographic Holder Binding.
+3. Multiple Credentials with different Credential Format bound to different Cryptographic Holder Binding.
+
+These combinations allow for flexibility in how Verifiable Credentials are issued, accommodating a variety of use cases and requirements. The choice between using the Single Credential Endpoint or the Batch Credential Endpoint depends on the specific use case. If only one Verifiable Credential needs to be issued, the Single Credential Endpoint would be used. If multiple Verifiable Credentials need to be issued at once, the Batch Credential Endpoint would be more efficient.
 
 In the course of the authorization process, the Credential Issuer MAY also request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as illustrated in (#use-case-5).
 
