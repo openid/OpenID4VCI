@@ -150,7 +150,7 @@ Credentials issued at the Credential Endpoint or Batch Credential Endpoint can v
 - Different Credential Dataset and Format, but same key
 - Different Credential Dataset and Format and different keys
 
-(TODO: Say how Dataset is connected to Credential Format.)
+The Credential Format represents the Verifiable Credential and defines how the data (or Dataset) within the Credential is organized. This can include the specific parameters needed to describe the Credential, which are established in the Credential Format Profile. Therefore, the Dataset and the Credential Format are closely connected. The Dataset provides the actual data or claims, while the Credential Format provides the structure or schema for representing and interacting with this data.
 
 This specification allows for the issuance of Verifiable Credentials through two types of endpoints: the Single Credential Endpoint and the Batch Credential Endpoint.
 
