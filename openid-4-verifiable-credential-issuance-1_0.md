@@ -144,7 +144,7 @@ Existing OAuth 2.0 mechanisms are extended as following:
 
 ### Multiple Credential Issuance
 
-Credentials issued at the Credential Endpoint or Batch Credential Endpoint can vary in their contents (the Credential Dataset), their format (Credential Format including Credential Format Profile specific parameters) as well as in the key to which they are bound for Cryptographic Holder Binding. For multiple Credentials, either issued in multiple Credential Requests or all at once at the Batch Credential Endpoint, the following combinations are possible.:
+Credentials can vary in their format (Credential Format including Credential Format Profile specific parameters), in their contents (the Credential Dataset), as well as in the key to which they are bound for Cryptographic Holder Binding. For multiple Credentials, either issued in multiple Credential Requests or all at once at the Batch Credential Endpoint, the following combinations are possible.:
 
 - Same Credential Dataset and Format, but different keys
 - Different Credential Dataset and Format, but same key
@@ -154,9 +154,9 @@ The Credential Format represents the Verifiable Credential and defines how the d
 
 This specification allows for the issuance of Verifiable Credentials through two types of endpoints: the Single Credential Endpoint and the Batch Credential Endpoint.
 
-1. Single Credential Endpoint: This endpoint is used when a single Verifiable Credential is to be issued. The request to this endpoint includes the necessary parameters for the issuance of one credential. The response from this endpoint will contain the issued Verifiable Credential.
+1. Single Credential Endpoint: This endpoint is used when a single Verifiable Credential is to be issued. The request to this endpoint includes the necessary parameters for the issuance of one Credential. The response from this endpoint will contain the issued Verifiable Credential.
 
-2. Batch Credential Endpoint: This endpoint is used when multiple Verifiable Credentials need to be issued at once. The request to this endpoint includes the necessary parameters for the issuance of multiple credentials. The response from this endpoint will contain all the issued Verifiable Credentials.
+2. Batch Credential Endpoint: This endpoint is used when multiple Verifiable Credentials need to be issued at once. The request to this endpoint includes the necessary parameters for the issuance of multiple Credentials. The response from this endpoint will contain all the issued Verifiable Credentials.
 
 When dealing with multiple Credentials, the following combinations are possible:
 
