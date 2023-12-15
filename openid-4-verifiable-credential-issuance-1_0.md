@@ -44,7 +44,7 @@ This specification defines an API for the issuance of Verifiable Credentials.
 
 # Introduction
 
-This specification defines an API that is used to issue Verifiable Credentials. W3C formats [@VC_DATA] as well as other Credential Formats, like [@ISO.18013-5], are supported. 
+This specification defines an API used for issuing Verifiable Credentials. It supports various Credential formats, including W3C formats [@VC_DATA] and others such as [@ISO.18013-5].
 
 Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. A Verifiable Credential follows a pre-defined schema (the Credential type) and MAY be bound to a certain holder, e.g., through Cryptographic Holder Binding. Verifiable Credentials can be securely presented for the End-User to the RP, without involvement of the Credential Issuer.
 
@@ -61,7 +61,7 @@ This specification uses the terms "Access Token", "Authorization Endpoint", "Aut
 This specification also defines the following terms. In the case where a term has a definition that differs, the definition below is authoritative for this specification.
 
 Credential Dataset:
-:  A set of one or more claims about a subject made by a Credential Issuer.
+:  A collection of one or more assertions about a subject, provided by a Credential Issuer. These assertions are also known as claims.
 
 Verifiable Credential (or Credential):
 :  An Issuer-signed Credential Dataset whose integrity can be cryptographically verified. It can be of any Credential Format.
@@ -144,7 +144,7 @@ Existing OAuth 2.0 mechanisms are extended as following:
 
 ### Multiple Credential Issuance
 
-Credentials issued at the Credential Endpoint or Batch Credential Endpoint can vary in their contents (the Credential Dataset), their format (Credential Format including Credential Format Profile specific parameters) as well as in the key to which they are bound for Cryptographic Holder Binding. For multiple Credentials (either issued in multiple Credential Requests or at once at the Batch Credential Endpoint), the following combinations are possible:
+Credentials issued at the Credential Endpoint or Batch Credential Endpoint can vary in their contents (the Credential Dataset), their format (Credential Format including Credential Format Profile specific parameters) as well as in the key to which they are bound for Cryptographic Holder Binding. For multiple Credentials, either issued in multiple Credential Requests or all at once at the Batch Credential Endpoint, the following combinations are possible.:
 
 - Same Credential Dataset and Format, but different keys
 - Different Credential Dataset and Format, but same key
@@ -158,7 +158,7 @@ In the course of the authorization process, the Credential Issuer MAY also reque
 
 ### Credential Formats and Credential Format Profiles
 
-At its core, this specification is Credential Format agnostic and allows implementers to leverage specific capabilities of Credential Formats of their choice. Multiple Credential Formats can be used within the same transaction. This specification defines Extension points to add Credential Format specific parameters in the Credential Issuer metadata, Credential Offer, Authorization Request, Credential Request and Batch Credential Request.
+At its core, this specification is Credential Format agnostic and allows implementers to leverage specific capabilities of Credential Formats of their choice. Multiple Credential Formats can be used within the same transaction. This specification defines extension points to add Credential Format specific parameters in the Credential Issuer metadata, Credential Offer, Authorization Request, Credential Request and Batch Credential Request.
 
 This specification defines Credential Format Profiles for W3C Verifiable Credentials as defined in [@VC_DATA] and ISO/IEC 18013-5 mDL as defined in [@ISO.18013-5] in (#format_profiles) that contain Credential Format specific parameters to be included at each extension point defined in this specification. Other specifications or deployments can define their own Credential Format Profiles using the above-mentioned extension points.
 
@@ -611,7 +611,7 @@ In addition to the response parameters defined in [@!RFC6749], the AS MAY return
 * `c_nonce`: OPTIONAL. String containing a nonce to be used when creating a proof of possession of the key proof (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
 * `authorization_details`: REQUIRED when `authorization_details` parameter is used to request issuance of a certain Credential type as defined in (#authorization-details). MUST NOT be used otherwise. An array of objects as defined in Section 7 of [@!RFC9396]. This specification defines the following parameter to be used with authorization details type `openid_credential` in the Token Response:
-  * `credential_identifiers`: OPTIONAL. Array of strings that each uniquely identify a Credential instance that can be issued using Access Token returned in this response. Each Credential instance is a unique Credential described using the same entry in the `credentials_supported` Credential Issuer metadata, but can contain different claim values or different subset of claims within the claimset identified by the Credential type. This parameter can also be used to simplify the Credential Request, since as defined in (#credential_request) `credential_identifier` parameter replaces `format` and any other Credential Format specific parameters in the Credential Request. When received, the Wallet MUST use these values together with an Access Token in the subsequent Credential Request(s).
+  * `credential_identifiers`: OPTIONAL. Array of strings that each uniquely identify a Credential that can be issued using Access Token returned in this response. Each Credential is a unique Credential described using the same entry in the `credentials_supported` Credential Issuer metadata, but can contain different claim values or different subset of claims within the claimset identified by the Credential type. This parameter can also be used to simplify the Credential Request, since as defined in (#credential_request) `credential_identifier` parameter replaces `format` and any other Credential Format specific parameters in the Credential Request. When received, the Wallet MUST use these values together with an Access Token in the subsequent Credential Request(s).
 
 Note: Credential Instance identifier(s) cannot be used when `scope` parameter is used in the Authorization Request to request issuance of a Credential.
 
