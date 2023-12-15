@@ -1848,9 +1848,10 @@ The following is a non-normative example of an object comprising `credentials_su
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
 
-* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists at least of the following sub claims:
-  * `type`: REQUIRED. Array as defined in (#server_metadata_jwt_vc_json). This claim contains the type values the Wallet requests authorization for at the Credential Issuer.
+* `credential_definition`: OPTIONAL. Object containing a detailed description of the Credential consisting of the following sub claim:
   * `credentialSubject`: OPTIONAL. An object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. The most deeply nested value MUST be an empty object. This object indicates the claims the Wallet would like to turn up in the Credential to be issued.
+
+Note that the `type` is referenced in the `credentials_supported` object in the Credential Issuer metadata.
 
 The following is a non-normative example of an authorization details object with Credential format `jwt_vc_json`:
 
@@ -1913,10 +1914,10 @@ The following is a non-normative example of an object comprising `credentials_su
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.  
 
-* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of the following sub claims:
-    * `@context`: REQUIRED. Array as defined in (#server_metadata_ldp_vc).
-    * `type`: REQUIRED. Array as defined in (#server_metadata_ldp_vc).  This claim contains the type values the Wallet requests authorization for at the Credential Issuer.
+* `credential_definition`: OPTIONAL. Object containing the detailed description of the Credential consisting of the following sub claim:
     * `credentialSubject`: OPTIONAL. An object as defined in (#authorization_jwt_vc_json).
+
+Note that the `@context` and `type` are referenced in the `credentials_supported` object in the Credential Issuer metadata.
 
 The following is a non-normative example of an authorization details object with Credential format `ldp_vc`:
 
@@ -2002,8 +2003,9 @@ The following is a non-normative example of an object comprising `credentials_su
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
 
-* `doctype`: REQUIRED. String as defined in (#server_metadata_mso_mdoc). This claim contains the type values the Wallet requests authorization for at the Credential Issuer.
 * `claims`: OPTIONAL. An object as defined in (#server_metadata_mso_mdoc).
+
+Note that the `doctype` is referenced in the `credentials_supported` object in the Credential Issuer metadata.
 
 The following is a non-normative example of an authorization details object with Credential format `mso_mdoc`:
 

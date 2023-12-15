@@ -1,6 +1,12 @@
 [
     {
         "type": "openid_credential",
-        "credentials_supported_id": "UniversityDegreeCredential"
+        "credentials_supported_id": "UniversityDegreeCredential",
+        "credential_definition": {
+            "credentialSubject": {
+                "given_name": {},
+                "family_name": {},
+                "degree": {}
+            }
     }
 ]
