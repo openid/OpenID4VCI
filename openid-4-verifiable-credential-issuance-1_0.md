@@ -1276,6 +1276,7 @@ When `notification_id` value is invalid, the HTTP response MUST use the HTTP sta
 It is at the discretion of the Wallet whether to retry the request or not.
 
 It is up to the Issuer to decide how to proceed after returning an error response.
+
 The following is a non-normative example of an Notification Error Response where an invalid `notification_id` value was used:
 
 ```
@@ -1285,7 +1286,7 @@ Cache-Control: no-store
 {
    "error": "invalid_notification_id"
 }
-``````
+```
 
 # Metadata
 
