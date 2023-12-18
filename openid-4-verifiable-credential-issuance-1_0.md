@@ -118,7 +118,7 @@ This specification defines an API for Credential issuance provided by a Credenti
 * An optional Batch Credential Endpoint from which multiple Credentials can be issued in one request (see (#batch-credential-endpoint)).
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of Credentials (see (#deferred-credential-issuance)).
 * An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow (see (#credential_offer_endpoint)).
-* An optional mechanism for the Credential Issuer to receive from the Wallet the status of the Credential that has been issued.
+* An optional mechanism for the Credential Issuer to receive from the Wallet notification(s) of the status of the Credential(s) that have been issued.
 * A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing (see (#credential_issuer_metadata)).
 
 Both the Credential and the Batch Credential Endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both requests therefore enable conveying proof of possession for the key material. Multiple key proof types are supported.
@@ -928,7 +928,7 @@ The following claims are used in the JSON-encoded Credential Response body:
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer was unable to immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST be present when the `credential` parameter is not returned. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. String containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
-* `ack_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the acknowledgement request as defined in (#acknowledgement). This parameter MUST NOT be present if `credential` parameter is not present.
+* `notification_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the Notification Request as defined in (#notification ). This parameter MUST NOT be present if `credential` parameter is not present.
 
 The `format` key determines the Credential format and encoding of the credential in the Credential Response. Details are defined in the Credential Format Profiles in (#format_profiles). 
 
@@ -1193,33 +1193,33 @@ Cache-Control: no-store
 }
 ```
 
-# Acknowledgement Endpoint {#acknowledgement_endpoint}
+# Notification Endpoint {#notification_endpoint}
 
-This endpoint is used by the Wallet to notify the Credential Issuer whether a Credential has been successfully received or not. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the Credential has been accepted and successfully stored by the Wallet, rejected by the Wallet, or errors or other unforeseen circumstances have occurred during the Wallet's processing. The Credential Issuer needs to return the `ack_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL.
+This endpoint is used by the Wallet to notify the Credential Issuer whether a Credential has been successfully received or not. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the Credential has been accepted and successfully stored by the Wallet, rejected by the Wallet, or errors or other unforeseen circumstances have occurred during the Wallet's processing. The Credential Issuer needs to return the `notification_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL.
 
-The Wallet MUST present to the Acknowledgement Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). 
+The Wallet MUST present to the Notification Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). 
 
-Note: A Credential Issuer that requires a request to the Acknowledgement Endpoint MUST ensure the Access Token issued by the Authorization Server is valid at the Acknowledgement Endpoint.
+Note: A Credential Issuer that requires a request to the Notification Endpoint MUST ensure the Access Token issued by the Authorization Server is valid at the Notification Endpoint.
 
-The acknowledgement from the Wallet is idempotent. The Credential Issuer MUST return success even if it receives multiple identical calls from the Wallet for the same `ack_id`s.
+The notification from the Wallet is idempotent. The Credential Issuer MUST return success even if it receives multiple identical calls from the Wallet for the same `notification_id`s.
 
-The Wallet MAY retry if the call to this endpoint fails for a temporary reason. The Credential Issuer SHOULD pre-determine the amount of time within which it expects the acknowledgement. Therefore, even a well-formed acknowledgement from the Wallet could fail if received by the Credential Issuer after this time period. The Credential Issuer may not receive the acknowledgement, meaning it is unknown whether the Wallet successfully stored the credential or not - it is left to the Credential Issuer to decide how to proceed in this case.
+The Wallet MAY retry if the call to this endpoint fails for a temporary reason. The Credential Issuer SHOULD pre-determine the amount of time within which it expects the notification. Therefore, even a well-formed notification from the Wallet could fail if received by the Credential Issuer after this time period. The Credential Issuer may not receive the notification, meaning it is unknown whether the Wallet successfully stored the credential or not - it is left to the Credential Issuer to decide how to proceed in this case.
 
-Communication with the Acknowledgement Endpoint MUST utilize TLS.
+Communication with the Notification Endpoint MUST utilize TLS.
 
-## Acknowledgement Request {#acknowledgement}
+## Notification Request {#notification}
 
-The Wallet sends an HTTP POST request to the Acknowledgement Endpoint with the following parameters in the entity-body and using the `application/json` media type.
+The Wallet sends an HTTP POST request to the Notification Endpoint with the following parameters in the entity-body and using the `application/json` media type.
 
 * `credentials`: Array of objects, where each object consists of the following parameters:
-  * `ack_id`: REQUIRED. String received in Credential Response or Batch Credential Response.
+  * `notification_id`: REQUIRED. String received in Credential Response or Batch Credential Response.
   * `status`: REQUIRED. Status whether the credential issuance was successful or not. It MUST be a case sensitive string whose value is either `success`, `failure` or `deleted`. `success` is to be used when Credential was successfully stored in the Wallet. `deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `failure` is to be used.
   * `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
-Below is a non-normative example of an acknowledgement request when credential issuance was successful:
+Below is a non-normative example of a Notification Request when credential issuance was successful:
 
 ```
-POST /acknowledgement HTTP/1.1
+POST /notification HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
 Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
@@ -1227,17 +1227,17 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 {
   "credentials": [
     {
-    "ack_id": "3fwe98js",
+    "notification_id": "3fwe98js",
     "status": "success"
     }
   ]
 }
 ```
 
-Below is a non-normative example of an acknowledgement request when credential issuance was unsuccessful:
+Below is a non-normative example of a Notification Request when credential issuance was unsuccessful:
 
 ```
-POST /acknowledgement HTTP/1.1
+POST /notification HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
 Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
@@ -1245,7 +1245,7 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 {
   "credentials": [
     {
-    "ack_id": "3fwe98js",
+    "notification_id": "3fwe98js",
     "status": "failure",
     "error_description": "..."
     }
@@ -1253,36 +1253,39 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 }
 ```
 
-## Successful Acknowledgement Response
+## Successful Notification Response
 
-When the Credential Issuer has successfully received the acknowledgement request from the Wallet, it MUST respond with the HTTP status code 2xx. The usage of the HTTP status code 204 (No Content) is RECOMMENDED.
+When the Credential Issuer has successfully received the Notification Request from the Wallet, it MUST respond with the HTTP status code 2xx. The usage of the HTTP status code 204 (No Content) is RECOMMENDED.
 
-Below is a non-normative example of response to a successful acknowledgement request:
+Below is a non-normative example of response to a successful Notification Request:
 
 ```
 HTTP/1.1 204 No Content
 ```
 
-## Acknowledgement Error Response
+## Notification Error Response
 
-If the acknowledgement request does not contain an Access Token or contains an invalid Access Token, the Acknowledgement Endpoint returns an authorization error response such as defined in section 3 of [@!RFC6750].
+If the Notification Request does not contain an Access Token or contains an invalid Access Token, the Notification Endpoint returns an authorization error response such as defined in section 3 of [@!RFC6750].
 
-`invalid_request` parameter defined in section 3.1 of [@!RFC6750] SHOULD be used in most cases other than when `ack_id` value is invalid. In the latter case, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the JSON-encoded response body:
+When `notification_id` value is invalid, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the JSON-encoded response body:
 
 * `error`: REQUIRED. A key at the top level of the object, the value of which SHOULD be the following ASCII [@!USASCII] error code:
-  * `invalid_ack_id`: The `ack_id` in the acknowledgement request was invalid.
+  * `invalid_notification_id`: The `notification_id` in the Notification Request was invalid.
+  * `invalid_notification_request`: The Notification Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
 
 It is at the discretion of the Wallet whether to retry the request or not.
+
 It is up to the Issuer to decide how to proceed after returning an error response.
-The following is a non-normative example of an Acknowledgement Error Response where an invalid `ack_id` value was used:
+The following is a non-normative example of an Notification Error Response where an invalid `notification_id` value was used:
 
 ```
 HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Cache-Control: no-store
 {
-   "error": "invalid_ack_id"
+   "error": "invalid_notification_id"
 }
+``````
 
 # Metadata
 
@@ -1340,7 +1343,7 @@ This specification defines the following Credential Issuer Metadata:
 * `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint as defined in (#credential_request). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components.
 * `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint as defined in (#batch-credential-endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
 * `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint as defined in (#deferred-credential-issuance). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
-* `ack_endpoint`: OPTIONAL. URL of the Credential Issuer's Acknowledgement Endpoint as defined in (#acknowledgement_endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Acknowledgement Endpoint.
+* `notification_endpoint`: OPTIONAL. URL of the Credential Issuer's Notification Endpoint as defined in (#notification_endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Notification Endpoint.
 * `credential_response_encryption_alg_values_supported`: OPTIONAL. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`alg` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
 * `credential_response_encryption_enc_values_supported`: OPTIONAL. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
 * `require_credential_response_encryption`: OPTIONAL. Boolean value specifying whether the Credential Issuer requires additional encryption on top of TLS for the Credential Response and expects encryption parameters to be present in the Credential Request and/or Batch Credential Request, with `true` indicating support. When the value is `true`, `credential_response_encryption_alg_values_supported` parameter MUST also be provided.  If omitted, the default value is `false`.
@@ -1420,7 +1423,7 @@ The Credential Issuer MUST ensure the release of any privacy-sensitive data in C
 The Pre-Authorized Code Flow is vulnerable to the replay of the Pre-Authorized Code, because by design, it is not bound to a certain device (as the Authorization Code Flow does with PKCE). This means an attacker can replay at another device the Pre-Authorized Code meant for a victim, e.g., the attacker can scan the QR code while it is displayed on the victim's screen, and thereby get access to the Credential. Such replay attacks must be prevented using other means. The design facilitates the following options:
 
 * Transaction Code: the Credential Issuer might set up a Transaction Code with the End-User (e.g., via text message or email) that needs to be presented in the Token Request.
-* Callback to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the End-User to confirm the originating device (device that displayed the QR code) that the Credential Issuer MAY proceed with the Credential issuance process. While the Credential Issuer reaches out to the End-User on the other device to get confirmation, the Credential Issuer's Authorization Server returns an error code `authorization_pending` or `slow_down` to the Wallet as described in (#token_error_response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the End-User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the End-User on the originating device more control over the issuance process.
+* Notification to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the End-User to confirm the originating device (device that displayed the QR code) that the Credential Issuer MAY proceed with the Credential issuance process. While the Credential Issuer reaches out to the End-User on the other device to get confirmation, the Credential Issuer's Authorization Server returns an error code `authorization_pending` or `slow_down` to the Wallet as described in (#token_error_response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the End-User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the End-User on the originating device more control over the issuance process.
 
 ### Transaction Code Code Phishing
 
