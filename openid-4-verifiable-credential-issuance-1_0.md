@@ -67,10 +67,13 @@ Verifiable Credential (or Credential):
 :  An Issuer-signed Credential Dataset whose integrity can be cryptographically verified. It can be of any Credential Format.
 
 Credential Format:
-:  A format used to represent a Verifiable Credential. The exact parameters required to describe a Credential Format are defined in the Credential Format Profile. Definition of credential formats is out of scope for this specification.
+:  A format used to represent a Verifiable Credential. The exact parameters required to describe a Credential Format are defined in the Credential Format Profile. Definition of credential formats is out of scope for this specification. Examples for Credential Formats are W3C Verifiable Credentials [@VC_DATA], SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] and ISO/IEC 18013-5 mDL [@ISO.18013-5].
 
 Credential Format Profile:
 :  Sets of parameters specific to individual Credential Formats. Credential Format Profiles for W3C Verifiable Credentials [@VC_DATA] and ISO/IEC 18013-5 mDL [@ISO.18013-5] are provided in (#format_profiles). Other specifications or deployments can define their own Credential Format Profiles using the extension points defined in this specification.
+
+Credential Format Identifier:
+:  An identifier for a specific Credential Format in the context of this specification. Implies the usage of the respective Credential Format Profile specific parameters.
 
 Credential Configuration:
 :  A Credential Configuration consists of a Credential Format including a type, information about requesting Credentials using this Credential Configuration (in particular, a `scope` value), information on cryptographic methods and algorithms supported for issuance, and display information to be used by the Wallet. A Credential Configuration is identified by a unique string.
