@@ -64,7 +64,7 @@ Credential Dataset:
 :  A collection of one or more assertions about a subject, provided by a Credential Issuer. These assertions are also known as claims.
 
 Verifiable Credential (or Credential):
-:  An Issuer-signed Credential Dataset whose integrity can be cryptographically verified. It can be of any Credential Format.
+:  A Credential Dataset signed by an Issuer, whose integrity can be cryptographically verified. This can be in any Credential Format. In this specification, the term "Verifiable Credential" is also referred to as "Credential".
 
 Credential Format:
 :  A format used to represent a Verifiable Credential. The exact parameters required to describe a Credential Format are defined in the Credential Format Profile. Definition of credential formats is out of scope for this specification. Examples for Credential Formats are W3C Verifiable Credentials [@VC_DATA], SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] and ISO/IEC 18013-5 mDL [@ISO.18013-5].
