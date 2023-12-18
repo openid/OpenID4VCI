@@ -1264,7 +1264,7 @@ This specification defines the following Credential Issuer Metadata:
       * `name`: REQUIRED. String value of a display name for the Credential.
       * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. Multiple `display` objects MAY be included for separate languages. There MUST be only one object for each language identifier.
       * `logo`: OPTIONAL. A JSON object with information about the logo of the Credential with a following non-exhaustive list of parameters that MAY be included:
-          * `uri`: OPTIONAL. String value that contains a URI where the Wallet can obtain a logo of the Credential from the Credential Issuer. Wallet needs to determine the scheme, since the URI value could use `https:` scheme, `data:` scheme, etc.
+          * `uri`: OPTIONAL. Array of values that each identify a URI where the Wallet can obtain a logo of the Credential from the Credential Issuer. Wallet needs to identify and pick the scheme that it supports, since the URI value could use `https:` scheme, `data:` scheme, etc.
           * `alt_text`: OPTIONAL. String value of an alternative text of a logo image.
       * `description`: OPTIONAL. String value of a description of the Credential.
       * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
@@ -1846,6 +1846,9 @@ The following additional Credential Issuer metadata are defined for this Credent
       * `display`: OPTIONAL. An array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
           * `name`: OPTIONAL. String value of a display name for the claim.
           * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
+          * `logo`: OPTIONAL. A JSON object with information about the logo of the Credential Issuer with a following non-exhaustive list of parameters that MAY be included:
+            * `uri`: OPTIONAL. Array of values that each identify a URI where the Wallet can obtain a logo of the Credential Issuer. Wallet needs to identify and pick the scheme that it supports, since the URI value could use `https:` scheme, `data:` scheme, etc.
+            * `alt_text`: OPTIONAL. String value of an alternative text of a logo image.
 * `order`: OPTIONAL. An array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
 The following is a non-normative example of an object comprising `credentials_supported` parameter of Credential format `jwt_vc_json`:
