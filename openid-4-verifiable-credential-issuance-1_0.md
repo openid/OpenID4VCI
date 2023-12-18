@@ -1768,7 +1768,7 @@ This specification registers the following media types in the IANA "Media Types"
   - Magic number(s): n/a
   - File extension(s): n/a
   - Macintosh file type code(s): n/a
-* Person & email address to contact for further information: TBD
+* Person & email address to contact for further information: Torsten Lodderstedt, torsten@lodderstedt.net
 * Intended usage: COMMON
 * Restrictions on usage: none
 * Author: Torsten Lodderstedt, torsten@lodderstedt.net
