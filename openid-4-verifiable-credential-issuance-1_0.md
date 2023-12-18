@@ -1791,7 +1791,7 @@ This specification registers the following media types in the IANA "Media Types"
 * Person & email address to contact for further information: Torsten Lodderstedt, torsten@lodderstedt.net
 * Intended usage: COMMON
 * Restrictions on usage: none
-* Author: Michael B. Jones, michael_b_jones@hotmail.com
+* Author: Torsten Lodderstedt, torsten@lodderstedt.net
 * Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Provisional registration? No
 
