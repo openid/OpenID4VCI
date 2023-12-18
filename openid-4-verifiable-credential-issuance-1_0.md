@@ -1209,9 +1209,9 @@ Communication with the Notification Endpoint MUST utilize TLS.
 
 ## Notification Request {#notification}
 
-The Wallet sends an HTTP POST request to the Notification Endpoint with the following parameters in the entity-body and using the `application/json` media type.
+The Wallet sends an HTTP POST request to the Notification Endpoint with the following parameters in the entity-body and using the `application/json` media type. The Wallet MUST send one Notification Request per Credential issued.
 
-* `credentials`: Array of objects, where each object consists of the following parameters:
+* `credential`: Oject describing status of the Credential issuance of which the Wallet has requested in the Credential or Batch Credential Request. It consists of the following parameters:
   * `notification_id`: REQUIRED. String received in Credential Response or Batch Credential Response.
   * `status`: REQUIRED. Status whether the credential issuance was successful or not. It MUST be a case sensitive string whose value is either `success`, `failure` or `deleted`. `success` is to be used when Credential was successfully stored in the Wallet. `deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `failure` is to be used.
   * `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
@@ -1225,12 +1225,10 @@ Content-Type: application/json
 Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
-  "credentials": [
-    {
+  "credential": {
     "notification_id": "3fwe98js",
     "status": "success"
-    }
-  ]
+  }
 }
 ```
 
@@ -1243,13 +1241,11 @@ Content-Type: application/json
 Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
-  "credentials": [
-    {
+  "credential": {
     "notification_id": "3fwe98js",
     "status": "failure",
     "error_description": "..."
-    }
-  ]
+  }
 }
 ```
 
@@ -1265,7 +1261,7 @@ HTTP/1.1 204 No Content
 
 ## Notification Error Response
 
-If the Notification Request does not contain an Access Token or contains an invalid Access Token, the Notification Endpoint returns an authorization error response such as defined in section 3 of [@!RFC6750].
+If the Notification Request does not contain an Access Token or contains an invalid Access Token, the Notification Endpoint returns an Authorization Error Response such as defined in section 3 of [@!RFC6750].
 
 When `notification_id` value is invalid, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the JSON-encoded response body:
 
@@ -1424,7 +1420,7 @@ The Credential Issuer MUST ensure the release of any privacy-sensitive data in C
 The Pre-Authorized Code Flow is vulnerable to the replay of the Pre-Authorized Code, because by design, it is not bound to a certain device (as the Authorization Code Flow does with PKCE). This means an attacker can replay at another device the Pre-Authorized Code meant for a victim, e.g., the attacker can scan the QR code while it is displayed on the victim's screen, and thereby get access to the Credential. Such replay attacks must be prevented using other means. The design facilitates the following options:
 
 * Transaction Code: the Credential Issuer might set up a Transaction Code with the End-User (e.g., via text message or email) that needs to be presented in the Token Request.
-* Notification to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the End-User to confirm the originating device (device that displayed the QR code) that the Credential Issuer MAY proceed with the Credential issuance process. While the Credential Issuer reaches out to the End-User on the other device to get confirmation, the Credential Issuer's Authorization Server returns an error code `authorization_pending` or `slow_down` to the Wallet as described in (#token_error_response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the End-User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the End-User on the originating device more control over the issuance process.
+* Callback to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the End-User to confirm the originating device (device that displayed the QR code) that the Credential Issuer MAY proceed with the Credential issuance process. While the Credential Issuer reaches out to the End-User on the other device to get confirmation, the Credential Issuer's Authorization Server returns an error code `authorization_pending` or `slow_down` to the Wallet as described in (#token_error_response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the End-User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the End-User on the originating device more control over the issuance process.
 
 ### Transaction Code Code Phishing
 
