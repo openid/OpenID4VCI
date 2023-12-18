@@ -269,7 +269,7 @@ The following diagram is based on the Credential Issuer initiated flow, as illus
         |   interacts    |                                                    |
         |--------------->|                                                    |
         |                |                                                    |
-        |                |  (4) Token Request (Pre-Authorized Code, pin)      |
+        |                |  (4) Token Request (Pre-Authorized Code, tx_code)  |
         |                |--------------------------------------------------->|
         |                |      Token Response (access_token)                 |
         |                |<---------------------------------------------------|
