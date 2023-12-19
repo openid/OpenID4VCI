@@ -1203,7 +1203,7 @@ Note: A Credential Issuer that requires a request to the Notification Endpoint M
 
 The notification from the Wallet is idempotent. The Credential Issuer MUST return success even if it receives multiple identical calls from the Wallet for the same `notification_id`s.
 
-The Wallet MAY retry if a notification request fails. The Credential Issuer may not receive certain notifications for a variety of reasons and therefore should take this into consideration.
+The Wallet MAY retry if a notification request fails. There are no guarantees that a Credential Issuer receives a notification within a certain time period or at all.
 
 Communication with the Notification Endpoint MUST utilize TLS.
 
