@@ -1195,7 +1195,7 @@ Cache-Control: no-store
 
 # Notification Endpoint {#notification_endpoint}
 
-This endpoint is used by the Wallet to notify the Credential Issuer of certain events for issued credentials, these events enable the Credential Issuer to take subsequent actions after issuance. The Credential Issuer needs to return the `notification_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL.
+This endpoint is used by the Wallet to notify the Credential Issuer of certain events for issued credentials. These events enable the Credential Issuer to take subsequent actions after issuance. The Credential Issuer needs to return the `notification_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL.
 
 The Wallet MUST present to the Notification Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). 
 
