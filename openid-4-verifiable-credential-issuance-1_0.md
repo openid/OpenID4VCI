@@ -1708,39 +1708,6 @@ This specification registers the following client metadata name in the IANA "OAu
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential_offer_endpoint) of this specification
 
-## OAuth Extensions Error Registry
-
-This specification registers the following error values in the IANA "OAuth Extensions Error Registry" [@!IANA.OAuth.Parameters] established by [@!RFC6749].
-
-* Name: invalid_credential_request
-* Usage Location: resource access error response
-* Protocol Extension: OpenID for Verifiable Credentials Issuance
-* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#credential-request-errors) of this specification
-
-* Name: unsupported_credential_type
-* Usage Location: resource access error response
-* Protocol Extension: OpenID for Verifiable Credentials Issuance
-* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#credential-request-errors) of this specification
-
-* Name: unsupported_credential_format
-* Usage Location: resource access error response
-* Protocol Extension: OpenID for Verifiable Credentials Issuance
-* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#credential-request-errors) of this specification
-
-* Name: invalid_proof
-* Usage Location: resource access error response
-* Protocol Extension: OpenID for Verifiable Credentials Issuance
-* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#credential-request-errors) of this specification
-
-* Name: invalid_encryption_parameters
-* Usage Location: resource access error response
-* Protocol Extension: OpenID for Verifiable Credentials Issuance
-* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#credential-request-errors) of this specification
 
 ## Well-Known URI Registry
 
