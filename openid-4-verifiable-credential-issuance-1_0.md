@@ -91,7 +91,7 @@ Holder:
 :  An entity that receives Verifiable Credentials and has control over them to present them to the Verifiers as Verifiable Presentations.
 
 Verifier:
-:  An entity that requests, receives, and validates Verifiable Presentations. During a presentation, the Verifier acts as an OAuth 2.0 Client towards the Wallet that is acting as an OAuth 2.0 Authorization Server. The Verifier is a specific case of an OAuth 2.0 Client, just like Relying Party (RP) in [@OpenID.Core].
+:  An entity that requests, receives, and validates Verifiable Presentations.
 
 Issuer-Holder-Verifier Model:
 :  A model for exchanging claims, where claims are issued in the form of Verifiable Credentials independent of the process of presenting them as Verifiable Presentations to the Verifiers. An issued Verifiable Credential can be (but is not necessarily) used multiple times.
