@@ -145,37 +145,44 @@ Existing OAuth 2.0 mechanisms are extended as following:
 
 ## Core Concepts
 
+In the context of this specification, Credential Datasets define the data (claims) about a subject that is to be included in a Credential.
+The Credential Format defines how the data (or Dataset) within final Verifiable Credential is organized and secured.
+This can include the specific parameters needed to describe the Credential, which are established in the Credential Format Profile.
+While in principle independent from each other, the Credential Dataset and the Credential Format can have a relationship in the sense that an Issuer may only offer certain Credential Formats for certain Credential Datasets.
+
+An End-User typically authorizes the issuance of Credentials with a specific Credential Dataset, but do not usually care about the Credential Format. The same Credential Dataset may even be issued in different Credential Formats.
+
+### Credential Formats and Credential Format Profiles
+
+This specification is Credential Format agnostic and allows implementers to leverage specific capabilities of Credential Formats of their choice.
+To this end, extension points to add Credential Format specific parameters in the Credential Issuer metadata, Credential Offer, Authorization Request, Credential Request, and Batch Credential Request are defined.
+
+Credential Format Profiles for W3C Verifiable Credentials ([@VC_DATA]) and ISO/IEC 18013-5 mDL ([@ISO.18013-5]) are specified in (#format_profiles).
+Other specifications or deployments can define their own Credential Format Profiles using the above-mentioned extension points.
+
 ### Multiple Credential Issuance
-
-Credentials can vary in their format (Credential Format including Credential Format Profile specific parameters), in their contents (the Credential Dataset), as well as in the key to which they are bound for Cryptographic Holder Binding. For multiple Credentials, either issued in multiple Credential Requests or all at once at the Batch Credential Endpoint, the following combinations are possible.:
-
-- Same Credential Dataset and Format, but different keys
-- Different Credential Dataset and Format, but same key
-- Different Credential Dataset and Format and different keys
-
-The Credential Format represents the Verifiable Credential and defines how the data (or Dataset) within the Credential is organized. This can include the specific parameters needed to describe the Credential, which are established in the Credential Format Profile. Therefore, the Dataset and the Credential Format are closely connected. The Dataset provides the actual data or claims, while the Credential Format provides the structure or schema for representing and interacting with this data.
 
 This specification allows for the issuance of Verifiable Credentials through two types of endpoints: the Single Credential Endpoint and the Batch Credential Endpoint.
 
 1. Single Credential Endpoint: This endpoint is used when a single Verifiable Credential is to be issued. The request to this endpoint includes the necessary parameters for the issuance of one Credential. The response from this endpoint will contain the issued Verifiable Credential.
-
 2. Batch Credential Endpoint: This endpoint is used when multiple Verifiable Credentials need to be issued at once. The request to this endpoint includes the necessary parameters for the issuance of multiple Credentials. The response from this endpoint will contain all the issued Verifiable Credentials.
 
-When dealing with multiple Credentials, the following combinations are possible:
+Credentials can vary in their format (Credential Format including Credential Format Profile specific parameters), in their contents (the Credential Dataset), as well as in the key to which they are bound for Cryptographic Holder Binding.
+Multiple Credentials, either issued in multiple Credential Requests or all at once at the Batch Credential Endpoint, can therefore vary in the following dimensions:
 
-1. Multiple Credentials with different Credential Format bound to the same Cryptographic Holder Binding.
-2. Multiple Credentials with the same Credential Format bound to different Cryptographic Holder Binding.
-3. Multiple Credentials with different Credential Format bound to different Cryptographic Holder Binding.
+- Credential Dataset
+- Credential Format
+- Cryptographic Holder Binding Key
 
-These combinations allow for flexibility in how Verifiable Credentials are issued, accommodating a variety of use cases and requirements. The choice between using the Single Credential Endpoint or the Batch Credential Endpoint depends on the specific use case. If only one Verifiable Credential needs to be issued, the Single Credential Endpoint would be used. If multiple Verifiable Credentials need to be issued at once, the Batch Credential Endpoint would be more efficient.
+For example, a batch of Credentials may be issued where all Credentials have the same Credential Dataset and Format, but all are bound to different cryptographic keys (e.g., for unlinkability between the credentials).
+As another example, an Issuer may offer two Credentials that differ in their contents and format, but are bound to the same key.
+These combinations allow for flexibility in how Verifiable Credentials are issued, accommodating a variety of use cases and requirements.
+
+The choice between using the Single Credential Endpoint or the Batch Credential Endpoint depends on the specific use case.
+If only one Verifiable Credential needs to be issued, the Single Credential Endpoint would be used.
+If multiple Verifiable Credentials need to be issued at once, the Batch Credential Endpoint would be more efficient.
 
 In the course of the authorization process, the Credential Issuer MAY also request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as illustrated in (#use-case-5).
-
-### Credential Formats and Credential Format Profiles
-
-At its core, this specification is Credential Format agnostic and allows implementers to leverage specific capabilities of Credential Formats of their choice. Multiple Credential Formats can be used within the same transaction. This specification defines extension points to add Credential Format specific parameters in the Credential Issuer metadata, Credential Offer, Authorization Request, Credential Request and Batch Credential Request.
-
-This specification defines Credential Format Profiles for W3C Verifiable Credentials as defined in [@VC_DATA] and ISO/IEC 18013-5 mDL as defined in [@ISO.18013-5] in (#format_profiles) that contain Credential Format specific parameters to be included at each extension point defined in this specification. Other specifications or deployments can define their own Credential Format Profiles using the above-mentioned extension points.
 
 ### Issuance Flow Variations
 
