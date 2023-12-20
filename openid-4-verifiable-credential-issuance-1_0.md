@@ -76,7 +76,7 @@ Credential Format Identifier:
 :  An identifier for a specific Credential Format in the context of this specification. Implies the usage of the respective Credential Format Profile specific parameters.
 
 Credential Configuration:
-:  A Credential Configuration consists of a Credential Format including a type, information about requesting Credentials using this Credential Configuration (in particular, a `scope` value), information on cryptographic methods and algorithms supported for issuance, and display information to be used by the Wallet. A Credential Configuration is identified by a unique string.
+: A Credential Configuration describes a particular kind of Credential that a Credential Issuer is offering to issue, along with metadata pertaining to the issuance process and the issued Credentials. A Credential Configuration references a Credential Format and specifies the corresponding parameters given in the Credential Format Profile. Furthermore it includes information about requesting Credentials using this Credential Configuration, information on cryptographic methods and algorithms supported for issuance, and display information to be used by the Wallet. A Credential Configuration is identified by a Credential Configuration Identifier string that is unique to an Issuer.
 
 Presentation:
 : Data that is presented to a specific verifier, derived from one or more Verifiable Credentials that can be from the same or different Credential Issuers.
@@ -109,7 +109,7 @@ Biometrics-based Holder Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential by demonstrating a certain biometric trait, such as fingerprint or face. One example of a Verifiable Credential with Biometrics-based Holder Binding is a mobile driving license [@ISO.18013-5], which contains a portrait of the holder.
 
 Wallet:
-:  An entity used by the Holder to receive, store, present, and manage Verifiable Credentials and key material. There is no single deployment model of a Wallet: Verifiable Credentials and keys can both be stored/managed locally, or by using a remote self-hosted service, or a remote third-party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Authorization Server (see [@!RFC6749]) towards the Verifier which acts as the OAuth 2.0 Client.
+:  An entity used by the Holder to receive, store, present, and manage Verifiable Credentials and key material. There is no single deployment model of a Wallet: Verifiable Credentials and keys can both be stored/managed locally, or by using a remote self-hosted service, or a remote third-party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Client (see [@!RFC6749]).
 
 Deferred Credential Issuance:
 :  Issuance of Credentials not directly in the response to a Credential issuance request but following a period of time that can be used to perform certain offline business processes.
