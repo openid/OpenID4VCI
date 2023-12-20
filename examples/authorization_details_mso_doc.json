@@ -13,6 +13,6 @@
                 "organ_donor": {}
             }
         },
-        "iaca_uri": "https://example.com/id-card/iaca"
+        "iacas_uri": "https://example.com/id-card/iacas"
     }
 ]
