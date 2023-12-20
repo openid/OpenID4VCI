@@ -63,7 +63,7 @@ This specification also defines the following terms. In the case where a term ha
 Credential Dataset:
 :  A collection of one or more assertions about a subject, provided by a Credential Issuer. These assertions are also known as claims.
 
-Verifiable Credential (or Credential):
+Credential (or Verifiable Credential):
 :  A Credential Dataset signed by an Issuer, whose integrity can be cryptographically verified. This can be in any Credential Format. In this specification, the term "Verifiable Credential" is also referred to as "Credential".
 
 Credential Format:
