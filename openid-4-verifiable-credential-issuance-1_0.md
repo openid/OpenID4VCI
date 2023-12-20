@@ -2001,6 +2001,7 @@ The following additional Credential Issuer metadata are defined for this Credent
         * `name`: OPTIONAL. String value of a display name for the claim.
         * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. An array of namespaced claim name values that lists them in the order they should be displayed by the Wallet. The values MUST be two strings separated by a tilde ('~') character, where the first string is a namespace value and a second is a claim name value. For example, `org.iso.18013.5.1~given_name".
+* `iaca_uri`: OPTIONAL. A URL using the `https` scheme referencing a resource containing the base64-encoded DER representation of an Issuing Authority Certificate Authority (IACA) X.509 certificate as defined in [@!ISO.18013-5] Annex B. This X.509 root certificate is needed to verify the X.509 certificate chain included in the Mobile Security Object (MSO) of the mdoc as defined in [@!ISO.18013-5].
 
 The following is a non-normative example of an object comprising `credentials_supported` parameter of Credential format `mso_mdoc`:
 

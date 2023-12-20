@@ -12,6 +12,7 @@
             "org.iso.18013.5.1.aamva": {
                 "organ_donor": {}
             }
-        }
+        },
+        "iaca_uri": "https://example.com/id-card/iaca"
     }
 ]
