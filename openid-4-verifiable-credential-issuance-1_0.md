@@ -2003,7 +2003,7 @@ The following additional Credential Issuer metadata are defined for this Credent
 * `order`: OPTIONAL. An array of namespaced claim name values that lists them in the order they should be displayed by the Wallet. The values MUST be two strings separated by a tilde ('~') character, where the first string is a namespace value and a second is a claim name value. For example, `org.iso.18013.5.1~given_name".
 * `iacas_uri`: OPTIONAL. A URL using the `https` scheme referencing a resource containing the Issuing Authority Certificate Authority (IACA) X.509 certificate of the Issuer as defined in [@!ISO.18013-5] Annex B. These X.509 root certificates are needed to verify the X.509 certificate chain included in the Mobile Security Object (MSO) of the mdoc with the provided `doctype` value as defined in [@!ISO.18013-5]. The contents of this resource MUST include a `iacas` object whose value is an array of objects. Each object in the array MUST contain a `certificate` member whose value is the base64-encoded DER representation of an IACA certificate. Other members MAY be defined and used in both the top-level object and the enclosed objects.
 
-Below is a non-normative example of the contents an IACA certificates resource:
+Below is a non-normative example of the contents of an IACA certificates resource:
 
 ```
 {
