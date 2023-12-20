@@ -186,7 +186,7 @@ In the course of the authorization process, the Credential Issuer MAY also reque
 
 ### Issuance Flow Variations
 
-The issuance can have multiple characteristics, which can be combined depending on the use cases:
+The issuance can have multiple characteristics that can be combined depending on the use cases:
 
 * Authorization Code Flow or Pre-Authorized Code Flow: The Credential Issuer can obtain End-User information to turn into a Verifiable Credential using End-User authentication and consent at the Credential Issuer's Authorization Endpoint (Authorization Code Flow) or using out-of-band mechanisms outside of the issuance flow (Pre-Authorized Code Flow).
 * Wallet initiated or Issuer initiated: The request from the Wallet can be sent to the Credential Issuer without any gesture from the Credential Issuer (Wallet Initiated) or following the communication from the Credential Issuer (Issuer Initiated).
