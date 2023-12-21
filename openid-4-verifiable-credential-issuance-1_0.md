@@ -323,7 +323,7 @@ For security considerations, see (#credential-offer-security).
 This specification defines the following parameters for the JSON-encoded Credential Offer object:
 
 * `credential_issuer`: REQUIRED. The URL of the Credential Issuer, as defined in (#credential-issuer-identifier), from which the Wallet is requested to obtain one or more Credentials. The Wallet uses it to obtain the Credential Issuer's Metadata following the steps defined in (#credential-issuer-wellknown).
-* `credentials`: REQUIRED. An array of unique strings that each identify one of the keys in the name/value pairs stored in the `credentials_supported` Credential Issuer metadata property. The Wallet uses this string value to obtain the respective object that contains information about the Credential being offered as defined in (#credential-issuer-parameters). For example, this string value can be used to obtain `scope` value to be used in the Authorization Request.
+* `credential_configurations_offered`: REQUIRED. An array of unique strings that each identify one of the keys in the name/value pairs stored in the `credentials_supported` Credential Issuer metadata property. The Wallet uses this string value to obtain the respective object that contains information about the Credential being offered as defined in (#credential-issuer-parameters). For example, this string value can be used to obtain `scope` value to be used in the Authorization Request.
 * `grants`: OPTIONAL. An object indicating to the Wallet the Grant Types the Credential Issuer's AS is prepared to process for this Credential Offer. Every grant is represented by a name/value pair. The name is the Grant Type identifier; the value is an object that contains parameters either determining the way the Wallet MUST use the particular grant and/or parameters the Wallet MUST send with the respective request(s). If `grants` is not present or empty, the Wallet MUST determine the Grant Types the Credential Issuer's AS supports using the respective metadata. When multiple grants are present, it is at the Wallet's discretion which one to use.
 
 The following values are defined by this specification: 
@@ -413,7 +413,7 @@ There are two possible ways to request issuance of a specific Credential type in
 The request parameter `authorization_details` defined in Section 2 of [@!RFC9396] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following parameters to be used with this authorization details type:
 
 * `type`: REQUIRED. String that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
-* `credentials_supported_id`: REQUIRED. String specifying a unique identifier of the Credential being described in the `credentials_supported` map in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). The referenced object in the `credentials_supported` map conveys the details, e.g. format, for the requested Credential issuance. This specification defines Credential Format specific Issuer Metadata in (#format_profiles).
+* `credential_configuration_id`: REQUIRED. String specifying a unique identifier of the Credential being described in the `credentials_supported` map in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). The referenced object in the `credentials_supported` map conveys the details, e.g. format, for the requested Credential issuance. This specification defines Credential Format specific Issuer Metadata in (#format_profiles).
 
 The following is a non-normative example of an `authorization_details` object:
 
@@ -432,7 +432,7 @@ GET /authorize?
   &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
   &code_challenge_method=S256
   &authorization_details=%5B%7B%22type%22%3A%20%22openid_credential%22%2C%20%22
-    credentials_supported_id%22%3A%20%22UniversityDegreeCredential%22%7D%5D
+    credential_configuration_id%22%3A%20%22UniversityDegreeCredential%22%7D%5D
   &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
   
 Host: https://server.example.com
@@ -448,7 +448,7 @@ Note: Applications MAY combine authorization details of type `openid_credential`
 
 In addition to a mechanism defined in (#credential-authz-request), Credential Issuers MAY support requesting authorization to issue a Credential using OAuth 2.0 scope parameter.
 
-When the Wallet does not know which scope value to use to request issuance of a certain Credential, it can discover it using the `scope` Credential Issuer metadata parameter defined in (#credential-issuer-parameters). When the flow starts with a Credential Offer, the Wallet can use the `credentials` parameter values to identify object(s) in the `credentials_supported` map in the Credential Issuer metadata parameter and use `scope` parameter value from that object.
+When the Wallet does not know which scope value to use to request issuance of a certain Credential, it can discover it using the `scope` Credential Issuer metadata parameter defined in (#credential-issuer-parameters). When the flow starts with a Credential Offer, the Wallet can use the `credentials_configurations_offered` parameter values to identify object(s) in the `credentials_supported` map in the Credential Issuer metadata parameter and use `scope` parameter value from that object.
 
 The Wallet can discover the scope values using other options such as normative text in a profile of this specification that defines scope values along with a description of their semantics.
 
@@ -629,7 +629,7 @@ Cache-Control: no-store
     "authorization_details": [
       {
         "type": "openid_credential",
-        "credentials_supported_id": "UniversityDegreeCredential",
+        "credential_configuration_id": "UniversityDegreeCredential",
         "credential_identifiers": [ "CivilEngineeringDegree-2023", "ElectricalEngineeringDegree-2023" ]
       }
     ]
@@ -2144,7 +2144,7 @@ The value of the `credential` claim in the Credential Response MUST be a string 
    
    -13
 
-   * changed `authorization_details` to use `credentials_supported_id` pointing to the name of a `credentials_supported` object in the Credential Issuer's Metadata
+   * changed `authorization_details` to use `credential_configuration_id` pointing to the name of a `credentials_supported` object in the Credential Issuer's Metadata
    * grouped `credential_encryption_jwk`, `credential_response_encryption_alg` and `credential_response_encryption_enc` from Credential Request into a single `credential_response_encryption` object
    * replaced `user_pin_required` in Credential Offer with a `tx_code` object that also now contains `description` and `length`
    * reworked flow description in Overview section
