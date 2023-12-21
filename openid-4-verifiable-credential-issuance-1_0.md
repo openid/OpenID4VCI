@@ -291,7 +291,7 @@ The following diagram is based on the Credential Issuer initiated flow, as illus
         |   interacts    |                                                    |
         |--------------->|                                                    |
         |                |                                                    |
-        |                |  (4) Token Request (Pre-Authorized Code, pin)      |
+        |                |  (4) Token Request (Pre-Authorized Code, tx_code)  |
         |                |--------------------------------------------------->|
         |                |      Token Response (access_token)                 |
         |                |<---------------------------------------------------|
@@ -1316,7 +1316,7 @@ This specification also defines a new OAuth 2.0 Authorization Server metadata [@
 
 Credential Issuers often want to know what Wallet they are issuing Credentials to and how private keys are managed for the following reasons:
 
-* The Credential Issuer MAY want to ensure that private keys are properly protected from exfiltration and replay to prevent an adversary from impersonating the legitimate Credential holder by presenting her Credential.
+* The Credential Issuer MAY want to ensure that private keys are properly protected from exfiltration and replay to prevent an adversary from impersonating the legitimate Credential Holders by presenting their Credentials.
 * The Credential Issuer MAY also want to ensure that the Wallet managing the Credentials adheres to certain policies and, potentially, was audited and approved under a certain regulatory and/or commercial scheme.
 
 The following mechanisms in concert can be utilized to fulfill those objectives:
@@ -1366,7 +1366,7 @@ The Wallet is supposed to detect signs of fraudulent behavior related to the Cre
 
 If an adversary is able to get hold of a key proof defined in (#proof_types), the adversary could get a Credential issued that is bound to a key pair controlled by the victim.
 
-Note: For the attacker to be able to present to the Verifier a Credential bound to a replayed Key Proof, the attacker also needs to obtain the victim's private key. To limit this, servers are RECOMMENDED to check how the Wallet protects the private keys, using mechanisms such as Key Based Client Authentication defined in [@I-D.looker-oauth-attestation-based-client-auth].
+Note: For the attacker to be able to present to the Verifier a Credential bound to a replayed Key Proof, the attacker also needs to obtain the victim's private key. To limit this, servers are RECOMMENDED to check how the Wallet protects the private keys, using mechanisms such as Key Based Client Authentication defined in [@!I-D.ietf-oauth-attestation-based-client-auth].
 
 `nonce` parameter is the primary countermeasure against key proof replay. To further narrow down the attack vector, the Credential Issuer SHOULD bind a unique `nonce` parameter to the respective Access Token.
 
@@ -1562,9 +1562,12 @@ TBD
       <organization>Microsoft</organization>
     </author>
     <author fullname="Michael B. Jones">
-      <organization>Microsoft</organization>
+      <organization>Self-Issued Consulting</organization>
     </author>
-   <date day="1" month="January" year="2023"/>
+    <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
+      <organization>sprind.org</organization>
+    </author>
+   <date day="28" month="November" year="2023"/>
   </front>
 </reference>
 
@@ -1698,21 +1701,18 @@ TBD
       <front>
         <title>OpenID for Verifiable Presentations</title>
         <author initials="O." surname="Terbu" fullname="Oliver Terbu">
-         <organization>ConsenSys Mesh</organization>
+         <organization>Mattr</organization>
         </author>
         <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
-          <organization>yes.com</organization>
+          <organization>sprind.org</organization>
         </author>
         <author initials="K." surname="Yasuda" fullname="Kristina Yasuda">
           <organization>Microsoft</organization>
         </author>
-        <author initials="A." surname="Lemmon" fullname="Adam Lemmon">
-          <organization>Convergence.tech</organization>
-        </author>
         <author initials="T." surname="Looker" fullname="Tobias Looker">
           <organization>Mattr</organization>
         </author>
-       <date day="20" month="June" year="2022"/>
+       <date day="29" month="November" year="2022"/>
       </front>
 </reference>
 
@@ -1753,30 +1753,142 @@ TBD
           <author fullname="Vladimir Dzhuvinov">
             <organization>Connect2id</organization>
           </author>
-          <date day="8" month="November" year="2023"/>
+          <date day="4" month="December" year="2023"/>
         </front>
 </reference>
 
+<reference anchor="IANA.OAuth.Parameters" target="https://www.iana.org/assignments/oauth-parameters">
+  <front>
+    <title>OAuth Parameters</title>
+    <author>
+      <organization>IANA</organization>
+    </author>
+    <date/>
+  </front>
+</reference>
+
+<reference anchor="IANA.MediaTypes" target="https://www.iana.org/assignments/media-types">
+  <front>
+    <title>Media Types</title>
+    <author>
+      <organization>IANA</organization>
+    </author>
+    <date/>
+  </front>
+</reference>
 
 # IANA Considerations
 
 ## Sub-Namespace Registration
 
-This section registers the value "urn:ietf:params:oauth:grant-type:pre-authorized_code" in the IANA "OAuth URI" registry established by "An IETF URN Sub-Namespace for OAuth" [@!RFC6755].
+This specification registers the following URN in the IANA "OAuth URI" registry [@!IANA.OAuth.Parameters] established by [@!RFC6755].
 
 * URN: urn:ietf:params:oauth:grant-type:pre-authorized_code
 * Common Name: Pre-Authorized Code
-* Change Controller: AB/Connect Working Group - openid-specs-ab@lists.openid.net
-* Specification Document: (#token_request) of this document
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token_request) of this spedification
+
+## OAuth Parameters Registry
+
+This specification registers the following parameter names in the IANA "OAuth Parameters" registry [@!IANA.OAuth.Parameters] established by [@!RFC6749].
+
+* Parameter Name: wallet_issuer
+* Parameter Usage Location: authorization request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#credential-authz-request) of this specification
+
+* Parameter Name: user_hint
+* Parameter Usage Location: authorization request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#credential-authz-request) of this specification
+
+* Parameter Name: issuer_state
+* Parameter Usage Location: authorization request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#credential-authz-request) of this specification
+
+* Parameter Name: pre-authorized_code
+* Parameter Usage Location: token request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token_request) of this specification
+
+* Parameter Name: tx_code
+* Parameter Usage Location: token request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token_request) of this specification
+
+* Parameter Name: c_nonce
+* Parameter Usage Location: token response
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token-response) of this specification
+
+* Parameter Name: c_nonce_expires_in
+* Parameter Usage Location: token response
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token-response) of this specification
+
+## OAuth Dynamic Client Registration Metadata Registry
+
+This specification registers the following client metadata name in the IANA "OAuth Dynamic Client Registration Metadata" registry [@!IANA.OAuth.Parameters] established by [@!RFC7591].
+
+* Client Metadata Name: credential_offer_endpoint
+* Client Metadata Description: Credential Offer Endpoint
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#credential_offer_endpoint) of this specification
+
 
 ## Well-Known URI Registry
 
-This specification registers the well-known URI defined in (#credential-issuer-wellknown) in the IANA Well-Known URI registry defined in RFC 5785 [@!RFC5785].
+This specification registers the following well-known URI in the IANA "Well-Known URI" registry established by [@!RFC5785].
 
 * URI suffix: openid-credential-issuer
-* Change controller: AB/Connect Working Group - openid-specs-ab@lists.openid.net
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Specification document: (#credential-issuer-wellknown) of this document
 * Related information: (none)
+
+## Media Types Registry
+
+This specification registers the following media types in the IANA "Media Types" registry [@!IANA.MediaTypes] in the manner described in [@!RFC6838].
+
+* Type name: `application`
+* Subtype name: `openid4vci-proof+jwt`
+* Required parameters: n/a
+* Optional parameters: n/a
+* Encoding considerations: Uses JWS Compact Serialization, as specified in [@!RFC7515].
+* Security considerations: See the Security Considerations in [@!RFC7519].
+* Interoperability considerations: n/a
+* Published specification: (#jwt-proof-type) of this specification
+* Applications that use this media type: Applications that issue and store verifiable credentials
+* Additional information:
+  - Magic number(s): n/a
+  - File extension(s): n/a
+  - Macintosh file type code(s): n/a
+* Person & email address to contact for further information: Torsten Lodderstedt, torsten@lodderstedt.net
+* Intended usage: COMMON
+* Restrictions on usage: none
+* Author: Torsten Lodderstedt, torsten@lodderstedt.net
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Provisional registration? No
+
+* Type name: `application`
+* Subtype name: `openid4vci-proof+cwt`
+* Required parameters: n/a
+* Optional parameters: n/a
+* Encoding considerations: Binary CBOR, as specified in [@!RFC9052]
+* Security considerations: See the Security Considerations in [@!RFC8392].
+* Interoperability considerations: n/a
+* Published specification: (#cwt-proof-type) of this specification
+* Applications that use this media type: Applications that issue and store verifiable credentials
+* Additional information:
+  - Magic number(s): n/a
+  - File extension(s): n/a
+  - Macintosh file type code(s): n/a
+* Person & email address to contact for further information: Torsten Lodderstedt, torsten@lodderstedt.net
+* Intended usage: COMMON
+* Restrictions on usage: none
+* Author: Torsten Lodderstedt, torsten@lodderstedt.net
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Provisional registration? No
 
 # Acknowledgements {#Acknowledgements}
 
@@ -1796,27 +1908,27 @@ This is a non-exhaustive list of sample use cases.
 
 ## Credential Offer - Same-Device {#use-case-1}
 
-While browsing the university's home page, the End-User finds a link "request your digital diploma". The End-User clicks on this link and is being redirected to a digital Wallet. The Wallet notifies the End-User that a Credential Issuer offered to issue a diploma Credential. User confirms this inquiry and is taken to the university's Credential issuance service's End-User experience. After authenticating at the university and consenting to the issuance of a digital diploma, the End-User is sent back to the Wallet, where she can check the successful creation of the digital diploma.
+While browsing the university's home page, the End-User finds a link "request your digital diploma". The End-User clicks on this link and is being redirected to a digital Wallet. The Wallet notifies the End-User that a Credential Issuer offered to issue a diploma Credential. User confirms this inquiry and is taken to the university's Credential issuance service's End-User experience. Upon successful authentication at the university and consent to the issuance of a digital diploma, the End-User is redirected back to the Wallet. Here, the End-User can verify the successful creation of the digital diploma.
 
 ## Credential Offer - Cross-Device (with Information Pre-Submitted by the End-User) {#use-case-2}
 
-The End-User is starting a job at a new employer. An employer has requested the End-User to upload certain documents to the employee portal. A few days later, the End-User receives an email from the employer notifying her that the employee Credential is ready and asking her to scan a QR code to retrieve it. The End-User scans the QR code with her smartphone, which opens her Wallet. Meanwhile, the End-User has received a text message with a Transaction Code to her smartphone. After entering that Transaction Code in the Wallet for security reasons, the End-User confirms the Credential issuance, and receives Credential into the Wallet.
+The End-User is starting a job at a new employer. The employer requests the End-User to upload specific documents to the employee portal. After a few days, the End-User receives an email from the employer indicating that the employee Credential is ready to be claimed and provides instructions to scan a presented QR code for its retrieval. The End-User scans the QR code with the smartphone, which opens the Wallet. Meanwhile, the End-User has received a text message with a Transaction Code to the smartphone. After entering the Transaction Code in the Wallet for security reasons, the End-User confirms the Credential issuance, and receives the Credential into the Wallet.
 
 ## Credential Offer - Cross-Device & Deferred {#use-case-3}
 
-The End-User wants to obtain a digital criminal record. She visits the local administration's office and requests the issuance of the official criminal record as a digital Credential. After presenting her ID document, she is asked to scan a QR code with her Wallet. She is being told that the actual issuance of the Credential will take some time due to necessary background checks by the authority. 
+The End-User intends to acquire a digital criminal record. This involves a visit to the local administration's office to request the official criminal record be issued as a digital Credential. After presenting the ID document, the End-User is prompted to scan a QR code using the Wallet and is informed that the issuance of the Credential will require some time, due to necessary background checks by the authority.
 
-In the Wallet, the End-User sees an indication that issuance of the digital record is under way. A few days later, the End-User receives a notification from her Wallet that requested Credential was successfully issued. When the End-User opens the Wallet, she is asked whether she wants to download the Credential. She confirms, and the new Credential is retrieved and stored in the Wallet.
+While using the Wallet, the End-User notices an indication that the issuance of the digital record is in progress. After a few days, the End-User receives a notification from the Wallet indicating that the requested Credential was successfully issued. Upon opening the Wallet, the End-User is queried about the download of the Credential. After confirmation, the Wallet fetches and saves the new Credential.
 
 ## Wallet Initiated Issuance during Presentation {#use-case-4}
 
-An End-User comes across a verifier app that is requesting the End-User to present a Credential, e.g., a driving license. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet selects a Credential Issuer capable of issuing the lacking Credential and, upon End-User consent, sends the End-User to the Credential Issuer's End-User experience (Web site or app). Upon being authenticated and providing consent to issue the Credential into her Wallet, the End-User is sent back to the Wallet. The Wallet informs the End-User that Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
+An End-User comes across a verifier app that is requesting the End-User to present a Credential, e.g., a driving license. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet selects a Credential Issuer capable of issuing the missing Credential and, upon End-User consent, sends the End-User to the Credential Issuer's End-User experience (Web site or app). Once authenticated and consent is provided for the issuance of the Credential into the Wallet, the End-User is redirected back to the Wallet. The Wallet informs the End-User that Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
 
 ## Wallet Initiated Issuance during Presentation (Requires Presentation of Additional Credentials During Issuance) {#use-case-5}
 
-An End-User comes across a verifier app that is requesting the End-User to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet then offers the End-User a list of Credential Issuers, which might be based on a Credential Issuer list curated by the Wallet provider. The End-User picks the university she graduated from and is sent to that university's End-User experience (Web site or app).
+An End-User comes across a verifier app that is requesting the End-User to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet then offers the End-User a list of Credential Issuers, which might be based on a Credential Issuer list curated by the Wallet provider. The End-User selects the university of graduation and is subsequently redirected to the corresponding university's website or app.
 
-The End-User logs in to the university, which determines that the respective End-User account is not verified yet. Among multiple identification options, the End-User chooses to present a Credential from her Wallet. The End-User is sent back to the Wallet where she consents to present requested Credential(s) to the university. The End-User is sent back to the university End-User experience. Based on the presented Credential, the university completes the End-User verification, looks up End-User data in its database, and offers to issue a diploma as a Verifiable Credential. 
+The End-User logs into the university, which identifies that the corresponding End-User account is not yet verified. Among various identification options, the End-User opts to present a Credential from the Wallet. The End-User is redirected back to the Wallet to consent to present the requested Credential(s) to the university. Following this, the End-User is redirected back to the university End-User experience. Based on the presented Credential, the university finalizes the End-User verification, retrieves End-User data from its database, and proposes to issue a diploma as a Verifiable Credential.
 
 Upon providing consent, the End-User is sent back to the Wallet. The Wallet informs the End-User Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
 
