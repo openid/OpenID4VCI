@@ -744,7 +744,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 }
 ```
 
-Below is a non-normative example of a Credential Request for a Credential in JWT VC format (JSON encoding) using Credential instance identifier and a key proof type `jwt`:
+Below is a non-normative example of a Credential Request for a Credential in an IETF SD-JWT VC format using Credential instance identifier and a key proof type `jwt`:
 
 ```
 POST /credential HTTP/1.1
@@ -756,10 +756,14 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
    "credential_identifier": "CivilEngineeringDegree-2023",
    "proof": {
       "proof_type": "jwt",
-      "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
-      xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
-      0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOjE1MzY5NTk5NTksIm5vbmNlIjoidFppZ25zbk
-      ZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
+      "jwt":
+      "eyJ0eXAiOiJvcGVuaWQ0dmNpLXByb29mK2p3dCIsImFsZyI6IkVTMjU2IiwiandrI
+      jp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiblVXQW9BdjNYWml0aDhFN2k
+      xOU9kYXhPTFlGT3dNLVoyRXVNMDJUaXJUNCIsInkiOiJIc2tIVThCalVpMVU5WHFpN
+      1N3bWo4Z3dBS18weGtjRGpFV183MVNvc0VZIn19.eyJhdWQiOiJodHRwczovL2NyZW
+      RlbnRpYWwtaXNzdWVyLmV4YW1wbGUuY29tIiwiaWF0IjoxNzAxOTYwNDQ0LCJub25j
+      ZSI6IkxhclJHU2JtVVBZdFJZTzZCUTR5bjgifQ.-a3EDsxClUB4O3LeDD5DVGEnNMT
+      01FCQW4P6-2-BNBqc_Zxf0Qw4CWayLEpqkAomlkLb9zioZoipdP-jvh1WlA"
    }
 }
 ```
@@ -801,10 +805,14 @@ Below is a non-normative example of a `proof` parameter (line breaks for display
 ```json
 {
   "proof_type": "jwt",
-  "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
-  xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
-  0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOjE1MzY5NTk5NTksIm5vbmNlIjoidFppZ25zbk
-  ZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
+  "jwt": 
+  "eyJ0eXAiOiJvcGVuaWQ0dmNpLXByb29mK2p3dCIsImFsZyI6IkVTMjU2IiwiandrI
+  jp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiblVXQW9BdjNYWml0aDhFN2k
+  xOU9kYXhPTFlGT3dNLVoyRXVNMDJUaXJUNCIsInkiOiJIc2tIVThCalVpMVU5WHFpN
+  1N3bWo4Z3dBS18weGtjRGpFV183MVNvc0VZIn19.eyJhdWQiOiJodHRwczovL2NyZW
+  RlbnRpYWwtaXNzdWVyLmV4YW1wbGUuY29tIiwiaWF0IjoxNzAxOTYwNDQ0LCJub25j
+  ZSI6IkxhclJHU2JtVVBZdFJZTzZCUTR5bjgifQ.-a3EDsxClUB4O3LeDD5DVGEnNMT
+  01FCQW4P6-2-BNBqc_Zxf0Qw4CWayLEpqkAomlkLb9zioZoipdP-jvh1WlA"
   }
 ```
 
@@ -812,14 +820,18 @@ where the JWT looks like this:
 
 ```json
 {
+  "typ": "openid4vci-proof+jwt",
   "alg": "ES256",
-  "kid": "did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1"
-}.
-{
-  "iss": "s6BhdRkqt3",
-  "aud": "https://server.example.com",
-  "iat": 1659145924,
-  "nonce": "tZignsnFbp"
+  "jwk": {
+    "kty": "EC",
+    "crv": "P-256",
+    "x": "nUWAoAv3XZith8E7i19OdaxOLYFOwM-Z2EuM02TirT4",
+    "y": "HskHU8BjUi1U9Xqi7Swmj8gwAK_0xkcDjEW_71SosEY"
+  }
+}.{
+  "aud": "https://credential-issuer.example.com",
+  "iat": 1701960444,
+  "nonce": "LarRGSbmUPYtRYO6BQ4yn8"
 }
 ```
 
@@ -1055,7 +1067,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
          },
          "proof":{
             "proof_type":"jwt",
-            "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZTpl...C_aZKPxgihac0aW9EkL1nOzM"
+            "jwt":"eyJ0eXAiOiJvcGVuaWQ0dmNpL...Lb9zioZoipdP-jvh1WlA"
          }
       },
       {
@@ -1980,7 +1992,7 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.  
 
-* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists at least of the following sub claims:
+* `credential_definition`: REQUIRED when the `credential_identifier` was not present in the Credential Request. MUST NOT be used otherwise. Object containing the detailed description of the Credential type. It consists at least of the following sub claims:
   * `type`: REQUIRED. Array as defined in (#server_metadata_jwt_vc_json). The credential issued by the Credential Issuer MUST at least contain the values listed in this claim.
   * `credentialSubject`: OPTIONAL. An object as defined in (#authorization_jwt_vc_json).
 
@@ -2046,7 +2058,7 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.  
 
-* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists at least of the following sub claims:
+* `credential_definition`: REQUIRED when the `credential_identifier` is not present in the Credential Request. MUST NOT be used otherwise. Object containing the detailed description of the Credential type. It consists at least of the following sub claims:
   * `@context`: REQUIRED. Array as defined in (#server_metadata_ldp_vc).
   * `type`: REQUIRED. Array as defined in (#server_metadata_ldp_vc). The Credential issued by the Credential Issuer MUST at least contain the values listed in this claim.
   * `credentialSubject`: OPTIONAL. An object as defined in (#authorization_ldp_vc).
@@ -2133,7 +2145,7 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.  
 
-* `doctype`: REQUIRED. String as defined in (#server_metadata_mso_mdoc). The Credential issued by the Credential Issuer MUST at least contain the values listed in this claim.
+* `doctype`: REQUIRED when the `credential_identifier` is not present in the Credential Request. MUST NOT be used otherwise. String as defined in (#server_metadata_mso_mdoc). The Credential issued by the Credential Issuer MUST at least contain the values listed in this claim.
 * `claims`: OPTIONAL. An object as defined in (#server_metadata_mso_mdoc).
 
 The following is a non-normative example of a Credential Request with Credential format `mso_mdoc`:
@@ -2143,6 +2155,58 @@ The following is a non-normative example of a Credential Request with Credential
 ### Credential Response
 
 The value of the `credential` claim in the Credential Response MUST be a string that is the base64url-encoded representation of the issued Credential.
+
+## IETF SD-JWT VC
+
+This section defines a Credential Format Profile for Credentials complying with [@!I-D.ietf-oauth-sd-jwt-vc].
+
+### Format Identifier
+
+The Credential format identifier is `vc+sd-jwt`.
+
+### Credential Issuer Metadata {#server_metadata_sd_jwt_vc}
+
+The following additional Credential Issuer metadata parameters are defined for this Credential format to be added to the `credentials_supported` parameter in addition to those defined in (#credential-issuer-parameters).
+
+
+* `vct`: REQUIRED. String designating the type of a Credential as defined in [@!I-D.ietf-oauth-sd-jwt-vc].
+* `claims`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim about the subject offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be an object that includes a following non-exhaustive list of parameters defined by this specification:
+    * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
+    * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
+    * `display`: OPTIONAL. Array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
+        * `name`: OPTIONAL. String value of a display name for the claim.
+        * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
+* `order`: OPTIONAL. An array of the claim name values that lists them in the order they should be displayed by the Wallet.
+
+The following is a non-normative example of an object comprising `credentials_supported` parameter of Credential format `vc+sd-jwt`.
+
+<{{examples/credential_metadata_sd_jwt_vc.json}}
+
+### Authorization Details {#authorization_sd_jwt_vc}
+
+The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
+
+* `vct`: REQUIRED. String as defined in (#server_metadata_sd_jwt_vc). This claim contains the type values the Wallet requests authorization for at the Credential Issuer.
+* `claims`: OPTIONAL. An object as defined in (#server_metadata_sd_jwt_vc).
+
+The following is a non-normative example of an authorization details object with Credential format `vc+sd-jwt`.
+
+<{{examples/authorization_details_sd_jwt_vc.json}}
+
+### Credential Request
+
+The following additional parameters are defined for Credential Requests and this Credential format.
+
+* `vct`: REQUIRED when the `credential_identifier` is not present in the Credential Request. MUST NOT be used otherwise. String as defined in (#server_metadata_sd_jwt_vc). This claim contains the type value of the Credential the Wallet requests the Credential Issuer to issue.
+* `claims`: OPTIONAL. An object as defined in (#server_metadata_sd_jwt_vc).
+
+The following is a non-normative example of a Credential Request with Credential format `vc+sd-jwt`.
+
+<{{examples/credential_request_sd_jwt_vc.json}}
+
+### Credential Response {#credential_response_jwt_vc_json}
+
+The value of the `credential` claim in the Credential Response MUST be a string that is an SD-JWT VC. Credentials of this format are already suitable for transfer and, therefore, they need not and MUST NOT be re-encoded.
 
 # Document History
 
