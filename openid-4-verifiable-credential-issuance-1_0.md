@@ -1910,7 +1910,7 @@ This specification registers the following well-known URI in the IANA "Well-Know
 
 * URI suffix: openid-credential-issuer
 * Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Specification document: (#credential-issuer-wellknown) of this document
+* Specification document: (#credential_issuer_wellknown) of this document
 * Related information: (none)
 
 ## Media Types Registry
