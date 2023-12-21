@@ -2132,22 +2132,35 @@ The value of the `credential` claim in the Credential Response MUST be a string 
    
    -13
 
+   * added a Notification Endpoint used by the Wallet to notify the Credential Issuer of certain events for issued credentials
+   * completed IANA registrations section
+   * clarified description of a `mandatory` claim
+   * made sure to use gender-neutral language throughout the specification
    * grouped `credential_encryption_jwk`, `credential_response_encryption_alg` and `credential_response_encryption_enc` from Credential Request into a single `credential_response_encryption` object
    * replaced `user_pin_required` in Credential Offer with a `tx_code` object that also now contains `description` and `length`
    * reworked flow description in Overview section
    * removed Credential Offer examples from Credential format profiles
+   * added support for HTTP Accept-Language Header in the request for Credential Issuer Metadata to request a subset for display data
+   * clarified how the Credential Issuer indicates that it requires proof of possession of the cryptographic key material in the Credential Request
+   * added an option to use data integrity proofs as proof of possession of the cryptographic key material in the Credential Request
+   * editorial clean-up (fix capitalization, etc.)
 
    -12
 
+   * changed `authorization_servers` Credential Issuer metadata parameter to be an array.
    * changed the structure of the `credentials_supported` parameter to a map from array of objects
    * changed the structure of `credentials` parameter in Credential Offer to only be a string (no more objects) whose value is a key in the `credentials_supported` map   
-   * added an option to return `credential_identifier` in Token Request `authorization_details` parameter that can be used to identify Credentials with the same metadata but different claimset/claim values and/or simplify the Credential request even when only one Credential is being issued.
+   * added an option to return `credential_identifiers` in `authorization_details` Token Response parameter that can be used to identify Credentials with the same metadata but different claimset/claim values and/or simplify the Credential request even when only one Credential is being issued.
+   * clarified that credential offer cannot be signed
+   * clarified that credential error response can be authorization (rfc6750) or credential request error
    * renamed proof to key proof and added key proof replay security considerations
-   * Aligned deferred authorization with RFC 8628 and CIBA
-   * Changed Deferred Endpoint to require same access tokens as (batch) Credential endpoint(s), renamed acceptance_token to transaction_id and changed it to a request parameter, and return HTTP status 202 in case of deferred issuance
-   * Added Deferred Endpoint error response section 
-   * Added Deferred Endpoint metadata
+   * aligned deferred authorization with RFC 8628 and CIBA
+   * changed Deferred Endpoint to require same access tokens as (batch) Credential endpoint(s)
+   * renamed acceptance_token to transaction_id and changed it to a request parameter, and clarified that HTTP status 202 should be returnedin case of deferred issuance
+   * added Deferred Endpoint error response section 
+   * added Deferred Endpoint metadata
    * added CWT proof type
+   * editorial clean-up (remove indefinite articles and duplicates, etc.)
 
    -11
 
