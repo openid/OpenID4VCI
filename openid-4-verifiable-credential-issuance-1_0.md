@@ -306,7 +306,7 @@ This endpoint is used by a Credential Issuer in case it is already in an interac
 
 ## Credential Offer {#credential_offer}
 
-The Credential Issuer sends Credential Offer as an HTTP GET request or an HTTP redirect to the Wallet's Credential Offer Endpoint defined in (#client_metadata).
+The Credential Issuer sends Credential Offer using an HTTP GET request or an HTTP redirect to the Wallet's Credential Offer Endpoint defined in (#client_metadata).
 
 The Credential Offer object, which is a JSON-encoded object with the Credential Offer parameters, can be sent by value or by reference.
 
@@ -1195,13 +1195,13 @@ Cache-Control: no-store
 
 # Notification Endpoint {#notification_endpoint}
 
-This endpoint is used by the Wallet to notify the Credential Issuer of certain events for issued credentials. These events enable the Credential Issuer to take subsequent actions after issuance. The Credential Issuer needs to return the `notification_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL.
+This endpoint is used by the Wallet to notify the Credential Issuer of certain events for issued Credentials. These events enable the Credential Issuer to take subsequent actions after issuance. The Credential Issuer needs to return the one or more `notification_id` parameters in the Credential Response or the Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL.
 
 The Wallet MUST present to the Notification Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). 
 
 Note: A Credential Issuer that requires a request to the Notification Endpoint MUST ensure the Access Token issued by the Authorization Server is valid at the Notification Endpoint.
 
-The notification from the Wallet is idempotent. When the Credential Issuer receives multiple identical calls from the Wallet for the same `notification_id`s, it returns success.
+The notification from the Wallet is idempotent. When the Credential Issuer receives multiple identical calls from the Wallet for the same `notification_id`, it returns success.
 
 The Wallet MAY retry if a notification request fails. There are no guarantees that a Credential Issuer receives a notification within a certain time period or at all.
 
@@ -1229,7 +1229,7 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 }
 ```
 
-Below is a non-normative example of a Notification Request when a credential was deleted by the End-User:
+Below is a non-normative example of a Notification Request when a Credential was deleted by the End-User:
 
 ```
 POST /notification HTTP/1.1
@@ -2239,7 +2239,7 @@ The value of the `credential` claim in the Credential Response MUST be a string 
    
    -13
 
-   * added a Notification Endpoint used by the Wallet to notify the Credential Issuer of certain events for issued credentials
+   * added a Notification Endpoint used by the Wallet to notify the Credential Issuer of certain events for issued Credentials
    * completed IANA registrations section
    * clarified description of a `mandatory` claim
    * made sure to use gender-neutral language throughout the specification
@@ -2259,7 +2259,7 @@ The value of the `credential` claim in the Credential Response MUST be a string 
    * changed the structure of `credentials` parameter in Credential Offer to only be a string (no more objects) whose value is a key in the `credentials_supported` map   
    * added an option to return `credential_identifiers` in `authorization_details` Token Response parameter that can be used to identify Credentials with the same metadata but different claimset/claim values and/or simplify the Credential request even when only one Credential is being issued.
    * clarified that credential offer cannot be signed
-   * clarified that credential error response can be authorization (rfc6750) or credential request error
+   * clarified that Credential error response can be authorization (rfc6750) or Credential request error
    * renamed proof to key proof and added key proof replay security considerations
    * aligned deferred authorization with RFC 8628 and CIBA
    * changed Deferred Endpoint to require same access tokens as (batch) Credential endpoint(s)
