@@ -744,7 +744,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 }
 ```
 
-Below is a non-normative example of a Credential Request for a Credential in JWT VC format (JSON encoding) using Credential instance identifier and a key proof type `jwt`:
+Below is a non-normative example of a Credential Request for a Credential in an IETF SD-JWT VC format using Credential instance identifier and a key proof type `jwt`:
 
 ```
 POST /credential HTTP/1.1
@@ -756,10 +756,14 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
    "credential_identifier": "CivilEngineeringDegree-2023",
    "proof": {
       "proof_type": "jwt",
-      "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
-      xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
-      0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOjE1MzY5NTk5NTksIm5vbmNlIjoidFppZ25zbk
-      ZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
+      "jwt":
+      "eyJ0eXAiOiJvcGVuaWQ0dmNpLXByb29mK2p3dCIsImFsZyI6IkVTMjU2IiwiandrI
+      jp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiblVXQW9BdjNYWml0aDhFN2k
+      xOU9kYXhPTFlGT3dNLVoyRXVNMDJUaXJUNCIsInkiOiJIc2tIVThCalVpMVU5WHFpN
+      1N3bWo4Z3dBS18weGtjRGpFV183MVNvc0VZIn19.eyJhdWQiOiJodHRwczovL2NyZW
+      RlbnRpYWwtaXNzdWVyLmV4YW1wbGUuY29tIiwiaWF0IjoxNzAxOTYwNDQ0LCJub25j
+      ZSI6IkxhclJHU2JtVVBZdFJZTzZCUTR5bjgifQ.-a3EDsxClUB4O3LeDD5DVGEnNMT
+      01FCQW4P6-2-BNBqc_Zxf0Qw4CWayLEpqkAomlkLb9zioZoipdP-jvh1WlA"
    }
 }
 ```
@@ -801,10 +805,14 @@ Below is a non-normative example of a `proof` parameter (line breaks for display
 ```json
 {
   "proof_type": "jwt",
-  "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8
-  xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJzNkJoZFJrcXQzIiwiYXVkIjoiaHR
-  0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJpYXQiOjE1MzY5NTk5NTksIm5vbmNlIjoidFppZ25zbk
-  ZicCJ9.ewdkIkPV50iOeBUqMXCC_aZKPxgihac0aW9EkL1nOzM"
+  "jwt": 
+  "eyJ0eXAiOiJvcGVuaWQ0dmNpLXByb29mK2p3dCIsImFsZyI6IkVTMjU2IiwiandrI
+  jp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiblVXQW9BdjNYWml0aDhFN2k
+  xOU9kYXhPTFlGT3dNLVoyRXVNMDJUaXJUNCIsInkiOiJIc2tIVThCalVpMVU5WHFpN
+  1N3bWo4Z3dBS18weGtjRGpFV183MVNvc0VZIn19.eyJhdWQiOiJodHRwczovL2NyZW
+  RlbnRpYWwtaXNzdWVyLmV4YW1wbGUuY29tIiwiaWF0IjoxNzAxOTYwNDQ0LCJub25j
+  ZSI6IkxhclJHU2JtVVBZdFJZTzZCUTR5bjgifQ.-a3EDsxClUB4O3LeDD5DVGEnNMT
+  01FCQW4P6-2-BNBqc_Zxf0Qw4CWayLEpqkAomlkLb9zioZoipdP-jvh1WlA"
   }
 ```
 
@@ -812,14 +820,18 @@ where the JWT looks like this:
 
 ```json
 {
+  "typ": "openid4vci-proof+jwt",
   "alg": "ES256",
-  "kid": "did:example:ebfeb1f712ebc6f1c276e12ec21/keys/1"
-}.
-{
-  "iss": "s6BhdRkqt3",
-  "aud": "https://server.example.com",
-  "iat": 1659145924,
-  "nonce": "tZignsnFbp"
+  "jwk": {
+    "kty": "EC",
+    "crv": "P-256",
+    "x": "nUWAoAv3XZith8E7i19OdaxOLYFOwM-Z2EuM02TirT4",
+    "y": "HskHU8BjUi1U9Xqi7Swmj8gwAK_0xkcDjEW_71SosEY"
+  }
+}.{
+  "aud": "https://credential-issuer.example.com",
+  "iat": 1701960444,
+  "nonce": "LarRGSbmUPYtRYO6BQ4yn8"
 }
 ```
 
@@ -1055,7 +1067,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
          },
          "proof":{
             "proof_type":"jwt",
-            "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZTpl...C_aZKPxgihac0aW9EkL1nOzM"
+            "jwt":"eyJ0eXAiOiJvcGVuaWQ0dmNpL...Lb9zioZoipdP-jvh1WlA"
          }
       },
       {
