@@ -1201,9 +1201,7 @@ The Wallet MUST present to the Notification Endpoint a valid Access Token issued
 
 Note: A Credential Issuer that requires a request to the Notification Endpoint MUST ensure the Access Token issued by the Authorization Server is valid at the Notification Endpoint.
 
-The notification from the Wallet is idempotent. When the Credential Issuer receives multiple identical calls from the Wallet for the same `notification_id`, it returns success.
-
-The Wallet MAY retry if a notification request fails. There are no guarantees that a Credential Issuer receives a notification within a certain time period or at all.
+The notification from the Wallet is idempotent. When the Credential Issuer receives multiple identical calls from the Wallet for the same `notification_id`, it returns success. Due to the network errors, there are no guarantees that a Credential Issuer receives a notification within a certain time period or at all.
 
 Communication with the Notification Endpoint MUST utilize TLS.
 
