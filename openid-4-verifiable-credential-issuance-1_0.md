@@ -1946,7 +1946,7 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.  
 
-* `credential_definition`: REQUIRED when the `credential_identifier` was not present in the Credential Request. MUST NOT be used otherwise. Object containing the detailed description of the Credential type. It consists at least of the following sub claims:
+* `credential_definition`: REQUIRED when the `credential_identifier` is not present in the Credential Request. MUST NOT be used otherwise. Object containing the detailed description of the Credential type. It consists at least of the following sub claims:
   * `@context`: REQUIRED. Array as defined in (#server_metadata_ldp_vc).
   * `type`: REQUIRED. Array as defined in (#server_metadata_ldp_vc). The Credential issued by the Credential Issuer MUST at least contain the values listed in this claim.
   * `credentialSubject`: OPTIONAL. An object as defined in (#authorization_ldp_vc).
@@ -2033,7 +2033,7 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.  
 
-* `doctype`: REQUIRED when the `credential_identifier` was not present in the Credential Request. MUST NOT be used otherwise. String as defined in (#server_metadata_mso_mdoc). The Credential issued by the Credential Issuer MUST at least contain the values listed in this claim.
+* `doctype`: REQUIRED when the `credential_identifier` is not present in the Credential Request. MUST NOT be used otherwise. String as defined in (#server_metadata_mso_mdoc). The Credential issued by the Credential Issuer MUST at least contain the values listed in this claim.
 * `claims`: OPTIONAL. An object as defined in (#server_metadata_mso_mdoc).
 
 The following is a non-normative example of a Credential Request with Credential format `mso_mdoc`:
@@ -2085,7 +2085,7 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.
 
-* `vct`: REQUIRED when the `credential_identifier` was not present in the Credential Request. MUST NOT be used otherwise. String as defined in (#server_metadata_sd_jwt_vc). This claim contains the type values the Wallet requests authorization for at the Credential Issuer.
+* `vct`: REQUIRED when the `credential_identifier` is not present in the Credential Request. MUST NOT be used otherwise. String as defined in (#server_metadata_sd_jwt_vc). This claim contains the type value of the Credential the Wallet requests the Credential Issuer to issue.
 * `claims`: OPTIONAL. An object as defined in (#server_metadata_sd_jwt_vc).
 
 The following is a non-normative example of a Credential Request with Credential format `vc+sd-jwt`.
