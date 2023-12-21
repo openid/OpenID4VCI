@@ -270,7 +270,7 @@ The following diagram is based on the Credential Issuer initiated flow, as illus
         |   interacts    |                                                    |
         |--------------->|                                                    |
         |                |                                                    |
-        |                |  (4) Token Request (Pre-Authorized Code, pin)      |
+        |                |  (4) Token Request (Pre-Authorized Code, tx_code)  |
         |                |--------------------------------------------------->|
         |                |      Token Response (access_token)                 |
         |                |<---------------------------------------------------|
@@ -1195,15 +1195,15 @@ Cache-Control: no-store
 
 # Notification Endpoint {#notification_endpoint}
 
-This endpoint is used by the Wallet to notify the Credential Issuer whether a Credential has been successfully received or not. It enables the Credential Issuer to take subsequent actions after issuance, depending on whether the Credential has been accepted and successfully stored by the Wallet, rejected by the Wallet, or errors or other unforeseen circumstances have occurred during the Wallet's processing. The Credential Issuer needs to return the `notification_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL.
+This endpoint is used by the Wallet to notify the Credential Issuer of certain events for issued credentials. These events enable the Credential Issuer to take subsequent actions after issuance. The Credential Issuer needs to return the `notification_id` in the Credential Response or a Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL.
 
 The Wallet MUST present to the Notification Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). 
 
 Note: A Credential Issuer that requires a request to the Notification Endpoint MUST ensure the Access Token issued by the Authorization Server is valid at the Notification Endpoint.
 
-The notification from the Wallet is idempotent. The Credential Issuer MUST return success even if it receives multiple identical calls from the Wallet for the same `notification_id`s.
+The notification from the Wallet is idempotent. When the Credential Issuer receives multiple identical calls from the Wallet for the same `notification_id`s, it returns success.
 
-The Wallet MAY retry if the call to this endpoint fails for a temporary reason. The Credential Issuer SHOULD pre-determine the amount of time within which it expects the notification. Therefore, even a well-formed notification from the Wallet could fail if received by the Credential Issuer after this time period. The Credential Issuer may not receive the notification, meaning it is unknown whether the Wallet successfully stored the credential or not - it is left to the Credential Issuer to decide how to proceed in this case.
+The Wallet MAY retry if a notification request fails. There are no guarantees that a Credential Issuer receives a notification within a certain time period or at all.
 
 Communication with the Notification Endpoint MUST utilize TLS.
 
@@ -1211,12 +1211,11 @@ Communication with the Notification Endpoint MUST utilize TLS.
 
 The Wallet sends an HTTP POST request to the Notification Endpoint with the following parameters in the entity-body and using the `application/json` media type. The Wallet MUST send one Notification Request per Credential issued.
 
-* `credential`: Oject describing status of the Credential issuance of which the Wallet has requested in the Credential or Batch Credential Request. It consists of the following parameters:
-  * `notification_id`: REQUIRED. String received in Credential Response or Batch Credential Response.
-  * `status`: REQUIRED. Status whether the credential issuance was successful or not. It MUST be a case sensitive string whose value is either `success`, `failure` or `deleted`. `success` is to be used when Credential was successfully stored in the Wallet. `deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `failure` is to be used.
-  * `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
+* `notification_id`: REQUIRED. String received in Credential Response or Batch Credential Response.
+* `event`: REQUIRED. Type of the notification event. It MUST be a case sensitive string whose value is either `credential_accepted`, `credential_failure` or `credential_deleted`. `credential_accepted` is to be used when the Credential was successfully accepted by the user and stored in the Wallet. `credential_deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `credential_failure` is to be used.
+* `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
-Below is a non-normative example of a Notification Request when credential issuance was successful:
+Below is a non-normative example of a Notification Request when a credential was successfully accepted by the End-User:
 
 ```
 POST /notification HTTP/1.1
@@ -1225,14 +1224,12 @@ Content-Type: application/json
 Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
-  "credential": {
-    "notification_id": "3fwe98js",
-    "status": "success"
-  }
+  "notification_id": "3fwe98js",
+  "event": "credential_accepted"
 }
 ```
 
-Below is a non-normative example of a Notification Request when credential issuance was unsuccessful:
+Below is a non-normative example of a Notification Request when a credential was deleted by the End-User:
 
 ```
 POST /notification HTTP/1.1
@@ -1241,11 +1238,9 @@ Content-Type: application/json
 Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
-  "credential": {
-    "notification_id": "3fwe98js",
-    "status": "failure",
-    "error_description": "..."
-  }
+  "notification_id": "3fwe98js",
+  "event": "credential_deleted",
+  "error_description": "..."
 }
 ```
 
@@ -1263,7 +1258,7 @@ HTTP/1.1 204 No Content
 
 If the Notification Request does not contain an Access Token or contains an invalid Access Token, the Notification Endpoint returns an Authorization Error Response such as defined in section 3 of [@!RFC6750].
 
-When `notification_id` value is invalid, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the JSON-encoded response body:
+When the `notification_id` value is invalid, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the JSON-encoded response body:
 
 * `error`: REQUIRED. A key at the top level of the object, the value of which SHOULD be the following ASCII [@!USASCII] error code:
   * `invalid_notification_id`: The `notification_id` in the Notification Request was invalid.
@@ -1271,7 +1266,7 @@ When `notification_id` value is invalid, the HTTP response MUST use the HTTP sta
 
 It is at the discretion of the Wallet whether to retry the request or not.
 
-It is up to the Issuer to decide how to proceed after returning an error response.
+It is at the discretion of the Issuer to decide how to proceed after returning an error response.
 
 The following is a non-normative example of an Notification Error Response where an invalid `notification_id` value was used:
 
@@ -1438,7 +1433,7 @@ The Wallet is supposed to detect signs of fraudulent behavior related to the Cre
 
 If an adversary is able to get hold of a key proof defined in (#proof_types), the adversary could get a Credential issued that is bound to a key pair controlled by the victim.
 
-Note: For the attacker to be able to present to the Verifier a Credential bound to a replayed Key Proof, the attacker also needs to obtain the victim's private key. To limit this, servers are RECOMMENDED to check how the Wallet protects the private keys, using mechanisms such as Key Based Client Authentication defined in [@I-D.looker-oauth-attestation-based-client-auth].
+Note: For the attacker to be able to present to the Verifier a Credential bound to a replayed Key Proof, the attacker also needs to obtain the victim's private key. To limit this, servers are RECOMMENDED to check how the Wallet protects the private keys, using mechanisms such as Key Based Client Authentication defined in [@!I-D.ietf-oauth-attestation-based-client-auth].
 
 `nonce` parameter is the primary countermeasure against key proof replay. To further narrow down the attack vector, the Credential Issuer SHOULD bind a unique `nonce` parameter to the respective Access Token.
 
@@ -1634,9 +1629,12 @@ TBD
       <organization>Microsoft</organization>
     </author>
     <author fullname="Michael B. Jones">
-      <organization>Microsoft</organization>
+      <organization>Self-Issued Consulting</organization>
     </author>
-   <date day="1" month="January" year="2023"/>
+    <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
+      <organization>sprind.org</organization>
+    </author>
+   <date day="28" month="November" year="2023"/>
   </front>
 </reference>
 
@@ -1770,21 +1768,18 @@ TBD
       <front>
         <title>OpenID for Verifiable Presentations</title>
         <author initials="O." surname="Terbu" fullname="Oliver Terbu">
-         <organization>ConsenSys Mesh</organization>
+         <organization>Mattr</organization>
         </author>
         <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
-          <organization>yes.com</organization>
+          <organization>sprind.org</organization>
         </author>
         <author initials="K." surname="Yasuda" fullname="Kristina Yasuda">
           <organization>Microsoft</organization>
         </author>
-        <author initials="A." surname="Lemmon" fullname="Adam Lemmon">
-          <organization>Convergence.tech</organization>
-        </author>
         <author initials="T." surname="Looker" fullname="Tobias Looker">
           <organization>Mattr</organization>
         </author>
-       <date day="20" month="June" year="2022"/>
+       <date day="29" month="November" year="2022"/>
       </front>
 </reference>
 
@@ -1825,30 +1820,142 @@ TBD
           <author fullname="Vladimir Dzhuvinov">
             <organization>Connect2id</organization>
           </author>
-          <date day="8" month="November" year="2023"/>
+          <date day="4" month="December" year="2023"/>
         </front>
 </reference>
 
+<reference anchor="IANA.OAuth.Parameters" target="https://www.iana.org/assignments/oauth-parameters">
+  <front>
+    <title>OAuth Parameters</title>
+    <author>
+      <organization>IANA</organization>
+    </author>
+    <date/>
+  </front>
+</reference>
+
+<reference anchor="IANA.MediaTypes" target="https://www.iana.org/assignments/media-types">
+  <front>
+    <title>Media Types</title>
+    <author>
+      <organization>IANA</organization>
+    </author>
+    <date/>
+  </front>
+</reference>
 
 # IANA Considerations
 
 ## Sub-Namespace Registration
 
-This section registers the value "urn:ietf:params:oauth:grant-type:pre-authorized_code" in the IANA "OAuth URI" registry established by "An IETF URN Sub-Namespace for OAuth" [@!RFC6755].
+This specification registers the following URN in the IANA "OAuth URI" registry [@!IANA.OAuth.Parameters] established by [@!RFC6755].
 
 * URN: urn:ietf:params:oauth:grant-type:pre-authorized_code
 * Common Name: Pre-Authorized Code
-* Change Controller: AB/Connect Working Group - openid-specs-ab@lists.openid.net
-* Specification Document: (#token_request) of this document
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token_request) of this spedification
+
+## OAuth Parameters Registry
+
+This specification registers the following parameter names in the IANA "OAuth Parameters" registry [@!IANA.OAuth.Parameters] established by [@!RFC6749].
+
+* Parameter Name: wallet_issuer
+* Parameter Usage Location: authorization request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#credential-authz-request) of this specification
+
+* Parameter Name: user_hint
+* Parameter Usage Location: authorization request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#credential-authz-request) of this specification
+
+* Parameter Name: issuer_state
+* Parameter Usage Location: authorization request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#credential-authz-request) of this specification
+
+* Parameter Name: pre-authorized_code
+* Parameter Usage Location: token request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token_request) of this specification
+
+* Parameter Name: tx_code
+* Parameter Usage Location: token request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token_request) of this specification
+
+* Parameter Name: c_nonce
+* Parameter Usage Location: token response
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token-response) of this specification
+
+* Parameter Name: c_nonce_expires_in
+* Parameter Usage Location: token response
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token-response) of this specification
+
+## OAuth Dynamic Client Registration Metadata Registry
+
+This specification registers the following client metadata name in the IANA "OAuth Dynamic Client Registration Metadata" registry [@!IANA.OAuth.Parameters] established by [@!RFC7591].
+
+* Client Metadata Name: credential_offer_endpoint
+* Client Metadata Description: Credential Offer Endpoint
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#credential_offer_endpoint) of this specification
+
 
 ## Well-Known URI Registry
 
-This specification registers the well-known URI defined in (#credential_issuer_wellknown) in the IANA Well-Known URI registry defined in RFC 5785 [@!RFC5785].
+This specification registers the following well-known URI in the IANA "Well-Known URI" registry established by [@!RFC5785].
 
 * URI suffix: openid-credential-issuer
-* Change controller: AB/Connect Working Group - openid-specs-ab@lists.openid.net
-* Specification document: (#credential_issuer_wellknown) of this document
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Specification document: (#credential-issuer-wellknown) of this document
 * Related information: (none)
+
+## Media Types Registry
+
+This specification registers the following media types in the IANA "Media Types" registry [@!IANA.MediaTypes] in the manner described in [@!RFC6838].
+
+* Type name: `application`
+* Subtype name: `openid4vci-proof+jwt`
+* Required parameters: n/a
+* Optional parameters: n/a
+* Encoding considerations: Uses JWS Compact Serialization, as specified in [@!RFC7515].
+* Security considerations: See the Security Considerations in [@!RFC7519].
+* Interoperability considerations: n/a
+* Published specification: (#jwt-proof-type) of this specification
+* Applications that use this media type: Applications that issue and store verifiable credentials
+* Additional information:
+  - Magic number(s): n/a
+  - File extension(s): n/a
+  - Macintosh file type code(s): n/a
+* Person & email address to contact for further information: Torsten Lodderstedt, torsten@lodderstedt.net
+* Intended usage: COMMON
+* Restrictions on usage: none
+* Author: Torsten Lodderstedt, torsten@lodderstedt.net
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Provisional registration? No
+
+* Type name: `application`
+* Subtype name: `openid4vci-proof+cwt`
+* Required parameters: n/a
+* Optional parameters: n/a
+* Encoding considerations: Binary CBOR, as specified in [@!RFC9052]
+* Security considerations: See the Security Considerations in [@!RFC8392].
+* Interoperability considerations: n/a
+* Published specification: (#cwt-proof-type) of this specification
+* Applications that use this media type: Applications that issue and store verifiable credentials
+* Additional information:
+  - Magic number(s): n/a
+  - File extension(s): n/a
+  - Macintosh file type code(s): n/a
+* Person & email address to contact for further information: Torsten Lodderstedt, torsten@lodderstedt.net
+* Intended usage: COMMON
+* Restrictions on usage: none
+* Author: Torsten Lodderstedt, torsten@lodderstedt.net
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Provisional registration? No
 
 # Acknowledgements {#Acknowledgements}
 
