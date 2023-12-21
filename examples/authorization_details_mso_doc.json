@@ -1,7 +1,7 @@
 [
     {
         "type":"openid_credential",
-        "credentials_supported_id": "org.iso.18013.5.1.mDL",
+        "credential_configuration_id": "org.iso.18013.5.1.mDL",
         "claims": {
             "org.iso.18013.5.1": {
                 "given_name": {},
