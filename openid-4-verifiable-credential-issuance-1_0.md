@@ -67,7 +67,7 @@ Credential (or Verifiable Credential):
 :  A Credential Dataset signed by an Issuer, whose integrity can be cryptographically verified. This can be in any Credential Format. In this specification, the term "Verifiable Credential" is also referred to as "Credential".
 
 Credential Format:
-:  A format used to represent a Verifiable Credential. The exact parameters required to describe a Credential Format are defined in the Credential Format Profile. Definition of credential formats is out of scope for this specification. Examples for Credential Formats are W3C Verifiable Credentials [@VC_DATA], SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] and ISO/IEC 18013-5 mDL [@ISO.18013-5].
+:  A format used to represent a Verifiable Credential. The exact parameters required to describe a Credential Format are defined in the Credential Format Profile. Definition of Credential Formats is out of scope for this specification. Examples for Credential Formats are W3C Verifiable Credentials [@VC_DATA], SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] and ISO/IEC 18013-5 mDL [@ISO.18013-5].
 
 Credential Format Profile:
 :  Sets of parameters specific to individual Credential Formats. Credential Format Profiles for W3C Verifiable Credentials [@VC_DATA] and ISO/IEC 18013-5 mDL [@ISO.18013-5] are provided in (#format_profiles). Other specifications or deployments can define their own Credential Format Profiles using the extension points defined in this specification.
