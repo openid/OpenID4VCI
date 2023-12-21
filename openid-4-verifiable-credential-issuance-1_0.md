@@ -766,7 +766,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 The Client MAY request encrypted responses by providing its encryption parameters in the Credential Request.
 
-The Credential Issuer MAY require encrypted responses by including `credential_response_encryption` object in the Credential Issuer Metadata.
+The Credential Issuer indicates support for the encrypted responses by including `credential_response_encryption` parameter in the Credential Issuer Metadata.
 
 ### Key Proof Types {#proof_types}
 
