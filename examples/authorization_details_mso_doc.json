@@ -1,8 +1,7 @@
 [
     {
-        "type": "openid_credential",
-        "format": "mso_doc",
-        "doctype": "org.iso.18013.5.1.mDL",
+        "type":"openid_credential",
+        "credentials_supported_id": "org.iso.18013.5.1.mDL",
         "claims": {
             "org.iso.18013.5.1": {
                 "given_name": {},

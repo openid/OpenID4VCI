@@ -1,12 +1,8 @@
 [
     {
         "type": "openid_credential",
-        "format": "jwt_vc_json",
+        "credentials_supported_id": "UniversityDegreeCredential",
         "credential_definition": {
-            "type": [
-                "VerifiableCredential",
-                "UniversityDegreeCredential"
-            ],
             "credentialSubject": {
                 "given_name": {},
                 "family_name": {},
