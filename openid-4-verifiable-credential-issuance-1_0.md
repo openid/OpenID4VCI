@@ -79,22 +79,19 @@ Credential Configuration:
 : A Credential Configuration describes a particular kind of Credential that a Credential Issuer is offering to issue, along with metadata pertaining to the issuance process and the issued Credentials. A Credential Configuration references a Credential Format and specifies the corresponding parameters given in the Credential Format Profile. Furthermore it includes information about requesting Credentials using this Credential Configuration, information on cryptographic methods and algorithms supported for issuance, and display information to be used by the Wallet. A Credential Configuration is identified by a Credential Configuration Identifier string that is unique to an Issuer.
 
 Presentation:
-: Data that is presented to a specific verifier, derived from one or more Verifiable Credentials that can be from the same or different Credential Issuers.
-
-Verifiable Presentation (VP):
-:  A Holder-signed Credential whose integrity can be cryptographically verified to provide Cryptographic Holder Binding. It can be of any format used in the Issuer-Holder-Verifier Model, including, but not limited to those defined in [@VC_DATA] and [@ISO.18013-5].
+: Data that is presented to a specific verifier, derived from one or more Verifiable Credentials that can be from the same or different Credential Issuers. It can be of any format used in the Issuer-Holder-Verifier Model, including, but not limited to those defined in [@VC_DATA] and [@ISO.18013-5].
 
 Credential Issuer (or Issuer):
 :  An entity that issues Verifiable Credentials. In the context of this specification, the Credential Issuer acts as an OAuth 2.0 Authorization Server (see [@!RFC6749]).
 
 Holder:
-:  An entity that receives Verifiable Credentials and has control over them to present them to the Verifiers as Verifiable Presentations.
+:  An entity that receives Verifiable Credentials and has control over them to present them to the Verifiers as Presentations.
 
 Verifier:
-:  An entity that requests, receives, and validates Verifiable Presentations.
+:  An entity that requests, receives, and validates Presentations.
 
 Issuer-Holder-Verifier Model:
-:  A model for exchanging claims, where claims are issued in the form of Verifiable Credentials independent of the process of presenting them as Verifiable Presentations to the Verifiers. An issued Verifiable Credential can be (but is not necessarily) used multiple times.
+:  A model for exchanging claims, where claims are issued in the form of Verifiable Credentials independent of the process of presenting them as  Presentations to the Verifiers. An issued Verifiable Credential can be (but is not necessarily) used multiple times.
 
 Holder Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential.
@@ -140,7 +137,7 @@ Existing OAuth 2.0 mechanisms are extended as following:
 * A new authorization details [@!RFC9396] type `openid_credential` is defined to convey the details about the Credentials (including Credential Dataset, formats, and types) the Wallet wants to obtain (see (#authorization-details)).
 * New token response error codes `authorization_pending` and `slow_down` are added to allow for deferred authorization of Credential issuance. These error codes are supported for the Pre-Authorized Code grant type.
 * Client metadata is used to convey Wallet's metadata. A new metadata parameter `credential_offer_endpoint` is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (see (#client-metadata)).
-* Authorization Endpoint: An additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated Credential Offer (see (#credential-authz-request)). Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Verifiable Presentations from the calling Wallet during Authorization Request processing.
+* Authorization Endpoint: An additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated Credential Offer (see (#credential-authz-request)). Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Presentations from the calling Wallet during Authorization Request processing.
 * Token Endpoint: optional response parameters `c_nonce` and `c_nonce_expires_in` are added to the Token Endpoint, Credential Endpoint and Batch Credential Endpoint to provide the Client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential Endpoint (see (#token-response)).
 
 ## Core Concepts
