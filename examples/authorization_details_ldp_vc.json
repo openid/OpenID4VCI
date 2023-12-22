@@ -1,7 +1,7 @@
 [
     {
         "type": "openid_credential",
-        "credentials_supported_id": "UniversityDegree_LDP_VC",
+        "credential_configuration_id": "UniversityDegree_LDP_VC",
         "credential_definition": {
             "credentialSubject": {
                 "given_name": {},
