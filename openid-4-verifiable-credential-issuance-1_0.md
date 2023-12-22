@@ -2292,6 +2292,7 @@ The value of the `credential` claim in the Credential Response MUST be a string 
    
    -13
 
+   * clarified that logo can is a uri and not a url only
    * added a Notification Endpoint used by the Wallet to notify the Credential Issuer of certain events for issued Credentials
    * completed IANA registrations section
    * clarified description of a `mandatory` claim
