@@ -449,7 +449,7 @@ Note: Applications MAY combine authorization details of type `openid_credential`
 
 In addition to a mechanism defined in (#credential-authz-request), Credential Issuers MAY support requesting authorization to issue a Credential using OAuth 2.0 scope parameter.
 
-When the Wallet does not know which scope value to use to request issuance of a certain Credential, it can discover it using the `scope` Credential Issuer metadata parameter defined in (#credential-issuer-parameters). When the flow starts with a Credential Offer, the Wallet can use the `credential_configurations_offered` parameter values to identify object(s) in the `credential_configurations_supported` map in the Credential Issuer metadata parameter and use `scope` parameter value from that object.
+When the Wallet does not know which scope value to use to request issuance of a certain Credential, it can discover it using the `scope` Credential Issuer metadata parameter defined in (#credential-issuer-parameters). When the flow starts with a Credential Offer, the Wallet can use the `credential_configurations` parameter values to identify object(s) in the `credential_configurations_supported` map in the Credential Issuer metadata parameter and use `scope` parameter value from that object.
 
 The Wallet can discover the scope values using other options such as normative text in a profile of this specification that defines scope values along with a description of their semantics.
 
