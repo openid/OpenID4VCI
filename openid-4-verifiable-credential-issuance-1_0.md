@@ -1034,11 +1034,11 @@ The Client can request issuance of multiple Credentials of certain types and for
 
 ## Batch Credential Request {#batch-credential_request}
 
-The Batch Credential Endpoint allows a Client to send multiple Credential Request objects (see (#credential_request)) to request the issuance of multiple Credentials at once. A Batch Credential Request MUST be sent as a JSON-encoded object using the `application/json` media type.
+The Batch Credential Endpoint allows a Client to send multiple Credential Request objects (see (#credential_request)) to request the issuance of multiple Credentials at once. A Batch Credential Request MUST be sent as a JSON object using the `application/json` media type.
 
-The following keys are used in the Batch Credential Request:
+The following claims are used in the Batch Credential Request:
 
-* `credential_requests`: REQUIRED. Array that contains Credential Request objects as defined in (#credential_request).
+* `credential_requests`: REQUIRED. Array that contains Credential Request objects, as defined in (#credential_request).
 
 Below is a non-normative example of a Batch Credential Request:
 
@@ -1077,11 +1077,11 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Batch Credential Response {#batch-credential_response}
 
-A successful Batch Credential Response MUST contain all the requested Credentials. The Batch Credential Response MUST be sent as a JSON-encoded object using the `application/json` media type.
+A successful Batch Credential Response MUST contain all the requested Credentials. The Batch Credential Response MUST be sent as a JSON object using the `application/json` media type.
 
 The following claims are used in the Batch Credential Response:
 
-* `credential_responses`: REQUIRED. Array that contains Credential Response objects as defined in (#credential_request) and/or Deferred Credential Response objects as defined in (#deferred-credential_request). Every entry of the array corresponds to the Credential Request object at the same array index in the `credential_requests` parameter of the Batch Credential Request.
+* `credential_responses`: REQUIRED. Array that contains Credential Response objects, as defined in (#credential_request), and/or Deferred Credential Response objects, as defined in (#deferred-credential_request). Every entry of the array corresponds to the Credential Request object at the same array index in the `credential_requests` parameter of the Batch Credential Request.
 * `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response). 
 * `c_nonce_expires_in`: OPTIONAL. The `c_nonce_expires_in` as defined in (#credential-response).
 
@@ -1106,7 +1106,7 @@ Cache-Control: no-store
 }
 ```
 
-Below is a non-normative example of a Batch Credential Response that contains Credential Response and Deferred Credential Response objects:
+Below is a non-normative example of a Batch Credential Response that contains Deferred Credential Response and Credential Response objects:
 
 ```
 HTTP/1.1 200 OK
@@ -1134,15 +1134,15 @@ The Batch Credential Endpoint MUST respond with an HTTP 400 (Bad Request) status
 
 Error codes extensions defined in (#credential-error-response) apply.
 
-The Batch Credential Request MUST fail entirely if there is even one Credential failed to be issued. `transaction_id` MUST NOT be returned in this case.
+The Batch Credential Request MUST fail entirely if there is even one Credential that failed to be issued. `transaction_id` MUST NOT be returned in this case.
 
-When the Credential Issuer requires `proof` objects to be present in the Batch Credential Request, but does not receive them, it will return a Batch Credential Error Response with a `c_nonce` using `invalid_proof` error code as defined in (#issuer-provided-nonce).
+When the Credential Issuer requires `proof` objects to be present in the Batch Credential Request, but does not receive them, it will return a Batch Credential Error Response with a `c_nonce` using `invalid_proof` error code, as defined in (#issuer-provided-nonce).
 
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
 This endpoint is used to issue a Credential previously requested at the Credential Endpoint or Batch Credential Endpoint in cases where the Credential Issuer was not able to immediately issue this Credential. Support for this endpoint is OPTIONAL.
 
-The Wallet MUST present to the Deferred Endpoint an Access Token valid for the issuance of the Credential previously requested at the Credential Endpoint or the Batch Credential Endpoint. 
+The Wallet MUST present an Access Token to the Deferred Endpoint that is valid for the issuance of the Credential previously requested at the Credential Endpoint or the Batch Credential Endpoint.
 
 Communication with the Deferred Credential Endpoint MUST utilize TLS. 
 
@@ -1150,11 +1150,11 @@ Communication with the Deferred Credential Endpoint MUST utilize TLS.
 
 The Deferred Credential Request is an HTTP POST request. It MUST be sent using the `application/json` media type.
 
-The following claims are used in the Batch Credential Response:
+The following claims are used in the Batch Credential Request:
 
 * `transaction_id`: REQUIRED. String identifying a Deferred Issuance transaction.
 
-Credential Issuer MUST invalidate `transaction_id` after the Credential for which it was meant was obtained by the Wallet.
+The Credential Issuer MUST invalidate the `transaction_id` after the Credential for which it was meant has been obtained by the Wallet.
 
 The following is a non-normative example of a Deferred Credential Request:
 
@@ -1171,9 +1171,9 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Deferred Credential Response {#deferred-credential_response}
 
-The Deferred Credential Response uses the `format` and `credential` parameters as defined in (#credential-response).
+The Deferred Credential Response uses the `format` and `credential` parameters defined in (#credential-response).
 
-Deferred Credential Response MUST be sent using the `application/json` media type.
+The Deferred Credential Response MUST be sent using the `application/json` media type.
 
 ## Deferred Credential Error Response {#deferred-credential_error_response}
 
@@ -1181,8 +1181,8 @@ When the Deferred Credential Request is invalid or the Credential is not availab
 
 The following additional error codes are specified in addition to those already defined in (#credential-request-errors):
 
-* `issuance_pending` - The Credential issuance is still pending. The error response SHOULD also contain the `interval` member, determining the minimum amount of time in seconds that the Wallet needs to wait before providing a new request to the Deferred Credential Endpoint.  If `interval` member is missing or its value is not provided, the Wallet MUST use `5` as the default value.
-* `invalid_transaction_id` - The Deferred Credential Request contains an invalid `transaction_id`. This error occurs when the `transaction_id` was not issued by the respective Credential Issuer or it was already used to obtain the Credential.
+* `issuance_pending`: The Credential issuance is still pending. The error response SHOULD also contain the `interval` member, determining the minimum amount of time in seconds that the Wallet needs to wait before providing a new request to the Deferred Credential Endpoint.  If `interval` member is not present, the Wallet MUST use `5` as the default value.
+* `invalid_transaction_id`: The Deferred Credential Request contains an invalid `transaction_id`. This error occurs when the `transaction_id` was not issued by the respective Credential Issuer or it was already used to obtain a Credential.
 
 This is a non-normative example of a Deferred Credential Error Response:
 
