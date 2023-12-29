@@ -603,7 +603,7 @@ grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
 
 Token Responses are made as defined in [@!RFC6749].
 
-The AS might decide to authorize issuance of multiple instances for each Credential requested in the Authorization Request. Each Credential instance is described using the same entry in the `credential_configurations_supported` Credential Issuer metadata, but contains different claim values or different subset of claims within the Claims Set identified by the Credential description.
+The AS might decide to authorize issuance of multiple instances for each Credential requested in the Authorization Request. Each Credential instance is described using the same entry in the `credential_configurations_supported` Credential Issuer metadata, but contains different claim values or different subset of claims within the claims set identified by the `credential_configuration_id`.
 
 In addition to the response parameters defined in [@!RFC6749], the AS MAY return the following parameters:
 
