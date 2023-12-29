@@ -1142,7 +1142,7 @@ When the Credential Issuer requires `proof` objects to be present in the Batch C
 
 This endpoint is used to issue a Credential previously requested at the Credential Endpoint or Batch Credential Endpoint in cases where the Credential Issuer was not able to immediately issue this Credential. Support for this endpoint is OPTIONAL.
 
-The Wallet MUST present to the Deferred Endpoint an Access Token valid for the issuance of the Credential previously requested at the Credential Endpoint or the Batch Credential Endpoint. 
+The Wallet MUST present an Access Token to the Deferred Endpoint that is valid for the issuance of the Credential previously requested at the Credential Endpoint or the Batch Credential Endpoint. 
 
 Communication with the Deferred Credential Endpoint MUST utilize TLS. 
 
@@ -1202,9 +1202,9 @@ This endpoint is used by the Wallet to notify the Credential Issuer of certain e
 
 The Wallet MUST present to the Notification Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). 
 
-Note: A Credential Issuer that requires a request to the Notification Endpoint MUST ensure the Access Token issued by the Authorization Server is valid at the Notification Endpoint.
+A Credential Issuer that requires a request to the Notification Endpoint MUST ensure the Access Token issued by the Authorization Server is valid at the Notification Endpoint.
 
-The notification from the Wallet is idempotent. When the Credential Issuer receives multiple identical calls from the Wallet for the same `notification_id`, it returns success. Due to the network errors, there are no guarantees that a Credential Issuer receives a notification within a certain time period or at all.
+The notification from the Wallet is idempotent. When the Credential Issuer receives multiple identical calls from the Wallet for the same `notification_id`, it returns success. Due to the network errors, there are no guarantees that a Credential Issuer will receive a notification within a certain time period or at all.
 
 Communication with the Notification Endpoint MUST utilize TLS.
 
@@ -1212,8 +1212,8 @@ Communication with the Notification Endpoint MUST utilize TLS.
 
 The Wallet sends an HTTP POST request to the Notification Endpoint with the following parameters in the entity-body and using the `application/json` media type. If the Wallet supports the Notification Endpoint, the Wallet MAY send one or more Notification Requests per Credential issued.
 
-* `notification_id`: REQUIRED. String received in Credential Response or Batch Credential Response.
-* `event`: REQUIRED. Type of the notification event. It MUST be a case sensitive string whose value is either `credential_accepted`, `credential_failure` or `credential_deleted`. `credential_accepted` is to be used when the Credential was successfully stored in the Wallet, with or without user action. `credential_deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `credential_failure` is to be used.
+* `notification_id`: REQUIRED. String received in the Credential Response or the Batch Credential Response.
+* `event`: REQUIRED. Type of the notification event. It MUST be a case sensitive string whose value is either `credential_accepted`, `credential_failure`, or `credential_deleted`. `credential_accepted` is to be used when the Credential was successfully stored in the Wallet, with or without user action. `credential_deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `credential_failure` is to be used.
 * `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
 Below is a non-normative example of a Notification Request when a credential was successfully accepted by the End-User:
@@ -1247,7 +1247,7 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Successful Notification Response
 
-When the Credential Issuer has successfully received the Notification Request from the Wallet, it MUST respond with the HTTP status code 2xx. The usage of the HTTP status code 204 (No Content) is RECOMMENDED.
+When the Credential Issuer has successfully received the Notification Request from the Wallet, it MUST respond with an HTTP status code in the 2xx range. Use of the HTTP status code 204 (No Content) is RECOMMENDED.
 
 Below is a non-normative example of response to a successful Notification Request:
 
@@ -1257,17 +1257,17 @@ HTTP/1.1 204 No Content
 
 ## Notification Error Response
 
-If the Notification Request does not contain an Access Token or contains an invalid Access Token, the Notification Endpoint returns an Authorization Error Response such as defined in section 3 of [@!RFC6750].
+If the Notification Request does not contain an Access Token or contains an invalid Access Token, the Notification Endpoint returns an Authorization Error Response, as defined in Section 3 of [@!RFC6750].
 
 When the `notification_id` value is invalid, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the JSON-encoded response body:
 
-* `error`: REQUIRED. A key at the top level of the object, the value of which SHOULD be the following ASCII [@!USASCII] error code:
+* `error`: REQUIRED. A name at the top level of the object, the value of which SHOULD be one of the following ASCII [@!USASCII] error codes:
   * `invalid_notification_id`: The `notification_id` in the Notification Request was invalid.
   * `invalid_notification_request`: The Notification Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
 
 It is at the discretion of the Issuer to decide how to proceed after returning an error response.
 
-The following is a non-normative example of an Notification Error Response where an invalid `notification_id` value was used:
+The following is a non-normative example of a Notification Error Response when an invalid `notification_id` value was used:
 
 ```
 HTTP/1.1 400 Bad Request
