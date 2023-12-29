@@ -414,7 +414,7 @@ There are two possible ways to request issuance of a specific Credential type in
 The request parameter `authorization_details` defined in Section 2 of [@!RFC9396] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following parameters to be used with this authorization details type:
 
 * `type`: REQUIRED. String that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
-* `credential_configuration_id`: REQUIRED. String specifying a unique identifier of the Credential being described in the `credential_configurations_supported` map in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). The referenced object in the `credential_configurations_supported` map conveys the details, such as the format, for issuance of the requested Credential. This specification defines Credential Format specific Issuer Metadata in (#format_profiles).
+* `credential_configuration_id`: REQUIRED. String specifying a unique identifier of the Credential being described in the `credential_configurations_supported` parameter in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). The referenced object in the `credential_configurations_supported` parameter conveys the details, such as the format, for issuance of the requested Credential. This specification defines Credential Format specific Issuer Metadata in (#format_profiles).
 
 The following is a non-normative example of an `authorization_details` object:
 
@@ -449,7 +449,7 @@ Note: Applications MAY combine authorization details of type `openid_credential`
 
 In addition to a mechanism defined in (#credential-authz-request), Credential Issuers MAY support requesting authorization to issue a Credential using the OAuth 2.0 `scope` parameter.
 
-When the Wallet does not know which scope value to use to request issuance of a certain Credential, it can discover it using the `scope` Credential Issuer metadata parameter defined in (#credential-issuer-parameters). When the flow starts with a Credential Offer, the Wallet can use the `credential_configurations` parameter values to identify object(s) in the `credential_configurations_supported` map in the Credential Issuer metadata parameter and use the `scope` parameter value from that object.
+When the Wallet does not know which scope value to use to request issuance of a certain Credential, it can discover it using the `scope` Credential Issuer metadata parameter defined in (#credential-issuer-parameters). When the flow starts with a Credential Offer, the Wallet can use the `credential_configurations` parameter values to identify object(s) in the `credential_configurations_supported` parameter in the Credential Issuer metadata parameter and use the `scope` parameter value from that object.
 
 The Wallet can discover the scope values using other options such as normative text in a profile of this specification that defines scope values along with a description of their semantics.
 
