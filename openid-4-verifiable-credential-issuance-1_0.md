@@ -2006,7 +2006,7 @@ Wallet Providers may also provide a market place where Issuers can register to b
 
 # Credential Format Profiles {#format_profiles}
 
-This specification defines several extension points to accommodate the differences across Credential formats. Sets of Credential format specific parameters or claims referred to as Credential format Identifiers are identified by the Credential format identifier and used at each extension point.
+This specification defines several extension points to accommodate the differences across Credential formats. Sets of Credential format specific parameters or claims referred to as Credential format Identifiers are identified by the Credential format identifier and used at these extension points.
 
 This section defines Credential Format Profiles for a few of the commonly used Credential formats. Other specifications or deployments can define their own Credential Format Profiles.
 
@@ -2014,11 +2014,11 @@ This section defines Credential Format Profiles for a few of the commonly used C
 
 Sections 6.1 and 6.2 of [@VC_DATA] define how Verifiable Credentials MAY or MAY NOT use JSON-LD. As acknowledged in Section 4.1 of [@VC_DATA], implementations can behave differently regarding processing of the `@context` property whether JSON-LD is used or not.
 
-This specification therefore differentiates the following three Credential formats for W3C Verifiable Credentials:
+This specification therefore differentiates between the following three Credential formats for W3C Verifiable Credentials:
 
 * VC signed as a JWT, not using JSON-LD (`jwt_vc_json`)
 * VC signed as a JWT, using JSON-LD (`jwt_vc_json-ld`)
-* VC secured using Data Integrity, using JSON-LD, with proof suite requiring Linked Data canonicalization (`ldp_vc`)
+* VC secured using Data Integrity, using JSON-LD, with a proof suite requiring Linked Data canonicalization (`ldp_vc`)
 
 Note: VCs secured using Data Integrity MAY NOT necessarily use JSON-LD and MAY NOT necessarily use proof suites requiring Linked Data canonicalization. Credential Format Profiles for them may be defined in the future versions of this specification.
 
@@ -2032,23 +2032,23 @@ It is on purpose that the Credential Offer does not contain `credentialSubject` 
 
 The Credential format identifier is `jwt_vc_json`.
 
-When the `format` value is `jwt_vc_json`, entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules.
+When the `format` value is `jwt_vc_json`, the entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules.
 
 #### Credential Issuer Metadata {#server_metadata_jwt_vc_json}
 
-The following additional Credential Issuer metadata are defined for this Credential format to be added to the `credential_configurations_supported` parameter in addition to those defined in (#credential-issuer-parameters).
+The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
-* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists at least of the following two sub claims:
-  * `type`: REQUIRED. Array designating the types a certain Credential type supports according to [@VC_DATA], Section 4.3.
+* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of at least the following two parameters:
+  * `type`: REQUIRED. Array designating the types a certain Credential type supports, according to [@VC_DATA], Section 4.3.
   * `credentialSubject`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be an object that includes a following non-exhaustive list of parameters defined by this specification:
-      * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default should be assumed to be `false`.
+      * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default value is `false`.
       * `value_type`: OPTIONAL. String value determining the type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
       * `display`: OPTIONAL. Array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
           * `name`: OPTIONAL. String value of a display name for the claim.
           * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. Array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
-The following is a non-normative example of an object comprising `credential_configurations_supported` parameter of Credential format `jwt_vc_json`:
+The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `jwt_vc_json`:
 
 <{{examples/credential_metadata_jwt_vc_json.json}}
 
@@ -2056,8 +2056,8 @@ The following is a non-normative example of an object comprising `credential_con
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
 
-* `credential_definition`: OPTIONAL. Object containing a detailed description of the Credential consisting of the following sub claim:
-  * `credentialSubject`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. The most deeply nested value MUST be an empty object. This object indicates the claims the Wallet would like to turn up in the Credential to be issued.
+* `credential_definition`: OPTIONAL. Object containing a detailed description of the Credential consisting of the following parameter:
+  * `credentialSubject`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. The most deeply nested value MUST be an empty object. This object indicates the claims the Wallet would like to be present in the Credential to be issued.
 
 Note that the `type` is referenced in the `credential_configurations_supported` object in the Credential Issuer metadata.
 
@@ -2069,8 +2069,8 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.  
 
-* `credential_definition`: REQUIRED when the `credential_identifier` was not present in the Credential Request. MUST NOT be used otherwise. Object containing the detailed description of the Credential type. It consists at least of the following sub claims:
-  * `type`: REQUIRED. Array as defined in (#server_metadata_jwt_vc_json). The credential issued by the Credential Issuer MUST at least contain the values listed in this claim.
+* `credential_definition`: REQUIRED when the `credential_identifier` was not present in the Credential Request. It MUST NOT be used otherwise. It is an object containing the detailed description of the Credential type. It consists of at least the following parameters:
+  * `type`: REQUIRED. Array as defined in (#server_metadata_jwt_vc_json). The credential issued by the Credential Issuer MUST contain at least the values listed in this claim.
   * `credentialSubject`: OPTIONAL. Object as defined in (#authorization_jwt_vc_json).
 
 The following is a non-normative example of a Credential Request with Credential format `jwt_vc_json`:
@@ -2085,36 +2085,36 @@ The following is a non-normative example of a Credential Response with Credentia
 
 <{{examples/credential_response_jwt_vc_json.txt}}
 
-### VC Secured using Data Integrity, using JSON-LD, with Proof Suite Requiring Linked Data Canonicalization
+### VC Secured using Data Integrity, using JSON-LD, with a Proof Suite Requiring Linked Data Canonicalization
 
 #### Format Identifier
 
 The Credential format identifier is `ldp_vc`.
 
-When the `format` value is `ldp_vc`, entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules. 
+When the `format` value is `ldp_vc`, the entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules. 
 
-`@context` value in the `credential_definition` object could be used by the Wallet to check whether it supports a certain VC or not. If necessary, the Wallet could apply JSON-LD processing to the Credential issued by the Credential Issuer.
+The `@context` value in the `credential_definition` object can be used by the Wallet to check whether it supports a certain VC or not. If necessary, the Wallet could apply JSON-LD processing to the Credential issued by the Credential Issuer.
 
-Note: Data Integrity used to be called Linked Data Proofs, hence "ldp" in the Credential format identifier.
+Note: Data Integrity used to be called Linked Data Proofs, hence the "ldp" in the Credential format identifier.
 
 #### Credential Issuer Metadata {#server_metadata_ldp_vc}
 
-The following additional Credential Issuer metadata are defined for this Credential format to be added to the `credential_configurations_supported` parameter in addition to those defined in (#credential-issuer-parameters):
+The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters):
 
-* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists at least of the following three sub claims:
+* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of at least the following three parameters:
   * `@context`: REQUIRED. Array as defined in [@VC_DATA], Section 4.1.
-  * `type`: REQUIRED. Array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
+  * `type`: REQUIRED. Array designating the types a certain credential type supports, according to [@VC_DATA], Section 4.3.
   * `credentialSubject`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be an object that includes a following non-exhaustive list of parameters defined by this specification:
- * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default should be assumed to be `false`.
+ * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default value is `false`.
       * `value_type`: OPTIONAL. String value determining the type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
       * `display`: OPTIONAL. Array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
           * `name`: OPTIONAL. String value of a display name for the claim.
           * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. Array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
-It is recommended to define an `@context` value to communicate additional information such as which claims are mandatory-to-be-issued, type of claim value (i.e., string, number, etc.), display properties of a Credential and the order of the claim values when displayed as in (#vc-jwt).
+It is recommended to define an `@context` value to communicate additional information such as which claims are mandatory-to-be-issued, type of claim value (i.e., string, number, etc.), the display properties of a Credential, and the order of the claim values when displayed as in (#vc-jwt).
 
-The following is a non-normative example of an object comprising `credential_configurations_supported` parameter of Credential format `ldp_vc`:
+The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `ldp_vc`:
 
 <{{examples/credential_metadata_ldp_vc.json}}
 
@@ -2122,7 +2122,7 @@ The following is a non-normative example of an object comprising `credential_con
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.  
 
-* `credential_definition`: OPTIONAL. Object containing the detailed description of the Credential consisting of the following sub claim:
+* `credential_definition`: OPTIONAL. Object containing the detailed description of the Credential consisting of the following parameter:
     * `credentialSubject`: OPTIONAL. Object as defined in (#authorization_jwt_vc_json).
 
 Note that the `@context` and `type` are referenced in the `credential_configurations_supported` object in the Credential Issuer metadata.
@@ -2135,9 +2135,9 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.  
 
-* `credential_definition`: REQUIRED when the `credential_identifier` is not present in the Credential Request. MUST NOT be used otherwise. Object containing the detailed description of the Credential type. It consists at least of the following sub claims:
+* `credential_definition`: REQUIRED when the `credential_identifier` is not present in the Credential Request. It MUST NOT be used otherwise. It is an object containing the detailed description of the Credential type. It consists of at least the following parameters:
   * `@context`: REQUIRED. Array as defined in (#server_metadata_ldp_vc).
-  * `type`: REQUIRED. Array as defined in (#server_metadata_ldp_vc). The Credential issued by the Credential Issuer MUST at least contain the values listed in this claim.
+  * `type`: REQUIRED. Array as defined in (#server_metadata_ldp_vc). The Credential issued by the Credential Issuer MUST contain at least the values listed in this claim.
   * `credentialSubject`: OPTIONAL. Object as defined in (#authorization_ldp_vc).
 
 The following is a non-normative example of a Credential Request with Credential format `ldp_vc`:
@@ -2162,9 +2162,9 @@ The following is a non-normative example of a Credential Response with Credentia
 
 The Credential format identifier is `jwt_vc_json-ld`.
 
-When the `format` value is `jwt_vc_json-ld`, entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules.
+When the `format` value is `jwt_vc_json-ld`, the entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules.
 
-`@context` value in the `credential_definition` object could be used by the Wallet to check whether it supports a certain VC or not. If necessary, the Wallet could apply JSON-LD processing to the Credential issued by the Credential Issuer.
+The `@context` value in the `credential_definition` object can be used by the Wallet to check whether it supports a certain VC or not. If necessary, the Wallet could apply JSON-LD processing to the Credential issued by the Credential Issuer.
 
 #### Credential Issuer Metadata
 
@@ -2192,18 +2192,18 @@ The Credential format identifier is `mso_mdoc`.
 
 ### Credential Issuer Metadata {#server_metadata_mso_mdoc}
 
-The following additional Credential Issuer metadata are defined for this Credential format to be added to the `credential_configurations_supported` parameter in addition to those defined in (#credential-issuer-parameters).
+The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
-* `doctype`: REQUIRED. String identifying the Credential type as defined in [@!ISO.18013-5].
+* `doctype`: REQUIRED. String identifying the Credential type, as defined in [@!ISO.18013-5].
 * `claims`: OPTIONAL. Object containing a list of name/value pairs, where the name is a certain `namespace` as defined in [@!ISO.18013-5] (or any profile of it), and the value is an object. This object also contains a list of name/value pairs, where the name is a claim name value that is defined in the respective namespace and is offered in the Credential. The value is an object detailing the specifics of the claim with the following non-exhaustive list of parameters that MAY be included:
-    * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default should be assumed to be `false`.
+    * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default value is `false`.
     * `value_type`: OPTIONAL. String value determining the type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
     * `display`: OPTIONAL. Array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
         * `name`: OPTIONAL. String value of a display name for the claim.
         * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. Array of namespaced claim name values that lists them in the order they should be displayed by the Wallet. The values MUST be two strings separated by a tilde ('~') character, where the first string is a namespace value and a second is a claim name value. For example, `org.iso.18013.5.1~given_name".
 
-The following is a non-normative example of an object comprising `credential_configurations_supported` parameter of Credential format `mso_mdoc`:
+The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `mso_mdoc`:
 
 <{{examples/credential_metadata_mso_mdoc.json}}
 
@@ -2223,7 +2223,7 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.  
 
-* `doctype`: REQUIRED when the `credential_identifier` is not present in the Credential Request. MUST NOT be used otherwise. String as defined in (#server_metadata_mso_mdoc). The Credential issued by the Credential Issuer MUST at least contain the values listed in this claim.
+* `doctype`: REQUIRED when the `credential_identifier` is not present in the Credential Request. It MUST NOT be used otherwise. It is a string as defined in (#server_metadata_mso_mdoc). The Credential issued by the Credential Issuer MUST contain at least the values listed in this claim.
 * `claims`: OPTIONAL. Object as defined in (#server_metadata_mso_mdoc).
 
 The following is a non-normative example of a Credential Request with Credential format `mso_mdoc`:
@@ -2244,10 +2244,10 @@ The Credential format identifier is `vc+sd-jwt`.
 
 ### Credential Issuer Metadata {#server_metadata_sd_jwt_vc}
 
-The following additional Credential Issuer metadata parameters are defined for this Credential format to be added to the `credentials_supported` parameter in addition to those defined in (#credential-issuer-parameters).
+The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credentials_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
 
-* `vct`: REQUIRED. String designating the type of a Credential as defined in [@!I-D.ietf-oauth-sd-jwt-vc].
+* `vct`: REQUIRED. String designating the type of a Credential, as defined in [@!I-D.ietf-oauth-sd-jwt-vc].
 * `claims`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim about the subject offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be an object that includes a following non-exhaustive list of parameters defined by this specification:
     * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
     * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
@@ -2256,7 +2256,7 @@ The following additional Credential Issuer metadata parameters are defined for t
         * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. An array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
-The following is a non-normative example of an object comprising `credentials_supported` parameter of Credential format `vc+sd-jwt`.
+The following is a non-normative example of an object containing the `credentials_supported` parameter for Credential format `vc+sd-jwt`.
 
 <{{examples/credential_metadata_sd_jwt_vc.json}}
 
@@ -2275,7 +2275,7 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.
 
-* `vct`: REQUIRED when the `credential_identifier` is not present in the Credential Request. MUST NOT be used otherwise. String as defined in (#server_metadata_sd_jwt_vc). This claim contains the type value of the Credential the Wallet requests the Credential Issuer to issue.
+* `vct`: REQUIRED when the `credential_identifier` is not present in the Credential Request. It MUST NOT be used otherwise. It is a string as defined in (#server_metadata_sd_jwt_vc). This claim contains the type value of the Credential that the Wallet requests the Credential Issuer to issue.
 * `claims`: OPTIONAL. An object as defined in (#server_metadata_sd_jwt_vc).
 
 The following is a non-normative example of a Credential Request with Credential format `vc+sd-jwt`.
