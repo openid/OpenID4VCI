@@ -1446,7 +1446,7 @@ Implementations MUST follow [@!BCP195].
 
 Whenever TLS is used, a TLS server certificate check MUST be performed, per [@!RFC6125].
 
-# Implementation Considerations
+# Implementation Considerations {#implementation-considerations}
 
 ## Claim-based Binding of the Credential to the End-User possessing the Credential {#claim-based-binding}
 
@@ -1499,9 +1499,14 @@ Access Tokens represent End-User authorization and consent to issue certain Cred
 
 To sender-constrain Access Tokens, see the recommendations in Section 4.10.1 in [@!I-D.ietf-oauth-security-topics]. If Bearer Access Tokens are stored by the Wallet, they MUST be stored in a secure manner, for example, encrypted using a key stored in a protected key store.
 
-# Privacy Considerations
+# Privacy Considerations {#privacy-considerations}
 
-TBD
+Privacy harms can occur if information about a person is released to another party without the person's consent.
+True consent involves both the person knowing what information is being released and knowing who it is being released to, and for what purpose.
+
+Many of the attacks described in (#security-considerations) are about unautorized parties gaining access to information.
+These attacks must be thwarted to prevent the accompanying privacy harms.
+Likewise, the precautions described in (#implementation-considerations) are also often about preventing privacy harms.
 
 {backmatter}
 
