@@ -2006,7 +2006,7 @@ Wallet Providers may also provide a market place where Issuers can register to b
 
 # Credential Format Profiles {#format_profiles}
 
-This specification defines several extension points to accommodate the differences across Credential formats. Sets of Credential format specific parameters or claims referred to as Credential format Identifiers are identified by the Credential format identifier and used at these extension points.
+This specification defines several extension points to accommodate the differences across Credential formats. Sets of Credential format specific parameters or claims referred to as Credential format identifiers are identified by the Credential format identifier and used at these extension points.
 
 This section defines Credential Format Profiles for a few of the commonly used Credential formats. Other specifications or deployments can define their own Credential Format Profiles.
 
