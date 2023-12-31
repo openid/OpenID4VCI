@@ -2244,7 +2244,7 @@ The Credential format identifier is `vc+sd-jwt`.
 
 ### Credential Issuer Metadata {#server_metadata_sd_jwt_vc}
 
-The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credentials_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
+The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
 
 * `vct`: REQUIRED. String designating the type of a Credential, as defined in [@!I-D.ietf-oauth-sd-jwt-vc].
@@ -2256,7 +2256,7 @@ The following additional Credential Issuer metadata parameters are defined for t
         * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. An array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
-The following is a non-normative example of an object containing the `credentials_supported` parameter for Credential format `vc+sd-jwt`.
+The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `vc+sd-jwt`.
 
 <{{examples/credential_metadata_sd_jwt_vc.json}}
 
