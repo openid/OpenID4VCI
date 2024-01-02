@@ -21,39 +21,35 @@
                 ],
                 "credentialSubject": {
                     "given_name": {
-                        "display": [
-                            {
-                                "name": "Given Name",
-                                "locale": "en-US"
+                        "display": {
+                            "en-US": {
+                                "name": "Given Name"
                             },
-                            {
-                                "name": "名前",
-                                "locale": "ja-JP"
+                            "ja-JP": {
+                                "name": "名前"
                             }
-                        ]
+                        }
                     },
                     "family_name": {
-                        "display": [
-                            {
-                                "name": "Surname",
-                                "locale": "en-US"
+                        "display": {
+                            "en-US": {
+                                "name": "Surname"
                             }
-                        ]
+                        }
                     },
                     "degree": {},
                     "gpa": {
-                        "display": [
-                            {
+                        "display": {
+                            "en-US": {
                                 "name": "GPA"
                             }
-                        ]
+                        }
                     }
                 }
             },
-            "display": [
-                {
+            "display": {
+                "en-US": {
                     "name": "University Credential",
-                    "locale": "en-US",
                     "logo": {
                         "url": "https://exampleuniversity.com/public/logo.png",
                         "alternative_text": "a square logo of a university"
@@ -61,9 +57,8 @@
                     "background_color": "#12107c",
                     "text_color": "#FFFFFF"
                 },
-                {
+                "ja-JP": {
                     "name": "在籍証明書",
-                    "locale": "ja-JP",
                     "logo": {
                         "url": "https://exampleuniversity.com/public/logo.png",
                         "alternative_text": "大学のロゴ"
@@ -71,7 +66,7 @@
                     "background_color": "#12107c",
                     "text_color": "#FFFFFF"
                 }
-            ]
+            }
         },
         {
             "format": "jwt_vc_json",
@@ -88,39 +83,35 @@
                 ],
                 "credentialSubject": {
                     "given_name": {
-                        "display": [
-                            {
-                                "name": "Given Name",
-                                "locale": "en-US"
+                        "display": {
+                            "en-US": {
+                                "name": "Given Name"
                             },
-                            {
-                                "name": "名前",
-                                "locale": "ja-JP"
+                            "ja-JP": {
+                                "name": "名前"
                             }
-                        ]
+                        }
                     },
                     "family_name": {
-                        "display": [
-                            {
-                                "name": "Surname",
-                                "locale": "en-US"
+                        "display": {
+                            "en-US": {
+                                "name": "Surname"
                             }
-                        ]
+                        }
                     },
                     "degree": {},
                     "gpa": {
-                        "display": [
-                            {
+                        "display": {
+                            "en-US": {
                                 "name": "GPA"
                             }
-                        ]
+                        }
                     }
                 }
             },
-            "display": [
-                {
+            "display": {
+                "en-US": {
                     "name": "University Credential",
-                    "locale": "en-US",
                     "logo": {
                         "url": "https://exampleuniversity.com/public/logo.png",
                         "alternative_text": "a square logo of a university"
@@ -128,9 +119,8 @@
                     "background_color": "#12107c",
                     "text_color": "#FFFFFF"
                 },
-                {
+                "ja-JP": {
                     "name": "在籍証明書",
-                    "locale": "ja-JP",
                     "logo": {
                         "url": "https://exampleuniversity.com/public/logo.png",
                         "alternative_text": "大学のロゴ"
@@ -138,7 +128,7 @@
                     "background_color": "#12107c",
                     "text_color": "#FFFFFF"
                 }
-            ],
+            }
         },
         {
             "format": "mso_mdoc",
@@ -149,10 +139,9 @@
             "cryptographic_suites_supported": [
                 "ES256, ES384, ES512"
             ],
-            "display": [
-                {
+            "display": {
+                "en-US": {
                     "name": "Mobile Driving License",
-                    "locale": "en-US",
                     "logo": {
                         "url": "https://examplestate.com/public/mdl.png",
                         "alternative_text": "a square figure of a mobile driving license"
@@ -160,9 +149,8 @@
                     "background_color": "#12107c",
                     "text_color": "#FFFFFF"
                 },
-                {
+                "ja-JP": {
                     "name": "在籍証明書",
-                    "locale": "ja-JP",
                     "logo": {
                         "url": "https://examplestate.com/public/mdl.png",
                         "alternative_text": "大学のロゴ"
@@ -170,28 +158,25 @@
                     "background_color": "#12107c",
                     "text_color": "#FFFFFF"
                 }
-            ],
+            },
             "claims": {
                 "org.iso.18013.5.1": {
                     "given_name": {
-                        "display": [
-                            {
-                                "name": "Given Name",
-                                "locale": "en-US"
+                        "display": {
+                            "en-US": {
+                                "name": "Given Name"
                             },
-                            {
-                                "name": "名前",
-                                "locale": "ja-JP"
+                            "ja-JP": {
+                                "name": "名前"
                             }
-                        ]
+                        }
                     },
                     "family_name": {
-                        "display": [
-                            {
-                                "name": "Surname",
-                                "locale": "en-US"
+                        "display": {
+                            "en-US": {
+                                "name": "Surname"
                             }
-                        ]
+                        }
                     },
                     "birth_date": {}
                 },
@@ -202,15 +187,13 @@
         }
     ],
     "credential_issuer": {
-        "display": [
-            {
-                "name": "Example Issuer",
-                "locale": "en-US"
+        "display": {
+            "en-US": {
+                "name": "Example Issuer"
             },
-            {
-                "name": "サンプル大学",
-                "locale": "ja-JP"
+            "ja-JP": {
+                "name": "サンプル大学"
             }
-        ]
+        }
     }
 }
