@@ -2270,19 +2270,19 @@ While using the Wallet, the End-User notices an indication that the issuance of 
 
 ## Wallet Initiated Issuance during Presentation {#use-case-4}
 
-An End-User comes across a verifier app that is requesting the End-User to present a Credential, e.g., a driving license. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet selects a Credential Issuer capable of issuing the missing Credential and, upon End-User consent, sends the End-User to the Credential Issuer's End-User experience (Web site or app). Once authenticated and consent is provided for the issuance of the Credential into the Wallet, the End-User is redirected back to the Wallet. The Wallet informs the End-User that Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
+An End-User comes across a Verifier app that is requesting the End-User to present a Credential, e.g., a driving license. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet selects a Credential Issuer capable of issuing the missing Credential and, upon End-User consent, sends the End-User to the Credential Issuer's End-User experience (Web site or app). Once authenticated and consent is provided for the issuance of the Credential into the Wallet, the End-User is redirected back to the Wallet. The Wallet informs the End-User that Credential was successfully issued into the Wallet and is ready to be presented to the Verifier app that originally requested presentation of that Credential.
 
 ## Wallet Initiated Issuance during Presentation (Requires Presentation of Additional Credentials During Issuance) {#use-case-5}
 
-An End-User comes across a verifier app that is requesting the End-User to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet then offers the End-User a list of Credential Issuers, which might be based on a Credential Issuer list curated by the Wallet provider. The End-User selects the university of graduation and is subsequently redirected to the corresponding university's website or app.
+An End-User comes across a Verifier app that is requesting the End-User to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet then offers the End-User a list of Credential Issuers, which might be based on a Credential Issuer list curated by the Wallet provider. The End-User selects the university of graduation and is subsequently redirected to the corresponding university's website or app.
 
 The End-User logs into the university, which identifies that the corresponding End-User account is not yet verified. Among various identification options, the End-User opts to present a Credential from the Wallet. The End-User is redirected back to the Wallet to consent to present the requested Credential(s) to the university. Following this, the End-User is redirected back to the university End-User experience. Based on the presented Credential, the university finalizes the End-User verification, retrieves End-User data from its database, and proposes to issue a diploma as a Verifiable Credential.
 
-Upon providing consent, the End-User is sent back to the Wallet. The Wallet informs the End-User Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
+Upon providing consent, the End-User is sent back to the Wallet. The Wallet informs the End-User Credential was successfully issued into the Wallet and is ready to be presented to the Verifier app that originally requested presentation of that Credential.
 
 ## Wallet Initiated Issuance after Installation {#use-case-6}
 
-The End-User installs a new Wallet and executes it. The Wallet offers the End-User a selection of the Credentials that the End-User may obtain from a Credential Issuer, e.g. a national identity credential, a mobile driving license or a public transport ticket. The corresponding Credential Issuers (and their URLs) are pre-configured by the Wallet or follow some discovery processes that are out of scope for this specification. By clicking on one these options corresponding to the Credentials available for the issuance, the Issuance process starts with the flows supported by the Credential Issuer (Pre-Authorized Code flow or Auth Code flow).
+The End-User installs a new Wallet and executes it. The Wallet offers the End-User a selection of the Credentials that the End-User may obtain from a Credential Issuer, e.g. a national identity Credential, a mobile driving license or a public transport ticket. The corresponding Credential Issuers (and their URLs) are pre-configured by the Wallet or follow some discovery processes that are out of scope for this specification. By clicking on one these options corresponding to the Credentials available for the issuance, the Issuance process starts with the flows supported by the Credential Issuer (Pre-Authorized Code flow or Auth Code flow).
 
 Wallet Providers may also provide a market place where Issuers can register to be found for Wallet-initiated flows.
 
@@ -2292,7 +2292,7 @@ Wallet Providers may also provide a market place where Issuers can register to b
    
    -13
 
-   * moved an annex with credential format profiles to the top of all annexes
+   * moved the annex with Credential format profiles to the top of all annexes
    * added a Notification Endpoint used by the Wallet to notify the Credential Issuer of certain events for issued Credentials
    * completed IANA registrations section
    * clarified description of a `mandatory` claim
