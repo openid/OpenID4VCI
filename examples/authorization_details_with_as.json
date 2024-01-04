@@ -4,12 +4,6 @@
       "locations": [
          "https://credential-issuer.example.com"
       ],
-      "format": "jwt_vc_json",
-      "credential_definition": {
-         "type": [
-            "VerifiableCredential",
-            "UniversityDegreeCredential"
-         ]
-      }
+      "credential_configuration_id": "UniversityDegreeCredential"
    }
 ]
