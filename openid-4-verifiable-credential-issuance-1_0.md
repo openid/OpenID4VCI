@@ -1241,7 +1241,7 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 {
   "notification_id": "3fwe98js",
   "event": "credential_failure",
-  "event_description": "User pressed 'cancel' button"
+  "event_description": "Could not retrieve issuer key"
 }
 ```
 
