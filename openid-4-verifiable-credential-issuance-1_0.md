@@ -1340,6 +1340,7 @@ This specification defines the following Credential Issuer Metadata:
   * `enc_values_supported`: REQUIRED. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
   * `encryption_required`: REQUIRED. Boolean value specifying whether the Credential Issuer requires the additional encryption on top of TLS for the Credential Response. If the value is `true`, the Credential Issuer requires the encryption for every Credential Response and therefore the Wallet MUST provide encryption keys in the Credential Request. If the value is `false`, the Wallet MAY chose whether it provides encryption keys or not.
 * `credential_identifiers_supported`: OPTIONAL. Boolean value specifying whether the Credential Issuer supports returning `credential_identifiers` parameter in the `authorization_details` Token Response parameter, with `true` indicating support. If omitted, the default value is `false`.
+* `signed_credential_issuer_metadata`: OPTIONAL. String that is an entire signed JWT. This JWT can contain Credential Issuer metadata parameters as claims. The signed metadata MUST be secured using JSON Web Signature (JWS) [@!RFC7515] and MUST contain an `iat` (Issued At) claim and an `iss` (Issuer) claim denoting the party attesting to the claims in the signed metadata. This JWT can also be used to identify the actual Credential Issuer when it is using third party service provider as a domain to host its metadata file, in which case, the JWT SHOULD contain `sub` (Subject) claim denoting the third party service provider. If the Wallet supports signed metadata, metadata values conveyed in the signed JWT MUST take precedence over the corresponding values conveyed using plain JSON elements. A `signed_credential_issuer_metadata` metadata value SHOULD NOT appear as a claim in the JWT. How the trust in the signer of the metadata can be established, and how to obtain the keys to validate the signature is out of scope of this specification and may be defined in the profiles of this specification.
 * `display`: OPTIONAL. Array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
   * `name`: OPTIONAL. String value of a display name for the Credential Issuer.
   * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
@@ -1446,6 +1447,10 @@ Server-provided nonces are an effective means for further reducing the chances f
 Implementations MUST follow [@!BCP195].
 
 Whenever TLS is used, a TLS server certificate check MUST be performed, per [@!RFC6125].
+
+## Token Binding
+
+The usage of DPoP [@!RFC9449] or MTLS [@!RFC8705] is RECOMMENDED for the detection of replay attacks with access and refresh tokens.
 
 # Implementation Considerations
 
@@ -2292,7 +2297,8 @@ Wallet Providers may also provide a market place where Issuers can register to b
    [[ To be removed from the final specification ]]
    
    -13
-
+  
+   * added `signed_credential_issuer_metadata` parameter
    * clarified that logo can is a uri and not a url only
    * moved the annex with Credential format profiles to the top of all annexes
    * added a Notification Endpoint used by the Wallet to notify the Credential Issuer of certain events for issued Credentials
