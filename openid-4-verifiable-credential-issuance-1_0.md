@@ -1839,7 +1839,6 @@ TBD
   </front>
 </reference>
 
-
 # Credential Format Profiles {#format_profiles}
 
 This specification defines several extension points to accommodate the differences across Credential formats. Sets of Credential format specific parameters or claims referred to as Credential format Identifiers are identified by the Credential format identifier and used at each extension point.
