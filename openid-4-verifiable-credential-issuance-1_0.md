@@ -312,7 +312,7 @@ The Credential Offer object, which is a JSON-encoded object with the Credential 
 
 The Credential Offer contains a single URI query parameter, either `credential_offer` or `credential_offer_uri`:
 
-* `credential_offer`: JSON object with the Credential Offer parameters. This MUST NOT be present when the `credential_offer_uri` parameter is present.
+* `credential_offer`: Object with the Credential Offer parameters. This MUST NOT be present when the `credential_offer_uri` parameter is present.
 * `credential_offer_uri`: String that is a URL using the `https` scheme referencing a resource containing a JSON object with the Credential Offer parameters. This MUST NOT be present when the `credential_offer` parameter is present.
 
 The Credential Issuer MAY render a QR code containing the Credential Offer that can be scanned by the End-User using a Wallet, or a link that the End-User can click.
