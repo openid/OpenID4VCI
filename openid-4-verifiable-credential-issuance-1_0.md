@@ -1294,7 +1294,7 @@ If the Credential Issuer is unable to perform discovery of the Wallet's Credenti
 
 ## Credential Issuer Metadata {#credential_issuer_metadata}
 
-The Credential Issuer Metadata contains information on the Credential Issuer's capabilities, supported Credentials, and (internationalized) display information.
+The Credential Issuer Metadata contains information on the Credential Issuer's technical capabilities, supported Credentials, and (internationalized) display information.
 
 ### Credential Issuer Identifier {#credential_issuer_identifier}
 
