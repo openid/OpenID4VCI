@@ -1431,7 +1431,7 @@ The Wallet is supposed to detect signs of fraudulent behavior related to the Cre
 
 ## Key Proof replay {#key-proof-replay}
 
-If an adversary is able to get ahold of a key proof, as defined in (#proof_types), the adversary could get a Credential issued that is bound to a key pair controlled by the victim.
+If an adversary is able to obtain a key proof, as defined in (#proof_types), the adversary could get a Credential issued that is bound to a key pair controlled by the victim.
 
 Note: For the attacker to be able to present a Credential bound to a replayed Key Proof to the Verifier, the attacker also needs to obtain the victim's private key. To limit this, servers are RECOMMENDED to check how the Wallet protects the private keys, using mechanisms such as Attestation-Based Client Authentication as defined in [@!I-D.ietf-oauth-attestation-based-client-auth].
 
