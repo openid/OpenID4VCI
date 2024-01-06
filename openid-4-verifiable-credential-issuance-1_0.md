@@ -1079,7 +1079,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 A successful Batch Credential Response MUST contain all the requested Credentials. The Batch Credential Response MUST be sent as a JSON object using the `application/json` media type.
 
-The following claims are used in the Batch Credential Response:
+The following parameters are used in the Batch Credential Response:
 
 * `credential_responses`: REQUIRED. Array that contains Credential Response objects, as defined in (#credential_request), and/or Deferred Credential Response objects, as defined in (#deferred-credential_request). Every entry of the array corresponds to the Credential Request object at the same array index in the `credential_requests` parameter of the Batch Credential Request.
 * `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response). 
