@@ -1036,7 +1036,7 @@ The Client can request issuance of multiple Credentials of certain types and for
 
 The Batch Credential Endpoint allows a Client to send multiple Credential Request objects (see (#credential_request)) to request the issuance of multiple Credentials at once. A Batch Credential Request MUST be sent as a JSON object using the `application/json` media type.
 
-The following claims are used in the Batch Credential Request:
+The following parameters are used in the Batch Credential Request:
 
 * `credential_requests`: REQUIRED. Array that contains Credential Request objects, as defined in (#credential_request).
 
