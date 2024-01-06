@@ -1150,7 +1150,7 @@ Communication with the Deferred Credential Endpoint MUST utilize TLS.
 
 The Deferred Credential Request is an HTTP POST request. It MUST be sent using the `application/json` media type.
 
-The following claims are used in the Batch Credential Request:
+The following parameter is used in the Batch Credential Request:
 
 * `transaction_id`: REQUIRED. String identifying a Deferred Issuance transaction.
 
