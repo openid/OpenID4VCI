@@ -924,7 +924,7 @@ If the Client requested an encrypted response by including the `credential_respo
 
 If the Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
 
-The following claims are used in the JSON-encoded Credential Response body:
+The following parameters are used in the JSON-encoded Credential Response body:
 
 * `format`: REQUIRED. String denoting the format of the issued Credential.
 * `credential`: OPTIONAL. Contains issued Credential. It MUST be present when `transaction_id` is not returned. It MAY be a string or an object, depending on the Credential format. See (#format_profiles) for the Credential format specific encoding requirements.
