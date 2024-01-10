@@ -693,7 +693,7 @@ If the Access Token is valid for requesting issuance of multiple Credentials, it
 
 An issued Credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the Credential. Cryptographic binding allows the Verifier to verify during the presentation of a Credential that the End-User presenting a Credential is the same End-User to whom that Credential was issued. For non-cryptographic types of binding and Credentials issued without any binding, see the Implementation Considerations in (#claim-based-binding) and (#no-binding).
 
-Note: Claims in the Credential are about the subject of the Credential, which is often End-User who possesses it.
+Note: Claims in the Credential are about the subject of the Credential, which is often the End-User who possesses it.
 
 For cryptographic binding, the Client has the options defined in (#credential_request) to provide cryptographic binding material for a requested Credential. 
 
