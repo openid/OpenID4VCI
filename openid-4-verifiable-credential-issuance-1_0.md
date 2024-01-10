@@ -1448,7 +1448,7 @@ Whenever TLS is used, a TLS server certificate check MUST be performed, per [@!R
 
 # Implementation Considerations
 
-## Claims-based Binding of the Credential to the End-User Possessing the Credential {#claim-based-binding}
+## Claims-based Binding of the Credential to the End-User possessing the Credential {#claim-based-binding}
 
 Credentials not cryptographically bound to the identifier of the End-User possessing it (see (#credential-binding)), should be bound to the End-User possessing the Credential, based on the claims included in the Credential.
 
