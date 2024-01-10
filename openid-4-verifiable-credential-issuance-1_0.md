@@ -2294,7 +2294,7 @@ Wallet Providers may also provide a market place where Issuers can register to b
    
    -13
   
-   * added `signed_credential_issuer_metadata` parameter
+   * added `signed_metadata` parameter
    * clarified that logo can is a uri and not a url only
    * moved the annex with Credential format profiles to the top of all annexes
    * added a Notification Endpoint used by the Wallet to notify the Credential Issuer of certain events for issued Credentials
