@@ -1448,10 +1448,6 @@ Implementations MUST follow [@!BCP195].
 
 Whenever TLS is used, a TLS server certificate check MUST be performed, per [@!RFC6125].
 
-## Token Binding
-
-The usage of DPoP [@!RFC9449] or MTLS [@!RFC8705] is RECOMMENDED for the detection of replay attacks with access and refresh tokens.
-
 # Implementation Considerations
 
 ## Claim-based Binding of the Credential to the End-User possessing the Credential {#claim-based-binding}
