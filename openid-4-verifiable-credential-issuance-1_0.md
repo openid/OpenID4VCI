@@ -1448,10 +1448,6 @@ Implementations MUST follow [@!BCP195].
 
 Whenever TLS is used, a TLS server certificate check MUST be performed, per [@!RFC6125].
 
-## Token Binding
-
-The usage of DPoP [@!RFC9449] or MTLS [@!RFC8705] is RECOMMENDED for the detection of replay attacks with access and refresh tokens.
-
 # Implementation Considerations
 
 ## Claim-based Binding of the Credential to the End-User possessing the Credential {#claim-based-binding}
@@ -2298,7 +2294,7 @@ Wallet Providers may also provide a marketplace where Issuers can register to be
    
    -13
   
-   * added `signed_credential_issuer_metadata` parameter
+   * added `signed_metadata` parameter
    * clarified that logo can is a uri and not a url only
    * moved the annex with Credential format profiles to the top of all annexes
    * added a Notification Endpoint used by the Wallet to notify the Credential Issuer of certain events for issued Credentials
