@@ -519,7 +519,7 @@ It is RECOMMENDED that the Credential Issuer use [@OpenID4VP] to dynamically req
 
 To enable dynamic callbacks of the Credential Issuer to the End-User's Wallet, the Wallet MAY provide the additional parameters `wallet_issuer` and `user_hint` defined in (#additional_request_parameters).
 
-For non-normative examples of the request and response, see Section TBD in [@OpenID4VP].
+For non-normative examples of the request and response, see Section 5 and Section 6 in [@OpenID4VP].
 
 Note to the editors: We need to sort out the Credential Issuer's `client_id` with the Wallet and potentially add an example with `wallet_issuer` and `user_hint`.
 
