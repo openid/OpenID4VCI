@@ -926,14 +926,13 @@ If the Credential Response is not encrypted, the media type of the response MUST
 
 The following claims are used in the JSON-encoded Credential Response body:
 
-* `format`: REQUIRED. String denoting the format of the issued Credential.
 * `credential`: OPTIONAL. Contains issued Credential. MUST be present when `transaction_id` is not returned. MAY be a string or an object, depending on the Credential format. See (#format_profiles) for the Credential format specific encoding requirements.
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer was unable to immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST be present when the `credential` parameter is not returned. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. String containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
 * `notification_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the Notification Request as defined in (#notification ). This parameter MUST NOT be present if `credential` parameter is not present.
 
-The `format` key determines the Credential format and encoding of the credential in the Credential Response. Details are defined in the Credential Format Profiles in (#format_profiles). 
+The Credential format and encoding of the `credential` MUST match the Credential format specified in the Credential Request. Details are defined in the Credential Format Profiles in (#format_profiles).
 
 Credential formats expressed as binary data MUST be base64url-encoded and returned as a string.
 
@@ -945,7 +944,6 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "format": "jwt_vc_json",
   "credential": "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
   "c_nonce": "fGFF7UkhLa",
   "c_nonce_expires_in": 86400  
@@ -2296,7 +2294,8 @@ Wallet Providers may also provide a marketplace where Issuers can register to be
    [[ To be removed from the final specification ]]
    
    -13
-  
+
+   * remove `format` from the Credential Response
    * added `signed_metadata` parameter
    * clarified that logo can is a uri and not a url only
    * moved the annex with Credential format profiles to the top of all annexes
