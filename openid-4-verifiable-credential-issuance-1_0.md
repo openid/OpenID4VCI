@@ -695,7 +695,7 @@ An issued Credential SHOULD be cryptographically bound to the identifier of the 
 
 Note: Claims in the Credential are about the subject of the Credential, which is often the End-User who possesses it.
 
-For cryptographic binding, the Client has the options defined in (#credential_request) to provide cryptographic binding material for a requested Credential. 
+For cryptographic binding, the Client has the following options defined in (#credential_request) to provide cryptographic binding material for a requested Credential:
 
 1. Provide proof of control alongside key material (`proof` that includes `sub_jwk` or `did`).
 1. Provide only proof of control without the key material (`proof` that does not include `sub_jwk` or `did`).
