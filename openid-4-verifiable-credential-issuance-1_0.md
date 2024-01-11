@@ -239,7 +239,7 @@ Note: Steps (3) and (4) happen in the front channel, by redirecting the End-User
 
 If the Credential Issuer requires more time to issue a Credential, the Credential Issuer may return a Transaction ID and a time interval in the Credential Response. The Wallet may send a Deferred Credential Request with the Transaction ID to obtain a Credential after the specified time interval has passed, as defined in (#deferred-credential-issuance).
 
-If the Credential Issuer wants to issue multiple Credentials in one response, the Credential Issuer MAY support the Batch Credential Endpoint. In this case, the Wallet may send a Batch Credential Request to the Batch Credential Endpoint, as defined in (#batch-credential-endpoint).
+If the Credential Issuer wants to issue multiple Credentials in one response, the Credential Issuer may support the Batch Credential Endpoint. In this case, the Wallet may send a Batch Credential Request to the Batch Credential Endpoint, as defined in (#batch-credential-endpoint).
 
 Note: This flow is based on OAuth 2.0 and the Authorization Code Grant type, but this specification can be used with other OAuth 2.0 grant types as well.
 
