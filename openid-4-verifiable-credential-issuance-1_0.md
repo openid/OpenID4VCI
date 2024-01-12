@@ -1092,11 +1092,9 @@ Cache-Control: no-store
 
 {
   "credential_responses": [{
-    "format": "jwt_vc_json",
     "credential": "eyJraWQiOiJkaWQ6ZXhhbXBsZTpl...C_aZKPxgihac0aW9EkL1nOzM"
   },
   {
-    "format": "mso_mdoc",
     "credential": "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
   }],
   "c_nonce": "fGFF7UkhLa",
@@ -1117,7 +1115,6 @@ Cache-Control: no-store
          "transaction_id":"8xLOxBtZp8"
       },
       {
-         "format":"jwt_vc_json",
          "credential":"YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
       }
    ],
