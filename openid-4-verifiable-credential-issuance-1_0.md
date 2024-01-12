@@ -52,7 +52,7 @@ Access to this API is authorized using OAuth 2.0 [@!RFC6749], i.e., the Wallet u
 
 ## Requirements Notation and Conventions
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119 [@!RFC2119].
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [@!RFC2119] [@!RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 # Terminology
 
@@ -405,7 +405,7 @@ When the grant type `authorization_code` is used, it is RECOMMENDED to use PKCE 
 
 ## Authorization Request {#credential-authz-request}
 
-An Authorization Request is an OAuth 2.0 Authorization Request as defined in section 4.1.1 of [@!RFC6749], which requests to grant access to the Credential Endpoint as defined in (#credential-endpoint). 
+An Authorization Request is an OAuth 2.0 Authorization Request as defined in Section 4.1.1 of [@!RFC6749], which requests to grant access to the Credential Endpoint as defined in (#credential-endpoint).
 
 There are two possible ways to request issuance of a specific Credential type in an Authorization Request. One way is to use of the `authorization_details` request parameter as defined in [@!RFC9396] with one or more authorization details objects of type `openid_credential`, per (#authorization-details). The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
 
@@ -519,7 +519,7 @@ It is RECOMMENDED that the Credential Issuer use [@OpenID4VP] to dynamically req
 
 To enable dynamic callbacks of the Credential Issuer to the End-User's Wallet, the Wallet MAY provide additional parameters `wallet_issuer` and `user_hint` defined in the Authorization Request section of this specification.
 
-For non-normative examples of request and response, see section 11.6 in [@OpenID4VP].
+For non-normative examples of request and response, see Section 11.6 in [@OpenID4VP].
 
 Note to the editors: We need to sort out Credential Issuer's `client_id` with the Wallet and potentially add an example with `wallet_issuer` and `user_hint`.
 
@@ -771,7 +771,7 @@ This specification defines the following values for the `proof_type` property:
 
 * `jwt`: A JWT [@!RFC7519] is used as proof of possession. When `proof_type` is `jwt`, a `proof` object MUST include a `jwt` claim containing a JWT defined in (#jwt-proof-type).
 * `cwt`: A CWT [@!RFC8392] is used as proof of possession. When `proof_type` is `cwt`, a `proof` object MUST include a `cwt` claim containing a CWT defined in (#cwt-proof-type).
-* `ldp_vp`: A W3C Verifiable Presentation object signed using the Data Integrity Proof as defined in [@VC_DATA_2.0] or [@VC_DATA], and where the proof of possession MUST be done in accordance with [@Data_Integrity]. When `proof_type` is set to `ldp_vp`, the `proof` object MUST include a `ldp_vp` claim containing a [W3C Verifiable Presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp_vp-proof-type).
+* `ldp_vp`: A W3C Verifiable Presentation object signed using the Data Integrity Proof as defined in [@VC_DATA_2.0] or [@VC_DATA], and where the proof of possession MUST be done in accordance with [@VC_Data_Integrity]. When `proof_type` is set to `ldp_vp`, the `proof` object MUST include a `ldp_vp` claim containing a [W3C Verifiable Presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp_vp-proof-type).
 
 #### `jwt` Key Proof Type {#jwt-proof-type}
 
@@ -972,11 +972,11 @@ When the Credential Request is invalid or unauthorized, the Credential Issuer co
 
 #### Authorization Errors {#authorization-errors}
 
-If the Credential Request does not contain an Access Token that enables issuance of a requested Credential, the Credential Endpoint returns an authorization error response such as defined in section 3 of [@!RFC6750].
+If the Credential Request does not contain an Access Token that enables issuance of a requested Credential, the Credential Endpoint returns an authorization error response such as defined in Section 3 of [@!RFC6750].
 
 #### Credential Request Errors {#credential-request-errors}
 
-For the errors specific to the payload of the Credential Request such as those caused by `type`, `format`, `proof`, or encryption parameters in the request, the error codes values defined in this section MUST be used instead of a generic `invalid_request` parameter defined in section 3.1 of [@!RFC6750].
+For the errors specific to the payload of the Credential Request such as those caused by `type`, `format`, `proof`, or encryption parameters in the request, the error codes values defined in this section MUST be used instead of a generic `invalid_request` parameter defined in Section 3.1 of [@!RFC6750].
 
 If the Wallet is requesting the issuance of a Credential that is not supported by the Credential Endpoint, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the JSON-encoded response body:
 
@@ -1257,7 +1257,7 @@ HTTP/1.1 204 No Content
 
 ## Notification Error Response
 
-If the Notification Request does not contain an Access Token or contains an invalid Access Token, the Notification Endpoint returns an Authorization Error Response such as defined in section 3 of [@!RFC6750].
+If the Notification Request does not contain an Access Token or contains an invalid Access Token, the Notification Endpoint returns an Authorization Error Response such as defined in Section 3 of [@!RFC6750].
 
 When the `notification_id` value is invalid, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the JSON-encoded response body:
 
@@ -1351,7 +1351,7 @@ This specification defines the following Credential Issuer Metadata:
   * `format`: REQUIRED. A JSON string identifying the format of this Credential, i.e., `jwt_vc_json` or `ldp_vc`. Depending on the format value, the object contains further elements defining the type and (optionally) particular claims the Credential MAY contain and information about how to display the Credential. (#format_profiles) defines Credential Format Profiles introduced by this specification.
   * `scope`: OPTIONAL. A JSON string identifying the scope value that this Credential Issuer supports for this particular Credential. The value can be the same across multiple `credential_configurations_supported` objects. The Authorization Server MUST be able to uniquely identify the Credential Issuer based on the scope value. The Wallet can use this value in the Authorization Request as defined in (#credential-request-using-type-specific-scope). Scope values in this Credential Issuer metadata MAY duplicate those in the `scopes_supported` parameter of the Authorization Server.
   * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential as defined in (#credential-binding). Support for keys in JWK format [@!RFC7517] is indicated by the value `jwk`. Support for keys expressed as a COSE Key object [@!RFC8152] (for example, used in [@!ISO.18013-5]) is indicated by the value `cose_key`. When Cryptographic Binding Method is a DID, valid values MUST be a `did:` prefix followed by a method-name using a syntax as defined in Section 3.1 of [@!DID-Core], but without a `:`and method-specific-id. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in Section 13 of [@DID_Specification_Registries] is indicated by sending a DID without any method-name.
-  * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptographic algorithms for Credentials in `jwt_vc` format should use algorithm names defined in [IANA JOSE Algorithms Registry](https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms). Cryptographic algorithms for Credentials in `ldp_vc` format should use signature suites names defined in [Linked Data Cryptographic Suite Registry](https://w3c-ccg.github.io/ld-cryptosuite-registry/).
+  * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptographic algorithms for Credentials in `jwt_vc` format should use algorithm names defined in [@IANA.JOSE.ALGS]. Cryptographic algorithms for Credentials in `ldp_vc` format should use signature suite names defined in [@LD_Suite_Registry].
   * `proof_types`: OPTIONAL. Array of case sensitive strings, each representing a `proof_type` that the Credential Issuer supports as defined in (#credential_request), one of which MUST be used in the Credential Request. If this array is non-empty and present, the Credential Issuer requires proof of possession of the cryptographic key material. If the parameter is omitted or the array is empty, the Credential Issuer does not require proof of possession of the cryptographic key material.
   * `display`: OPTIONAL. Array of objects, where each object contains the display properties of the supported Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included.
       * `name`: REQUIRED. String value of a display name for the Credential.
@@ -1477,7 +1477,7 @@ Another use case is when the Credential Issuer uses cryptographic schemes that c
 
 The Credential Endpoint can be accessed multiple times by a Wallet using the same Access Token, even for the same Credential. The Credential Issuer determines if the subsequent successful requests will return the same or an updated Credential, such as having a new expiration time or using the most current End-User claims.
 
-The Credential Issuer MAY also decide to no longer accept the Access Token and a re-authentication or Token Refresh (see [@!RFC6749], section 6) MAY be required at the Credential Issuer's discretion. The policies between the Credential Endpoint and the Authorization Server that MAY change the behavior of what is returned with a new Access Token are beyond the scope of this specification (see [@!RFC6749, section 7]).
+The Credential Issuer MAY also decide to no longer accept the Access Token and a re-authentication or Token Refresh (see [@!RFC6749], Section 6) MAY be required at the Credential Issuer's discretion. The policies between the Credential Endpoint and the Authorization Server that MAY change the behavior of what is returned with a new Access Token are beyond the scope of this specification (see [@!RFC6749, Section 7]).
 
 The action leading to the Wallet performing another Credential Request can also be triggered by a background process, or by the Credential Issuer using an out-of-band mechanism (SMS, email, etc.) to inform the End-User.
 
@@ -1510,7 +1510,7 @@ TBD
 
 {backmatter}
 
-<reference anchor="DID-Core" target="https://www.w3.org/TR/2021/PR-did-core-20210803/">
+<reference anchor="DID-Core" target="https://www.w3.org/TR/did-core/">
         <front>
         <title>Decentralized Identifiers (DIDs) v1.0</title>
         <author fullname="Manu Sporny">
@@ -1523,57 +1523,20 @@ TBD
             <organization>Danube Tech</organization>
         </author>
         <author fullname="Drummond Reed">
-            <organization>Evernym</organization>
+            <organization>Evernym/Avast</organization>
         </author>
-        <date day="3" month="Aug" year="2021"/>
+        <date day="19" month="Jul" year="2022"/>
         </front>
 </reference>
 
 <reference anchor="VC_DATA" target="https://www.w3.org/TR/vc-data-model">
   <front>
-    <title>Verifiable Credentials Data Model 1.0</title>
+    <title>Verifiable Credentials Data Model 1.1</title>
     <author fullname="Manu Sporny">
       <organization>Digital Bazaar</organization>
     </author>
     <author fullname="Grant Noble">
       <organization>ConsenSys</organization>
-    </author>
-    <author fullname="Dave Longley">
-      <organization>Digital Bazaar</organization>
-    </author>
-    <author fullname="Daniel C. Burnett">
-      <organization>ConsenSys</organization>
-    </author>
-    <author fullname="Brent Zundel">
-      <organization>Evernym</organization>
-    </author>
-    <author fullname="David Chadwick">
-      <organization>University of Kent</organization>
-    </author>
-   <date day="19" month="Nov" year="2019"/>
-  </front>
-</reference>
-
-<reference anchor="VC_DATA_2.0" target="https://www.w3.org/TR/vc-data-model-2.0">
-  <front>
-    <title>Verifiable Credentials Data Model 2.0</title>
-    <author fullname="Manu Sporny">
-      <organization>Digital Bazaar</organization>
-    </author>
-    <author fullname="Orie Steele">
-      <organization>Transmute</organization>
-    </author>
-    <author fullname="Oliver Terbu">
-      <organization>Spruce Systems, Inc.</organization>
-    </author>
-    <author fullname="Grant Noble">
-      <organization>ConsenSys</organization>
-    </author>
-    <author fullname="Gabe Cohen">
-      <organization>Block</organization>
-    </author>
-    <author fullname="Michael B. Jones">
-      <organization>independent</organization>
     </author>
     <author fullname="Dave Longley">
       <organization>Digital Bazaar</organization>
@@ -1585,16 +1548,35 @@ TBD
       <organization>Evernym</organization>
     </author>
     <author fullname="Kyle Den Hartog">
-      <organization>MATTR</organization>
+      <organization>Mattr</organization>
     </author>
-    <author fullname="David Chadwick">
-      <organization>University of Kent</organization>
-    </author>
-   <date day="15" month="Aug" year="2023"/>
+   <date day="3" month="March" year="2022"/>
   </front>
 </reference>
 
-<reference anchor="Data_Integrity" target="https://w3c.github.io/vc-data-integrity/">
+<reference anchor="VC_DATA_2.0" target="https://www.w3.org/TR/vc-data-model-2.0">
+  <front>
+    <title>Verifiable Credentials Data Model 2.0</title>
+    <author fullname="Manu Sporny">
+      <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Ted Thibodeau Jr">
+      <organization>OpenLink Software</organization>
+    </author>
+    <author fullname="Ivan Herman">
+      <organization>W3C</organization>
+    </author>
+    <author fullname="Michael B. Jones">
+      <organization>Invited Expert</organization>
+    </author>
+    <author fullname="Gabe Cohen">
+      <organization>Block</organization>
+    </author>
+   <date day="27" month="December" year="2023"/>
+  </front>
+</reference>
+
+<reference anchor="VC_Data_Integrity" target="https://w3c.github.io/vc-data-integrity/">
   <front>
     <title>Verifiable Credential Data Integrity 1.0</title>
     <author fullname="Manu Sporny">
@@ -1612,7 +1594,7 @@ TBD
     <author fullname="Sebastian Crane">
       <organization>Invited Expert</organization>
     </author>
-   <date day="31" month="Aug" year="2023"/>
+   <date day="14" month="November" year="2023"/>
   </front>
 </reference>
 
@@ -1648,13 +1630,13 @@ TBD
           <author>
             <organization>IETF</organization>
           </author>
-          <date year="2022"/>
+          <date month="November" year="2022"/>
         </front>
 </reference>
 
 <reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
   <front>
-    <title>OpenID Connect Core 1.0 incorporating errata set 1</title>
+    <title>OpenID Connect Core 1.0 incorporating errata set 2</title>
     <author initials="N." surname="Sakimura" fullname="Nat Sakimura">
       <organization>NRI</organization>
     </author>
@@ -1670,24 +1652,8 @@ TBD
     <author initials="C." surname="Mortimore" fullname="Chuck Mortimore">
       <organization>Salesforce</organization>
     </author>
-   <date day="8" month="Nov" year="2014"/>
+   <date day="15" month="December" year="2023"/>
   </front>
-</reference>
-
-<reference anchor="DIF.PresentationExchange" target="https://identity.foundation/presentation-exchange/spec/v1.0.0/">
-        <front>
-          <title>Presentation Exchange v1.0.0</title>
-      <author fullname="Daniel Buchner">
-            <organization>Microsoft</organization>
-          </author>
-          <author fullname="Brent Zundel">
-            <organization>Evernym</organization>
-          </author>
-          <author fullname="Martin Riedel">
-            <organization>Consensys Mesh</organization>
-          </author>
-         <date month="Feb" year="2021"/>
-        </front>
 </reference>
 
 <reference anchor="DIF.Well-Known_DID" target="https://identity.foundation/specs/did-configuration/">
@@ -1746,7 +1712,7 @@ TBD
           <author>
             <organization> ISO/IEC JTC 1/SC 17 Cards and security devices for personal identification</organization>
           </author>
-          <date year="2021"/>
+          <date Month="September" year="2021"/>
         </front>
 </reference>
 
@@ -1796,14 +1762,27 @@ TBD
           <author fullname="Manu Sporny">
             <organization>Digital Bazaar</organization>
           </author>
-          <author fullname="Michael Prorock">
-            <organization>mesur.io</organization>
-          </author>
-         <date month="Aug" year="2022"/>
+         <date day="11" month="September" year="2023"/>
         </front>
 </reference>
 
-<reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-connect-federation-1_0.html">
+<reference anchor="LD_Suite_Registry" target="https://w3c-ccg.github.io/ld-cryptosuite-registry/">
+        <front>
+          <title>Linked Data Cryptographic Suite Registry</title>
+          <author fullname="Manu Sporny">
+            <organization>Digital Bazaar</organization>
+          </author>
+          <author fullname="Drummond Reed">
+            <organization>Evernym</organization>
+          </author>
+          <author fullname="Orie Steele">
+            <organization>Transmute</organization>
+          </author>
+         <date day="29" month="December" year="2020"/>
+        </front>
+</reference>
+
+<reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-federation-1_0.html">
         <front>
           <title>OpenID Federation 1.0</title>
 		  <author fullname="R. Hedberg, Ed.">
@@ -1856,7 +1835,7 @@ This section defines Credential Format Profiles for a few of the commonly used C
 
 ## W3C Verifiable Credentials
 
-Sections 6.1 and 6.2 of [@VC_DATA] define how Verifiable Credentials MAY or MAY NOT use JSON-LD. As acknowledged in Section 4.1 of [@VC_DATA], implementations can behave differently regarding processing of the `@context` property whether JSON-LD is used or not.
+Sections 6.1 and 6.2 of [@VC_DATA] define how Verifiable Credentials MAY or MAY NOT use JSON-LD [@JSON-LD]. As acknowledged in Section 4.1 of [@VC_DATA], implementations can behave differently regarding processing of the `@context` property whether JSON-LD is used or not.
 
 This specification therefore differentiates the following three Credential formats for W3C Verifiable Credentials:
 
