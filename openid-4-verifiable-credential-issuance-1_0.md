@@ -1459,7 +1459,7 @@ To sender-constrain Access Tokens, see the recommendations in Section 4.10.1 in 
 
 # Implementation Considerations
 
-## Claims-based Binding of the Credential to the End-User possessing the Credential {#claims-based-binding}
+## Claims-based Binding of the Credential to the End-User possessing the Credential {#claim-based-binding}
 
 Credentials not cryptographically bound to the identifier of the End-User possessing it (see (#credential-binding)), should be bound to the End-User possessing the Credential, based on the claims included in that Credential.
 
