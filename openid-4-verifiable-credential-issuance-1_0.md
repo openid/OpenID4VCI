@@ -691,35 +691,35 @@ If the Access Token is valid for requesting issuance of multiple Credentials, it
 
 ## Binding the Issued Credential to the Identifier of the End-User Possessing that Credential {#credential-binding}
 
-Issued Credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the Credential. Cryptographic binding allows the Verifier to verify during the presentation of a Credential that the End-User presenting a Credential is the same End-User to whom that Credential was issued. For non-cryptographic type of binding and Credentials issued without any binding, see Implementation Considerations in (#claim-based-binding) and (#no-binding).
+An issued Credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the Credential. Cryptographic binding allows the Verifier to verify during the presentation of a Credential that the End-User presenting a Credential is the same End-User to whom that Credential was issued. For non-cryptographic types of binding and Credentials issued without any binding, see the Implementation Considerations in (#claim-based-binding) and (#no-binding).
 
-Note: Claims in the Credential are usually about the End-User who possesses it, but can be about another entity.
+Note: Claims in the Credential are about the subject of the Credential, which is often the End-User who possesses it.
 
-For cryptographic binding, the Client has the following options to provide cryptographic binding material for a requested Credential as defined in (#credential_request):
+For cryptographic binding, the Client has the following options defined in (#credential_request) to provide cryptographic binding material for a requested Credential:
 
-1. Provide proof of control alongside key material (`proof` that includes `sub_jwk` or `did`)
-1. Provide only proof of control without the key material (`proof` that does not include `sub_jwk` or `did`)
+1. Provide proof of control alongside key material.
+1. Provide only proof of control without the key material.
 
 ## Credential Request {#credential_request}
 
 A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
-* `format`: REQUIRED when the `credential_identifier` was not returned from the Token Response. MUST NOT be used otherwise. String that determines the format of the Credential to be issued, which may determine the type and any other information related to the Credential to be issued. Credential Format Profiles consisting of the Credential format specific set of parameters are defined in (#format_profiles). When this parameter is used, `credential_identifier` parameter MUST NOT be present.
-* `proof`: OPTIONAL. Object containing the proof of possession of the cryptographic key material the issued Credential would be bound to.  The `proof` object is REQUIRED if the `proof_types` parameter is non-empty and present in the `credential_configurations_supported` map of the Issuer metadata for the requested Credential. The `proof` object MUST contain a following claim:
-    * `proof_type`: REQUIRED. String denoting the key proof type. The value of this claim determines other claims in the key proof object and its respective processing rules. Key proof types defined in this specification can be found in (#proof_types).
-* `credential_identifier`: REQUIRED when `credential_identifier` was returned from the Token Response. MUST NOT be used otherwise. String that identifies a Credential that is being requested to be issued. When this parameter is used, the `format` parameter and any other Credential format specific set of parameters such as those defined in (#format_profiles) MUST NOT be present.
+* `format`: REQUIRED when the `credential_identifier` was not returned from the Token Response. It MUST NOT be used otherwise. It is a String that determines the format of the Credential to be issued, which may determine the type and any other information related to the Credential to be issued. Credential Format Profiles consist of the Credential format specific parameters that are defined in (#format_profiles). When this parameter is used, the `credential_identifier` parameter MUST NOT be present.
+* `proof`: OPTIONAL. Object containing the proof of possession of the cryptographic key material the issued Credential would be bound to.  The `proof` object is REQUIRED if the `proof_types` parameter is non-empty and present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential. The `proof` object MUST contain the following:
+    * `proof_type`: REQUIRED. String denoting the key proof type. The value of this parameter determines other parameters in the key proof object and its respective processing rules. Key proof types defined in this specification can be found in (#proof_types).
+* `credential_identifier`: REQUIRED when `credential_identifier` was returned from the Token Response. It MUST NOT be used otherwise. It is a String that identifies a Credential that is being requested to be issued. When this parameter is used, the `format` parameter and any other Credential format specific parameters such as those defined in (#format_profiles) MUST NOT be present.
 * `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If this request element is not present, the corresponding credential response returned is not encrypted.
     * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
     * `alg`: REQUIRED. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] for encrypting Credential Responses.
     * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
 
-The `proof_type` claim is an extension point that enables the use of different types of proofs for different cryptographic schemes.
+The `proof_type` parameter is an extension point that enables the use of different types of proofs for different cryptographic schemes.
 
-The `proof` element MUST incorporate the Credential Issuer Identifier (audience), and a `c_nonce` value generated by the Authorization Server or the Credential Issuer to allow the Credential Issuer to detect replay. The way that data is incorporated depends on the key proof type. In a JWT, for example, the `c_nonce` is conveyed in the `nonce` claims whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the key proof object and the Credential Issuer (the intended audience) is included as the `domain` element.
+The `proof` element MUST incorporate the Credential Issuer Identifier (audience), and a `c_nonce` value generated by the Authorization Server or the Credential Issuer to allow the Credential Issuer to detect replay. The way that data is incorporated depends on the key proof type. In a JWT, for example, the `c_nonce` value is conveyed in the `nonce` claim, whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the key proof object and the Credential Issuer (the intended audience) is included as the `domain` element.
 
-Initial `c_nonce` value can be returned in a successful Token Response as defined in (#token-response), in a Credential Error Response as defined in (#issuer-provided-nonce), or in a Batch Credential Error Response as defined in (#batch-credential_error_response).
+The initial `c_nonce` value can be returned in a successful Token Response as defined in (#token-response), in a Credential Error Response as defined in (#issuer-provided-nonce), or in a Batch Credential Error Response as defined in (#batch-credential_error_response).
 
-Below is a non-normative example of a Credential Request for a Credential in [@ISO.18013-5] format using Credential format specific set of parameters and a key proof type `cwt`:
+Below is a non-normative example of a Credential Request for a Credential in [@ISO.18013-5] format using Credential format specific parameters and a key proof type `cwt`:
 
 ```
 POST /credential HTTP/1.1
@@ -737,7 +737,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 }
 ```
 
-Below is a non-normative example of a Credential Request for a Credential in an IETF SD-JWT VC format using Credential instance identifier and a key proof type `jwt`:
+Below is a non-normative example of a Credential Request for a Credential in an IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format using a Credential instance identifier and key proof type `jwt`:
 
 ```
 POST /credential HTTP/1.1
@@ -778,7 +778,7 @@ This specification defines the following values for the `proof_type` property:
 The JWT MUST contain the following elements:
 
 * in the JOSE header,
-  * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE.ALGS]. MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
+  * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE.ALGS]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
   * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
   * `kid`: OPTIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. It MUST NOT be present if `jwk` is present.
   * `jwk`: OPTIONAL. JOSE Header containing the key material the new Credential shall be bound to. It MUST NOT be present if `kid` is present.
@@ -789,11 +789,11 @@ The JWT MUST contain the following elements:
   * `iss`: OPTIONAL (string). The value of this claim MUST be the `client_id` of the Client making the Credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
   * `aud`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
   * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the key proof was issued using the syntax defined in [@!RFC7519].
-  * `nonce`: OPTIONAL (string). The value type of this claim MUST be a string, where the value is a server-provided `c_nonce`. MUST be present when the Wallet received server-provided `c_nonce`.
+  * `nonce`: OPTIONAL (string). The value type of this claim MUST be a string, where the value is a server-provided `c_nonce`. It MUST be present when the Wallet received a server-provided `c_nonce`.
 
 The Credential Issuer MUST validate that the `proof` is actually signed by a key identified in the JOSE Header.
 
-Below is a non-normative example of a `proof` parameter (line breaks for display purposes only):
+Below is a non-normative example of a `proof` parameter (with line breaks within values for display purposes only):
 
 ```json
 {
@@ -806,10 +806,10 @@ Below is a non-normative example of a `proof` parameter (line breaks for display
   RlbnRpYWwtaXNzdWVyLmV4YW1wbGUuY29tIiwiaWF0IjoxNzAxOTYwNDQ0LCJub25j
   ZSI6IkxhclJHU2JtVVBZdFJZTzZCUTR5bjgifQ.-a3EDsxClUB4O3LeDD5DVGEnNMT
   01FCQW4P6-2-BNBqc_Zxf0Qw4CWayLEpqkAomlkLb9zioZoipdP-jvh1WlA"
-  }
+}
 ```
 
-where the JWT looks like this:
+where the decoded JWT looks like this:
 
 ```json
 {
@@ -850,9 +850,9 @@ When a W3C Verifiable Presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] si
 * `holder`: OPTIONAL. MUST be equivalent to the controller identifier (e.g., DID) for the `verificationMethod` value identified by the `proof.verificationMethod` property.
 * `proof`: REQUIRED. The proof body of a W3C Verifiable Presentation.
   * `domain`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
-  * `challenge`: REQUIRED when the Credential Issuer has provided a `c_nonce`. MUST NOT be used otherwise. String, where the value is a server-provided `c_nonce`. It MUST be present when the Wallet received server-provided `c_nonce`.
+  * `challenge`: REQUIRED when the Credential Issuer has provided a `c_nonce`. It MUST NOT be used otherwise. String, where the value is a server-provided `c_nonce`. It MUST be present when the Wallet received a server-provided `c_nonce`.
 
-The Credential Issuer MUST validate that the `proof` is actually signed with a key in possession of the Holder.
+The Credential Issuer MUST validate that the `proof` is actually signed with a key in the possession of the Holder.
 
 Below is a non-normative example of a `proof` parameter:
 
@@ -890,15 +890,15 @@ Below is a non-normative example of a `proof` parameter:
 The CWT MUST contain the following elements:
 
 * in the COSE protected header (see [@!RFC8152], Section 3.1.),
-  * Label 1 (`alg`): REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry [@IANA.COSE.ALGS]. MUST NOT be an identifier for a symmetric algorithm (MAC).
+  * Label 1 (`alg`): REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry [@IANA.COSE.ALGS]. It MUST NOT be an identifier for a symmetric algorithm (MAC).
   * Label 3 (`content type`): REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the key proof CWT.
   * (string-valued) Label `COSE_Key`: OPTIONAL (byte string). COSE key material the new Credential shall be bound to. It MUST NOT be present if `x5chain` is present.
-  * Label 33 (`x5chain`): OPTIONAL (byte string). As defined in [@!RFC9360], contains an ordered array of X.509 certificates corresponding to the key used to sign the CWT. It MUST NOT be present if `COSE_Key` is present.
+  * Label 33 (`x5chain`): OPTIONAL (byte string). As defined in [@!RFC9360], it contains an ordered array of X.509 certificates corresponding to the key used to sign the CWT. It MUST NOT be present if `COSE_Key` is present.
 * in the content of the message (see [@!RFC8392], Section 4),
   * Claim Key 1 (`iss`): OPTIONAL (text string). The value of this claim MUST be the `client_id` of the Client making the Credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
   * Claim Key 3 (`aud`): REQUIRED (text string). The value of this claim MUST be the Credential Issuer Identifier.
   * Claim Key 6 (`iat`): REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the key proof was issued.
-  * Claim Key 10 (`Nonce`): OPTIONAL (byte string). The value of this claim MUST be a server-provided `c_nonce` converted from string to bytes. MUST be present when the Wallet received server-provided `c_nonce`.
+  * Claim Key 10 (`Nonce`): OPTIONAL (byte string). The value of this claim MUST be a server-provided `c_nonce` converted from string to bytes. It MUST be present when the Wallet received a server-provided `c_nonce`.
 
 ### Verifying Key Proof {#verifying-key-proof}
 
@@ -918,22 +918,22 @@ These checks may be performed in any order.
 
 Credential Response can be immediate or deferred. The Credential Issuer MAY be able to immediately issue a requested Credential and send it to the Client.
 
-In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send a `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code MUST be 202 (section 10.2.3 of [@!RFC2616]).
+In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send a `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code MUST be 202 (see Section 15.3.3 of [@!RFC9110]).
 
 If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Credential Response as a JWT using the  parameters from the `credential_response_encryption` object. If the Credential Response is encrypted, the media type of the response MUST be set to `application/jwt`. If encryption was requested in the Credential Request and the Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
 
 If the Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
 
-The following claims are used in the JSON-encoded Credential Response body:
+The following parameters are used in the JSON-encoded Credential Response body:
 
 * `format`: REQUIRED. String denoting the format of the issued Credential.
-* `credential`: OPTIONAL. Contains issued Credential. MUST be present when `transaction_id` is not returned. MAY be a string or an object, depending on the Credential format. See (#format_profiles) for the Credential format specific encoding requirements.
+* `credential`: OPTIONAL. Contains issued Credential. It MUST be present when `transaction_id` is not returned. It MAY be a string or an object, depending on the Credential format. See (#format_profiles) for the Credential format specific encoding requirements.
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer was unable to immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST be present when the `credential` parameter is not returned. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. String containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
-* `notification_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the Notification Request as defined in (#notification ). This parameter MUST NOT be present if `credential` parameter is not present.
+* `notification_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the Notification Request as defined in (#notification). This parameter MUST NOT be present if `credential` parameter is not present.
 
-The `format` key determines the Credential format and encoding of the credential in the Credential Response. Details are defined in the Credential Format Profiles in (#format_profiles). 
+The value of the `format` parameter determines the Credential format and encoding of the credential in the Credential Response. Details are defined in the Credential Format Profiles in (#format_profiles).
 
 Credential formats expressed as binary data MUST be base64url-encoded and returned as a string.
 
@@ -980,13 +980,13 @@ For the errors specific to the payload of the Credential Request such as those c
 
 If the Wallet is requesting the issuance of a Credential that is not supported by the Credential Endpoint, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the JSON-encoded response body:
 
-* `error`: REQUIRED. A key at the top level of the object, the value of which SHOULD be a single ASCII [@!USASCII] error code from the following:
+* `error`: REQUIRED. The `error` parameter SHOULD be a single ASCII [@!USASCII] error code from the following:
   * `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
   * `unsupported_credential_type`: Requested Credential type is not supported.
   * `unsupported_credential_format`: Requested Credential format is not supported.
   * `invalid_proof`: The `proof` in the Credential Request is invalid. The `proof` field is not present or the provided key proof is invalid or not bound to a nonce provided by the Credential Issuer.
   * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
-* `error_description`: OPTIONAL. A key at the top level of the object. The value MUST be a human-readable ASCII [@!USASCII] text, providing any additional information used to assist the Client implementers in understanding the occurred error. The values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
+* `error_description`: OPTIONAL. The `error_description` parameter MUST be a human-readable ASCII [@!USASCII] text, providing any additional information used to assist the Client implementers in understanding the occurred error. The values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
 The usage of these parameters takes precedence over the `invalid_request` parameter defined in (#authorization-errors), since they provide more details about the errors.
 
