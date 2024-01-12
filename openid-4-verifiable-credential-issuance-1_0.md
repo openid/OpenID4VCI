@@ -932,7 +932,7 @@ The following parameters are used in the JSON-encoded Credential Response body:
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
 * `notification_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the Notification Request as defined in (#notification). This parameter MUST NOT be present if `credential` parameter is not present.
 
-The Credential format and encoding of the `credential` MUST match the Credential format specified in the Credential Request. Details are defined in the Credential Format Profiles in (#format_profiles).
+The format and encoding of the `credential` value is determined by the Credential format specified in the Credential Request. Details are defined in the Credential Format Profiles in (#format_profiles).
 
 Credential formats expressed as binary data MUST be base64url-encoded and returned as a string.
 
