@@ -1166,7 +1166,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Deferred Credential Response {#deferred-credential_response}
 
-The Deferred Credential Response uses the `format` and `credential` parameters as defined in (#credential-response).
+The Deferred Credential Response uses the `credential` parameter as defined in (#credential-response).
 
 Deferred Credential Response MUST be sent using the `application/json` media type.
 
