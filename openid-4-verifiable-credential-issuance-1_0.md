@@ -290,7 +290,7 @@ Figure: Issuance using Pre-Authorized Code Flow
 
 (3) The Wallet uses the Credential Issuer's URL to fetch its metadata as described in (#credential_issuer_metadata). The Wallet needs the metadata to learn the Credential types and formats that the Credential Issuer supports, and to determine the Authorization Endpoint (OAuth 2.0 Authorization Server) as well as Credential Endpoint required to start the request.
 
-(4) The Wallet sends the Pre-Authorized Code obtained in step (2) in the Token Request to the Token Endpoint. The Wallet will additionally send a Transaction Code provided by the User, if it was required by the Credential Issuer. This step is defined in (#token_endpoint).
+(4) The Wallet sends the Pre-Authorized Code obtained in step (2) in the Token Request to the Token Endpoint. The Wallet will additionally send a Transaction Code provided by the End-User, if it was required by the Credential Issuer. This step is defined in (#token_endpoint).
 
 (5) This step is the same as Step 5 in the Authorization Code Flow.
 
@@ -337,7 +337,7 @@ The following values are defined by this specification:
   * `tx_code`: OPTIONAL. Object specifying whether the AS expects presentation of a Transaction Code by the End-User along with the Token Request in a Pre-Authorized Code Flow. If the AS does not expect a Transaction Code, this object is absent, this is the default. The Transaction Code is intended to bind the Pre-Authorized Code to a certain transaction to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate End-User. It is RECOMMENDED to send the Transaction Code via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, the Transaction Code value MUST be sent in the `tx_code` parameter with the respective Token Request as defined in (#token_request). If no `length` or `description` is given, this object may be empty, indicating that a Transaction Code is required.
     * `input_mode` : OPTIONAL. String specifying the input characters set. Possible values are `numeric` (only digits) and `text` (any character). The default is `numeric`.
     * `length`: OPTIONAL. Integer specifying the length of the Transaction Code. This helps the Wallet to render the input screen and improve the user experience.
-    * `description`: OPTIONAL. String containing guidance for the Holder of the Wallet on how to obtain the Transaction Code, e.g. describing over which communication channel it is delivered. The Wallet is RECOMMENDED to display this description next to the Transaction Code input screen to improve the user experience. The length of the string MUST NOT exceed 300 characters. The `description` does not support internationalization (i18n), however the Issuer MAY detect the Holder's language by previous communication or an HTTP Accept-Language header within an HTTP GET request for a Credential Offer URI.
+    * `description`: OPTIONAL. String containing guidance for the Holder of the Wallet on how to obtain the Transaction Code, e.g., describing over which communication channel it is delivered. The Wallet is RECOMMENDED to display this description next to the Transaction Code input screen to improve the user experience. The length of the string MUST NOT exceed 300 characters. The `description` does not support internationalization, however the Issuer MAY detect the Holder's language by previous communication or an HTTP Accept-Language header within an HTTP GET request for a Credential Offer URI.
   * `interval`: OPTIONAL. The minimum amount of time in seconds that the Wallet SHOULD wait between polling requests to the token endpoint (in case the Authorization Server responds with error code `authorization_pending` - see (#token_error_response)). If no value is provided, Wallets MUST use `5` as the default.
   * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. It MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
   
@@ -603,14 +603,14 @@ grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
 
 Token Responses are made as defined in [@!RFC6749].
 
-The AS might decide to authorize issuance of multiple instances for each Credential requested in the Authorization Request. Each Credential instance is described using the same entry in the `credential_configurations_supported` Credential Issuer metadata, but contains different claim values or a different subset of claims within the claims set identified by the Credential description.
+The authorization server might decide to authorize issuance of multiple instances for each Credential requested in the Authorization Request. Each Credential instance is described using the same entry in the `credential_configurations_supported` Credential Issuer metadata, but contains different claim values or different subset of claims within the claims set identified by the `credential_configuration_id`.
 
 In addition to the response parameters defined in [@!RFC6749], the AS MAY return the following parameters:
 
 * `c_nonce`: OPTIONAL. String containing a nonce to be used when creating a proof of possession of the key proof (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
 * `authorization_details`: REQUIRED when `authorization_details` parameter is used to request issuance of a certain Credential type as defined in (#authorization-details). It MUST NOT be used otherwise. It is an array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
-  * `credential_identifiers`: OPTIONAL. Array of strings, each uniquely identifying a Credential that can be issued using the Access Token returned in this response. Each of these Credentials corresponds to the same entry in the `credential_configurations_supported` Credential Issuer metadata but can contain different claim values or a different subset of claims within the claimset identified by that Credential type. This parameter can be used to simplify the Credential Request, as defined in (#credential_request), where the `credential_identifier` parameter replaces the `format` parameter and any other Credential format-specific parameters in the Credential Request. When received, the Wallet MUST use these values together with an Access Token in subsequent Credential Requests.
+  * `credential_identifiers`: OPTIONAL. Array of strings, each uniquely identifying a Credential that can be issued using the Access Token returned in this response. Each of these Credentials corresponds to the same entry in the `credential_configurations_supported` Credential Issuer metadata but can contain different claim values or a different subset of claims within the claims set identified by that Credential type. This parameter can be used to simplify the Credential Request, as defined in (#credential_request), where the `credential_identifier` parameter replaces the `format` parameter and any other Credential format-specific parameters in the Credential Request. When received, the Wallet MUST use these values together with an Access Token in subsequent Credential Requests.
 
 Note: Credential Instance identifier(s) cannot be used when the `scope` parameter is used in the Authorization Request to request issuance of a Credential.
 
@@ -763,7 +763,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 The Client MAY request encrypted responses by providing its encryption parameters in the Credential Request.
 
-The Credential Issuer MAY require encrypted responses by including `require_credential_response_encryption` in the Credntial Issuer Metadata.
+The Credential Issuer indicates support for encrypted responses by including the `credential_response_encryption` parameter in the Credential Issuer Metadata.
 
 ### Key Proof Types {#proof_types}
 
@@ -847,7 +847,7 @@ Here is another example JWT not only proving possession of a private key but als
 
 When a W3C Verifiable Presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] signed using Data Integrity is used as Key Proof, it MUST contain the following elements:
 
-* `holder`: OPTIONAL. MUST be equivalent to the controller identifier (e.g. DID) for the `verificationMethod` value identified by the `proof.verificationMethod` property.
+* `holder`: OPTIONAL. MUST be equivalent to the controller identifier (e.g., DID) for the `verificationMethod` value identified by the `proof.verificationMethod` property.
 * `proof`: REQUIRED. The proof body of a W3C Verifiable Presentation.
   * `domain`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
   * `challenge`: REQUIRED when the Credential Issuer has provided a `c_nonce`. MUST NOT be used otherwise. String, where the value is a server-provided `c_nonce`. It MUST be present when the Wallet received server-provided `c_nonce`.
@@ -920,7 +920,7 @@ Credential Response can be immediate or deferred. The Credential Issuer MAY be a
 
 In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send a `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code MUST be 202 (section 10.2.3 of [@!RFC2616]).
 
-If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Credential Response as a JWT using the  parameters from the `credential_response_encryption` object. If the Credential Response is encrypted, the media type of the response MUST bet set to `application/jwt`. If encryption was requested in the Credential Request and the Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
+If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Credential Response as a JWT using the  parameters from the `credential_response_encryption` object. If the Credential Response is encrypted, the media type of the response MUST be set to `application/jwt`. If encryption was requested in the Credential Request and the Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
 
 If the Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
 
@@ -1214,7 +1214,7 @@ The Wallet sends an HTTP POST request to the Notification Endpoint with the foll
 
 * `notification_id`: REQUIRED. String received in Credential Response or Batch Credential Response.
 * `event`: REQUIRED. Type of the notification event. It MUST be a case sensitive string whose value is either `credential_accepted`, `credential_failure` or `credential_deleted`. `credential_accepted` is to be used when the Credential was successfully stored in the Wallet, with or without user action. `credential_deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `credential_failure` is to be used.
-* `error_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the error that occurred. Values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
+* `event_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the event that occurred. Values for the `event_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
 Below is a non-normative example of a Notification Request when a credential was successfully accepted by the End-User:
 
@@ -1240,8 +1240,8 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
   "notification_id": "3fwe98js",
-  "event": "credential_deleted",
-  "error_description": "..."
+  "event": "credential_failure",
+  "event_description": "Could not store the Credential. Out of storage."
 }
 ```
 
@@ -1267,7 +1267,7 @@ When the `notification_id` value is invalid, the HTTP response MUST use the HTTP
 
 It is at the discretion of the Issuer to decide how to proceed after returning an error response.
 
-The following is a non-normative example of an Notification Error Response where an invalid `notification_id` value was used:
+The following is a non-normative example of a Notification Error Response where an invalid `notification_id` value was used:
 
 ```
 HTTP/1.1 400 Bad Request
@@ -1335,16 +1335,21 @@ This specification defines the following Credential Issuer Metadata:
 * `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint as defined in (#batch-credential-endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
 * `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint as defined in (#deferred-credential-issuance). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
 * `notification_endpoint`: OPTIONAL. URL of the Credential Issuer's Notification Endpoint as defined in (#notification_endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Notification Endpoint.
-* `credential_response_encryption_alg_values_supported`: OPTIONAL. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`alg` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
-* `credential_response_encryption_enc_values_supported`: OPTIONAL. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and/or Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
-* `require_credential_response_encryption`: OPTIONAL. Boolean value specifying whether the Credential Issuer requires additional encryption on top of TLS for the Credential Response and expects encryption parameters to be present in the Credential Request and/or Batch Credential Request, with `true` indicating support. When the value is `true`, `credential_response_encryption_alg_values_supported` parameter MUST also be provided.  If omitted, the default value is `false`.
+* `credential_response_encryption`: OPTIONAL. Object containing information whether the Credential Issuer supports encryption of the Credential and Batch Credential Response on top of TLS.
+  * `alg_values_supported`: REQUIRED. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`alg` values) [@!RFC7518] supported by the Credential and Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
+  * `enc_values_supported`: REQUIRED. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
+  * `encryption_required`: REQUIRED. Boolean value specifying whether the Credential Issuer requires the additional encryption on top of TLS for the Credential Response. If the value is `true`, the Credential Issuer requires the encryption for every Credential Response and therefore the Wallet MUST provide encryption keys in the Credential Request. If the value is `false`, the Wallet MAY chose whether it provides encryption keys or not.
 * `credential_identifiers_supported`: OPTIONAL. Boolean value specifying whether the Credential Issuer supports returning `credential_identifiers` parameter in the `authorization_details` Token Response parameter, with `true` indicating support. If omitted, the default value is `false`.
+* `signed_metadata`: OPTIONAL. String that is a signed JWT. This JWT contains Credential Issuer metadata parameters as claims. The signed metadata MUST be secured using JSON Web Signature (JWS) [@!RFC7515] and MUST contain an `iat` (Issued At) claim, an `iss` (Issuer) claim denoting the party attesting to the claims in the signed metadata, and `sub` (Subject) claim matching the Credential Issuer identifier. If the Wallet supports signed metadata, metadata values conveyed in the signed JWT MUST take precedence over the corresponding values conveyed using plain JSON elements. If the Credential Issuer wants to enforce use of signed metadata, it omits the respective metadata parameters from the unsigned part of the Credential Issuer metadata. A `signed_metadata` metadata value MUST NOT appear as a claim in the JWT. The Wallet MUST establish trust in the signer of the metadata, and obtain the keys to validate the signature before processing the metadata. The concrete mechanism how to do that is out of scope of this specification and MAY be defined in the profiles of this specification.
 * `display`: OPTIONAL. Array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
   * `name`: OPTIONAL. String value of a display name for the Credential Issuer.
   * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
+  * `logo`: OPTIONAL. Object with information about the logo of the Credential Issuer. Below is a non-exhaustive list of parameters that MAY be included:
+    * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the logo of the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
+    * `alt_text`: OPTIONAL. String value of the alternative text for the logo image.
 * `credential_configurations_supported`: REQUIRED. Object that describes specifics of the Credential that the Credential Issuer supports issuance of. This object contains a list of name/value pairs, where each name is a unique identifier of the supported Credential being described. This identifier is used in the Credential Offer as defined in (#credential_offer_parameters) to communicate to the Wallet which Credential is being offered. The value is an object that contains metadata about specific Credential and contains the following parameters defined by this specification:
   * `format`: REQUIRED. A JSON string identifying the format of this Credential, i.e., `jwt_vc_json` or `ldp_vc`. Depending on the format value, the object contains further elements defining the type and (optionally) particular claims the Credential MAY contain and information about how to display the Credential. (#format_profiles) defines Credential Format Profiles introduced by this specification.
-  * `scope`: OPTIONAL. A JSON string identifying the scope value that this Credential Issuer supports for this particular Credential. The value can be the same accross multiple `credential_configurations_supported` objects. The Authorization Server MUST be able to uniquely identify the Credential Issuer based on the scope value. The Wallet can use this value in the Authorization Request as defined in (#credential-request-using-type-specific-scope). Scope values in this Credential Issuer metadata MAY duplicate those in the `scopes_supported` parameter of the Authorization Server.
+  * `scope`: OPTIONAL. A JSON string identifying the scope value that this Credential Issuer supports for this particular Credential. The value can be the same across multiple `credential_configurations_supported` objects. The Authorization Server MUST be able to uniquely identify the Credential Issuer based on the scope value. The Wallet can use this value in the Authorization Request as defined in (#credential-request-using-type-specific-scope). Scope values in this Credential Issuer metadata MAY duplicate those in the `scopes_supported` parameter of the Authorization Server.
   * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential as defined in (#credential-binding). Support for keys in JWK format [@!RFC7517] is indicated by the value `jwk`. Support for keys expressed as a COSE Key object [@!RFC8152] (for example, used in [@!ISO.18013-5]) is indicated by the value `cose_key`. When Cryptographic Binding Method is a DID, valid values MUST be a `did:` prefix followed by a method-name using a syntax as defined in Section 3.1 of [@!DID-Core], but without a `:`and method-specific-id. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in Section 13 of [@DID_Specification_Registries] is indicated by sending a DID without any method-name.
   * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptographic algorithms for Credentials in `jwt_vc` format should use algorithm names defined in [IANA JOSE Algorithms Registry](https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms). Cryptographic algorithms for Credentials in `ldp_vc` format should use signature suites names defined in [Linked Data Cryptographic Suite Registry](https://w3c-ccg.github.io/ld-cryptosuite-registry/).
   * `proof_types`: OPTIONAL. Array of case sensitive strings, each representing a `proof_type` that the Credential Issuer supports as defined in (#credential_request), one of which MUST be used in the Credential Request. If this array is non-empty and present, the Credential Issuer requires proof of possession of the cryptographic key material. If the parameter is omitted or the array is empty, the Credential Issuer does not require proof of possession of the cryptographic key material.
@@ -1352,7 +1357,7 @@ This specification defines the following Credential Issuer Metadata:
       * `name`: REQUIRED. String value of a display name for the Credential.
       * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. Multiple `display` objects MAY be included for separate languages. There MUST be only one object for each language identifier.
       * `logo`: OPTIONAL. Object with information about the logo of the Credential with a following non-exhaustive list of parameters that MAY be included:
-          * `url`: OPTIONAL. URL where the Wallet can obtain a logo of the Credential from the Credential Issuer.
+          * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the logo of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
           * `alt_text`: OPTIONAL. String value of an alternative text of a logo image.
       * `description`: OPTIONAL. String value of a description of the Credential.
       * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
@@ -1446,6 +1451,12 @@ Implementations MUST follow [@!BCP195].
 
 Whenever TLS is used, a TLS server certificate check MUST be performed, per [@!RFC6125].
 
+## Protecting the Access Token
+
+Access Tokens represent End-User authorization and consent to issue certain Credential(s). Long-lived Access Tokens giving access to Credentials MUST not be issued unless sender-constrained. Access Tokens with lifetimes longer than 5 minutes are, in general, considered long lived.
+
+To sender-constrain Access Tokens, see the recommendations in Section 4.10.1 in [@!I-D.ietf-oauth-security-topics]. If Bearer Access Tokens are stored by the Wallet, they MUST be stored in a secure manner, for example, encrypted using a key stored in a protected key store.
+
 # Implementation Considerations
 
 ## Claim-based Binding of the Credential to the End-User possessing the Credential {#claim-based-binding}
@@ -1492,12 +1503,6 @@ Second, the Credential Issuer can reissue the Credential by starting the issuanc
 Credential Refresh can be initiated by the Wallet independently from the Credential Issuer, or the Credential Issuer can send a signal to the Wallet asking it to request Credential refresh. How the Credential Issuer sends such a signal is out of scope for this specification.
 
 It is up to the Credential Issuer whether to update both the signature and the claim values, or only the signature.
-
-## Protecting the Access Token
-
-Access Tokens represent End-User authorization and consent to issue certain Credential(s). Long-lived Access Tokens giving access to Credentials MUST not be issued unless sender-constrained. Access Tokens with lifetimes longer than 5 minutes are, in general, considered long lived.
-
-To sender-constrain Access Tokens, see the recommendations in Section 4.10.1 in [@!I-D.ietf-oauth-security-topics]. If Bearer Access Tokens are stored by the Wallet, they MUST be stored in a secure manner, for example, encrypted using a key stored in a protected key store.
 
 # Privacy Considerations
 
@@ -1843,167 +1848,6 @@ TBD
   </front>
 </reference>
 
-# IANA Considerations
-
-## Sub-Namespace Registration
-
-This specification registers the following URN in the IANA "OAuth URI" registry [@!IANA.OAuth.Parameters] established by [@!RFC6755].
-
-* URN: urn:ietf:params:oauth:grant-type:pre-authorized_code
-* Common Name: Pre-Authorized Code
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#token_request) of this spedification
-
-## OAuth Parameters Registry
-
-This specification registers the following parameter names in the IANA "OAuth Parameters" registry [@!IANA.OAuth.Parameters] established by [@!RFC6749].
-
-* Parameter Name: wallet_issuer
-* Parameter Usage Location: authorization request
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#credential-authz-request) of this specification
-
-* Parameter Name: user_hint
-* Parameter Usage Location: authorization request
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#credential-authz-request) of this specification
-
-* Parameter Name: issuer_state
-* Parameter Usage Location: authorization request
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#credential-authz-request) of this specification
-
-* Parameter Name: pre-authorized_code
-* Parameter Usage Location: token request
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#token_request) of this specification
-
-* Parameter Name: tx_code
-* Parameter Usage Location: token request
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#token_request) of this specification
-
-* Parameter Name: c_nonce
-* Parameter Usage Location: token response
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#token-response) of this specification
-
-* Parameter Name: c_nonce_expires_in
-* Parameter Usage Location: token response
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#token-response) of this specification
-
-## OAuth Dynamic Client Registration Metadata Registry
-
-This specification registers the following client metadata name in the IANA "OAuth Dynamic Client Registration Metadata" registry [@!IANA.OAuth.Parameters] established by [@!RFC7591].
-
-* Client Metadata Name: credential_offer_endpoint
-* Client Metadata Description: Credential Offer Endpoint
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#credential_offer_endpoint) of this specification
-
-
-## Well-Known URI Registry
-
-This specification registers the following well-known URI in the IANA "Well-Known URI" registry established by [@!RFC5785].
-
-* URI suffix: openid-credential-issuer
-* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Specification document: (#credential_issuer_wellknown) of this document
-* Related information: (none)
-
-## Media Types Registry
-
-This specification registers the following media types in the IANA "Media Types" registry [@!IANA.MediaTypes] in the manner described in [@!RFC6838].
-
-* Type name: `application`
-* Subtype name: `openid4vci-proof+jwt`
-* Required parameters: n/a
-* Optional parameters: n/a
-* Encoding considerations: Uses JWS Compact Serialization, as specified in [@!RFC7515].
-* Security considerations: See the Security Considerations in [@!RFC7519].
-* Interoperability considerations: n/a
-* Published specification: (#jwt-proof-type) of this specification
-* Applications that use this media type: Applications that issue and store verifiable credentials
-* Additional information:
-  - Magic number(s): n/a
-  - File extension(s): n/a
-  - Macintosh file type code(s): n/a
-* Person & email address to contact for further information: Torsten Lodderstedt, torsten@lodderstedt.net
-* Intended usage: COMMON
-* Restrictions on usage: none
-* Author: Torsten Lodderstedt, torsten@lodderstedt.net
-* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Provisional registration? No
-
-* Type name: `application`
-* Subtype name: `openid4vci-proof+cwt`
-* Required parameters: n/a
-* Optional parameters: n/a
-* Encoding considerations: Binary CBOR, as specified in [@!RFC9052]
-* Security considerations: See the Security Considerations in [@!RFC8392].
-* Interoperability considerations: n/a
-* Published specification: (#cwt-proof-type) of this specification
-* Applications that use this media type: Applications that issue and store verifiable credentials
-* Additional information:
-  - Magic number(s): n/a
-  - File extension(s): n/a
-  - Macintosh file type code(s): n/a
-* Person & email address to contact for further information: Torsten Lodderstedt, torsten@lodderstedt.net
-* Intended usage: COMMON
-* Restrictions on usage: none
-* Author: Torsten Lodderstedt, torsten@lodderstedt.net
-* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Provisional registration? No
-
-# Acknowledgements {#Acknowledgements}
-
-We would like to thank Paul Bastian, Vittorio Bertocci, Christian Bormann, John Bradley, Brian Campbell, Gabe Cohen, David Chadwick, Andrii Deinega, Giuseppe De Marco, Mark Dobrinic, Daniel Fett, Pedro Felix, George Fletcher, Timo Glasta, Mark Haine, Fabian Hauck, Roland Hedberg, Joseph Heenan, Alen Horvat, Andrew Hughes, Jacob Ideskog, Edmund Jay, Michael B. Jones, Tom Jones, Judith Kahrer, Takahiko Kawasaki, Niels Klomp, Ronald Koenig, Markus Kreusch, Adam Lemmon, Daniel McGrogan, Jeremie Miller, Kenichi Nakamura, Rolson Quadras, Nat Sakimura, Oliver Terbu, Arjen van Veen, David Waite, Jacob Ward for their valuable feedback and contributions to this specification.
-
-# Notices
-
-Copyright (c) 2023 The OpenID Foundation.
-
-The OpenID Foundation (OIDF) grants to any Contributor, developer, implementer, or other interested party a non-exclusive, royalty free, worldwide copyright license to reproduce, prepare derivative works from, distribute, perform and display, this Implementers Draft or Final Specification solely for the purposes of (i) developing specifications, and (ii) implementing Implementers Drafts and Final Specifications based on such documents, provided that attribution be made to the OIDF as the source of the material, but that such attribution does not indicate an endorsement by the OIDF.
-
-The technology described in this specification was made available from contributions from various sources, including members of the OpenID Foundation and others. Although the OpenID Foundation has taken steps to help ensure that the technology is available for distribution, it takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this specification or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any independent effort to identify any such rights. The OpenID Foundation and the contributors to this specification make no (and hereby expressly disclaim any) warranties (express, implied, or otherwise), including implied warranties of merchantability, non-infringement, fitness for a particular purpose, or title, related to this specification, and the entire risk as to implementing this specification is assumed by the implementer. The OpenID Intellectual Property Rights policy requires contributors to offer a patent promise not to assert certain patent claims against other contributors and against implementers. The OpenID Foundation invites any interested party to bring to its attention any copyrights, patents, patent applications, or other proprietary rights that MAY cover technology that MAY be required to practice this specification.
-
-# Use Cases
-
-This is a non-exhaustive list of sample use cases.
-
-## Credential Offer - Same-Device {#use-case-1}
-
-While browsing the university's home page, the End-User finds a link "request your digital diploma". The End-User clicks on this link and is being redirected to a digital Wallet. The Wallet notifies the End-User that a Credential Issuer offered to issue a diploma Credential. User confirms this inquiry and is taken to the university's Credential issuance service's End-User experience. Upon successful authentication at the university and consent to the issuance of a digital diploma, the End-User is redirected back to the Wallet. Here, the End-User can verify the successful creation of the digital diploma.
-
-## Credential Offer - Cross-Device (with Information Pre-Submitted by the End-User) {#use-case-2}
-
-The End-User is starting a job at a new employer. The employer requests the End-User to upload specific documents to the employee portal. After a few days, the End-User receives an email from the employer indicating that the employee Credential is ready to be claimed and provides instructions to scan a presented QR code for its retrieval. The End-User scans the QR code with the smartphone, which opens the Wallet. Meanwhile, the End-User has received a text message with a Transaction Code to the smartphone. After entering the Transaction Code in the Wallet for security reasons, the End-User confirms the Credential issuance, and receives the Credential into the Wallet.
-
-## Credential Offer - Cross-Device & Deferred {#use-case-3}
-
-The End-User intends to acquire a digital criminal record. This involves a visit to the local administration's office to request the official criminal record be issued as a digital Credential. After presenting the ID document, the End-User is prompted to scan a QR code using the Wallet and is informed that the issuance of the Credential will require some time, due to necessary background checks by the authority.
-
-While using the Wallet, the End-User notices an indication that the issuance of the digital record is in progress. After a few days, the End-User receives a notification from the Wallet indicating that the requested Credential was successfully issued. Upon opening the Wallet, the End-User is queried about the download of the Credential. After confirmation, the Wallet fetches and saves the new Credential.
-
-## Wallet Initiated Issuance during Presentation {#use-case-4}
-
-An End-User comes across a verifier app that is requesting the End-User to present a Credential, e.g., a driving license. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet selects a Credential Issuer capable of issuing the missing Credential and, upon End-User consent, sends the End-User to the Credential Issuer's End-User experience (Web site or app). Once authenticated and consent is provided for the issuance of the Credential into the Wallet, the End-User is redirected back to the Wallet. The Wallet informs the End-User that Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
-
-## Wallet Initiated Issuance during Presentation (Requires Presentation of Additional Credentials During Issuance) {#use-case-5}
-
-An End-User comes across a verifier app that is requesting the End-User to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet then offers the End-User a list of Credential Issuers, which might be based on a Credential Issuer list curated by the Wallet provider. The End-User selects the university of graduation and is subsequently redirected to the corresponding university's website or app.
-
-The End-User logs into the university, which identifies that the corresponding End-User account is not yet verified. Among various identification options, the End-User opts to present a Credential from the Wallet. The End-User is redirected back to the Wallet to consent to present the requested Credential(s) to the university. Following this, the End-User is redirected back to the university End-User experience. Based on the presented Credential, the university finalizes the End-User verification, retrieves End-User data from its database, and proposes to issue a diploma as a Verifiable Credential.
-
-Upon providing consent, the End-User is sent back to the Wallet. The Wallet informs the End-User Credential was successfully issued into the Wallet and is ready to be presented to the verifier app that originally requested presentation of that Credential.
-
-## Wallet Initiated Issuance after Installation {#use-case-6}
-
-The End-User installs a new Wallet and executes it. The Wallet offers the End-User a selection of the Credentials that the End-User may obtain from a Credential Issuer, e.g. a national identity credential, a mobile driving license or a public transport ticket. The corresponding Credential Issuers (and their URLs) are pre-configured by the Wallet or follow some discovery processes that are out of scope for this specification. By clicking on one these options corresponding to the Credentials available for the issuance, the Issuance process starts with the flows supported by the Credential Issuer (Pre-Authorized Code flow or Auth Code flow).
-
-Wallet Providers may also provide a market place where Issuers can register to be found for Wallet-initiated flows.
-
 # Credential Format Profiles {#format_profiles}
 
 This specification defines several extension points to accommodate the differences across Credential formats. Sets of Credential format specific parameters or claims referred to as Credential format Identifiers are identified by the Credential format identifier and used at each extension point.
@@ -2244,19 +2088,19 @@ The Credential format identifier is `vc+sd-jwt`.
 
 ### Credential Issuer Metadata {#server_metadata_sd_jwt_vc}
 
-The following additional Credential Issuer metadata parameters are defined for this Credential format to be added to the `credentials_supported` parameter in addition to those defined in (#credential-issuer-parameters).
+The following additional Credential Issuer metadata parameters are defined for this Credential format to be added to the `credential_configurations_supported` parameter in addition to those defined in (#credential-issuer-parameters).
 
 
 * `vct`: REQUIRED. String designating the type of a Credential as defined in [@!I-D.ietf-oauth-sd-jwt-vc].
 * `claims`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim about the subject offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be an object that includes a following non-exhaustive list of parameters defined by this specification:
     * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
-    * `value_type`: OPTIONAL. String value determining type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
+    * `value_type`: OPTIONAL. String value determining the type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
     * `display`: OPTIONAL. Array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
         * `name`: OPTIONAL. String value of a display name for the claim.
         * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. An array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
-The following is a non-normative example of an object comprising `credentials_supported` parameter of Credential format `vc+sd-jwt`.
+The following is a non-normative example of an object comprising `credential_configurations_supported` parameter of Credential format `vc+sd-jwt`.
 
 <{{examples/credential_metadata_sd_jwt_vc.json}}
 
@@ -2286,12 +2130,176 @@ The following is a non-normative example of a Credential Request with Credential
 
 The value of the `credential` claim in the Credential Response MUST be a string that is an SD-JWT VC. Credentials of this format are already suitable for transfer and, therefore, they need not and MUST NOT be re-encoded.
 
+# IANA Considerations
+
+## Sub-Namespace Registration
+
+This specification registers the following URN in the IANA "OAuth URI" registry [@!IANA.OAuth.Parameters] established by [@!RFC6755].
+
+* URN: urn:ietf:params:oauth:grant-type:pre-authorized_code
+* Common Name: Pre-Authorized Code
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token_request) of this specification
+
+## OAuth Parameters Registry
+
+This specification registers the following parameter names in the IANA "OAuth Parameters" registry [@!IANA.OAuth.Parameters] established by [@!RFC6749].
+
+* Parameter Name: wallet_issuer
+* Parameter Usage Location: authorization request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#credential-authz-request) of this specification
+
+* Parameter Name: user_hint
+* Parameter Usage Location: authorization request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#credential-authz-request) of this specification
+
+* Parameter Name: issuer_state
+* Parameter Usage Location: authorization request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#credential-authz-request) of this specification
+
+* Parameter Name: pre-authorized_code
+* Parameter Usage Location: token request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token_request) of this specification
+
+* Parameter Name: tx_code
+* Parameter Usage Location: token request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token_request) of this specification
+
+* Parameter Name: c_nonce
+* Parameter Usage Location: token response
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token-response) of this specification
+
+* Parameter Name: c_nonce_expires_in
+* Parameter Usage Location: token response
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token-response) of this specification
+
+## OAuth Dynamic Client Registration Metadata Registry
+
+This specification registers the following client metadata name in the IANA "OAuth Dynamic Client Registration Metadata" registry [@!IANA.OAuth.Parameters] established by [@!RFC7591].
+
+* Client Metadata Name: credential_offer_endpoint
+* Client Metadata Description: Credential Offer Endpoint
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#credential_offer_endpoint) of this specification
+
+
+## Well-Known URI Registry
+
+This specification registers the following well-known URI in the IANA "Well-Known URI" registry established by [@!RFC5785].
+
+* URI suffix: openid-credential-issuer
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Specification document: (#credential_issuer_wellknown) of this document
+* Related information: (none)
+
+## Media Types Registry
+
+This specification registers the following media types in the IANA "Media Types" registry [@!IANA.MediaTypes] in the manner described in [@!RFC6838].
+
+* Type name: `application`
+* Subtype name: `openid4vci-proof+jwt`
+* Required parameters: n/a
+* Optional parameters: n/a
+* Encoding considerations: Uses JWS Compact Serialization, as specified in [@!RFC7515].
+* Security considerations: See the Security Considerations in [@!RFC7519].
+* Interoperability considerations: n/a
+* Published specification: (#jwt-proof-type) of this specification
+* Applications that use this media type: Applications that issue and store verifiable credentials
+* Additional information:
+  - Magic number(s): n/a
+  - File extension(s): n/a
+  - Macintosh file type code(s): n/a
+* Person & email address to contact for further information: Torsten Lodderstedt, torsten@lodderstedt.net
+* Intended usage: COMMON
+* Restrictions on usage: none
+* Author: Torsten Lodderstedt, torsten@lodderstedt.net
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Provisional registration? No
+
+* Type name: `application`
+* Subtype name: `openid4vci-proof+cwt`
+* Required parameters: n/a
+* Optional parameters: n/a
+* Encoding considerations: Binary CBOR, as specified in [@!RFC9052]
+* Security considerations: See the Security Considerations in [@!RFC8392].
+* Interoperability considerations: n/a
+* Published specification: (#cwt-proof-type) of this specification
+* Applications that use this media type: Applications that issue and store verifiable credentials
+* Additional information:
+  - Magic number(s): n/a
+  - File extension(s): n/a
+  - Macintosh file type code(s): n/a
+* Person & email address to contact for further information: Torsten Lodderstedt, torsten@lodderstedt.net
+* Intended usage: COMMON
+* Restrictions on usage: none
+* Author: Torsten Lodderstedt, torsten@lodderstedt.net
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Provisional registration? No
+
+# Acknowledgements {#Acknowledgements}
+
+We would like to thank Richard Barnes, Paul Bastian, Vittorio Bertocci, Christian Bormann, John Bradley, Brian Campbell, Gabe Cohen, David Chadwick, Andrii Deinega, Giuseppe De Marco, Mark Dobrinic, Daniel Fett, Pedro Felix, George Fletcher, Timo Glasta, Mark Haine, Fabian Hauck, Roland Hedberg, Joseph Heenan, Alen Horvat, Andrew Hughes, Jacob Ideskog, Edmund Jay, Michael B. Jones, Tom Jones, Judith Kahrer, Takahiko Kawasaki, Niels Klomp, Ronald Koenig, Micha Kraus, Markus Kreusch, Philipp Lehwalder, Adam Lemmon, Dave Longley, David Luna, Daniel McGrogan, Jeremie Miller, Kenichi Nakamura, Rolson Quadras, Nat Sakimura, Sudesh Shetty, Oliver Terbu, Mike Varley, Arjen van Veen, David Waite, Jacob Ward for their valuable feedback and contributions to this specification.
+
+# Notices
+
+Copyright (c) 2024 The OpenID Foundation.
+
+The OpenID Foundation (OIDF) grants to any Contributor, developer, implementer, or other interested party a non-exclusive, royalty free, worldwide copyright license to reproduce, prepare derivative works from, distribute, perform and display, this Implementers Draft or Final Specification solely for the purposes of (i) developing specifications, and (ii) implementing Implementers Drafts and Final Specifications based on such documents, provided that attribution be made to the OIDF as the source of the material, but that such attribution does not indicate an endorsement by the OIDF.
+
+The technology described in this specification was made available from contributions from various sources, including members of the OpenID Foundation and others. Although the OpenID Foundation has taken steps to help ensure that the technology is available for distribution, it takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this specification or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any independent effort to identify any such rights. The OpenID Foundation and the contributors to this specification make no (and hereby expressly disclaim any) warranties (express, implied, or otherwise), including implied warranties of merchantability, non-infringement, fitness for a particular purpose, or title, related to this specification, and the entire risk as to implementing this specification is assumed by the implementer. The OpenID Intellectual Property Rights policy requires contributors to offer a patent promise not to assert certain patent claims against other contributors and against implementers. The OpenID Foundation invites any interested party to bring to its attention any copyrights, patents, patent applications, or other proprietary rights that MAY cover technology that MAY be required to practice this specification.
+
+# Use Cases
+
+This is a non-exhaustive list of sample use cases.
+
+## Credential Offer - Same-Device {#use-case-1}
+
+While browsing the university's home page, the End-User finds a link "request your digital diploma". The End-User clicks on this link and is being redirected to a digital Wallet. The Wallet notifies the End-User that a Credential Issuer offered to issue a diploma Credential. The End-User confirms this inquiry and is taken to the university's Credential issuance service's End-User experience. Upon successful authentication at the university and consent to the issuance of a digital diploma, the End-User is redirected back to the Wallet. Here, the End-User can verify the successful creation of the digital diploma.
+
+## Credential Offer - Cross-Device (with Information Pre-Submitted by the End-User) {#use-case-2}
+
+The End-User is starting a job at a new employer. The employer requests the End-User to upload specific documents to the employee portal. After a few days, the End-User receives an email from the employer indicating that the employee Credential is ready to be claimed and provides instructions to scan a presented QR code for its retrieval. The End-User scans the QR code with the smartphone, which opens the Wallet. Meanwhile, the End-User has received a text message with a Transaction Code to the smartphone. After entering the Transaction Code in the Wallet for security reasons, the End-User confirms the Credential issuance, and receives the Credential into the Wallet.
+
+## Credential Offer - Cross-Device & Deferred {#use-case-3}
+
+The End-User intends to acquire a digital criminal record. This involves a visit to the local administration's office to request the official criminal record be issued as a digital Credential. After presenting the ID document, the End-User is prompted to scan a QR code using the Wallet and is informed that the issuance of the Credential will require some time, due to necessary background checks by the authority.
+
+While using the Wallet, the End-User notices an indication that the issuance of the digital record is in progress. After a few days, the End-User receives a notification from the Wallet indicating that the requested Credential was successfully issued. Upon opening the Wallet, the End-User is queried about the download of the Credential. After confirmation, the Wallet fetches and saves the new Credential.
+
+## Wallet Initiated Issuance during Presentation {#use-case-4}
+
+An End-User comes across a Verifier app that is requesting the End-User to present a Credential, e.g., a driving license. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet selects a Credential Issuer capable of issuing the missing Credential and, upon End-User consent, sends the End-User to the Credential Issuer's End-User experience (Web site or app). Once authenticated and consent is provided for the issuance of the Credential into the Wallet, the End-User is redirected back to the Wallet. The Wallet informs the End-User that Credential was successfully issued into the Wallet and is ready to be presented to the Verifier app that originally requested presentation of that Credential.
+
+## Wallet Initiated Issuance during Presentation (Requires Presentation of Additional Credentials During Issuance) {#use-case-5}
+
+An End-User comes across a Verifier app that is requesting the End-User to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet then offers the End-User a list of Credential Issuers, which might be based on a Credential Issuer list curated by the Wallet provider. The End-User selects the university of graduation and is subsequently redirected to the corresponding university's website or app.
+
+The End-User logs into the university, which identifies that the corresponding End-User account is not yet verified. Among various identification options, the End-User opts to present a Credential from the Wallet. The End-User is redirected back to the Wallet to consent to present the requested Credential(s) to the university. Following this, the End-User is redirected back to the university End-User experience. Based on the presented Credential, the university finalizes the End-User verification, retrieves End-User data from its database, and proposes to issue a diploma as a Verifiable Credential.
+
+Upon providing consent, the End-User is sent back to the Wallet. The Wallet informs the End-User Credential was successfully issued into the Wallet and is ready to be presented to the Verifier app that originally requested presentation of that Credential.
+
+## Wallet Initiated Issuance after Installation {#use-case-6}
+
+The End-User installs a new Wallet and executes it. The Wallet offers the End-User a selection of the Credentials that the End-User may obtain from a Credential Issuer, e.g. a national identity Credential, a mobile driving license or a public transport ticket. The corresponding Credential Issuers (and their URLs) are pre-configured by the Wallet or follow some discovery processes that are out of scope for this specification. By clicking on one of these options corresponding to the Credentials available for the issuance, the Issuance process starts with the flows supported by the Credential Issuer (Pre-Authorized Code flow or Auth Code flow).
+
+Wallet Providers may also provide a marketplace where Issuers can register to be found for Wallet-initiated flows.
+
 # Document History
 
    [[ To be removed from the final specification ]]
    
    -13
-
+  
+   * added `signed_metadata` parameter
+   * clarified that logo can is a uri and not a url only
+   * moved the annex with Credential format profiles to the top of all annexes
    * added a Notification Endpoint used by the Wallet to notify the Credential Issuer of certain events for issued Credentials
    * completed IANA registrations section
    * clarified description of a `mandatory` claim
