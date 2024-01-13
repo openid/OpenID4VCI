@@ -1142,7 +1142,7 @@ When the Credential Issuer requires `proof` objects to be present in the Batch C
 
 This endpoint is used to issue a Credential previously requested at the Credential Endpoint or Batch Credential Endpoint in cases where the Credential Issuer was not able to immediately issue this Credential. Support for this endpoint is OPTIONAL.
 
-The Wallet MUST present an Access Token to the Deferred Endpoint that is valid for the issuance of the Credential previously requested at the Credential Endpoint or the Batch Credential Endpoint.
+The Wallet MUST present to the Deferred Endpoint an Access Token that is valid for the issuance of the Credential previously requested at the Credential Endpoint or the Batch Credential Endpoint.
 
 Communication with the Deferred Credential Endpoint MUST utilize TLS. 
 
