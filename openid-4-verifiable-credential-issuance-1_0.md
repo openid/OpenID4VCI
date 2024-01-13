@@ -1261,7 +1261,7 @@ If the Notification Request does not contain an Access Token or contains an inva
 
 When the `notification_id` value is invalid, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the JSON-encoded response body:
 
-* `error`: REQUIRED. A name at the top level of the object, the value of which SHOULD be one of the following ASCII [@!USASCII] error codes:
+* `error`: REQUIRED. The value of the `error` parameter SHOULD be one of the following ASCII [@!USASCII] error codes:
   * `invalid_notification_id`: The `notification_id` in the Notification Request was invalid.
   * `invalid_notification_request`: The Notification Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
 
