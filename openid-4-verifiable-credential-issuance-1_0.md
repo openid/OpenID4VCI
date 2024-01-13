@@ -251,7 +251,7 @@ How the End-User provides information required for the issuance of a requested C
 
 This flow uses the newly defined OAuth 2.0 Grant Type "urn:ietf:params:oauth:grant-type:pre-authorized_code".
 
-The following diagram is based on the Credential Issuer initiated flow, as illustrated in a use case in (#use-case-2). Please note that it does not illustrate all the optional features outlined in this specification.
+The following diagram is based on the Credential Issuer-initiated flow, as described in the use case in (#use-case-2). Please note that it does not illustrate all the optional features outlined in this specification.
 
 !---
 ~~~ ascii-art
@@ -2249,33 +2249,33 @@ This is a non-exhaustive list of sample use cases.
 
 ## Credential Offer - Same-Device {#use-case-1}
 
-While browsing the university's home page, the End-User finds a link "request your digital diploma". The End-User clicks on this link and is being redirected to a digital Wallet. The Wallet notifies the End-User that a Credential Issuer offered to issue a diploma Credential. The End-User confirms this inquiry and is taken to the university's Credential issuance service's End-User experience. Upon successful authentication at the university and consent to the issuance of a digital diploma, the End-User is redirected back to the Wallet. Here, the End-User can verify the successful creation of the digital diploma.
+While browsing the university's home page, the End-User finds a link "request your digital diploma". The End-User clicks on this link and is redirected to a digital Wallet. The Wallet notifies the End-User that a Credential Issuer offered to issue a diploma Credential. The End-User confirms this inquiry and is taken to the university's Credential issuance service's End-User experience. Upon successful authentication at the university and consent to the issuance of a digital diploma, the End-User is redirected back to the Wallet. Here, the End-User can verify the successful creation of the digital diploma.
 
 ## Credential Offer - Cross-Device (with Information Pre-Submitted by the End-User) {#use-case-2}
 
-The End-User is starting a job at a new employer. The employer requests the End-User to upload specific documents to the employee portal. After a few days, the End-User receives an email from the employer indicating that the employee Credential is ready to be claimed and provides instructions to scan a presented QR code for its retrieval. The End-User scans the QR code with the smartphone, which opens the Wallet. Meanwhile, the End-User has received a text message with a Transaction Code to the smartphone. After entering the Transaction Code in the Wallet for security reasons, the End-User confirms the Credential issuance, and receives the Credential into the Wallet.
+The End-User is starting a job at a new employer. The employer requests the End-User to upload specific documents to the employee portal. After a few days, the End-User receives an email from the employer indicating that the employee Credential is ready to be claimed and provides instructions to scan a presented QR code for its retrieval. The End-User scans the QR code with a smartphone, which opens the Wallet. Meanwhile, the End-User has received a text message with a Transaction Code to the smartphone. After entering the Transaction Code in the Wallet for security reasons, the End-User approves the Credential issuance, and receives the Credential in the Wallet.
 
 ## Credential Offer - Cross-Device & Deferred {#use-case-3}
 
-The End-User intends to acquire a digital criminal record. This involves a visit to the local administration's office to request the official criminal record be issued as a digital Credential. After presenting the ID document, the End-User is prompted to scan a QR code using the Wallet and is informed that the issuance of the Credential will require some time, due to necessary background checks by the authority.
+The End-User intends to acquire a digital criminal record. This involves a visit to the local administration's office to request the official criminal record be issued as a digital Credential. After presenting an ID document, the End-User is prompted to scan a QR code using the Wallet and is informed that the issuance of the Credential will require some time, due to necessary background checks by the authority.
 
 While using the Wallet, the End-User notices an indication that the issuance of the digital record is in progress. After a few days, the End-User receives a notification from the Wallet indicating that the requested Credential was successfully issued. Upon opening the Wallet, the End-User is queried about the download of the Credential. After confirmation, the Wallet fetches and saves the new Credential.
 
-## Wallet Initiated Issuance during Presentation {#use-case-4}
+## Wallet-Initiated Issuance during Presentation {#use-case-4}
 
 An End-User comes across a Verifier app that is requesting the End-User to present a Credential, e.g., a driving license. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet selects a Credential Issuer capable of issuing the missing Credential and, upon End-User consent, sends the End-User to the Credential Issuer's End-User experience (Web site or app). Once authenticated and consent is provided for the issuance of the Credential into the Wallet, the End-User is redirected back to the Wallet. The Wallet informs the End-User that Credential was successfully issued into the Wallet and is ready to be presented to the Verifier app that originally requested presentation of that Credential.
 
-## Wallet Initiated Issuance during Presentation (Requires Presentation of Additional Credentials During Issuance) {#use-case-5}
+## Wallet-Initiated Issuance during Presentation (Requires Presentation of Additional Credentials During Issuance) {#use-case-5}
 
 An End-User comes across a Verifier app that is requesting the End-User to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet then offers the End-User a list of Credential Issuers, which might be based on a Credential Issuer list curated by the Wallet provider. The End-User selects the university of graduation and is subsequently redirected to the corresponding university's website or app.
 
-The End-User logs into the university, which identifies that the corresponding End-User account is not yet verified. Among various identification options, the End-User opts to present a Credential from the Wallet. The End-User is redirected back to the Wallet to consent to present the requested Credential(s) to the university. Following this, the End-User is redirected back to the university End-User experience. Based on the presented Credential, the university finalizes the End-User verification, retrieves End-User data from its database, and proposes to issue a diploma as a Verifiable Credential.
+The End-User logs into the university, which identifies that the corresponding End-User account is not yet verified. Among various identification options, the End-User opts to present a Credential from the Wallet. The End-User is redirected back to the Wallet to consent to present the requested Credential(s) to the university. Following this, the End-User is redirected back to the university End-User experience. Based on the presented Credential, the university finalizes the End-User verification, retrieves data about the End-User from its database, and proposes to issue a diploma as a Verifiable Credential.
 
-Upon providing consent, the End-User is sent back to the Wallet. The Wallet informs the End-User Credential was successfully issued into the Wallet and is ready to be presented to the Verifier app that originally requested presentation of that Credential.
+Upon providing consent, the End-User is sent back to the Wallet. The Wallet informs the End-User that the Credential was successfully issued into the Wallet and is ready to be presented to the Verifier app that originally requested presentation of that Credential.
 
-## Wallet Initiated Issuance after Installation {#use-case-6}
+## Wallet-Initiated Issuance after Installation {#use-case-6}
 
-The End-User installs a new Wallet and executes it. The Wallet offers the End-User a selection of the Credentials that the End-User may obtain from a Credential Issuer, e.g. a national identity Credential, a mobile driving license or a public transport ticket. The corresponding Credential Issuers (and their URLs) are pre-configured by the Wallet or follow some discovery processes that are out of scope for this specification. By clicking on one of these options corresponding to the Credentials available for the issuance, the Issuance process starts with the flows supported by the Credential Issuer (Pre-Authorized Code flow or Auth Code flow).
+The End-User installs a new Wallet and opens it. The Wallet offers the End-User a selection of Credentials that the End-User may obtain from a Credential Issuer, e.g. a national identity Credential, a mobile driving license, or a public transport ticket. The corresponding Credential Issuers (and their URLs) are pre-configured by the Wallet or follow some discovery processes that are out of scope for this specification. By clicking on one of these options corresponding to the Credentials available for issuance, the issuance process starts using a flow supported by the Credential Issuer (Pre-Authorized Code flow or Authorization Code flow).
 
 Wallet Providers may also provide a marketplace where Issuers can register to be found for Wallet-initiated flows.
 
