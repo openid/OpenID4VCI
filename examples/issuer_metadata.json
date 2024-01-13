@@ -55,7 +55,7 @@
                     "name": "University Credential",
                     "locale": "en-US",
                     "logo": {
-                        "url": "https://exampleuniversity.com/public/logo.png",
+                        "url": "https://university.example.edu/public/logo.png",
                         "alternative_text": "a square logo of a university"
                     },
                     "background_color": "#12107c",
@@ -65,7 +65,7 @@
                     "name": "在籍証明書",
                     "locale": "ja-JP",
                     "logo": {
-                        "url": "https://exampleuniversity.com/public/logo.png",
+                        "url": "https://university.example.edu/public/logo.png",
                         "alternative_text": "大学のロゴ"
                     },
                     "background_color": "#12107c",
@@ -122,7 +122,7 @@
                     "name": "University Credential",
                     "locale": "en-US",
                     "logo": {
-                        "url": "https://exampleuniversity.com/public/logo.png",
+                        "url": "https://university.example.edu/public/logo.png",
                         "alternative_text": "a square logo of a university"
                     },
                     "background_color": "#12107c",
@@ -132,7 +132,7 @@
                     "name": "在籍証明書",
                     "locale": "ja-JP",
                     "logo": {
-                        "url": "https://exampleuniversity.com/public/logo.png",
+                        "url": "https://university.example.edu/public/logo.png",
                         "alternative_text": "大学のロゴ"
                     },
                     "background_color": "#12107c",
@@ -154,7 +154,7 @@
                     "name": "Mobile Driving License",
                     "locale": "en-US",
                     "logo": {
-                        "url": "https://examplestate.com/public/mdl.png",
+                        "url": "https://state.example.org/public/mdl.png",
                         "alternative_text": "a square figure of a mobile driving license"
                     },
                     "background_color": "#12107c",
@@ -164,7 +164,7 @@
                     "name": "在籍証明書",
                     "locale": "ja-JP",
                     "logo": {
-                        "url": "https://examplestate.com/public/mdl.png",
+                        "url": "https://state.example.org/public/mdl.png",
                         "alternative_text": "大学のロゴ"
                     },
                     "background_color": "#12107c",
