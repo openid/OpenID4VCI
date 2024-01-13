@@ -691,7 +691,7 @@ If the Access Token is valid for requesting issuance of multiple Credentials, it
 
 ## Binding the Issued Credential to the Identifier of the End-User Possessing that Credential {#credential-binding}
 
-The issued Credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the Credential. Cryptographic binding allows the Verifier to verify during the presentation of a Credential that the End-User presenting a Credential is the same End-User to whom that Credential was issued. For non-cryptographic types of binding and Credentials issued without any binding, see the Implementation Considerations in (#claim-based-binding) and (#no-binding).
+The issued Credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the Credential. Cryptographic binding allows the Verifier to verify during the presentation of a Credential that the End-User presenting a Credential is the same End-User to whom that Credential was issued. For non-cryptographic types of binding and Credentials issued without any binding, see the Implementation Considerations in (#claims-based-binding) and (#no-binding).
 
 Note: Claims in the Credential are about the subject of the Credential, which is often the End-User who possesses it.
 
@@ -1458,7 +1458,7 @@ To sender-constrain Access Tokens, see the recommendations in Section 4.10.1 in 
 
 # Implementation Considerations
 
-## Claims-based Binding of the Credential to the End-User possessing the Credential {#claim-based-binding}
+## Claims-based Binding of the Credential to the End-User possessing the Credential {#claims-based-binding}
 
 Credentials not cryptographically bound to the identifier of the End-User possessing it (see (#credential-binding)), should be bound to the End-User possessing the Credential, based on the claims included in the Credential.
 
