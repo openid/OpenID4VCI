@@ -85,7 +85,7 @@ Holder:
 :  An entity that receives Verifiable Credentials and has control over them to present them to the Verifiers as Verifiable Presentations.
 
 Verifier:
-:  An entity that requests, receives, and validates Verifiable Presentations. During presentation of Credentials, Verifier acts as an OAuth 2.0 Client towards the Wallet that is acting as an OAuth 2.0 Authorization Server. The Verifier is a specific case of an OAuth 2.0 Client, just like Relying Party (RP) in [@OpenID.Core].
+:  An entity that requests, receives, and validates Verifiable Presentations. During presentation of Credentials, the Verifier acts as an OAuth 2.0 Client towards the Wallet that is acting as an OAuth 2.0 Authorization Server. The Verifier is a specific case of an OAuth 2.0 Client, just like a Relying Party (RP) is in [@OpenID.Core].
 
 Issuer-Holder-Verifier Model:
 :  A model for exchanging claims, where claims are issued in the form of Verifiable Credentials independent of the process of presenting them as Verifiable Presentations to the Verifiers. An issued Verifiable Credential can be (but is not necessarily) used multiple times.
@@ -94,10 +94,10 @@ Holder Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential.
 
 Cryptographic Holder Binding:
-:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proving control over the same private key during the issuance and presentation. Mechanism might depend on the Credential Format. For example, in `jwt_vc_json` Credential Format, a VC with Cryptographic Holder Binding contains a public key or a reference to a public key that corresponds to the private key controlled by the Holder.
+:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proving control over the same private key during the issuance and presentation. The mechanism might depend on the Credential Format. For example, in `jwt_vc_json` Credential Format, a VC with Cryptographic Holder Binding contains a public key or a reference to a public key that corresponds to the private key controlled by the Holder.
 
-Claim-based Holder Binding:
-:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proofing certain claims, e.g., name and date of birth, for example by presenting another Verifiable Credential. Claim-based Holder Binding allows long-term, cross-device use of a Credential as it does not depend on cryptographic key material stored on a certain device. One example of such a Verifiable Credential could be a Diploma.
+Claims-based Holder Binding:
+:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proofing certain claims, e.g., name and date of birth, for example, by presenting another Verifiable Credential. Claims-based Holder Binding allows long-term, cross-device use of a Credential as it does not depend on cryptographic key material stored on a certain device. One example of such a Verifiable Credential could be a Diploma.
 
 Biometrics-based Holder Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential by demonstrating a certain biometric trait, such as fingerprint or face. One example of a Verifiable Credential with Biometrics-based Holder Binding is a mobile driving license [@ISO.18013-5], which contains a portrait of the holder.
@@ -133,10 +133,10 @@ Existing OAuth 2.0 mechanisms are extended as following:
 
 * A new Grant Type "Pre-Authorized Code" is defined to facilitate flows where the preparation of the Credential issuance is conducted before the actual OAuth flow starts (see (#pre-authz-code-flow)).
 * A new authorization details [@!RFC9396] type `openid_credential` is defined to convey the details about the Credentials (including formats and types) the Wallet wants to obtain (see (#authorization-details)).
-* New token response error codes `authorization_pending` and `slow_down` are added to allow for deferred authorization of Credential issuance. These error codes are supported for the Pre-Authorized Code grant type.
-* Client metadata is used to convey Wallet's metadata. A new metadata parameter `credential_offer_endpoint` is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (see (#client_metadata)).
-* Authorization Endpoint: An additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated Credential Offer (see (#credential-authz-request)). Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Verifiable Presentations from the calling Wallet during Authorization Request processing.
-* Token Endpoint: optional response parameters `c_nonce` and `c_nonce_expires_in` are added to the Token Endpoint, Credential Endpoint and Batch Credential Endpoint to provide the Client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential Endpoint (see (#token-response)).
+* The Token Response error codes `authorization_pending` and `slow_down` are used to allow for deferred authorization of Credential issuance. These error codes are supported for the Pre-Authorized Code grant type.
+* Client metadata is used to convey the Wallet's metadata. The new Client metadata parameter `credential_offer_endpoint` is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (see (#client_metadata)).
+* Authorization Endpoint: The additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated Credential Offer (see (#credential-authz-request)). Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Verifiable Presentations from the calling Wallet during Authorization Request processing.
+* Token Endpoint: Optional response parameters `c_nonce` and `c_nonce_expires_in` are added to the Token Endpoint, Credential Endpoint, and Batch Credential Endpoint to provide the Client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential Endpoint (see (#token-response)).
 
 ## Core Concepts
 
@@ -144,9 +144,9 @@ The Wallet sends one Credential Request per individual Credential to the Credent
 
 * multiple Credentials of different types/doctypes bound to the same proof, or
 * multiple Credentials of the same type/doctype bound to different proofs, or
-* multiple Credentials of the different types/doctypes bound to different proofs.
+* multiple Credentials of different types/doctypes bound to different proofs.
 
-Note: "type" and "doctype" are terms defined by an individual Credential format. For details, see (#format_profiles).
+Note: "type" and "doctype" are terms defined by individual Credential formats. For details, see (#format_profiles).
 
 The Wallet MAY send one Batch Credential Request to the Batch Credential Endpoint to request the following in the Batch Credential Response:
 
@@ -154,22 +154,22 @@ The Wallet MAY send one Batch Credential Request to the Batch Credential Endpoin
 * multiple Credentials of the same type/doctype bound to different proofs, or
 * multiple Credentials of different types/doctypes bound to different proofs.
 
-In the course of the authorization process, the Credential Issuer MAY also request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as illustrated in (#use-case-5).
+In the course of the authorization process, the Credential Issuer MAY also request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as described in (#use-case-5).
 
 At its core, this specification is Credential format agnostic and allows implementers to leverage specific capabilities of Credential formats of their choice. Multiple Credential formats can be used within the same transaction. 
 
 The specification achieves this by defining the following:
 
-* Extension points to add Credential format specific parameters or claims in the Credential Issuer metadata, Credential Offer, Authorization Request, Credential Request and Batch Credential Request,
+* Extension points to add Credential format specific parameters or claims in the Credential Issuer metadata, Credential Offer, Authorization Request, Credential Request, and Batch Credential Request,
 * Credential format identifiers to identify Credential format specific set of parameters and claims to be applied at each extension point. This set of Credential format specific set of parameters and claims is referred to as a "Credential Format Profile" in this specification.
 
-This specification defines Credential Format Profiles for W3C Verifiable Credentials as defined in [@VC_DATA] and ISO/IEC 18013-5 mDL as defined in [@ISO.18013-5] in (#format_profiles) that contain Credential Format specific parameters to be included at each extension point defined in this specification. Other specifications or deployments can define their own Credential Format Profiles using the above-mentioned extension points.
+This specification defines Credential Format Profiles in (#format_profiles) for W3C Verifiable Credentials as defined in [@VC_DATA] and ISO/IEC 18013-5 mDL as defined in [@ISO.18013-5] that contain Credential Format specific parameters to be included at each extension point defined in this specification. Other specifications or deployments can define their own Credential Format Profiles using the above-mentioned extension points.
 
 The issuance can have multiple characteristics, which can be combined depending on the use cases:
 
 * Authorization Code Flow or Pre-Authorized Code Flow: The Credential Issuer can obtain End-User information to turn into a Verifiable Credential using End-User authentication and consent at the Credential Issuer's Authorization Endpoint (Authorization Code Flow) or using out-of-band mechanisms outside of the issuance flow (Pre-Authorized Code Flow).
 * Wallet initiated or Issuer initiated: The request from the Wallet can be sent to the Credential Issuer without any gesture from the Credential Issuer (Wallet Initiated) or following the communication from the Credential Issuer (Issuer Initiated).
-* Same-device or Cross-device Credential Offer: The End-User may receive the Credential Offer from the Credential Issuer either on the same device as the device the Wallet resides on, or through any other means, such as another device or physical mail, so that the Credential Offer can be communicated to the Wallet.
+* Same-device or Cross-device Credential Offer: The End-User may receive the Credential Offer from the Credential Issuer either on the same device as the device the Wallet resides on, or through any other means, such as another device or postal mail, so that the Credential Offer can be communicated to the Wallet.
 * Immediate or Deferred: The Credential Issuer can issue the Credential directly in response to the Credential Request (immediate) or requires time and needs the Wallet to come back to retrieve Credential (deferred).
 
 The following subsections illustrate some of the authorization flows supported by this specification.
@@ -221,37 +221,37 @@ Please note that the diagram does not illustrate all the optional features defin
 !---
 Figure: Issuance using Authorization Code Flow 
 
-(1a) The Wallet-initiated flow begins as the End-User requests a Credential via the Wallet from the Credential Issuer. The End-User either selects a Credential from a pre-configured list of Credentials ready to be issued, or, alternatively, the Wallet gives guidance to the End-User to select a Credential from a Credential Issuer based on the information it received in the presentation request from a Verifier.
+(1a) The Wallet-initiated flow begins as the End-User requests a Credential via the Wallet from the Credential Issuer. The End-User either selects a Credential from a pre-configured list of Credentials ready to be issued, or alternatively, the Wallet gives guidance to the End-User to select a Credential from a Credential Issuer based on the information it received in the presentation request from a Verifier.
 
 (1b) The Issuer-initiated flow begins as the Credential Issuer generates a Credential Offer for certain Credential(s) that it communicates to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL and the information about the Credential(s) being offered. This step is defined in (#credential_offer).
 
-(2) The Wallet uses the Credential Issuer's URL to fetch the Credential Issuer metadata as described in (#credential_issuer_metadata). The Wallet needs the metadata to learn the Credential types and formats that the Credential Issuer supports, and to determine the Authorization Endpoint (OAuth 2.0 Authorization Server) as well as Credential Endpoint required to start the request. This specification enables deployments where the Credential Endpoint and the Authorization Endpoint are provided by different entities. Please note that in this example the Credential Issuer and OAuth 2.0 Authorization Server correspond to the same entity.
+(2) The Wallet uses the Credential Issuer's URL to fetch the Credential Issuer metadata, as described in (#credential_issuer_metadata). The Wallet needs the metadata to learn the Credential types and formats that the Credential Issuer supports and to determine the Authorization Endpoint (OAuth 2.0 Authorization Server) as well as Credential Endpoint required to start the request. This specification enables deployments where the Credential Endpoint and the Authorization Endpoint are provided by different entities. Please note that in this example, the Credential Issuer and OAuth 2.0 Authorization Server correspond to the same entity.
 
-(3) The Wallet sends an Authorization Request to the Authorization Endpoint. The Authorization Endpoint processes the Authorization Request, which typically includes the End-User authentication and the gathering of the End-User consent. Note: The Authorization Request may be sent as a Pushed Authorization Request.
+(3) The Wallet sends an Authorization Request to the Authorization Endpoint. The Authorization Endpoint processes the Authorization Request, which typically includes authenticating the End-User and gathering End-User consent. Note: The Authorization Request may be sent as a Pushed Authorization Request.
 
 Note: Steps (3) and (4) happen in the front channel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization_endpoint). The Authorization Server and the User Agent may exchange any further messages between the steps if required by the Authorization Server to authenticate the End-User.
 
 (4) The Authorization Endpoint returns the Authorization Response with the Authorization Code upon successfully processing the Authorization Request.
 
-(5) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in step (4). The Token Endpoint returns an Access Token in the Token Response upon successfully validating the Authorization Code. This step happens in the back-channel communication (direct communication between two systems using HTTP requests and responses without using redirects through an intermediary such as a browser). This step is defined in (#token_endpoint).
+(5) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in Step (4). The Token Endpoint returns an Access Token in the Token Response upon successfully validating the Authorization Code. This step happens in the back-channel communication (direct communication between two systems using HTTP requests and responses without using redirects through an intermediary such as a browser). This step is defined in (#token_endpoint).
 
 (6) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and (optionally) the proof of possession of the private key of a key pair to which the Credential Issuer should bind the issued Credential to. Upon successfully validating Access Token and proof, the Credential Issuer returns a Credential in the Credential Response. This step is defined in (#credential-endpoint).
 
 If the Credential Issuer requires more time to issue a Credential, the Credential Issuer may return a Transaction ID and a time interval in the Credential Response. The Wallet may send a Deferred Credential Request with the Transaction ID to obtain a Credential after the specified time interval has passed, as defined in (#deferred-credential-issuance).
 
-If the Credential Issuer wants to issue multiple Credentials in one response, the Credential Issuer may support the Batch Credential Endpoint. In this case the Wallet may send a Batch Credential Request to the Batch Credential Endpoint, as defined in (#batch-credential-endpoint).
+If the Credential Issuer wants to issue multiple Credentials in one response, the Credential Issuer may support the Batch Credential Endpoint. In this case, the Wallet may send a Batch Credential Request to the Batch Credential Endpoint, as defined in (#batch-credential-endpoint).
 
 Note: This flow is based on OAuth 2.0 and the Authorization Code Grant type, but this specification can be used with other OAuth 2.0 grant types as well.
 
 ## Pre-Authorized Code Flow {#pre-authz-code-flow}
 
-Figure 2 is a diagram of a Credential issuance using the Pre-Authorized Code Flow. In this flow, before initiating the flow with the Wallet, the Credential Issuer first conducts the steps required to prepare the Credential issuance, e.g., End-User authentication and authorization. Consequently, the Pre-Authorized Code is sent by the Credential Issuer to the Wallet. This flow does not use the Authorization Endpoint, and the Wallet exchanges the Pre-Authorized Code for the Access Token directly at the Token Endpoint. Access Token is then used to request Credential issuance at the Credential Endpoint. See (#use-case-2) for the description of a use case.
+Figure 2 is a diagram of a Credential issuance using the Pre-Authorized Code Flow. In this flow, before initiating the flow with the Wallet, the Credential Issuer first conducts the steps required to prepare for Credential issuance, e.g., End-User authentication and authorization. Consequently, the Pre-Authorized Code is sent by the Credential Issuer to the Wallet. This flow does not use the Authorization Endpoint, and the Wallet exchanges the Pre-Authorized Code for the Access Token directly at the Token Endpoint. The Access Token is then used to request Credential issuance at the Credential Endpoint. See (#use-case-2) for the description of such a use case.
 
 How the End-User provides information required for the issuance of a requested Credential to the Credential Issuer and the business processes conducted by the Credential Issuer to prepare a Credential are out of scope of this specification.
 
-This flow uses the newly defined OAuth 2.0 Grant Type "urn:ietf:params:oauth:grant-type:pre-authorized_code".
+This flow uses the OAuth 2.0 Grant Type `urn:ietf:params:oauth:grant-type:pre-authorized_code`, which is defined in (#credential_offer_parameters).
 
-The following diagram is based on the Credential Issuer initiated flow, as illustrated in a use case in (#use-case-2). Please note that it does not illustrate all the optional features outlined in this specification.
+The following diagram is based on the Credential Issuer-initiated flow, as described in the use case in (#use-case-2). Please note that it does not illustrate all the optional features outlined in this specification.
 
 !---
 ~~~ ascii-art
@@ -284,15 +284,15 @@ The following diagram is based on the Credential Issuer initiated flow, as illus
 !---
 Figure: Issuance using Pre-Authorized Code Flow 
 
-(1) The Credential Issuer successfully obtains consent and End-User data required for the issuance of a requested Credential from the End-User using Issuer-specific business process.
+(1) The Credential Issuer successfully obtains consent and End-User data required for the issuance of a requested Credential from the End-User using an Issuer-specific business process.
 
-(2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL, the information about the Credential(s) being offered and the Pre-Authorized Code. This step is defined in (#credential_offer).
+(2) The flow defined in this specification begins as the Credential Issuer generates a Credential Offer for certain Credential(s) and communicates it to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL, the information about the Credential(s) being offered, and the Pre-Authorized Code. This step is defined in (#credential_offer).
 
-(3) The Wallet uses the Credential Issuer's URL to fetch its metadata as described in (#credential_issuer_metadata). The Wallet needs the metadata to learn the Credential types and formats that the Credential Issuer supports, and to determine the Authorization Endpoint (OAuth 2.0 Authorization Server) as well as Credential Endpoint required to start the request.
+(3) The Wallet uses the Credential Issuer's URL to fetch its metadata, as described in (#credential_issuer_metadata). The Wallet needs the metadata to learn the Credential types and formats that the Credential Issuer supports, and to determine the Authorization Endpoint (at the OAuth 2.0 Authorization Server) as well as the Credential Endpoint required to start the request.
 
-(4) The Wallet sends the Pre-Authorized Code obtained in step (2) in the Token Request to the Token Endpoint. The Wallet will additionally send a Transaction Code provided by the End-User, if it was required by the Credential Issuer. This step is defined in (#token_endpoint).
+(4) The Wallet sends the Pre-Authorized Code obtained in Step (2) in the Token Request to the Token Endpoint. The Wallet will additionally send a Transaction Code provided by the End-User, if it was required by the Credential Issuer. This step is defined in (#token_endpoint).
 
-(5) This step is the same as Step 5 in the Authorization Code Flow.
+(5) This step is the same as Step (5) in the Authorization Code Flow.
 
 It is important to note that anyone who possesses a valid Pre-Authorized Code, without further security measures, would be able to receive a VC from the Credential Issuer. Implementers MUST implement mitigations most suitable to the use case.
 
@@ -302,7 +302,7 @@ For more details and concrete mitigations, see (#security_considerations_pre-aut
 
 # Credential Offer Endpoint {#credential_offer_endpoint}
 
-This endpoint is used by a Credential Issuer in case it is already in an interaction with the End-User that wishes to initiate a Credential issuance. It is used to pass available information relevant for the Credential issuance to ensure a convenient and secure process.
+This endpoint is used by a Credential Issuer that is already interacting with an End-User who wishes to initiate a Credential issuance. It is used to pass available information relevant for the Credential issuance to ensure a convenient and secure process.
 
 ## Credential Offer {#credential_offer}
 
@@ -310,10 +310,10 @@ The Credential Issuer sends Credential Offer using an HTTP GET request or an HTT
 
 The Credential Offer object, which is a JSON-encoded object with the Credential Offer parameters, can be sent by value or by reference.
 
-The Credential Offer contains a single URI query parameter `credential_offer` or `credential_offer_uri`:
+The Credential Offer contains a single URI query parameter, either `credential_offer` or `credential_offer_uri`:
 
-* `credential_offer`: Object with the Credential Offer parameters. This MUST NOT be present when `credential_offer_uri` parameter is present.
-* `credential_offer_uri`: String that is a URL using the `https` scheme referencing a resource containing a JSON-encoded object with the Credential Offer parameters. This MUST NOT be present when `credential_offer` parameter is present.
+* `credential_offer`: Object with the Credential Offer parameters. This MUST NOT be present when the `credential_offer_uri` parameter is present.
+* `credential_offer_uri`: String that is a URL using the `https` scheme referencing a resource containing a JSON object with the Credential Offer parameters. This MUST NOT be present when the `credential_offer` parameter is present.
 
 The Credential Issuer MAY render a QR code containing the Credential Offer that can be scanned by the End-User using a Wallet, or a link that the End-User can click.
 
@@ -324,8 +324,8 @@ For security considerations, see (#credential-offer-security).
 This specification defines the following parameters for the JSON-encoded Credential Offer object:
 
 * `credential_issuer`: REQUIRED. The URL of the Credential Issuer, as defined in (#credential_issuer_identifier), from which the Wallet is requested to obtain one or more Credentials. The Wallet uses it to obtain the Credential Issuer's Metadata following the steps defined in (#credential_issuer_wellknown).
-* `credential_configurations`: REQUIRED. Array of unique strings that each identify one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The Wallet uses these string values to obtain the respective object that contains information about the Credential being offered as defined in (#credential-issuer-parameters). For example, these string values can be used to obtain `scope` value to be used in the Authorization Request.
-* `grants`: OPTIONAL. Object indicating to the Wallet the Grant Types the Credential Issuer's AS is prepared to process for this Credential Offer. Every grant is represented by a name/value pair. The name is the Grant Type identifier; the value is an object that contains parameters either determining the way the Wallet MUST use the particular grant and/or parameters the Wallet MUST send with the respective request(s). If `grants` is not present or empty, the Wallet MUST determine the Grant Types the Credential Issuer's AS supports using the respective metadata. When multiple grants are present, it is at the Wallet's discretion which one to use.
+* `credential_configurations`: REQUIRED. Array of unique strings that each identify one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The Wallet uses these string values to obtain the respective object that contains information about the Credential being offered as defined in (#credential-issuer-parameters). For example, these string values can be used to obtain `scope` values to be used in the Authorization Request.
+* `grants`: OPTIONAL. Object indicating to the Wallet the Grant Types the Credential Issuer's Authorization Server is prepared to process for this Credential Offer. Every grant is represented by a name/value pair. The name is the Grant Type identifier; the value is an object that contains parameters either determining the way the Wallet MUST use the particular grant and/or parameters the Wallet MUST send with the respective request(s). If `grants` is not present or is empty, the Wallet MUST determine the Grant Types the Credential Issuer's Authorization Server supports using the respective metadata. When multiple grants are present, it is at the Wallet's discretion which one to use.
 
 The following values are defined by this specification: 
 
@@ -334,14 +334,14 @@ The following values are defined by this specification:
   * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
 * Grant Type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
   * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single use. If the Wallet decides to use the Pre-Authorized Code Flow, this parameter value MUST be included in the subsequent Token Request with the Pre-Authorized Code Flow.
-  * `tx_code`: OPTIONAL. Object specifying whether the AS expects presentation of a Transaction Code by the End-User along with the Token Request in a Pre-Authorized Code Flow. If the AS does not expect a Transaction Code, this object is absent, this is the default. The Transaction Code is intended to bind the Pre-Authorized Code to a certain transaction to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate End-User. It is RECOMMENDED to send the Transaction Code via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, the Transaction Code value MUST be sent in the `tx_code` parameter with the respective Token Request as defined in (#token_request). If no `length` or `description` is given, this object may be empty, indicating that a Transaction Code is required.
-    * `input_mode` : OPTIONAL. String specifying the input characters set. Possible values are `numeric` (only digits) and `text` (any character). The default is `numeric`.
+  * `tx_code`: OPTIONAL. Object specifying whether the Authorization Server expects presentation of a Transaction Code by the End-User along with the Token Request in a Pre-Authorized Code Flow. If the Authorization Server does not expect a Transaction Code, this object is absent; this is the default. The Transaction Code is intended to bind the Pre-Authorized Code to a certain transaction to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate End-User. It is RECOMMENDED to send the Transaction Code via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, the Transaction Code value MUST be sent in the `tx_code` parameter with the respective Token Request as defined in (#token_request). If no `length` or `description` is given, this object may be empty, indicating that a Transaction Code is required.
+    * `input_mode` : OPTIONAL. String specifying the input character set. Possible values are `numeric` (only digits) and `text` (any characters). The default is `numeric`.
     * `length`: OPTIONAL. Integer specifying the length of the Transaction Code. This helps the Wallet to render the input screen and improve the user experience.
     * `description`: OPTIONAL. String containing guidance for the Holder of the Wallet on how to obtain the Transaction Code, e.g., describing over which communication channel it is delivered. The Wallet is RECOMMENDED to display this description next to the Transaction Code input screen to improve the user experience. The length of the string MUST NOT exceed 300 characters. The `description` does not support internationalization, however the Issuer MAY detect the Holder's language by previous communication or an HTTP Accept-Language header within an HTTP GET request for a Credential Offer URI.
   * `interval`: OPTIONAL. The minimum amount of time in seconds that the Wallet SHOULD wait between polling requests to the token endpoint (in case the Authorization Server responds with error code `authorization_pending` - see (#token_error_response)). If no value is provided, Wallets MUST use `5` as the default.
-  * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
+  * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. It MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
   
-The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two different Credentials (which may be even of different formats):
+The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two different Credentials (which may even be of different formats):
 
 <{{examples/credential_offer_multiple_credentials.json}}
 
@@ -372,9 +372,9 @@ GET /credential_offer HTTP/1.1
 Host: server.example.com
 ```
 
-Response from the Credential Issuer that contains a Credential Offer Object MUST have the media type "application/json".
+The response from the Credential Issuer that contains a Credential Offer Object MUST use the media type `application/json`.
 
-This ability to pass Credential Offer by reference is particularly useful for large requests.
+This ability to pass the Credential Offer by reference is particularly useful for large requests.
 
 Below is a non-normative example of the Credential Offer displayed by the Credential Issuer as a QR code when the Credential Offer is passed by reference:
 
@@ -391,11 +391,11 @@ Below is a non-normative example of a Credential Offer Object for a Pre-Authoriz
 
 <{{examples/credential_offer_by_reference.json}}
 
-When retrieving Credential Offer from the Credential Offer URL, `application/json` media type MUST be used. The Credential Offer cannot be signed and MUST NOT use `application/jwt` with `"alg": "none"`.
+When retrieving the Credential Offer from the Credential Offer URL, the `application/json` media type MUST be used. The Credential Offer cannot be signed and MUST NOT use `application/jwt` with `"alg": "none"`.
 
 ## Credential Offer Response
 
-The Wallet is not supposed to create a response. UX control stays with the Wallet after completion of the process. 
+The Wallet does not create a response. UX control stays with the Wallet after completion of the process. 
 
 # Authorization Endpoint {#authorization_endpoint}
 
@@ -420,7 +420,7 @@ The following is a non-normative example of an `authorization_details` object:
 
 <{{examples/authorization_details.json}}
 
-If the Credential Issuer metadata contains an `authorization_servers` parameter, the authorization detail's `locations` common data field MUST be set to the Credential Issuer Identifier value. A non-normative example for a deployment where an AS protects multiple Credential Issuers would look like this:
+If the Credential Issuer metadata contains an `authorization_servers` parameter, the authorization detail's `locations` common data field MUST be set to the Credential Issuer Identifier value. A non-normative example for a deployment where an Authorization Server protects multiple Credential Issuers would look like this:
 
 <{{examples/authorization_details_with_as.json}}
 
@@ -464,7 +464,7 @@ occurrence MUST be interpreted individually.
 
 Credential Issuers MUST ignore unknown scope values in a request.
 
-If the Credential Issuer metadata contains an `authorization_servers` property, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the AS to differentiate Credential Issuers.  
+If the Credential Issuer metadata contains an `authorization_servers` property, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the Authorization Server to differentiate Credential Issuers.  
 
 Below is a non-normative example of an Authorization Request provided by the Wallet to the Authorization Server using the scope `UniversityDegree_JWT` and in response to an HTTP 302 redirect. The line wraps within the values are intended for display purposes only:
 
@@ -539,7 +539,7 @@ Location: https://Wallet.example.org/cb?
 
 Authorization Error Response MUST be made as defined in [@!RFC6749].
 
-When the requested scope value is invalid, unknown, or malformed, the AS should respond with the error code `invalid_scope` defined in Section 4.1.2.1 of [@!RFC6749].
+When the requested scope value is invalid, unknown, or malformed, the Authorization Server should respond with the error code `invalid_scope` defined in Section 4.1.2.1 of [@!RFC6749].
 
 Below is a non-normative example of an unsuccessful Authorization Response.
 
@@ -569,7 +569,7 @@ For the Pre-Authorized Code Grant Type, authentication of the Client is OPTIONAL
 
 If the Token Request contains an `authorization_details` parameter (as defined by [RFC@!9396]) of type `openid_credential` and the Credential Issuer's metadata contains an `authorization_servers` parameter, the `authorization_details` object MUST contain the Credential Issuer's identifier in the `locations` element. 
 
-If the Token Request contains a scope value related to Credential issuance and the Credential Issuer's metadata contains an `authorization_servers` parameter, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the AS to differentiate Credential Issuers.
+If the Token Request contains a scope value related to Credential issuance and the Credential Issuer's metadata contains an `authorization_servers` parameter, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the Authorization Server to differentiate Credential Issuers.
 
 When Pre-Authorized Grant Type is used, it is RECOMMENDED that the Credential Issuer issues an Access Token valid only for the Credentials indicated in the Credential Offer (see (#credential_offer)). The Wallet SHOULD obtain a separate Access Token if it wants to request issuance of any of the Credentials that were not included in the Credential Offer, but were discoverable from the Credential Issuer's `credential_configurations_supported` metadata parameter.
 
@@ -603,9 +603,9 @@ grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
 
 Token Responses are made as defined in [@!RFC6749].
 
-The AS might decide to authorize issuance of multiple instances for each Credential requested in the Authorization Request. Each Credential instance is described using the same entry in the `credential_configurations_supported` Credential Issuer metadata, but contains different claim values or different subset of claims within the claims set identified by the `credential_configuration_id`.
+The Authorization Server might decide to authorize issuance of multiple instances for each Credential requested in the Authorization Request. Each Credential instance is described using the same entry in the `credential_configurations_supported` Credential Issuer metadata, but contains different claim values or different subset of claims within the claims set identified by the `credential_configuration_id`.
 
-In addition to the response parameters defined in [@!RFC6749], the AS MAY return the following parameters:
+In addition to the response parameters defined in [@!RFC6749], the Authorization Server MAY return the following parameters:
 
 * `c_nonce`: OPTIONAL. String containing a nonce to be used when creating a proof of possession of the key proof (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
@@ -691,7 +691,7 @@ If the Access Token is valid for requesting issuance of multiple Credentials, it
 
 ## Binding the Issued Credential to the Identifier of the End-User Possessing that Credential {#credential-binding}
 
-An issued Credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the Credential. Cryptographic binding allows the Verifier to verify during the presentation of a Credential that the End-User presenting a Credential is the same End-User to whom that Credential was issued. For non-cryptographic types of binding and Credentials issued without any binding, see the Implementation Considerations in (#claim-based-binding) and (#no-binding).
+The issued Credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the Credential. Cryptographic binding allows the Verifier to verify during the presentation of a Credential that the End-User presenting a Credential is the same End-User to whom that Credential was issued. For non-cryptographic types of binding and Credentials issued without any binding, see the Implementation Considerations in (#claim-based-binding) and (#no-binding).
 
 Note: Claims in the Credential are about the subject of the Credential, which is often the End-User who possesses it.
 
@@ -1034,11 +1034,11 @@ The Client can request issuance of multiple Credentials of certain types and for
 
 ## Batch Credential Request {#batch-credential_request}
 
-The Batch Credential Endpoint allows a Client to send multiple Credential Request objects (see (#credential_request)) to request the issuance of multiple Credentials at once. A Batch Credential Request MUST be sent as a JSON-encoded object using the `application/json` media type.
+The Batch Credential Endpoint allows a Client to send multiple Credential Request objects (see (#credential_request)) to request the issuance of multiple Credentials at once. A Batch Credential Request MUST be sent as a JSON object using the `application/json` media type.
 
-The following keys are used in the Batch Credential Request:
+The following parameters are used in the Batch Credential Request:
 
-* `credential_requests`: REQUIRED. Array that contains Credential Request objects as defined in (#credential_request).
+* `credential_requests`: REQUIRED. Array that contains Credential Request objects, as defined in (#credential_request).
 
 Below is a non-normative example of a Batch Credential Request:
 
@@ -1077,11 +1077,11 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Batch Credential Response {#batch-credential_response}
 
-A successful Batch Credential Response MUST contain all the requested Credentials. The Batch Credential Response MUST be sent as a JSON-encoded object using the `application/json` media type.
+A successful Batch Credential Response MUST contain all the requested Credentials. The Batch Credential Response MUST be sent as a JSON object using the `application/json` media type.
 
-The following claims are used in the Batch Credential Response:
+The following parameters are used in the Batch Credential Response:
 
-* `credential_responses`: REQUIRED. Array that contains Credential Response objects as defined in (#credential_request) and/or Deferred Credential Response objects as defined in (#deferred-credential_request). Every entry of the array corresponds to the Credential Request object at the same array index in the `credential_requests` parameter of the Batch Credential Request.
+* `credential_responses`: REQUIRED. Array that contains Credential Response objects, as defined in (#credential_request), and/or Deferred Credential Response objects, as defined in (#deferred-credential_request). Every entry of the array corresponds to the Credential Request object at the same array index in the `credential_requests` parameter of the Batch Credential Request.
 * `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response). 
 * `c_nonce_expires_in`: OPTIONAL. The `c_nonce_expires_in` as defined in (#credential-response).
 
@@ -1104,7 +1104,7 @@ Cache-Control: no-store
 }
 ```
 
-Below is a non-normative example of a Batch Credential Response that contains Credential Response and Deferred Credential Response objects:
+Below is a non-normative example of a Batch Credential Response that contains Deferred Credential Response and Credential Response objects:
 
 ```
 HTTP/1.1 200 OK
@@ -1131,15 +1131,15 @@ The Batch Credential Endpoint MUST respond with an HTTP 400 (Bad Request) status
 
 Error codes extensions defined in (#credential-error-response) apply.
 
-The Batch Credential Request MUST fail entirely if there is even one Credential failed to be issued. `transaction_id` MUST NOT be returned in this case.
+The Batch Credential Request MUST fail entirely if there is even one Credential that failed to be issued. `transaction_id` MUST NOT be returned in this case.
 
-When the Credential Issuer requires `proof` objects to be present in the Batch Credential Request, but does not receive them, it will return a Batch Credential Error Response with a `c_nonce` using `invalid_proof` error code as defined in (#issuer-provided-nonce).
+When the Credential Issuer requires `proof` objects to be present in the Batch Credential Request, but does not receive them, it will return a Batch Credential Error Response with a `c_nonce` using `invalid_proof` error code, as defined in (#issuer-provided-nonce).
 
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
 This endpoint is used to issue a Credential previously requested at the Credential Endpoint or Batch Credential Endpoint in cases where the Credential Issuer was not able to immediately issue this Credential. Support for this endpoint is OPTIONAL.
 
-The Wallet MUST present to the Deferred Endpoint an Access Token valid for the issuance of the Credential previously requested at the Credential Endpoint or the Batch Credential Endpoint. 
+The Wallet MUST present to the Deferred Endpoint an Access Token that is valid for the issuance of the Credential previously requested at the Credential Endpoint or the Batch Credential Endpoint. 
 
 Communication with the Deferred Credential Endpoint MUST utilize TLS. 
 
@@ -1147,11 +1147,11 @@ Communication with the Deferred Credential Endpoint MUST utilize TLS.
 
 The Deferred Credential Request is an HTTP POST request. It MUST be sent using the `application/json` media type.
 
-The following claims are used in the Batch Credential Response:
+The following parameter is used in the Batch Credential Request:
 
 * `transaction_id`: REQUIRED. String identifying a Deferred Issuance transaction.
 
-Credential Issuer MUST invalidate `transaction_id` after the Credential for which it was meant was obtained by the Wallet.
+The Credential Issuer MUST invalidate the `transaction_id` after the Credential for which it was meant has been obtained by the Wallet.
 
 The following is a non-normative example of a Deferred Credential Request:
 
@@ -1170,7 +1170,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 The Deferred Credential Response uses the `credential` parameter as defined in (#credential-response).
 
-Deferred Credential Response MUST be sent using the `application/json` media type.
+The Deferred Credential Response MUST be sent using the `application/json` media type.
 
 ## Deferred Credential Error Response {#deferred-credential_error_response}
 
@@ -1178,8 +1178,8 @@ When the Deferred Credential Request is invalid or the Credential is not availab
 
 The following additional error codes are specified in addition to those already defined in (#credential-request-errors):
 
-* `issuance_pending` - The Credential issuance is still pending. The error response SHOULD also contain the `interval` member, determining the minimum amount of time in seconds that the Wallet needs to wait before providing a new request to the Deferred Credential Endpoint.  If `interval` member is missing or its value is not provided, the Wallet MUST use `5` as the default value.
-* `invalid_transaction_id` - The Deferred Credential Request contains an invalid `transaction_id`. This error occurs when the `transaction_id` was not issued by the respective Credential Issuer or it was already used to obtain the Credential.
+* `issuance_pending`: The Credential issuance is still pending. The error response SHOULD also contain the `interval` member, determining the minimum amount of time in seconds that the Wallet needs to wait before providing a new request to the Deferred Credential Endpoint.  If `interval` member is not present, the Wallet MUST use `5` as the default value.
+* `invalid_transaction_id`: The Deferred Credential Request contains an invalid `transaction_id`. This error occurs when the `transaction_id` was not issued by the respective Credential Issuer or it was already used to obtain a Credential.
 
 This is a non-normative example of a Deferred Credential Error Response:
 
@@ -1199,9 +1199,9 @@ This endpoint is used by the Wallet to notify the Credential Issuer of certain e
 
 The Wallet MUST present to the Notification Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token_endpoint). 
 
-Note: A Credential Issuer that requires a request to the Notification Endpoint MUST ensure the Access Token issued by the Authorization Server is valid at the Notification Endpoint.
+A Credential Issuer that requires a request to the Notification Endpoint MUST ensure the Access Token issued by the Authorization Server is valid at the Notification Endpoint.
 
-The notification from the Wallet is idempotent. When the Credential Issuer receives multiple identical calls from the Wallet for the same `notification_id`, it returns success. Due to the network errors, there are no guarantees that a Credential Issuer receives a notification within a certain time period or at all.
+The notification from the Wallet is idempotent. When the Credential Issuer receives multiple identical calls from the Wallet for the same `notification_id`, it returns success. Due to the network errors, there are no guarantees that a Credential Issuer will receive a notification within a certain time period or at all.
 
 Communication with the Notification Endpoint MUST utilize TLS.
 
@@ -1209,8 +1209,8 @@ Communication with the Notification Endpoint MUST utilize TLS.
 
 The Wallet sends an HTTP POST request to the Notification Endpoint with the following parameters in the entity-body and using the `application/json` media type. If the Wallet supports the Notification Endpoint, the Wallet MAY send one or more Notification Requests per Credential issued.
 
-* `notification_id`: REQUIRED. String received in Credential Response or Batch Credential Response.
-* `event`: REQUIRED. Type of the notification event. It MUST be a case sensitive string whose value is either `credential_accepted`, `credential_failure` or `credential_deleted`. `credential_accepted` is to be used when the Credential was successfully stored in the Wallet, with or without user action. `credential_deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `credential_failure` is to be used.
+* `notification_id`: REQUIRED. String received in the Credential Response or the Batch Credential Response.
+* `event`: REQUIRED. Type of the notification event. It MUST be a case sensitive string whose value is either `credential_accepted`, `credential_failure`, or `credential_deleted`. `credential_accepted` is to be used when the Credential was successfully stored in the Wallet, with or without user action. `credential_deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `credential_failure` is to be used.
 * `event_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the event that occurred. Values for the `event_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
 Below is a non-normative example of a Notification Request when a credential was successfully accepted by the End-User:
@@ -1244,7 +1244,7 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Successful Notification Response
 
-When the Credential Issuer has successfully received the Notification Request from the Wallet, it MUST respond with the HTTP status code 2xx. The usage of the HTTP status code 204 (No Content) is RECOMMENDED.
+When the Credential Issuer has successfully received the Notification Request from the Wallet, it MUST respond with an HTTP status code in the 2xx range. Use of the HTTP status code 204 (No Content) is RECOMMENDED.
 
 Below is a non-normative example of response to a successful Notification Request:
 
@@ -1254,17 +1254,17 @@ HTTP/1.1 204 No Content
 
 ## Notification Error Response
 
-If the Notification Request does not contain an Access Token or contains an invalid Access Token, the Notification Endpoint returns an Authorization Error Response such as defined in Section 3 of [@!RFC6750].
+If the Notification Request does not contain an Access Token or contains an invalid Access Token, the Notification Endpoint returns an Authorization Error Response, such as defined in Section 3 of [@!RFC6750].
 
 When the `notification_id` value is invalid, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the JSON-encoded response body:
 
-* `error`: REQUIRED. A key at the top level of the object, the value of which SHOULD be the following ASCII [@!USASCII] error code:
+* `error`: REQUIRED. The value of the `error` parameter SHOULD be one of the following ASCII [@!USASCII] error codes:
   * `invalid_notification_id`: The `notification_id` in the Notification Request was invalid.
   * `invalid_notification_request`: The Notification Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
 
 It is at the discretion of the Issuer to decide how to proceed after returning an error response.
 
-The following is a non-normative example of a Notification Error Response where an invalid `notification_id` value was used:
+The following is a non-normative example of a Notification Error Response when an invalid `notification_id` value was used:
 
 ```
 HTTP/1.1 400 Bad Request
@@ -1279,19 +1279,19 @@ Cache-Control: no-store
 
 ## Client Metadata {#client_metadata}
 
-This specification defines the following new Client Metadata parameter in addition to [@!RFC7591] for Wallets acting as OAuth 2.0 Client:
+This specification defines the following new Client Metadata parameter in addition to those defined by [@!RFC7591] for Wallets acting as OAuth 2.0 Client:
 
 * `credential_offer_endpoint`: OPTIONAL. Credential Offer Endpoint of a Wallet.
 
 ### Client Metadata Retrieval {#client_metadata_retrieval}
 
-How to obtain Client Metadata is out of scope of this specification. The profiles of this specification may define static Client Metadata values.
+How to obtain Client Metadata is out of scope of this specification. Profiles of this specification MAY also define static sets of Client Metadata values to be used.
 
 If the Credential Issuer is unable to perform discovery of the Wallet's Credential Offer Endpoint, the following claimed URL is used: `openid-credential-offer://`.
 
 ## Credential Issuer Metadata {#credential_issuer_metadata}
 
-The Credential Issuer Metadata contains information on the Credential Issuer's technical capabilities, supported Credentials and (internationalized) display information.
+The Credential Issuer Metadata contains information on the Credential Issuer's technical capabilities, supported Credentials, and (internationalized) display information.
 
 ### Credential Issuer Identifier {#credential_issuer_identifier}
 
@@ -1305,12 +1305,12 @@ Credential Issuers publishing metadata MUST make a JSON document available at th
 
 Communication with the Credential Issuer Metadata Endpoint MUST utilize TLS.
 
-To fetch the Credential Issuer Metadata, a requester MUST send a HTTP request using the GET method and the path formed following the steps above. The URL SHOULD NOT contain any query parameters. The Credential Issuer MUST return a JSON document compliant with this specification using the `application/json` media type and a HTTP Status Code 200.
+To fetch the Credential Issuer Metadata, the requester MUST send an HTTP request using the GET method and the path formed following the steps above. The URL SHOULD NOT contain any query parameters. The Credential Issuer MUST return a JSON document compliant with this specification using the `application/json` media type and the HTTP Status Code 200.
 
-The Wallet is RECOMMENDED to send an `Accept-Language` Header in the HTTP GET request to indicate the language(s) preferred for display. It is up to the Credential Issuer whether to
+The Wallet is RECOMMENDED to send an `Accept-Language` Header in the HTTP GET request to indicate the language(s) preferred for display. It is up to the Credential Issuer whether to:
 
-* send a subset the metadata containing internationalized display data for one or all of the requested languages and indicate returned languages using the HTTP `Content-Language` Header.
-* ignore the `Accept-Language` Header and send all supported languages or any chosen default subset.
+* send a subset the metadata containing internationalized display data for one or all of the requested languages and indicate returned languages using the HTTP `Content-Language` Header, or
+* ignore the `Accept-Language` Header and send all supported languages or any chosen subset.
 
 The language(s) in HTTP `Accept-Language` and `Content-Language` Headers MUST use the values defined in [@!RFC3066]. 
 
@@ -1324,18 +1324,18 @@ Accept-Language: fr-ch, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5
 
 ### Credential Issuer Metadata Parameters {#credential-issuer-parameters}
 
-This specification defines the following Credential Issuer Metadata:
+This specification defines the following Credential Issuer Metadata parameters:
 
 * `credential_issuer`: REQUIRED. The Credential Issuer's identifier, as defined in (#credential_issuer_identifier).
-* `authorization_servers`: OPTIONAL. Array of strings, where each string is an identifier of the OAuth 2.0 Authorization Server (as defined in [@!RFC8414]) the Credential Issuer relies on for authorization. If this parameter is omitted, the entity providing the Credential Issuer is also acting as the AS, i.e., the Credential Issuer's identifier is used as the OAuth 2.0 Issuer value to obtain the Authorization Server metadata as per [@!RFC8414]. When there are multiple entries in the array, the Wallet may be able to determine which AS to use by querying the metadata; for example, by examining the `grant_types_supported` values, the Wallet can filter the server to use based on the grant type it plans to use. When the Wallet is using `authorization_server` parameter in the Credential Offer as a hint to determine which AS to use out of multiple, the Wallet MUST NOT proceed with the flow if the `authorization_server` Credential Offer parameter value does not match any of the entries in the `authorization_servers` array.
-* `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint as defined in (#credential_request). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components.
-* `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint as defined in (#batch-credential-endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
-* `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint as defined in (#deferred-credential-issuance). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
-* `notification_endpoint`: OPTIONAL. URL of the Credential Issuer's Notification Endpoint as defined in (#notification_endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Notification Endpoint.
-* `credential_response_encryption`: OPTIONAL. Object containing information whether the Credential Issuer supports encryption of the Credential and Batch Credential Response on top of TLS.
+* `authorization_servers`: OPTIONAL. Array of strings, where each string is an identifier of the OAuth 2.0 Authorization Server (as defined in [@!RFC8414]) the Credential Issuer relies on for authorization. If this parameter is omitted, the entity providing the Credential Issuer is also acting as the Authorization Server, i.e., the Credential Issuer's identifier is used to obtain the Authorization Server metadata. The actual OAuth 2.0 Authorization Server metadata is obtained from the `oauth-authorization-server` well-known location as defined in Section 3 of [@!RFC8414]. When there are multiple entries in the array, the Wallet may be able to determine which Authorization Server to use by querying the metadata; for example, by examining the `grant_types_supported` values, the Wallet can filter the server to use based on the grant type it plans to use. When the Wallet is using `authorization_server` parameter in the Credential Offer as a hint to determine which Authorization Server to use out of multiple, the Wallet MUST NOT proceed with the flow if the `authorization_server` Credential Offer parameter value does not match any of the entries in the `authorization_servers` array.
+* `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint, as defined in (#credential_request). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components.
+* `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint, as defined in (#batch-credential-endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
+* `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint, as defined in (#deferred-credential-issuance). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
+* `notification_endpoint`: OPTIONAL. URL of the Credential Issuer's Notification Endpoint, as defined in (#notification_endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Notification Endpoint.
+* `credential_response_encryption`: OPTIONAL. Object containing information about whether the Credential Issuer supports encryption of the Credential and Batch Credential Response on top of TLS.
   * `alg_values_supported`: REQUIRED. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`alg` values) [@!RFC7518] supported by the Credential and Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
   * `enc_values_supported`: REQUIRED. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
-  * `encryption_required`: REQUIRED. Boolean value specifying whether the Credential Issuer requires the additional encryption on top of TLS for the Credential Response. If the value is `true`, the Credential Issuer requires the encryption for every Credential Response and therefore the Wallet MUST provide encryption keys in the Credential Request. If the value is `false`, the Wallet MAY chose whether it provides encryption keys or not.
+  * `encryption_required`: REQUIRED. Boolean value specifying whether the Credential Issuer requires the additional encryption on top of TLS for the Credential Response. If the value is `true`, the Credential Issuer requires encryption for every Credential Response and therefore the Wallet MUST provide encryption keys in the Credential Request. If the value is `false`, the Wallet MAY chose whether it provides encryption keys or not.
 * `credential_identifiers_supported`: OPTIONAL. Boolean value specifying whether the Credential Issuer supports returning `credential_identifiers` parameter in the `authorization_details` Token Response parameter, with `true` indicating support. If omitted, the default value is `false`.
 * `signed_metadata`: OPTIONAL. String that is a signed JWT. This JWT contains Credential Issuer metadata parameters as claims. The signed metadata MUST be secured using JSON Web Signature (JWS) [@!RFC7515] and MUST contain an `iat` (Issued At) claim, an `iss` (Issuer) claim denoting the party attesting to the claims in the signed metadata, and `sub` (Subject) claim matching the Credential Issuer identifier. If the Wallet supports signed metadata, metadata values conveyed in the signed JWT MUST take precedence over the corresponding values conveyed using plain JSON elements. If the Credential Issuer wants to enforce use of signed metadata, it omits the respective metadata parameters from the unsigned part of the Credential Issuer metadata. A `signed_metadata` metadata value MUST NOT appear as a claim in the JWT. The Wallet MUST establish trust in the signer of the metadata, and obtain the keys to validate the signature before processing the metadata. The concrete mechanism how to do that is out of scope of this specification and MAY be defined in the profiles of this specification.
 * `display`: OPTIONAL. Array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
@@ -1344,29 +1344,29 @@ This specification defines the following Credential Issuer Metadata:
   * `logo`: OPTIONAL. Object with information about the logo of the Credential Issuer. Below is a non-exhaustive list of parameters that MAY be included:
     * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the logo of the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
     * `alt_text`: OPTIONAL. String value of the alternative text for the logo image.
-* `credential_configurations_supported`: REQUIRED. Object that describes specifics of the Credential that the Credential Issuer supports issuance of. This object contains a list of name/value pairs, where each name is a unique identifier of the supported Credential being described. This identifier is used in the Credential Offer as defined in (#credential_offer_parameters) to communicate to the Wallet which Credential is being offered. The value is an object that contains metadata about specific Credential and contains the following parameters defined by this specification:
-  * `format`: REQUIRED. A JSON string identifying the format of this Credential, i.e., `jwt_vc_json` or `ldp_vc`. Depending on the format value, the object contains further elements defining the type and (optionally) particular claims the Credential MAY contain and information about how to display the Credential. (#format_profiles) defines Credential Format Profiles introduced by this specification.
+* `credential_configurations_supported`: REQUIRED. Object that describes specifics of the Credential that the Credential Issuer supports issuance of. This object contains a list of name/value pairs, where each name is a unique identifier of the supported Credential being described. This identifier is used in the Credential Offer as defined in (#credential_offer_parameters) to communicate to the Wallet which Credential is being offered. The value is an object that contains metadata about a specific Credential and contains the following parameters defined by this specification:
+  * `format`: REQUIRED. A JSON string identifying the format of this Credential, i.e., `jwt_vc_json` or `ldp_vc`. Depending on the format value, the object contains further elements defining the type and (optionally) particular claims the Credential MAY contain and information about how to display the Credential. (#format_profiles) contains Credential Format Profiles introduced by this specification.
   * `scope`: OPTIONAL. A JSON string identifying the scope value that this Credential Issuer supports for this particular Credential. The value can be the same across multiple `credential_configurations_supported` objects. The Authorization Server MUST be able to uniquely identify the Credential Issuer based on the scope value. The Wallet can use this value in the Authorization Request as defined in (#credential-request-using-type-specific-scope). Scope values in this Credential Issuer metadata MAY duplicate those in the `scopes_supported` parameter of the Authorization Server.
-  * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential as defined in (#credential-binding). Support for keys in JWK format [@!RFC7517] is indicated by the value `jwk`. Support for keys expressed as a COSE Key object [@!RFC8152] (for example, used in [@!ISO.18013-5]) is indicated by the value `cose_key`. When Cryptographic Binding Method is a DID, valid values MUST be a `did:` prefix followed by a method-name using a syntax as defined in Section 3.1 of [@!DID-Core], but without a `:`and method-specific-id. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in Section 13 of [@DID_Specification_Registries] is indicated by sending a DID without any method-name.
+  * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential, as defined in (#credential-binding). Support for keys in JWK format [@!RFC7517] is indicated by the value `jwk`. Support for keys expressed as a COSE Key object [@!RFC8152] (for example, used in [@!ISO.18013-5]) is indicated by the value `cose_key`. When the Cryptographic Binding Method is a DID, valid values are a `did:` prefix followed by a method-name using a syntax as defined in Section 3.1 of [@!DID-Core], but without a `:`and method-specific-id. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in Section 13 of [@DID_Specification_Registries] is indicated by sending a DID without any method-name.
   * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptographic algorithms for Credentials in `jwt_vc` format should use algorithm names defined in [@IANA.JOSE.ALGS]. Cryptographic algorithms for Credentials in `ldp_vc` format should use signature suite names defined in [@LD_Suite_Registry].
-  * `proof_types`: OPTIONAL. Array of case sensitive strings, each representing a `proof_type` that the Credential Issuer supports as defined in (#credential_request), one of which MUST be used in the Credential Request. If this array is non-empty and present, the Credential Issuer requires proof of possession of the cryptographic key material. If the parameter is omitted or the array is empty, the Credential Issuer does not require proof of possession of the cryptographic key material.
+  * `proof_types`: OPTIONAL. Array of case sensitive strings, each representing a `proof_type` that the Credential Issuer supports, as defined in (#credential_request), one of which MUST be used in the Credential Request. If this array is non-empty and present, the Credential Issuer requires proof of possession of the cryptographic key material. If the parameter is omitted or the array is empty, the Credential Issuer does not require proof of possession of the cryptographic key material.
   * `display`: OPTIONAL. Array of objects, where each object contains the display properties of the supported Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included.
       * `name`: REQUIRED. String value of a display name for the Credential.
       * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. Multiple `display` objects MAY be included for separate languages. There MUST be only one object for each language identifier.
-      * `logo`: OPTIONAL. Object with information about the logo of the Credential with a following non-exhaustive list of parameters that MAY be included:
+      * `logo`: OPTIONAL. Object with information about the logo of the Credential. The following non-exhaustive set of parameters MAY be included:
           * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the logo of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
-          * `alt_text`: OPTIONAL. String value of an alternative text of a logo image.
+          * `alt_text`: OPTIONAL. String value of the alternative text for the logo image.
       * `description`: OPTIONAL. String value of a description of the Credential.
       * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
       * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
 
 Note: It can be challenging for a Credential Issuer that accepts tokens from multiple Authorization Servers to introspect an Access Token to check the validity and determine the permissions granted. Some ways to achieve this are relying on Authorization Servers that use [@!RFC9068] or by the Credential Issuer understanding the proprietary Access Token structures of the Authorization Servers.
 
-Depending on the Credential format, additional parameters might be present in the `credential_configurations_supported` object values, such as information about claims in the Credential. For Credential format specific claims, see "Credential Issuer Metadata" subsections in (#format_profiles).
+Depending on the Credential format, additional parameters might be present in the `credential_configurations_supported` object values, such as information about claims in the Credential. For Credential format specific claims, see the "Credential Issuer Metadata" subsections in (#format_profiles).
 
-The AS MUST be able to determine from the Issuer metadata what claims are disclosed with the requested Credentials to be able to render a meaningful End-User consent.
+The Authorization Server MUST be able to determine from the Issuer metadata what claims are disclosed by the requested Credentials to be able to render meaningful End-User consent.
 
-The following is a non-normative example of a Credential Issuer metadata.
+The following is a non-normative example of Credential Issuer metadata:
 
 <{{examples/credential_issuer_metadata_jwt_vc_json.json}}
 
@@ -1374,7 +1374,7 @@ Note: The Client MAY use other mechanisms to obtain information about the Verifi
 
 ## OAuth 2.0 Authorization Server Metadata
 
-This specification also defines a new OAuth 2.0 Authorization Server metadata [@!RFC8414] parameter to publish whether the AS that the Credential Issuer relies on for authorization supports anonymous Token Requests with the Pre-Authorized Grant Type. It is defined as follows:
+This specification also defines a new OAuth 2.0 Authorization Server metadata [@!RFC8414] parameter to publish whether the Authorization Server that the Credential Issuer relies on for authorization supports anonymous Token Requests with the Pre-Authorized Grant Type. It is defined as follows:
 
 * `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A boolean indicating whether the Credential Issuer accepts a Token Request with a Pre-Authorized Code but without a `client_id`. The default is `false`. 
 
@@ -1389,38 +1389,38 @@ Credential Issuers often want to know what Wallet they are issuing Credentials t
 
 The following mechanisms in concert can be utilized to fulfill those objectives:
 
-**Key attestation** is a mechanism where the device or security element in a device asserts the key management policy to the application creating and using this key. The Android Operating System, for example, provides apps with a certificate including a certificate chain asserting that a particular key is managed, for example, by a hardware security module [ref]. The Wallet can provide this data along with the proof of possession in the Credential Request (see (#credential_request) for an example) to allow the Credential Issuer to validate the key management policy. This requires the Credential Issuer to rely on the trust anchor of the certificate chain and the respective key management policy. Another variant of this concept is the use of a Qualified Electronic Signature as defined by the eIDAS regulation [ref]. This signature will not reveal the properties of the associated private key to the Credential Issuer. However, as one example, due to the regulatory regime of eIDAS, the Credential Issuer can deduce that the signing service manages the private keys according to this regime and fulfills very high security requirements. As another example, FIDO2 allows RPs to obtain an attestation along with the public key from a FIDO authenticator. That implicitly asserts the key management policy since the assertion is bound to a certain authenticator model and its key management capabilities.
+**Key attestation** is a mechanism where the device or security element in a device asserts the key management policy to the application creating and using this key. The Android Operating System, for example, provides apps with a certificate including a certificate chain asserting that a particular key is managed, for example, by a hardware security module. The Wallet can provide this data along with the proof of possession in the Credential Request (see (#credential_request) for an example) to allow the Credential Issuer to validate the key management policy. This requires the Credential Issuer to rely on the trust anchor of the certificate chain and the respective key management policy. Another variant of this concept is the use of a Qualified Electronic Signature as defined by the eIDAS regulation [@eIDAS]. This signature will not reveal the properties of the associated private key to the Credential Issuer. However, as one example, due to the regulatory regime of eIDAS, the Credential Issuer can deduce that the signing service manages the private keys according to this regime and fulfills very high security requirements. As another example, FIDO2 allows RPs to obtain an attestation along with the public key from a FIDO authenticator. That implicitly asserts the key management policy, since the assertion is bound to a certain authenticator model and its key management capabilities.
 
-**App Attestation**: Key attestation, however, does not establish trust in the application storing the Credential and producing presentation of that Credential. App attestation as provided by mobile operating systems, e.g., iOS's DeviceCheck or Android's SafetyNet, allows a server system to ensure it is communicating to a legitimate instance of its genuine app. Those mechanisms can be utilized to validate the internal integrity of the Wallet (as a whole).
+**App Attestation**: Key attestation, however, does not establish trust in the application storing the Credential and producing presentation of that Credential. App attestation, as provided by mobile operating systems, e.g., iOS's DeviceCheck or Android's SafetyNet, allows a server system to ensure it is communicating to a legitimate instance of its genuine app. Those mechanisms can be utilized to validate the internal integrity of the Wallet (as a whole).
 
-**Device Attestation**: Device Attestation attests the health of the device on which the Wallet is running, as a whole. It helps prevent compromises such as a malicious third-party application tampering with a Wallet that manages keys and Credentials, which cannot be captured only by obtaining app attestation of a Wallet.
+**Device Attestation**: Device Attestation attests to the health of the device on which the Wallet is running, as a whole. It helps prevent compromises such as a malicious third-party application tampering with a Wallet that manages keys and Credentials, which cannot be captured only by obtaining app attestation of a Wallet.
 
 **Client Authentication** allows a Wallet to authenticate with a Credential Issuer. To securely authenticate, the Wallet needs to utilize a backend component managing the key material and processing the secure communication with the Credential Issuer. The Credential Issuer MAY establish trust with the Wallet based on its own auditing or a trusted third-party attestation of the conformance of the Wallet to a certain policy.
 
-Directly using key, app and/or device attestations to prove certain capabilities towards a Credential Issuer is an obvious option. However, this at least requires platform mechanisms that issue signed assertions that third parties can evaluate, which is not always the case (e.g., iOS's DeviceCheck). Also, such an approach creates dependencies on platform specific mechanisms, trust anchors, and platform specific identifiers (e.g., Android `apkPackageName`) and it reveals information about the internal design of a Wallet. Implementers should take these consequences into account.
+Directly using key, app, and/or device attestations to prove certain capabilities to a Credential Issuer is an obvious option. However, this at least requires platform mechanisms that issue signed assertions that third parties can evaluate, which is not always the case (e.g., iOS's DeviceCheck). Also, such an approach creates dependencies on platform specific mechanisms, trust anchors, and platform specific identifiers (e.g., Android `apkPackageName`) and it reveals information about the internal design of a Wallet. Implementers should take these consequences into account.
 
 The approach recommended by this specification is that the Credential Issuer relies on the OAuth 2.0 Client Authentication to establish trust in the Wallet and leaves it to the Wallet to ensure its internal integrity using app and key attestation (if required). This establishes a clean separation between the different components and a uniform interface irrespective of the Wallet's architecture (e.g., native vs. Web Wallet). Client Authentication can be performed with assertions registered with the Credential Issuer or with assertions issued to the Wallet by a third party the Credential Issuer trusts for the purpose of Client Authentication.
 
 ## Credential Offer {#credential-offer-security}
 
-The Wallet MUST consider the parameter values in the Credential Offer as not trustworthy since the origin is not authenticated and the message integrity is not protected. The Wallet MUST apply the same checks on the Credential Issuer that it would apply when the flow is started from the Wallet itself since the Credential Issuer is not trustworthy just because it sent the Credential Offer. An attacker might attempt to use a Credential Offer to conduct a phishing or injection attack. 
+The Wallet MUST consider the parameter values in the Credential Offer as not trustworthy, since the origin is not authenticated and the message integrity is not protected. The Wallet MUST apply the same checks on the Credential Issuer that it would apply when the flow is started from the Wallet itself, since the Credential Issuer is not trustworthy just because it sent the Credential Offer. An attacker might attempt to use a Credential Offer to conduct a phishing or injection attack.
 
 The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this specification MUST be performed in the same way as if the Wallet would have started the flow. 
 
-The Credential Issuer MUST ensure the release of any privacy-sensitive data in Credential Offer is legally based.
+The Credential Issuer MUST ensure the release of any privacy-sensitive data in Credential Offer is legal.
 
 ## Pre-Authorized Code Flow {#security_considerations_pre-authz-code}
 
 ### Replay Prevention
 
-The Pre-Authorized Code Flow is vulnerable to the replay of the Pre-Authorized Code, because by design, it is not bound to a certain device (as the Authorization Code Flow does with PKCE). This means an attacker can replay at another device the Pre-Authorized Code meant for a victim, e.g., the attacker can scan the QR code while it is displayed on the victim's screen, and thereby get access to the Credential. Such replay attacks must be prevented using other means. The design facilitates the following options:
+The Pre-Authorized Code Flow is vulnerable to the replay of the Pre-Authorized Code, because by design, it is not bound to a certain device (as the Authorization Code Flow does with PKCE). This means an attacker can replay the Pre-Authorized Code meant for a victim at another device, e.g., the attacker can scan the QR code while it is displayed on the victim's screen, and thereby get access to the Credential. Such replay attacks must be prevented using other means. The design facilitates the following options:
 
 * Transaction Code: the Credential Issuer might set up a Transaction Code with the End-User (e.g., via text message or email) that needs to be presented in the Token Request.
-* Callback to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the End-User to confirm the originating device (device that displayed the QR code) that the Credential Issuer MAY proceed with the Credential issuance process. While the Credential Issuer reaches out to the End-User on the other device to get confirmation, the Credential Issuer's Authorization Server returns an error code `authorization_pending` or `slow_down` to the Wallet as described in (#token_error_response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the End-User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the End-User on the originating device more control over the issuance process.
+* Callback to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the End-User to confirm on the originating device (the device that displayed the QR code) that the Credential Issuer MAY proceed with the Credential issuance process. While the Credential Issuer reaches out to the End-User on the other device to get confirmation, the Credential Issuer's Authorization Server returns an error code `authorization_pending` or `slow_down` to the Wallet, as described in (#token_error_response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the End-User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the End-User on the originating device more control over the issuance process.
 
 ### Transaction Code Phishing
 
-An attacker might leverage the Credential issuance process and the End-User's trust into the Wallet to phish Transaction Codes sent out by a different service that grant the attacker access to services other than Credential issuance. The attacker could set up a Credential Issuer site and in parallel to the issuance request trigger transmission of a Transaction Code to the End-User's phone from a service other than Credential issuance, e.g., from a payment service. The End-User would then be asked to enter this Transaction Code into the Wallet and since the Wallet sends this Transaction Code to the Token Endpoint of the Credential Issuer (the attacker), the attacker would get access to the Transaction Code, and access to that other service.
+An attacker might leverage the Credential issuance process and the End-User's trust in the Wallet to phish Transaction Codes sent out by a different service that grant the attacker access to services other than Credential issuance. The attacker could set up a Credential Issuer site and in parallel to the issuance request, trigger transmission of a Transaction Code to the End-User's phone from a service other than Credential issuance, e.g., from a payment service. The End-User would then be asked to enter this Transaction Code into the Wallet and since the Wallet sends this Transaction Code to the Token Endpoint of the Credential Issuer (the attacker), the attacker would get access to the Transaction Code, and access to that other service.
 
 In order to cope with that issue, the Wallet is RECOMMENDED to interact with trusted Credential Issuers only. In that case, the Wallet would not process a Credential Offer with an untrusted issuer URL. The Wallet MAY also show the End-User the endpoint of the Credential Issuer it will be sending the Transaction Code to and ask the End-User for confirmation.
 
@@ -1432,20 +1432,19 @@ The Wallet is supposed to detect signs of fraudulent behavior related to the Cre
 
 ## Key Proof replay {#key-proof-replay}
 
-If an adversary is able to get hold of a key proof defined in (#proof_types), the adversary could get a Credential issued that is bound to a key pair controlled by the victim.
+If an adversary is able to obtain a key proof, as defined in (#proof_types), the adversary could get a Credential issued that is bound to a key pair controlled by the victim.
 
-Note: For the attacker to be able to present to the Verifier a Credential bound to a replayed Key Proof, the attacker also needs to obtain the victim's private key. To limit this, servers are RECOMMENDED to check how the Wallet protects the private keys, using mechanisms such as Attestation-Based Client Authentication defined in [@!I-D.ietf-oauth-attestation-based-client-auth].
+Note: For the attacker to be able to present a Credential bound to a replayed Key Proof to the Verifier, the attacker also needs to obtain the victim's private key. To limit this, servers are RECOMMENDED to check how the Wallet protects the private keys, using mechanisms such as Attestation-Based Client Authentication as defined in [@!I-D.ietf-oauth-attestation-based-client-auth].
 
-`nonce` parameter is the primary countermeasure against key proof replay. To further narrow down the attack vector, the Credential Issuer SHOULD bind a unique `nonce` parameter to the respective Access Token.
+The `nonce` parameter is the primary countermeasure against key proof replay. To further narrow down the attack vector, the Credential Issuer SHOULD bind a unique `nonce` parameter to the respective Access Token.
 
 Note: To accommodate for clock offsets, the Credential Issuer server MAY accept proofs that carry an `iat` time in the reasonably near future (on the order of seconds or minutes). Because clock skews between servers and Clients may be large, servers MAY limit key proof lifetimes by using server-provided nonce values containing the time at the server rather than comparing the client-supplied `iat` time to the time at the server. Nonces created in this way yield the same result even in the face of arbitrarily large clock skews.
 
-Server-provided nonces are an effective means for further reducing the chances for successful key proof replay by an attacker. A Wallet can keep using a certain nonce until the Credential Issuer provides a fresh nonce. This way the Credential Issuer determines how often a certain nonce can be used. Servers MUST have a clear policy whether the same key proof can be presented multiple times and for how long, or whether each Credential Request MUST have a fresh key proof.
+Server-provided nonces are an effective means for further reducing the chances for successful key proof replay by an attacker. A Wallet can keep using a provided nonce value until the Credential Issuer provides a fresh nonce. This way, the Credential Issuer determines how often a certain nonce can be used. Servers MUST have a clear policy on whether the same key proof can be presented multiple times and for how long, or whether each Credential Request MUST have a fresh key proof.
 
 ##  TLS Requirements
 
 Implementations MUST follow [@!BCP195].
-
 Whenever TLS is used, a TLS server certificate check MUST be performed, per [@!RFC6125].
 
 ## Protecting the Access Token
@@ -1456,15 +1455,15 @@ To sender-constrain Access Tokens, see the recommendations in Section 4.10.1 in 
 
 # Implementation Considerations
 
-## Claim-based Binding of the Credential to the End-User possessing the Credential {#claim-based-binding}
+## Claims-based Binding of the Credential to the End-User possessing the Credential {#claim-based-binding}
 
 Credentials not cryptographically bound to the identifier of the End-User possessing it (see (#credential-binding)), should be bound to the End-User possessing the Credential, based on the claims included in that Credential.
 
-In claim-based binding, no cryptographic binding material is provided. Instead, the issued Credential includes End-User claims that can be used by the Verifier to verify possession of the Credential by requesting presentation of existing forms of physical or digital identification that includes the same claims (e.g., a driving license or other ID cards in person, or an online ID verification service).
+In claims-based binding, no cryptographic binding material is provided. Instead, the issued Credential includes End-User claims that can be used by the Verifier to verify possession of the Credential by requesting presentation of existing forms of physical or digital identification that includes the same claims (e.g., a driving license or other ID cards in person, or an online ID verification service).
 
-## Binding of the Credential without Cryptographic Binding or Claim-based Binding {#no-binding}
+## Binding of the Credential without Cryptographic Binding or Claims-based Binding {#no-binding}
 
-Some Credential Issuers might choose to issue bearer Credentials without either cryptographic binding or claim-based binding, because they are meant to be presented without proof of possession.
+Some Credential Issuers might choose to issue bearer Credentials without either cryptographic binding or claims-based binding, because they are meant to be presented without proof of possession.
 
 One such use case is low assurance Credentials, such as coupons or tickets.
 
@@ -1824,9 +1823,19 @@ TBD
   </front>
 </reference>
 
+<reference anchor="eIDAS" target="https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32014R0910">
+  <front>
+    <title>REGULATION (EU) No 910/2014 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL on electronic identification and trust services for electronic transactions in the internal market and repealing Directive 1999/93/EC</title>
+    <author surname="European Parliament">
+      <organization>European Parliament</organization>
+    </author>
+    <date year="2014" month="July" day="23"></date>
+  </front>
+</reference>
+
 # Credential Format Profiles {#format_profiles}
 
-This specification defines several extension points to accommodate the differences across Credential formats. Sets of Credential format specific parameters or claims referred to as Credential format Identifiers are identified by the Credential format identifier and used at each extension point.
+This specification defines several extension points to accommodate the differences across Credential formats. Sets of Credential format specific parameters or claims referred to as Credential format identifiers are identified by the Credential format identifier and used at these extension points.
 
 This section defines Credential Format Profiles for a few of the commonly used Credential formats. Other specifications or deployments can define their own Credential Format Profiles.
 
@@ -1834,11 +1843,11 @@ This section defines Credential Format Profiles for a few of the commonly used C
 
 Sections 6.1 and 6.2 of [@VC_DATA] define how Verifiable Credentials MAY or MAY NOT use JSON-LD [@JSON-LD]. As acknowledged in Section 4.1 of [@VC_DATA], implementations can behave differently regarding processing of the `@context` property whether JSON-LD is used or not.
 
-This specification therefore differentiates the following three Credential formats for W3C Verifiable Credentials:
+This specification therefore differentiates between the following three Credential formats for W3C Verifiable Credentials:
 
 * VC signed as a JWT, not using JSON-LD (`jwt_vc_json`)
 * VC signed as a JWT, using JSON-LD (`jwt_vc_json-ld`)
-* VC secured using Data Integrity, using JSON-LD, with proof suite requiring Linked Data canonicalization (`ldp_vc`)
+* VC secured using Data Integrity, using JSON-LD, with a proof suite requiring Linked Data canonicalization (`ldp_vc`)
 
 Note: VCs secured using Data Integrity MAY NOT necessarily use JSON-LD and MAY NOT necessarily use proof suites requiring Linked Data canonicalization. Credential Format Profiles for them may be defined in the future versions of this specification.
 
@@ -1852,23 +1861,23 @@ It is on purpose that the Credential Offer does not contain `credentialSubject` 
 
 The Credential format identifier is `jwt_vc_json`.
 
-When the `format` value is `jwt_vc_json`, entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules.
+When the `format` value is `jwt_vc_json`, the entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules.
 
 #### Credential Issuer Metadata {#server_metadata_jwt_vc_json}
 
-The following additional Credential Issuer metadata are defined for this Credential format to be added to the `credential_configurations_supported` parameter in addition to those defined in (#credential-issuer-parameters).
+The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
-* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists at least of the following two sub claims:
-  * `type`: REQUIRED. Array designating the types a certain Credential type supports according to [@VC_DATA], Section 4.3.
+* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of at least the following two parameters:
+  * `type`: REQUIRED. Array designating the types a certain Credential type supports, according to [@VC_DATA], Section 4.3.
   * `credentialSubject`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be an object that includes a following non-exhaustive list of parameters defined by this specification:
-      * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default should be assumed to be `false`.
+      * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default value is `false`.
       * `value_type`: OPTIONAL. String value determining the type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
       * `display`: OPTIONAL. Array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
           * `name`: OPTIONAL. String value of a display name for the claim.
           * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. Array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
-The following is a non-normative example of an object comprising `credential_configurations_supported` parameter of Credential format `jwt_vc_json`:
+The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `jwt_vc_json`:
 
 <{{examples/credential_metadata_jwt_vc_json.json}}
 
@@ -1876,8 +1885,8 @@ The following is a non-normative example of an object comprising `credential_con
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
 
-* `credential_definition`: OPTIONAL. Object containing a detailed description of the Credential consisting of the following sub claim:
-  * `credentialSubject`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. The most deeply nested value MUST be an empty object. This object indicates the claims the Wallet would like to turn up in the Credential to be issued.
+* `credential_definition`: OPTIONAL. Object containing a detailed description of the Credential consisting of the following parameter:
+  * `credentialSubject`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. The most deeply nested value MUST be an empty object. This object indicates the claims the Wallet would like to be present in the Credential to be issued.
 
 Note that the `type` is referenced in the `credential_configurations_supported` object in the Credential Issuer metadata.
 
@@ -1889,8 +1898,8 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.  
 
-* `credential_definition`: REQUIRED when the `credential_identifier` was not present in the Credential Request. MUST NOT be used otherwise. Object containing the detailed description of the Credential type. It consists at least of the following sub claims:
-  * `type`: REQUIRED. Array as defined in (#server_metadata_jwt_vc_json). The credential issued by the Credential Issuer MUST at least contain the values listed in this claim.
+* `credential_definition`: REQUIRED when the `credential_identifier` was not present in the Credential Request. It MUST NOT be used otherwise. It is an object containing the detailed description of the Credential type. It consists of at least the following parameters:
+  * `type`: REQUIRED. Array as defined in (#server_metadata_jwt_vc_json). The credential issued by the Credential Issuer MUST contain at least the values listed in this claim.
   * `credentialSubject`: OPTIONAL. Object as defined in (#authorization_jwt_vc_json).
 
 The following is a non-normative example of a Credential Request with Credential format `jwt_vc_json`:
@@ -1905,36 +1914,36 @@ The following is a non-normative example of a Credential Response with Credentia
 
 <{{examples/credential_response_jwt_vc_json.txt}}
 
-### VC Secured using Data Integrity, using JSON-LD, with Proof Suite Requiring Linked Data Canonicalization
+### VC Secured using Data Integrity, using JSON-LD, with a Proof Suite Requiring Linked Data Canonicalization
 
 #### Format Identifier
 
 The Credential format identifier is `ldp_vc`.
 
-When the `format` value is `ldp_vc`, entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules. 
+When the `format` value is `ldp_vc`, the entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules. 
 
-`@context` value in the `credential_definition` object could be used by the Wallet to check whether it supports a certain VC or not. If necessary, the Wallet could apply JSON-LD processing to the Credential issued by the Credential Issuer.
+The `@context` value in the `credential_definition` object can be used by the Wallet to check whether it supports a certain VC or not. If necessary, the Wallet could apply JSON-LD processing to the Credential issued by the Credential Issuer.
 
-Note: Data Integrity used to be called Linked Data Proofs, hence "ldp" in the Credential format identifier.
+Note: Data Integrity used to be called Linked Data Proofs, hence the "ldp" in the Credential format identifier.
 
 #### Credential Issuer Metadata {#server_metadata_ldp_vc}
 
-The following additional Credential Issuer metadata are defined for this Credential format to be added to the `credential_configurations_supported` parameter in addition to those defined in (#credential-issuer-parameters):
+The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters):
 
-* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists at least of the following three sub claims:
+* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of at least the following three parameters:
   * `@context`: REQUIRED. Array as defined in [@VC_DATA], Section 4.1.
-  * `type`: REQUIRED. Array designating the types a certain credential type supports according to [@VC_DATA], Section 4.3.
+  * `type`: REQUIRED. Array designating the types a certain credential type supports, according to [@VC_DATA], Section 4.3.
   * `credentialSubject`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be an object that includes a following non-exhaustive list of parameters defined by this specification:
- * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default should be assumed to be `false`.
+ * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default value is `false`.
       * `value_type`: OPTIONAL. String value determining the type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
       * `display`: OPTIONAL. Array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
           * `name`: OPTIONAL. String value of a display name for the claim.
           * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. Array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
-It is recommended to define an `@context` value to communicate additional information such as which claims are mandatory-to-be-issued, type of claim value (i.e., string, number, etc.), display properties of a Credential and the order of the claim values when displayed as in (#vc-jwt).
+It is recommended to define an `@context` value to communicate additional information such as which claims are mandatory-to-be-issued, type of claim value (i.e., string, number, etc.), the display properties of a Credential, and the order of the claim values when displayed as in (#vc-jwt).
 
-The following is a non-normative example of an object comprising `credential_configurations_supported` parameter of Credential format `ldp_vc`:
+The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `ldp_vc`:
 
 <{{examples/credential_metadata_ldp_vc.json}}
 
@@ -1942,7 +1951,7 @@ The following is a non-normative example of an object comprising `credential_con
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.  
 
-* `credential_definition`: OPTIONAL. Object containing the detailed description of the Credential consisting of the following sub claim:
+* `credential_definition`: OPTIONAL. Object containing the detailed description of the Credential consisting of the following parameter:
     * `credentialSubject`: OPTIONAL. Object as defined in (#authorization_jwt_vc_json).
 
 Note that the `@context` and `type` are referenced in the `credential_configurations_supported` object in the Credential Issuer metadata.
@@ -1955,9 +1964,9 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.  
 
-* `credential_definition`: REQUIRED when the `credential_identifier` is not present in the Credential Request. MUST NOT be used otherwise. Object containing the detailed description of the Credential type. It consists at least of the following sub claims:
+* `credential_definition`: REQUIRED when the `credential_identifier` is not present in the Credential Request. It MUST NOT be used otherwise. It is an object containing the detailed description of the Credential type. It consists of at least the following parameters:
   * `@context`: REQUIRED. Array as defined in (#server_metadata_ldp_vc).
-  * `type`: REQUIRED. Array as defined in (#server_metadata_ldp_vc). The Credential issued by the Credential Issuer MUST at least contain the values listed in this claim.
+  * `type`: REQUIRED. Array as defined in (#server_metadata_ldp_vc). The Credential issued by the Credential Issuer MUST contain at least the values listed in this claim.
   * `credentialSubject`: OPTIONAL. Object as defined in (#authorization_ldp_vc).
 
 The following is a non-normative example of a Credential Request with Credential format `ldp_vc`:
@@ -1982,9 +1991,9 @@ The following is a non-normative example of a Credential Response with Credentia
 
 The Credential format identifier is `jwt_vc_json-ld`.
 
-When the `format` value is `jwt_vc_json-ld`, entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules.
+When the `format` value is `jwt_vc_json-ld`, the entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules.
 
-`@context` value in the `credential_definition` object could be used by the Wallet to check whether it supports a certain VC or not. If necessary, the Wallet could apply JSON-LD processing to the Credential issued by the Credential Issuer.
+The `@context` value in the `credential_definition` parameter can be used by the Wallet to check whether it supports a certain VC or not. If necessary, the Wallet could apply JSON-LD processing to the Credential issued by the Credential Issuer.
 
 #### Credential Issuer Metadata
 
@@ -2012,18 +2021,18 @@ The Credential format identifier is `mso_mdoc`.
 
 ### Credential Issuer Metadata {#server_metadata_mso_mdoc}
 
-The following additional Credential Issuer metadata are defined for this Credential format to be added to the `credential_configurations_supported` parameter in addition to those defined in (#credential-issuer-parameters).
+The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
-* `doctype`: REQUIRED. String identifying the Credential type as defined in [@!ISO.18013-5].
+* `doctype`: REQUIRED. String identifying the Credential type, as defined in [@!ISO.18013-5].
 * `claims`: OPTIONAL. Object containing a list of name/value pairs, where the name is a certain `namespace` as defined in [@!ISO.18013-5] (or any profile of it), and the value is an object. This object also contains a list of name/value pairs, where the name is a claim name value that is defined in the respective namespace and is offered in the Credential. The value is an object detailing the specifics of the claim with the following non-exhaustive list of parameters that MAY be included:
-    * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default should be assumed to be `false`.
+    * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default value is `false`.
     * `value_type`: OPTIONAL. String value determining the type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
     * `display`: OPTIONAL. Array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
         * `name`: OPTIONAL. String value of a display name for the claim.
         * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. Array of namespaced claim name values that lists them in the order they should be displayed by the Wallet. The values MUST be two strings separated by a tilde ('~') character, where the first string is a namespace value and a second is a claim name value. For example, `org.iso.18013.5.1~given_name".
 
-The following is a non-normative example of an object comprising `credential_configurations_supported` parameter of Credential format `mso_mdoc`:
+The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `mso_mdoc`:
 
 <{{examples/credential_metadata_mso_mdoc.json}}
 
@@ -2043,7 +2052,7 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.  
 
-* `doctype`: REQUIRED when the `credential_identifier` is not present in the Credential Request. MUST NOT be used otherwise. String as defined in (#server_metadata_mso_mdoc). The Credential issued by the Credential Issuer MUST at least contain the values listed in this claim.
+* `doctype`: REQUIRED when the `credential_identifier` is not present in the Credential Request. It MUST NOT be used otherwise. It is a string as defined in (#server_metadata_mso_mdoc). The Credential issued by the Credential Issuer MUST contain at least the values listed in this claim.
 * `claims`: OPTIONAL. Object as defined in (#server_metadata_mso_mdoc).
 
 The following is a non-normative example of a Credential Request with Credential format `mso_mdoc`:
@@ -2064,10 +2073,10 @@ The Credential format identifier is `vc+sd-jwt`.
 
 ### Credential Issuer Metadata {#server_metadata_sd_jwt_vc}
 
-The following additional Credential Issuer metadata parameters are defined for this Credential format to be added to the `credential_configurations_supported` parameter in addition to those defined in (#credential-issuer-parameters).
+The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
 
-* `vct`: REQUIRED. String designating the type of a Credential as defined in [@!I-D.ietf-oauth-sd-jwt-vc].
+* `vct`: REQUIRED. String designating the type of a Credential, as defined in [@!I-D.ietf-oauth-sd-jwt-vc].
 * `claims`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim about the subject offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be an object that includes a following non-exhaustive list of parameters defined by this specification:
     * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
     * `value_type`: OPTIONAL. String value determining the type of value of the claim. A non-exhaustive list of valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
@@ -2076,7 +2085,7 @@ The following additional Credential Issuer metadata parameters are defined for t
         * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. An array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
-The following is a non-normative example of an object comprising `credential_configurations_supported` parameter of Credential format `vc+sd-jwt`.
+The following is a non-normative example of an object comprising the `credential_configurations_supported` parameter for Credential format `vc+sd-jwt`.
 
 <{{examples/credential_metadata_sd_jwt_vc.json}}
 
@@ -2095,7 +2104,7 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential format.
 
-* `vct`: REQUIRED when the `credential_identifier` is not present in the Credential Request. MUST NOT be used otherwise. String as defined in (#server_metadata_sd_jwt_vc). This claim contains the type value of the Credential the Wallet requests the Credential Issuer to issue.
+* `vct`: REQUIRED when the `credential_identifier` is not present in the Credential Request. It MUST NOT be used otherwise. It is a string as defined in (#server_metadata_sd_jwt_vc). This claim contains the type value of the Credential that the Wallet requests the Credential Issuer to issue.
 * `claims`: OPTIONAL. An object as defined in (#server_metadata_sd_jwt_vc).
 
 The following is a non-normative example of a Credential Request with Credential format `vc+sd-jwt`.
@@ -2237,33 +2246,33 @@ This is a non-exhaustive list of sample use cases.
 
 ## Credential Offer - Same-Device {#use-case-1}
 
-While browsing the university's home page, the End-User finds a link "request your digital diploma". The End-User clicks on this link and is being redirected to a digital Wallet. The Wallet notifies the End-User that a Credential Issuer offered to issue a diploma Credential. The End-User confirms this inquiry and is taken to the university's Credential issuance service's End-User experience. Upon successful authentication at the university and consent to the issuance of a digital diploma, the End-User is redirected back to the Wallet. Here, the End-User can verify the successful creation of the digital diploma.
+While browsing the university's home page, the End-User finds a link "request your digital diploma". The End-User clicks on this link and is redirected to a digital Wallet. The Wallet notifies the End-User that a Credential Issuer offered to issue a diploma Credential. The End-User confirms this inquiry and is taken to the university's Credential issuance service's End-User experience. Upon successful authentication at the university and consent to the issuance of a digital diploma, the End-User is redirected back to the Wallet. Here, the End-User can verify the successful creation of the digital diploma.
 
 ## Credential Offer - Cross-Device (with Information Pre-Submitted by the End-User) {#use-case-2}
 
-The End-User is starting a job at a new employer. The employer requests the End-User to upload specific documents to the employee portal. After a few days, the End-User receives an email from the employer indicating that the employee Credential is ready to be claimed and provides instructions to scan a presented QR code for its retrieval. The End-User scans the QR code with the smartphone, which opens the Wallet. Meanwhile, the End-User has received a text message with a Transaction Code to the smartphone. After entering the Transaction Code in the Wallet for security reasons, the End-User confirms the Credential issuance, and receives the Credential into the Wallet.
+The End-User is starting a job at a new employer. The employer requests the End-User to upload specific documents to the employee portal. After a few days, the End-User receives an email from the employer indicating that the employee Credential is ready to be claimed and provides instructions to scan a presented QR code for its retrieval. The End-User scans the QR code with a smartphone, which opens the Wallet. Meanwhile, the End-User has received a text message with a Transaction Code to the smartphone. After entering the Transaction Code in the Wallet for security reasons, the End-User approves the Credential issuance, and receives the Credential in the Wallet.
 
 ## Credential Offer - Cross-Device & Deferred {#use-case-3}
 
-The End-User intends to acquire a digital criminal record. This involves a visit to the local administration's office to request the official criminal record be issued as a digital Credential. After presenting the ID document, the End-User is prompted to scan a QR code using the Wallet and is informed that the issuance of the Credential will require some time, due to necessary background checks by the authority.
+The End-User intends to acquire a digital criminal record. This involves a visit to the local administration's office to request the official criminal record be issued as a digital Credential. After presenting an ID document, the End-User is prompted to scan a QR code using the Wallet and is informed that the issuance of the Credential will require some time, due to necessary background checks by the authority.
 
 While using the Wallet, the End-User notices an indication that the issuance of the digital record is in progress. After a few days, the End-User receives a notification from the Wallet indicating that the requested Credential was successfully issued. Upon opening the Wallet, the End-User is queried about the download of the Credential. After confirmation, the Wallet fetches and saves the new Credential.
 
-## Wallet Initiated Issuance during Presentation {#use-case-4}
+## Wallet-Initiated Issuance during Presentation {#use-case-4}
 
 An End-User comes across a Verifier app that is requesting the End-User to present a Credential, e.g., a driving license. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet selects a Credential Issuer capable of issuing the missing Credential and, upon End-User consent, sends the End-User to the Credential Issuer's End-User experience (Web site or app). Once authenticated and consent is provided for the issuance of the Credential into the Wallet, the End-User is redirected back to the Wallet. The Wallet informs the End-User that Credential was successfully issued into the Wallet and is ready to be presented to the Verifier app that originally requested presentation of that Credential.
 
-## Wallet Initiated Issuance during Presentation (Requires Presentation of Additional Credentials During Issuance) {#use-case-5}
+## Wallet-Initiated Issuance during Presentation (Requires Presentation of Additional Credentials During Issuance) {#use-case-5}
 
 An End-User comes across a Verifier app that is requesting the End-User to present a Credential, e.g., a university diploma. The Wallet determines the requested Credential type(s) from the presentation request and notifies the End-User that there is currently no matching Credential in the Wallet. The Wallet then offers the End-User a list of Credential Issuers, which might be based on a Credential Issuer list curated by the Wallet provider. The End-User selects the university of graduation and is subsequently redirected to the corresponding university's website or app.
 
-The End-User logs into the university, which identifies that the corresponding End-User account is not yet verified. Among various identification options, the End-User opts to present a Credential from the Wallet. The End-User is redirected back to the Wallet to consent to present the requested Credential(s) to the university. Following this, the End-User is redirected back to the university End-User experience. Based on the presented Credential, the university finalizes the End-User verification, retrieves End-User data from its database, and proposes to issue a diploma as a Verifiable Credential.
+The End-User logs into the university, which identifies that the corresponding End-User account is not yet verified. Among various identification options, the End-User opts to present a Credential from the Wallet. The End-User is redirected back to the Wallet to consent to present the requested Credential(s) to the university. Following this, the End-User is redirected back to the university End-User experience. Based on the presented Credential, the university finalizes the End-User verification, retrieves data about the End-User from its database, and proposes to issue a diploma as a Verifiable Credential.
 
-Upon providing consent, the End-User is sent back to the Wallet. The Wallet informs the End-User Credential was successfully issued into the Wallet and is ready to be presented to the Verifier app that originally requested presentation of that Credential.
+Upon providing consent, the End-User is sent back to the Wallet. The Wallet informs the End-User that the Credential was successfully issued into the Wallet and is ready to be presented to the Verifier app that originally requested presentation of that Credential.
 
-## Wallet Initiated Issuance after Installation {#use-case-6}
+## Wallet-Initiated Issuance after Installation {#use-case-6}
 
-The End-User installs a new Wallet and executes it. The Wallet offers the End-User a selection of the Credentials that the End-User may obtain from a Credential Issuer, e.g. a national identity Credential, a mobile driving license or a public transport ticket. The corresponding Credential Issuers (and their URLs) are pre-configured by the Wallet or follow some discovery processes that are out of scope for this specification. By clicking on one of these options corresponding to the Credentials available for the issuance, the Issuance process starts with the flows supported by the Credential Issuer (Pre-Authorized Code flow or Auth Code flow).
+The End-User installs a new Wallet and opens it. The Wallet offers the End-User a selection of Credentials that the End-User may obtain from a Credential Issuer, e.g. a national identity Credential, a mobile driving license, or a public transport ticket. The corresponding Credential Issuers (and their URLs) are pre-configured by the Wallet or follow some discovery processes that are out of scope for this specification. By clicking on one of these options corresponding to the Credentials available for issuance, the issuance process starts using a flow supported by the Credential Issuer (Pre-Authorized Code flow or Authorization Code flow).
 
 Wallet Providers may also provide a marketplace where Issuers can register to be found for Wallet-initiated flows.
 
