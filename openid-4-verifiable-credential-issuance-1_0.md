@@ -926,16 +926,17 @@ If the Credential Response is not encrypted, the media type of the response MUST
 
 The following parameters are used in the JSON-encoded Credential Response body:
 
-* `format`: REQUIRED. String denoting the format of the issued Credential.
 * `credential`: OPTIONAL. Contains issued Credential. It MUST be present when `transaction_id` is not returned. It MAY be a string or an object, depending on the Credential format. See (#format_profiles) for the Credential format specific encoding requirements.
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer was unable to immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST be present when the `credential` parameter is not returned. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. String containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
 * `notification_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the Notification Request as defined in (#notification). This parameter MUST NOT be present if `credential` parameter is not present.
 
-The value of the `format` parameter determines the Credential format and encoding of the credential in the Credential Response. Details are defined in the Credential Format Profiles in (#format_profiles).
+The format of the Credential in the Credential Response is determined by the value of the `format` parameter specified in the Credential Request.
 
-Credential formats expressed as binary data MUST be base64url-encoded and returned as a string.
+The encoding of the Credential returned in the `credential` parameter depends on the Credential Format. Credential formats expressed as binary data MUST be base64url-encoded and returned as a string.
+
+More details such as Credential Format identifiers are defined in the Credential Format Profiles in (#format_profiles). 
 
 Below is a non-normative example of a Credential Response in an immediate issuance flow for a Credential in JWT VC format (JSON encoded):
 
@@ -945,7 +946,6 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "format": "jwt_vc_json",
   "credential": "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
   "c_nonce": "fGFF7UkhLa",
   "c_nonce_expires_in": 86400  
@@ -1094,11 +1094,9 @@ Cache-Control: no-store
 
 {
   "credential_responses": [{
-    "format": "jwt_vc_json",
     "credential": "eyJraWQiOiJkaWQ6ZXhhbXBsZTpl...C_aZKPxgihac0aW9EkL1nOzM"
   },
   {
-    "format": "mso_mdoc",
     "credential": "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
   }],
   "c_nonce": "fGFF7UkhLa",
@@ -1119,7 +1117,6 @@ Cache-Control: no-store
          "transaction_id":"8xLOxBtZp8"
       },
       {
-         "format":"jwt_vc_json",
          "credential":"YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
       }
    ],
@@ -1171,7 +1168,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Deferred Credential Response {#deferred-credential_response}
 
-The Deferred Credential Response uses the `format` and `credential` parameters defined in (#credential-response).
+The Deferred Credential Response uses the `credential` parameter as defined in (#credential-response).
 
 The Deferred Credential Response MUST be sent using the `application/json` media type.
 
@@ -2284,7 +2281,8 @@ Wallet Providers may also provide a marketplace where Issuers can register to be
    [[ To be removed from the final specification ]]
    
    -13
-  
+
+   * remove `format` from the Credential Response
    * added `signed_metadata` parameter
    * clarified that logo can is a uri and not a url only
    * moved the annex with Credential format profiles to the top of all annexes
