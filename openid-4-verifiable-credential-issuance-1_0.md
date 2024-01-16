@@ -691,7 +691,7 @@ If the Access Token is valid for requesting issuance of multiple Credentials, it
 
 ## Binding the Issued Credential to the Identifier of the End-User Possessing that Credential {#credential-binding}
 
-The issued Credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the Credential. Cryptographic binding allows the Verifier to verify during the presentation of a Credential that the End-User presenting a Credential is the same End-User to whom that Credential was issued. For non-cryptographic types of binding and Credentials issued without any binding, see the Implementation Considerations in (#claim-based-binding) and (#no-binding).
+The issued Credential SHOULD be cryptographically bound to the identifier of the End-User who possesses the Credential. Cryptographic binding allows the Verifier to verify during the presentation of a Credential that the End-User presenting a Credential is the same End-User to whom that Credential was issued. For non-cryptographic types of binding and Credentials issued without any binding, see the Implementation Considerations in (#claims-based-binding) and (#no-binding).
 
 Note: Claims in the Credential are about the subject of the Credential, which is often the End-User who possesses it.
 
@@ -1458,19 +1458,19 @@ To sender-constrain Access Tokens, see the recommendations in Section 4.10.1 in 
 
 # Implementation Considerations
 
-## Claims-based Binding of the Credential to the End-User possessing the Credential {#claim-based-binding}
+## Claims-based Binding of the Credential to the End-User possessing the Credential {#claims-based-binding}
 
-Credentials not cryptographically bound to the identifier of the End-User possessing it (see (#credential-binding)), should be bound to the End-User possessing the Credential, based on the claims included in that Credential.
+Credentials not cryptographically bound to the identifier of the End-User possessing it (see (#credential-binding)), should be bound to the End-User possessing the Credential, based on the claims included in the Credential.
 
 In claims-based binding, no cryptographic binding material is provided. Instead, the issued Credential includes End-User claims that can be used by the Verifier to verify possession of the Credential by requesting presentation of existing forms of physical or digital identification that includes the same claims (e.g., a driving license or other ID cards in person, or an online ID verification service).
 
 ## Binding of the Credential without Cryptographic Binding or Claims-based Binding {#no-binding}
 
-Some Credential Issuers might choose to issue bearer Credentials without either cryptographic binding or claims-based binding, because they are meant to be presented without proof of possession.
+Some Credential Issuers might choose to issue bearer Credentials without either cryptographic binding or claims-based binding because they are meant to be presented without proof of possession.
 
 One such use case is low assurance Credentials, such as coupons or tickets.
 
-Another use case is when the Credential Issuer uses cryptographic schemes that can provide binding to the End-User possessing that Credential without explicit cryptographic material being supplied by the application used by that End-User. For example, in the case of the BBS Signature Scheme, the issued Credential itself is a secret and only derivation of a Credential is presented to the Verifier. Effectively, Credential is bound to the Credential Issuer's signature on the Credential, which becomes a shared secret transferred from the Credential Issuer to the End-User.
+Another use case is when the Credential Issuer uses cryptographic schemes that can provide binding to the End-User possessing that Credential without explicit cryptographic material being supplied by the application used by that End-User. For example, in the case of the BBS Signature Scheme, the issued Credential itself is a secret and only a derivation from the Credential is presented to the Verifier. Effectively, the Credential is bound to the Credential Issuer's signature on the Credential, which becomes a shared secret transferred from the Credential Issuer to the End-User.
 
 ## Multiple Accesses to the Credential Endpoint
 
@@ -1480,11 +1480,11 @@ The Credential Issuer MAY also decide to no longer accept the Access Token and a
 
 The action leading to the Wallet performing another Credential Request can also be triggered by a background process, or by the Credential Issuer using an out-of-band mechanism (SMS, email, etc.) to inform the End-User.
 
-## Relationship between the Credential Issuer Identifier in the metadata and the Issuer Identifier in the Issued Credential
+## Relationship between the Credential Issuer Identifier in the Metadata and the Issuer Identifier in the Issued Credential
 
-Credential Issuer Identifier is always a URL using the `https` scheme as defined in (#credential_issuer_identifier). Depending on the Credential format, the issuer identifier in the issued Credential may not be a URL using the `https` scheme. Some other forms that it can take are a DID included in the `issuer` property in a [@VC_DATA] format, or the `Subject` value of the document signer certificate included in the `x5chain` element in a [@ISO.18013-5] format.
+The Credential Issuer Identifier is always a URL using the `https` scheme, as defined in (#credential_issuer_identifier). Depending on the Credential format, the issuer identifier in the issued Credential may not be a URL using the `https` scheme. Some other forms that it can take are a DID included in the `issuer` property in a [@VC_DATA] format, or the `Subject` value of the document signer certificate included in the `x5chain` element in an [@ISO.18013-5] format.
 
-When the Issuer identifier in the issued Credential is a DID, below is a non-exhaustive list of mechanisms the Credential Issuer MAY use to bind to the Credential Issuer Identifier:
+When the Issuer identifier in the issued Credential is a DID, a non-exhaustive list of mechanisms the Credential Issuer MAY use to bind to the Credential Issuer Identifier is as follows:
 
 1. Use the [@DIF.Well-Known_DID] Specification to provide binding between a DID and a certain domain.
 1. If the Issuer identifier in the issued Credential is an object, add to the object a `credential_issuer` claim, as defined in (#credential_issuer_identifier).
@@ -1493,13 +1493,13 @@ The Wallet MAY check the binding between the Credential Issuer Identifier and th
 
 ## Refreshing Issued Credentials
 
-After a Verifiable Credential has been issued to the Holder, claim values about the subject of a Credential, or a signature on the Credential may need to be updated. There are two possible mechanisms to do so.
+After a Verifiable Credential has been issued to the Holder, claim values about the subject of a Credential or a signature on the Credential may need to be updated. There are two possible mechanisms to do so.
 
-First, the Wallet may receive an updated version of a Credential from a Credential Endpoint or a Batch Credential Endpoint using a valid Access Token. This does not involve interaction with the End-User. If the Credential Issuer issued a Refresh Token to the Wallet, the Wallet would have to obtain a fresh Access Token by making a request to the Token Endpoint as defined in Section 6 of [@!RFC6749].
+First, the Wallet may receive an updated version of a Credential from a Credential Endpoint or a Batch Credential Endpoint using a valid Access Token. This does not involve interaction with the End-User. If the Credential Issuer issued a Refresh Token to the Wallet, the Wallet would obtain a fresh Access Token by making a request to the Token Endpoint, as defined in Section 6 of [@!RFC6749].
 
 Second, the Credential Issuer can reissue the Credential by starting the issuance process from the beginning. This would involve interaction with the End-User. A Credential needs to be reissued if the Wallet does not have a valid Access Token or a valid Refresh Token. With this approach, when a new Credential is issued, the Wallet might need to check if it already has a Credential of the same type and, if necessary, delete the old Credential. Otherwise, the Wallet might end up with more than one Credential of the same type, without knowing which one is the latest.
 
-Credential Refresh can be initiated by the Wallet independently from the Credential Issuer, or the Credential Issuer can send a signal to the Wallet asking it to request Credential refresh. How the Credential Issuer sends such a signal is out of scope for this specification.
+Credential Refresh can be initiated by the Wallet independently from the Credential Issuer, or the Credential Issuer can send a signal to the Wallet asking it to request Credential refresh. How the Credential Issuer sends such a signal is out of scope of this specification.
 
 It is up to the Credential Issuer whether to update both the signature and the claim values, or only the signature.
 
