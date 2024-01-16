@@ -331,7 +331,7 @@ The following values are defined by this specification:
 
 * Grant Type `authorization_code`:
   * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the subsequent Authorization Request with the Credential Issuer to a context set up during previous steps. If the Wallet decides to use the Authorization Code Flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value.
-  * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
+  * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. It MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
 * Grant Type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
   * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single use. If the Wallet decides to use the Pre-Authorized Code Flow, this parameter value MUST be included in the subsequent Token Request with the Pre-Authorized Code Flow.
   * `tx_code`: OPTIONAL. Object specifying whether the Authorization Server expects presentation of a Transaction Code by the End-User along with the Token Request in a Pre-Authorized Code Flow. If the Authorization Server does not expect a Transaction Code, this object is absent; this is the default. The Transaction Code is intended to bind the Pre-Authorized Code to a certain transaction to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate End-User. It is RECOMMENDED to send the Transaction Code via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, the Transaction Code value MUST be sent in the `tx_code` parameter with the respective Token Request as defined in (#token_request). If no `length` or `description` is given, this object may be empty, indicating that a Transaction Code is required.
@@ -401,20 +401,20 @@ The Wallet does not create a response. UX control stays with the Wallet after co
 
 The Authorization Endpoint is used in the same manner as defined in [@!RFC6749], taking into account the recommendations given in [@!I-D.ietf-oauth-security-topics].
 
-When the grant type `authorization_code` is used, it is RECOMMENDED to use PKCE as defined in [@!RFC7636] and Pushed Authorization Requests as defined in [@RFC9126]. PKCE prevents authorization code interception attacks. Pushed Authorization Requests ensure the integrity and authenticity of the authorization request.
+When the grant type `authorization_code` is used, it is RECOMMENDED to use PKCE [@!RFC7636] and Pushed Authorization Requests [@RFC9126]. PKCE prevents authorization code interception attacks. Pushed Authorization Requests ensure the integrity and authenticity of the authorization request.
 
 ## Authorization Request {#credential-authz-request}
 
-An Authorization Request is an OAuth 2.0 Authorization Request as defined in Section 4.1.1 of [@!RFC6749], which requests to grant access to the Credential Endpoint as defined in (#credential-endpoint).
+An Authorization Request is an OAuth 2.0 Authorization Request as defined in Section 4.1.1 of [@!RFC6749], which requests that access be granted to the Credential Endpoint, as defined in (#credential-endpoint).
 
-There are two possible ways to request issuance of a specific Credential type in an Authorization Request. One way is to use of the `authorization_details` request parameter as defined in [@!RFC9396] with one or more authorization details objects of type `openid_credential`, per (#authorization-details). The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
+There are two possible ways to request issuance of a specific Credential type in an Authorization Request. One way is to use the `authorization_details` request parameter, as defined in [@!RFC9396], with one or more authorization details objects of type `openid_credential`, per (#authorization-details). The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
 
 ### Request Issuance of a Certain Credential Type using `authorization_details` Parameter {#authorization-details}
 
 The request parameter `authorization_details` defined in Section 2 of [@!RFC9396] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following parameters to be used with this authorization details type:
 
-* `type`: REQUIRED. String that determines the authorization details type. MUST be set to `openid_credential` for the purpose of this specification.
-* `credential_configuration_id`: REQUIRED. String specifying a unique identifier of the Credential being described in the `credential_configurations_supported` map in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). The referenced object in the `credential_configurations_supported` map conveys the details, such as format, for the issuance of the requested Credential. This specification defines Credential Format specific Issuer Metadata in (#format_profiles).
+* `type`: REQUIRED. String that determines the authorization details type. It MUST be set to `openid_credential` for the purpose of this specification.
+* `credential_configuration_id`: REQUIRED. String specifying a unique identifier of the Credential being described in the `credential_configurations_supported` map in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). The referenced object in the `credential_configurations_supported` map conveys the details, such as the format, for issuance of the requested Credential. This specification defines Credential Format specific Issuer Metadata in (#format_profiles).
 
 The following is a non-normative example of an `authorization_details` object:
 
@@ -424,7 +424,7 @@ If the Credential Issuer metadata contains an `authorization_servers` parameter,
 
 <{{examples/authorization_details_with_as.json}}
 
-Below is a non-normative example of an Authorization Request using the `authorization_details` parameter that would be sent by the User Agent to the Authorization Server in response to an HTTP 302 redirect response by the Wallet (with line wraps within values for display purposes only):
+Below is a non-normative example of an Authorization Request using the `authorization_details` parameter that would be sent by the User Agent to the Authorization Server in response to an HTTP 302 redirect response by the Wallet (with line breaks within values for display purposes only):
 
 ```
 GET /authorize?
@@ -443,17 +443,17 @@ This non-normative example requests authorization to issue two different Credent
 
 <{{examples/authorization_details_multiple_credentials.json}}
 
-Note: Applications MAY combine authorization details of type `openid_credential` with any other authorization details type in an Authorization Request.
+Note: Applications MAY combine authorization details of type `openid_credential` with any other authorization details types in an Authorization Request.
 
 ### Using `scope` Parameter to Request Issuance of a Credential {#credential-request-using-type-specific-scope}
 
-In addition to a mechanism defined in (#credential-authz-request), Credential Issuers MAY support requesting authorization to issue a Credential using OAuth 2.0 scope parameter.
+In addition to a mechanism defined in (#credential-authz-request), Credential Issuers MAY support requesting authorization to issue a Credential using the OAuth 2.0 `scope` parameter.
 
-When the Wallet does not know which scope value to use to request issuance of a certain Credential, it can discover it using the `scope` Credential Issuer metadata parameter defined in (#credential-issuer-parameters). When the flow starts with a Credential Offer, the Wallet can use the `credential_configurations` parameter values to identify object(s) in the `credential_configurations_supported` map in the Credential Issuer metadata parameter and use `scope` parameter value from that object.
+When the Wallet does not know which scope value to use to request issuance of a certain Credential, it can discover it using the `scope` Credential Issuer metadata parameter defined in (#credential-issuer-parameters). When the flow starts with a Credential Offer, the Wallet can use the `credential_configurations` parameter values to identify object(s) in the `credential_configurations_supported` map in the Credential Issuer metadata parameter and use the `scope` parameter value from that object.
 
 The Wallet can discover the scope values using other options such as normative text in a profile of this specification that defines scope values along with a description of their semantics.
 
-The concrete scope values are out of scope of this specification.
+The concrete `scope` values are out of scope of this specification.
 
 The Wallet MAY combine scopes discovered from the Credential Issuer metadata with the scopes discovered from the Authorization Server metadata.
 
@@ -466,7 +466,7 @@ Credential Issuers MUST ignore unknown scope values in a request.
 
 If the Credential Issuer metadata contains an `authorization_servers` property, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the Authorization Server to differentiate Credential Issuers.  
 
-Below is a non-normative example of an Authorization Request provided by the Wallet to the Authorization Server using the scope `UniversityDegree_JWT` and in response to an HTTP 302 redirect. The line wraps within the values are intended for display purposes only:
+Below is a non-normative example of an Authorization Request provided by the Wallet to the Authorization Server using the scope `UniversityDegreeCredential` and in response to an HTTP 302 redirect (with line breaks within values for display purposes only):
 
 ```
 GET /authorize?
@@ -482,19 +482,19 @@ Host: https://server.example.com
 
 If a scope value related to Credential issuance and the `authorization_details` request parameter containing objects of type `openid_credential` are both present in a single request, the Credential Issuer MUST interpret these individually. However, if both request the same Credential type, then the Credential Issuer MUST follow the request as given by the authorization details object.
 
-### Additional Request Parameters
+### Additional Request Parameters {#additional_request_parameters}
 
 This specification defines the following request parameters that can be supplied in an Authorization Request:
 
-* `wallet_issuer`: OPTIONAL. String containing the Wallet's identifier. The Credential Issuer can use the discovery process defined in [@!SIOPv2] to determine the Wallet's capabilities and endpoints, using `wallet_issuer` value as an Issuer Identifier referred to in [@!SIOPv2]. This is RECOMMENDED in Dynamic Credential Requests.
-* `user_hint`: OPTIONAL. String containing an opaque End-User hint the Wallet MAY use in subsequent callbacks to optimize the End-User's experience. This is RECOMMENDED in Dynamic Credential Requests.
+* `wallet_issuer`: OPTIONAL. String containing the Wallet's identifier. The Credential Issuer can use the discovery process defined in [@!SIOPv2] to determine the Wallet's capabilities and endpoints, using the `wallet_issuer` value as the Issuer Identifier referred to in [@!SIOPv2]. This is RECOMMENDED in Dynamic Credential Requests.
+* `user_hint`: OPTIONAL. String containing an opaque End-User hint that the Wallet MAY use in subsequent callbacks to optimize the End-User's experience. This is RECOMMENDED in Dynamic Credential Requests.
 * `issuer_state`: OPTIONAL. String value identifying a certain processing context at the Credential Issuer. A value for this parameter is typically passed in a Credential Offer from the Credential Issuer to the Wallet (see (#credential_offer)). This request parameter is used to pass the `issuer_state` value back to the Credential Issuer.
 
 Note: When processing the Authorization Request, the Credential Issuer MUST take into account that the `issuer_state` is not guaranteed to originate from this Credential Issuer in all circumstances. It could have been injected by an attacker.
 
 ### Pushed Authorization Request
 
-Use of Pushed Authorization Requests is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues due to large requests sizes.
+Use of Pushed Authorization Requests is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues caused by large requests sizes.
 
 Below is a non-normative example of a Pushed Authorization Request:
 
@@ -513,15 +513,15 @@ response_type=code
 
 ### Dynamic Credential Request
 
-This step is OPTIONAL. After receiving an Authorization Request from the Client, the Credential Issuer MAY use this step to obtain additional Credentials from the End-User required to proceed with the authorization of the Credential issuance. The Credential Issuer MAY obtain a Credential and utilize it to identify the End-User before issuing an additional Credential. For a use case, see (#use-case-5).
+This step is OPTIONAL. After receiving an Authorization Request from the Client, the Credential Issuer MAY use this step to obtain additional Credentials from the End-User required to proceed with the authorization of the Credential issuance. The Credential Issuer MAY obtain a Credential and utilize it to identify the End-User before issuing an additional Credential. For such a use case, see (#use-case-5).
 
-It is RECOMMENDED that the Credential Issuer use [@OpenID4VP] to dynamically request presentation of additional Credentials. From a protocol perspective, the Credential Issuer then acts as a verifier and sends a presentation request to the Wallet. The Client SHOULD have these Credentials obtained prior to starting a transaction with this Credential Issuer. 
+It is RECOMMENDED that the Credential Issuer use [@OpenID4VP] to dynamically request presentation of additional Credentials. From a protocol perspective, the Credential Issuer then acts as a verifier and sends a presentation request to the Wallet. The Client SHOULD obtain these Credentials prior to starting a transaction with this Credential Issuer.
 
-To enable dynamic callbacks of the Credential Issuer to the End-User's Wallet, the Wallet MAY provide additional parameters `wallet_issuer` and `user_hint` defined in the Authorization Request section of this specification.
+To enable dynamic callbacks of the Credential Issuer to the End-User's Wallet, the Wallet MAY provide the additional parameters `wallet_issuer` and `user_hint` defined in (#additional_request_parameters).
 
-For non-normative examples of request and response, see Section 11.6 in [@OpenID4VP].
+For non-normative examples of the request and response, see Sections 5 and 6 in [@OpenID4VP].
 
-Note to the editors: We need to sort out Credential Issuer's `client_id` with the Wallet and potentially add an example with `wallet_issuer` and `user_hint`.
+Note to the editors: We need to sort out the Credential Issuer's `client_id` with the Wallet and potentially add an example with `wallet_issuer` and `user_hint`.
 
 ## Successful Authorization Response {#authorization_response}
 
@@ -537,7 +537,7 @@ Location: https://Wallet.example.org/cb?
 
 ## Authorization Error Response
 
-Authorization Error Response MUST be made as defined in [@!RFC6749].
+The Authorization Error Response MUST be made as defined in [@!RFC6749].
 
 When the requested scope value is invalid, unknown, or malformed, the Authorization Server should respond with the error code `invalid_scope` defined in Section 4.1.2.1 of [@!RFC6749].
 
@@ -558,20 +558,20 @@ The Token Endpoint issues an Access Token and, optionally, a Refresh Token in ex
 
 Upon receiving a successful Authorization Response, a Token Request is made as defined in Section 4.1.3 of [@!RFC6749].
 
-The following are the extension parameters to the Token Request used in a Pre-Authorized Code Flow defined by this specification:
+The following are the extension parameters to the Token Request used in the Pre-Authorized Code Flow defined in (#pre-authz-code-flow):
 
 * `pre-authorized_code`: The code representing the authorization to obtain Credentials of a certain type. This parameter MUST be present if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 * `tx_code`: OPTIONAL. String value containing a Transaction Code. This value MUST be present if a `tx_code` object was present in the Credential Offer (including if the object was empty). This parameter MUST only be used if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 
-Requirements around how the Wallet identifies and, if applicable, authenticates itself with the Authorization Server in the Token Request depends on the Client type defined in Section 2.1 of [@!RFC6749] and the Client authentication method indicated in the `token_endpoint_auth_method` Client metadata. The requirement as described in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
+Requirements around how the Wallet identifies and, if applicable, authenticates itself with the Authorization Server in the Token Request depends on the Client type defined in Section 2.1 of [@!RFC6749] and the Client authentication method indicated in the `token_endpoint_auth_method` Client metadata. The requirements specified in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
 
 For the Pre-Authorized Code Grant Type, authentication of the Client is OPTIONAL, as described in Section 3.2.1 of OAuth 2.0 [@!RFC6749], and, consequently, the `client_id` parameter is only needed when a form of Client Authentication that relies on this parameter is used.
 
-If the Token Request contains an `authorization_details` parameter (as defined by [RFC@!9396]) of type `openid_credential` and the Credential Issuer's metadata contains an `authorization_servers` parameter, the `authorization_details` object MUST contain the Credential Issuer's identifier in the `locations` element. 
+If the Token Request contains an `authorization_details` parameter (as defined by [@!RFC9396]) of type `openid_credential` and the Credential Issuer's metadata contains an `authorization_servers` parameter, the `authorization_details` object MUST contain the Credential Issuer's identifier in the `locations` element. 
 
 If the Token Request contains a scope value related to Credential issuance and the Credential Issuer's metadata contains an `authorization_servers` parameter, it is RECOMMENDED to use a `resource` parameter [@!RFC8707] whose value is the Credential Issuer's identifier value to allow the Authorization Server to differentiate Credential Issuers.
 
-When Pre-Authorized Grant Type is used, it is RECOMMENDED that the Credential Issuer issues an Access Token valid only for the Credentials indicated in the Credential Offer (see (#credential_offer)). The Wallet SHOULD obtain a separate Access Token if it wants to request issuance of any of the Credentials that were not included in the Credential Offer, but were discoverable from the Credential Issuer's `credential_configurations_supported` metadata parameter.
+When the Pre-Authorized Grant Type is used, it is RECOMMENDED that the Credential Issuer issues an Access Token valid only for the Credentials indicated in the Credential Offer (see (#credential_offer)). The Wallet SHOULD obtain a separate Access Token if it wants to request issuance of any Credentials that were not included in the Credential Offer, but were discoverable from the Credential Issuer's `credential_configurations_supported` metadata parameter.
 
 Below is a non-normative example of a Token Request in an Authorization Code Flow:
 
@@ -609,12 +609,12 @@ In addition to the response parameters defined in [@!RFC6749], the Authorization
 
 * `c_nonce`: OPTIONAL. String containing a nonce to be used when creating a proof of possession of the key proof (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
-* `authorization_details`: REQUIRED when `authorization_details` parameter is used to request issuance of a certain Credential type as defined in (#authorization-details). MUST NOT be used otherwise. Array of objects as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with authorization details type `openid_credential` in the Token Response:
+* `authorization_details`: REQUIRED when `authorization_details` parameter is used to request issuance of a certain Credential type as defined in (#authorization-details). It MUST NOT be used otherwise. It is an array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
   * `credential_identifiers`: OPTIONAL. Array of strings, each uniquely identifying a Credential that can be issued using the Access Token returned in this response. Each of these Credentials corresponds to the same entry in the `credential_configurations_supported` Credential Issuer metadata but can contain different claim values or a different subset of claims within the claims set identified by that Credential type. This parameter can be used to simplify the Credential Request, as defined in (#credential_request), where the `credential_identifier` parameter replaces the `format` parameter and any other Credential format-specific parameters in the Credential Request. When received, the Wallet MUST use these values together with an Access Token in subsequent Credential Requests.
 
-Note: Credential Instance identifier(s) cannot be used when `scope` parameter is used in the Authorization Request to request issuance of a Credential.
+Note: Credential Instance identifier(s) cannot be used when the `scope` parameter is used in the Authorization Request to request issuance of a Credential.
 
-Below is a non-normative example of a Token Response when `authorization_details` parameter was used to request issuance of a certain Credential type:
+Below is a non-normative example of a Token Response when the `authorization_details` parameter was used to request issuance of a certain Credential type:
 
 ```
 HTTP/1.1 200 OK
@@ -655,7 +655,7 @@ The following additional clarifications are provided for some of the error codes
 
 `invalid_client`:
 
-- The Client tried to send a Token Request with a Pre-Authorized Code without Client ID but the Authorization Server does not support anonymous access.
+- The Client tried to send a Token Request with a Pre-Authorized Code without a Client ID but the Authorization Server does not support anonymous access.
 
 Below is a non-normative example Token Error Response:
 
@@ -669,11 +669,11 @@ Cache-Control: no-store
 }
 ```
 
-This specification also uses the error codes `authorization_pending` and `slow_down` as defined in [@!RFC8628] for the Pre-Authorized Code grant type. 
+This specification also uses the error codes `authorization_pending` and `slow_down` defined in [@!RFC8628] for the Pre-Authorized Code grant type:
 
  `authorization_pending`:
 
-- This error code is used if the Authorization Server is waiting for an End-User interaction or downstream process to complete. The Wallet SHOULD repeat the access token request to the token endpoint (a process known as polling). Before each new request, the Wallet MUST wait at least the number of seconds specified by the `interval` claim of the Credential Offer (see (#credential_offer_parameters)) or the authorization response (see (#authorization_response)), or 5 seconds if none was provided, and respect any increase in the polling interval required by the "slow_down" error.
+- This error code is used if the Authorization Server is waiting for an End-User interaction or a downstream process to complete. The Wallet SHOULD repeat the access token request to the token endpoint (a process known as polling). Before each new request, the Wallet MUST wait at least the number of seconds specified by the `interval` claim of the Credential Offer (see (#credential_offer_parameters)) or the authorization response (see (#authorization_response)), or 5 seconds if none was provided, and respect any increase in the polling interval required by the "slow_down" error.
 
 `slow_down`:
 
