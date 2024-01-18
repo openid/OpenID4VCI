@@ -1287,7 +1287,7 @@ This specification defines the following new Client Metadata parameter in additi
 
 How to obtain Client Metadata is out of scope of this specification. Profiles of this specification MAY also define static sets of Client Metadata values to be used.
 
-If the Credential Issuer is unable to perform discovery of the Wallet's Credential Offer Endpoint, the following claimed URL is used: `openid-credential-offer://`.
+If the Credential Issuer is unable to perform discovery of the Wallet's Credential Offer Endpoint, the following custom URL scheme is used: `openid-credential-offer://`.
 
 ## Credential Issuer Metadata {#credential_issuer_metadata}
 
