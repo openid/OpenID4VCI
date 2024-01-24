@@ -417,7 +417,7 @@ The request parameter `authorization_details` defined in Section 2 of [@!RFC9396
 * `credential_configuration_id`: String specifying a unique identifier of the Credential being described in the `credential_configurations_supported` map in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). The referenced object in the `credential_configurations_supported` map conveys the details, such as the format, for issuance of the requested Credential. This specification defines Credential Format specific Issuer Metadata in (#format_profiles).
 * `format`: String identifying the format of the Credential the Wallet needs. This Credential format identifier determines further claims in the authorization details object needed to identify the Credential type in the requested format. This specification defines Credential Format Profiles in (#format_profiles).
 
-Either `credential_configuration_id` or `format` MUST be present in an authorization details object of `type`  `openid_credential`. 
+Either `credential_configuration_id` or `format` MUST be present in an authorization details object of type `openid_credential`. 
 
 The following is a non-normative example of an `authorization_details` object with a `credential_configuration_id`:
 
