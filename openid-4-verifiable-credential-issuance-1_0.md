@@ -1509,7 +1509,7 @@ Privacy harms can occur if information about a person is released to another par
 True consent involves both the person knowing what information is being released and knowing who it is being released to, and for what purpose.
 The means to ensure the session's integrity to prevent disclosure to unintended parties, including Wallets not under control of the End-User, are means to protect privacy.
 
-Selective disclosure should be used to protect End-User privacy, when possible.
+Privacy-preserving mechanisms such as selective disclosure should be used to protect End-User privacy, when possible.
 If supported by the Credential format, the Issuer should make choices about which claims are selectively disclosable.
 Claims that are always disclosed can enable correlation by verifiers.
 Another possibility is issuing Credentials containing only a single claim each.
