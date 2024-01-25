@@ -1502,15 +1502,20 @@ It is up to the Credential Issuer whether to update both the signature and the c
 
 # Privacy Considerations {#privacy-considerations}
 
+Implementers and deployers should utilize mechanisms to protect End-User privacy.
+Means of protecting End-User privacy are described below.
+
 Privacy harms can occur if information about a person is released to another party without the person's consent.
 True consent involves both the person knowing what information is being released and knowing who it is being released to, and for what purpose.
 The means to ensure the session's integrity to prevent disclosure to unintended parties, including wallets not under control of the End-User, are means to protect privacy.
 
-The Issuer needs to make choices about which claims are selectively disclosable (and should do so carefully).
+Selective disclosure should be used to protect End-User privacy, when possible.
+If supported by the Credential format, the Issuer should make choices about which claims are selectively disclosable.
 Claims that are always disclosed can enable correlation by verifiers.
+Another possibility is issuing credentials containing only a single claim each.
 
 Multiple credentials can be linkable.
-Batch issuance solves this potential privacy issue, but only when used correctly.
+Batch issuance can solve this potential privacy issue.
 
 An issuer normally should not learn where an End-User uses a credential.
 The wallet should take care to not include information in the authorization request that may leak this information in an ad-hoc issuance scenario (e.g., a `state` value that contains clear-text session information or a `redirect_uri` that encodes this information).
