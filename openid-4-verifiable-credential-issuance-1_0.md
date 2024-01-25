@@ -1517,7 +1517,7 @@ Another possibility is issuing Credentials containing only a single claim each.
 Furthermore, multiple seemingly innocent consenting information releases can result in privacy erosion through collusion and correlation.
 There may be unintended second or third order effects, which is why minimal disclosure is crucial.
 
-Multiple Credentials can be linkable.
+Multiple Credentials can be linkable via claim data, identifiers, and other credential metadata.
 Batch issuance can solve this potential privacy issue, enabling each issued credential to only be used once.
 
 An Issuer normally should not learn where an End-User uses a Credential.
