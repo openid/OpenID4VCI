@@ -1504,6 +1504,20 @@ It is up to the Credential Issuer whether to update both the signature and the c
 
 Privacy harms can occur if information about a person is released to another party without the person's consent.
 True consent involves both the person knowing what information is being released and knowing who it is being released to, and for what purpose.
+The means to ensure the session's integrity to prevent disclosure to unintended parties, including wallets not under control of the End-User, are means to protect privacy.
+
+The Issuer needs to make choices about which claims are selectively disclosable (and should do so carefully).
+Claims that are always disclosed can enable correlation by verifiers.
+
+Multiple credentials can be linkable.
+Batch issuance solves this potential privacy issue, but only when used correctly.
+
+An issuer normally should not learn where an End-User uses a credential.
+The wallet should take care to not include information in the authorization request that may leak this information in an ad-hoc issuance scenario (e.g., a `state` value that contains clear-text session information or a `redirect_uri` that encodes this information).
+
+There's a potential for leaking information about the wallet to third parties when a wallet reacts to a credential offer that was sent to its custom scheme.
+An attacker may send such requests, wait for the wallet to react (e.g., retrieve metadata about the "issuer" which in reality is an attacker server), and therefore learn which wallet is installed (e.g., by observing specific headers).
+This should be avoided, e.g., by requiring user interaction with the wallet before reacting to the offer.
 
 Many of the attacks described in (#security-considerations) are about unautorized parties gaining access to information.
 These attacks must be thwarted to prevent the accompanying privacy harms.
