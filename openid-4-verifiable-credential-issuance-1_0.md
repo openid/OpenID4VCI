@@ -1352,9 +1352,10 @@ This specification defines the following Credential Issuer Metadata parameters:
 * `credential_configurations_supported`: REQUIRED. Object that describes specifics of the Credential that the Credential Issuer supports issuance of. This object contains a list of name/value pairs, where each name is a unique identifier of the supported Credential being described. This identifier is used in the Credential Offer as defined in (#credential_offer_parameters) to communicate to the Wallet which Credential is being offered. The value is an object that contains metadata about a specific Credential and contains the following parameters defined by this specification:
   * `format`: REQUIRED. A JSON string identifying the format of this Credential, i.e., `jwt_vc_json` or `ldp_vc`. Depending on the format value, the object contains further elements defining the type and (optionally) particular claims the Credential MAY contain and information about how to display the Credential. (#format_profiles) contains Credential Format Profiles introduced by this specification.
   * `scope`: OPTIONAL. A JSON string identifying the scope value that this Credential Issuer supports for this particular Credential. The value can be the same across multiple `credential_configurations_supported` objects. The Authorization Server MUST be able to uniquely identify the Credential Issuer based on the scope value. The Wallet can use this value in the Authorization Request as defined in (#credential-request-using-type-specific-scope). Scope values in this Credential Issuer metadata MAY duplicate those in the `scopes_supported` parameter of the Authorization Server.
-  * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify how the Credential is bound to the identifier of the End-User who possesses the Credential, as defined in (#credential-binding). Support for keys in JWK format [@!RFC7517] is indicated by the value `jwk`. Support for keys expressed as a COSE Key object [@!RFC8152] (for example, used in [@!ISO.18013-5]) is indicated by the value `cose_key`. When the Cryptographic Binding Method is a DID, valid values are a `did:` prefix followed by a method-name using a syntax as defined in Section 3.1 of [@!DID-Core], but without a `:`and method-specific-id. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in Section 13 of [@DID_Specification_Registries] is indicated by sending a DID without any method-name.
-  * `cryptographic_suites_supported`: OPTIONAL. Array of case sensitive strings that identify the cryptographic suites that are supported for the `cryptographic_binding_methods_supported`. Cryptographic algorithms for Credentials in `jwt_vc` format should use algorithm names defined in [@IANA.JOSE.ALGS]. Cryptographic algorithms for Credentials in `ldp_vc` format should use signature suite names defined in [@LD_Suite_Registry].
-  * `proof_types`: OPTIONAL. Array of case sensitive strings, each representing a `proof_type` that the Credential Issuer supports, as defined in (#credential_request), one of which MUST be used in the Credential Request. If this array is non-empty and present, the Credential Issuer requires proof of possession of the cryptographic key material. If the parameter is omitted or the array is empty, the Credential Issuer does not require proof of possession of the cryptographic key material.
+  * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify the representation of the cryptographic key material that the issued Credential is bound to, as defined in (#credential-binding). Support for keys in JWK format [@!RFC7517] is indicated by the value `jwk`. Support for keys expressed as a COSE Key object [@!RFC8152] (for example, used in [@!ISO.18013-5]) is indicated by the value `cose_key`. When the Cryptographic Binding Method is a DID, valid values are a `did:` prefix followed by a method-name using a syntax as defined in Section 3.1 of [@!DID-Core], but without a `:`and method-specific-id. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in Section 13 of [@DID_Specification_Registries] is indicated by sending a DID without any method-name.
+  * `credential_signing_alg_values_supported`: OPTIONAL. Array of case sensitive strings that identify the algorithms that the Issuer uses to sign the issued Credential. Algorithm names used are determined by the Credential format and are defined in (#format_profiles).
+  * `proofs_supported`: OPTIONAL. Object that describes specifics of the key proof(s) that the Credential Issuer supports. This object contains a list of name/value pairs, where each name is a unique identifier of the supported proof type being described. This identifier is used in the Credential Request defined in (#credential_request) to communicate to the Wallet specifics about the proof of possession of the cryptographic key material. A list of valid key proof type values defined by this specification can be found in (#proof_types). The value in the name/value pair is an object that contains metadata about the key proof and contains the following parameters defined by this specification:
+    * `proof_signing_alg_values_supported`: REQUIRED. Array of case sensitive strings that identify the algorithms that the Issuer uses to sign the proof. Algorithm names used SHOULD be one of those defined in [@IANA.JOSE.ALGS], [@LD_Suite_Registry] or [@!ISO.18013-5].
   * `display`: OPTIONAL. Array of objects, where each object contains the display properties of the supported Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included.
       * `name`: REQUIRED. String value of a display name for the Credential.
       * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. Multiple `display` objects MAY be included for separate languages. There MUST be only one object for each language identifier.
@@ -1870,6 +1871,8 @@ When the `format` value is `jwt_vc_json`, the entire Credential Offer, Authoriza
 
 #### Credential Issuer Metadata {#server_metadata_jwt_vc_json}
 
+Cryptographic algorithm names used in the `cryptographic_suites_supported` parameter SHOULD be one of those defined in [@IANA.JOSE.ALGS].
+
 The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
 * `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of at least the following two parameters:
@@ -1931,6 +1934,8 @@ The `@context` value in the `credential_definition` object can be used by the Wa
 Note: Data Integrity used to be called Linked Data Proofs, hence the "ldp" in the Credential format identifier.
 
 #### Credential Issuer Metadata {#server_metadata_ldp_vc}
+
+Cryptographic algorithm names used in the `cryptographic_suites_supported` parameter SHOULD be one of those defined in [@LD_Suite_Registry].
 
 The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters):
 
@@ -2025,6 +2030,8 @@ The Credential format identifier is `mso_mdoc`.
 
 ### Credential Issuer Metadata {#server_metadata_mso_mdoc}
 
+Cryptographic algorithm names used in the `cryptographic_suites_supported` parameter SHOULD be one of those defined in [@!ISO.18013-5].
+
 The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
 * `doctype`: REQUIRED. String identifying the Credential type, as defined in [@!ISO.18013-5].
@@ -2075,6 +2082,8 @@ This section defines a Credential Format Profile for Credentials complying with 
 The Credential format identifier is `vc+sd-jwt`.
 
 ### Credential Issuer Metadata {#server_metadata_sd_jwt_vc}
+
+Cryptographic algorithm names used in the `cryptographic_suites_supported` parameter SHOULD be one of those defined in [@IANA.JOSE.ALGS].
 
 The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
@@ -2285,6 +2294,9 @@ Wallet Providers may also provide a marketplace where Issuers can register to be
    
    -13
 
+   * change the structure of `proof_types` from an array to a `proofs_supported` map that contains a required `proof_signing_alg_values_supported` parameter
+   * renamed `credential_configurations_supported` to `credential_signing_alg_values_supported` to clarify the purpose of the parameter
+   * renamed `credential_configurations` Credential Offer parameter to  `credential_configuration_ids`
    * remove `format` from the Credential Response
    * added `signed_metadata` parameter
    * clarified that logo can is a uri and not a url only
@@ -2293,7 +2305,7 @@ Wallet Providers may also provide a marketplace where Issuers can register to be
    * completed IANA registrations section
    * clarified description of a `mandatory` claim
    * made sure to use gender-neutral language throughout the specification
-   * changed `authorization_details` to use `credential_configuration_id` pointing to the name of a `credential_configurations_supported` object in the Credential Issuer's Metadata
+   * added an option in `authorization_details` to use `credential_configuration_id` pointing to the name of a `credential_configurations_supported` object in the Credential Issuer's Metadata; in addition to an option to use format and type.
    * renamed `credentials` Credential Offer parameter to `credential_configuration_ids`
    * renamed `credentials_supported` Credential Issuer metadata parameter to `credential_configurations_supported`
    * grouped `credential_encryption_jwk`, `credential_response_encryption_alg` and `credential_response_encryption_enc` from Credential Request into a single `credential_response_encryption` object
