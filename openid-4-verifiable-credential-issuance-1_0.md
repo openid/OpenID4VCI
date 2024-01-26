@@ -1871,7 +1871,7 @@ When the `format` value is `jwt_vc_json`, the entire Credential Offer, Authoriza
 
 #### Credential Issuer Metadata {#server_metadata_jwt_vc_json}
 
-Cryptographic algorithm names used in the `cryptographic_suites_supported` parameter SHOULD be one of those defined in [@IANA.JOSE.ALGS].
+Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in [@IANA.JOSE.ALGS].
 
 The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
@@ -1935,7 +1935,7 @@ Note: Data Integrity used to be called Linked Data Proofs, hence the "ldp" in th
 
 #### Credential Issuer Metadata {#server_metadata_ldp_vc}
 
-Cryptographic algorithm names used in the `cryptographic_suites_supported` parameter SHOULD be one of those defined in [@LD_Suite_Registry].
+Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in [@LD_Suite_Registry].
 
 The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters):
 
@@ -2030,7 +2030,7 @@ The Credential format identifier is `mso_mdoc`.
 
 ### Credential Issuer Metadata {#server_metadata_mso_mdoc}
 
-Cryptographic algorithm names used in the `cryptographic_suites_supported` parameter SHOULD be one of those defined in [@!ISO.18013-5].
+Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in [@!ISO.18013-5].
 
 The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
@@ -2083,7 +2083,7 @@ The Credential format identifier is `vc+sd-jwt`.
 
 ### Credential Issuer Metadata {#server_metadata_sd_jwt_vc}
 
-Cryptographic algorithm names used in the `cryptographic_suites_supported` parameter SHOULD be one of those defined in [@IANA.JOSE.ALGS].
+Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in [@IANA.JOSE.ALGS].
 
 The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
@@ -2295,7 +2295,7 @@ Wallet Providers may also provide a marketplace where Issuers can register to be
    -13
 
    * change the structure of `proof_types` from an array to a `proofs_supported` map that contains a required `proof_signing_alg_values_supported` parameter
-   * renamed `credential_configurations_supported` to `credential_signing_alg_values_supported` to clarify the purpose of the parameter
+   * renamed `cryptographic_suites_supported` to `credential_signing_alg_values_supported` to clarify the purpose of the parameter
    * renamed `credential_configurations` Credential Offer parameter to  `credential_configuration_ids`
    * remove `format` from the Credential Response
    * added `signed_metadata` parameter
