@@ -1527,7 +1527,7 @@ There's a potential for leaking information about the Wallet to third parties wh
 An attacker may send such requests, wait for the Wallet to react (e.g., retrieve metadata about the "Issuer" which in reality is an attacker server), and therefore learn which Wallet is installed (e.g., by observing specific headers).
 This should be avoided, e.g., by requiring user interaction with the Wallet before reacting to the offer.
 
-Many of the attacks described in (#security-considerations) are about unautorized parties gaining access to information.
+Many of the attacks described in (#security-considerations) are about unauthorized parties gaining access to information.
 These attacks must be thwarted to prevent the accompanying privacy harms.
 Likewise, the precautions described in (#implementation-considerations) are also often about preventing privacy harms.
 
