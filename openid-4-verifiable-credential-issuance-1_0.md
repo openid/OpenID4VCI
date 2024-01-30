@@ -561,7 +561,7 @@ The Token Endpoint issues an Access Token and, optionally, a Refresh Token in ex
 
 ## Token Request {#token-request}
 
-Upon receiving a successful Authorization Response, a Token Request is made as defined in Section 4.1.3 of [@!RFC6749].
+The Token Request is made as defined in Section 4.1.3 of [@!RFC6749].
 
 The following are the extension parameters to the Token Request used in the Pre-Authorized Code Flow defined in (#pre-authz-code-flow):
 
