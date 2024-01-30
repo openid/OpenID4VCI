@@ -1973,11 +1973,11 @@ The following additional parameters are defined for Credential Requests and this
   * `type`: REQUIRED. Array as defined in (#server-metadata-ldp-vc). The Credential issued by the Credential Issuer MUST contain at least the values listed in this claim.
   * `credentialSubject`: OPTIONAL. Object as defined in (#authorization-ldp-vc).
 
-The following is a non-normative example of a Credential Request with Credential format `ldp_vc`:
+The following is a non-normative example of a Credential Request with Credential format `ldp_vc` with the key proof type `jwt`:
 
 <{{examples/credential_request_ldp_vc.json}}
 
-The following is a non-normative example of a Credential request with the key proof type `ldp_vp`:
+The following is a non-normative example of a Credential Request with Credential format `ldp_vc` with the key proof type `ldp_vp`:
 
 <{{examples/credential_request_ldp_vc_vp.json}}
 
