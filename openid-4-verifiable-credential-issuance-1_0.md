@@ -1945,7 +1945,7 @@ The following additional Credential Issuer metadata parameters are defined for t
           * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. Array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
-It is recommended to define an `@context` value to communicate additional information such as which claims are mandatory-to-be-issued, type of claim value (i.e., string, number, etc.), the display properties of a Credential, and the order of the claim values when displayed as in (#jwt-vc-json).
+It is recommended to define an `@context` value to communicate additional information such as which claims are mandatory-to-be-issued, type of claim value (i.e., string, number, etc.), the display properties of a Credential, and the order of the claim values when displayed.
 
 The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `ldp_vc`:
 
