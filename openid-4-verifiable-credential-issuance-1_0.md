@@ -710,7 +710,7 @@ For cryptographic binding, the Client has the following options defined in (#cre
 A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
 * `format`: REQUIRED when the `credential_identifier` was not returned from the Token Response. It MUST NOT be used otherwise. It is a String that determines the format of the Credential to be issued, which may determine the type and any other information related to the Credential to be issued. Credential Format Profiles consist of the Credential format specific parameters that are defined in (#format-profiles). When this parameter is used, the `credential_identifier` parameter MUST NOT be present.
-* `proof`: OPTIONAL. Object containing the proof of possession of the cryptographic key material the issued Credential would be bound to.  The `proof` object is REQUIRED if the `proof_types` parameter is non-empty and present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential. The `proof` object MUST contain the following:
+* `proof`: OPTIONAL. Object containing the proof of possession of the cryptographic key material the issued Credential would be bound to.  The `proof` object is REQUIRED if the `proof_types_supported` parameter is non-empty and present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential. The `proof` object MUST contain the following:
     * `proof_type`: REQUIRED. String denoting the key proof type. The value of this parameter determines other parameters in the key proof object and its respective processing rules. Key proof types defined in this specification can be found in (#proof-types).
 * `credential_identifier`: REQUIRED when `credential_identifier` was returned from the Token Response. It MUST NOT be used otherwise. It is a String that identifies a Credential that is being requested to be issued. When this parameter is used, the `format` parameter and any other Credential format specific parameters such as those defined in (#format-profiles) MUST NOT be present.
 * `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If this request element is not present, the corresponding credential response returned is not encrypted.
@@ -2294,7 +2294,7 @@ Wallet Providers may also provide a marketplace where Issuers can register to be
    
    -13
 
-   * change the structure of `proof_types` from an array to a `proofs_supported` map that contains a required `proof_signing_alg_values_supported` parameter
+   * change the structure of `proof_types` from an array to a `proof_types_supported` map that contains a required `proof_signing_alg_values_supported` parameter
    * renamed `cryptographic_suites_supported` to `credential_signing_alg_values_supported` to clarify the purpose of the parameter
    * renamed `credential_configurations` Credential Offer parameter to  `credential_configuration_ids`
    * remove `format` from the Credential Response
