@@ -798,6 +798,8 @@ The JWT MUST contain the following elements:
 
 The Credential Issuer MUST validate that the `proof` is actually signed by a key identified in the JOSE Header.
 
+Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@IANA.JOSE.ALGS].
+
 Below is a non-normative example of a `proof` parameter (with line breaks within values for display purposes only):
 
 ```json
@@ -859,6 +861,8 @@ When a W3C Verifiable Presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] si
 
 The Credential Issuer MUST validate that the `proof` is actually signed with a key in the possession of the Holder.
 
+Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@LD_Suite_Registry].
+
 Below is a non-normative example of a `proof` parameter:
 
 ```json
@@ -905,7 +909,9 @@ The CWT MUST contain the following elements:
   * Claim Key 6 (`iat`): REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the key proof was issued.
   * Claim Key 10 (`Nonce`): OPTIONAL (byte string). The value of this claim MUST be a server-provided `c_nonce` converted from string to bytes. It MUST be present when the Wallet received a server-provided `c_nonce`.
 
-### Verifying KProof {#verifying-key-proof}
+Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@IANA.COSE.ALGS].
+
+### Verifying Proof {#verifying-key-proof}
 
 To validate a key proof, the Credential Issuer MUST ensure that:
 
