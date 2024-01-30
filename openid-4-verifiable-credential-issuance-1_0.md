@@ -1518,7 +1518,7 @@ Furthermore, multiple seemingly innocent consenting information releases can res
 There may be unintended second or third order effects, which is why minimal disclosure is crucial.
 
 Multiple Credentials can be linkable via claim data, identifiers, and other credential metadata.
-Batch issuance can solve this potential privacy issue, enabling each issued credential to only be used once.
+Using an issued credential only once can help avoid some of these concerns for some credential formats. Batch issuance can be used by the wallet to obtain multiple copies of a credential.
 
 An Issuer normally should not learn where an End-User uses a Credential.
 The Wallet should take care to not include information in the Authorization Request that may leak this information in an ad-hoc issuance scenario (e.g., a `state` value that contains clear-text session information or a `redirect_uri` that encodes this information).
