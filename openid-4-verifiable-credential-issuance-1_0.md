@@ -770,7 +770,7 @@ The Client MAY request encrypted responses by providing its encryption parameter
 
 The Credential Issuer indicates support for encrypted responses by including the `credential_response_encryption` parameter in the Credential Issuer Metadata.
 
-### Key Proof Types {#proof-types}
+### Proof Types {#proof-types}
 
 This specification defines the following values for the `proof_type` property:
 
@@ -778,7 +778,7 @@ This specification defines the following values for the `proof_type` property:
 * `cwt`: A CWT [@!RFC8392] is used as proof of possession. When `proof_type` is `cwt`, a `proof` object MUST include a `cwt` claim containing a CWT defined in (#cwt-proof-type).
 * `ldp_vp`: A W3C Verifiable Presentation object signed using the Data Integrity Proof as defined in [@VC_DATA_2.0] or [@VC_DATA], and where the proof of possession MUST be done in accordance with [@VC_Data_Integrity]. When `proof_type` is set to `ldp_vp`, the `proof` object MUST include a `ldp_vp` claim containing a [W3C Verifiable Presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp-vp-proof-type).
 
-#### `jwt` Key Proof Type {#jwt-proof-type}
+#### `jwt` Proof Type {#jwt-proof-type}
 
 The JWT MUST contain the following elements:
 
@@ -848,9 +848,9 @@ Here is another example JWT not only proving possession of a private key but als
 }
 ```
 
-#### `ldp_vp` Key Proof Type {#ldp-vp-proof-type}
+#### `ldp_vp` Proof Type {#ldp-vp-proof-type}
 
-When a W3C Verifiable Presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] signed using Data Integrity is used as Key Proof, it MUST contain the following elements:
+When a W3C Verifiable Presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] signed using Data Integrity is used as key proof, it MUST contain the following elements:
 
 * `holder`: OPTIONAL. MUST be equivalent to the controller identifier (e.g., DID) for the `verificationMethod` value identified by the `proof.verificationMethod` property.
 * `proof`: REQUIRED. The proof body of a W3C Verifiable Presentation.
@@ -890,7 +890,7 @@ Below is a non-normative example of a `proof` parameter:
 
 ```
 
-#### `cwt` Key Proof Type {#cwt-proof-type}
+#### `cwt` Proof Type {#cwt-proof-type}
 
 The CWT MUST contain the following elements:
 
@@ -905,14 +905,14 @@ The CWT MUST contain the following elements:
   * Claim Key 6 (`iat`): REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the key proof was issued.
   * Claim Key 10 (`Nonce`): OPTIONAL (byte string). The value of this claim MUST be a server-provided `c_nonce` converted from string to bytes. It MUST be present when the Wallet received a server-provided `c_nonce`.
 
-### Verifying Key Proof {#verifying-key-proof}
+### Verifying KProof {#verifying-key-proof}
 
-To validate a Key Proof, the Credential Issuer MUST ensure that:
+To validate a key proof, the Credential Issuer MUST ensure that:
 
 - all required claims for that proof type are contained as defined in (#proof-types),
-- the Key Proof is explicitly typed using header parameters as defined for that proof type,
+- the key proof is explicitly typed using header parameters as defined for that proof type,
 - the header parameter indicates a registered asymmetric digital signature algorithm, `alg` parameter value is not `none`, is supported by the application, and is acceptable per local policy,
-- the signature on the Key Proof verifies with the public key contained in the header parameter,
+- the signature on the key proof verifies with the public key contained in the header parameter,
 - the header parameter does not contain a private key,
 - the `nonce` claim (or Claim Key 10) matches the server-provided `c_nonce` value, if the server had previously provided a `c_nonce`,
 - the creation time of the JWT, as determined by either the issuance time, or a server managed timestamp via the nonce claim, is within an acceptable window (see (#key-proof-replay)).
@@ -1354,8 +1354,8 @@ This specification defines the following Credential Issuer Metadata parameters:
   * `scope`: OPTIONAL. A JSON string identifying the scope value that this Credential Issuer supports for this particular Credential. The value can be the same across multiple `credential_configurations_supported` objects. The Authorization Server MUST be able to uniquely identify the Credential Issuer based on the scope value. The Wallet can use this value in the Authorization Request as defined in (#credential-request-using-type-specific-scope). Scope values in this Credential Issuer metadata MAY duplicate those in the `scopes_supported` parameter of the Authorization Server.
   * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify the representation of the cryptographic key material that the issued Credential is bound to, as defined in (#credential-binding). Support for keys in JWK format [@!RFC7517] is indicated by the value `jwk`. Support for keys expressed as a COSE Key object [@!RFC8152] (for example, used in [@!ISO.18013-5]) is indicated by the value `cose_key`. When the Cryptographic Binding Method is a DID, valid values are a `did:` prefix followed by a method-name using a syntax as defined in Section 3.1 of [@!DID-Core], but without a `:`and method-specific-id. For example, support for the DID method with a method-name "example" would be represented by `did:example`. Support for all DID methods listed in Section 13 of [@DID_Specification_Registries] is indicated by sending a DID without any method-name.
   * `credential_signing_alg_values_supported`: OPTIONAL. Array of case sensitive strings that identify the algorithms that the Issuer uses to sign the issued Credential. Algorithm names used are determined by the Credential format and are defined in (#format_profiles).
-  * `proofs_supported`: OPTIONAL. Object that describes specifics of the key proof(s) that the Credential Issuer supports. This object contains a list of name/value pairs, where each name is a unique identifier of the supported proof type(s). Valid values are defined in (#proof_types), other values MAY be used. This identifier is also used by the Wallet in the Credential Request as defined in (#credential_request). The value in the name/value pair is an object that contains metadata about the key proof and contains the following parameters defined by this specification:
-    * `proof_signing_alg_values_supported`: REQUIRED. Array of case sensitive strings that identify the algorithms that the Issuer supports for this proof type. The Wallet uses one of them to sign the proof. Algorithm names used SHOULD be one of those defined in [@IANA.JOSE.ALGS], [@LD_Suite_Registry] or [@!ISO.18013-5].
+  * `proof_types_supported`: OPTIONAL. Object that describes specifics of the key proof(s) that the Credential Issuer supports. This object contains a list of name/value pairs, where each name is a unique identifier of the supported proof type(s). Valid values are defined in (#proof_types), other values MAY be used. This identifier is also used by the Wallet in the Credential Request as defined in (#credential_request). The value in the name/value pair is an object that contains metadata about the key proof and contains the following parameters defined by this specification:
+    * `proof_signing_alg_values_supported`: REQUIRED. Array of case sensitive strings that identify the algorithms that the Issuer supports for this proof type. The Wallet uses one of them to sign the proof. Algorithm names used are determined by the key proof type and are defined in (#key_proof_types).
   * `display`: OPTIONAL. Array of objects, where each object contains the display properties of the supported Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included.
       * `name`: REQUIRED. String value of a display name for the Credential.
       * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. Multiple `display` objects MAY be included for separate languages. There MUST be only one object for each language identifier.
@@ -1436,11 +1436,11 @@ The Credential Issuer is supposed to be responsible for the lifecycle of its Cre
 
 The Wallet is supposed to detect signs of fraudulent behavior related to the Credential management in the Wallet (e.g., device rooting) and to act upon such signals. Options include Credential revocation at the Credential Issuer and/or invalidation of the key material used to cryptographically bind the Credential to the identifier of the End-User possessing that Credential.
 
-## Key Proof replay {#key-proof-replay}
+## Proof replay {#key-proof-replay}
 
 If an adversary is able to obtain a key proof, as defined in (#proof-types), the adversary could get a Credential issued that is bound to a key pair controlled by the victim.
 
-Note: For the attacker to be able to present a Credential bound to a replayed Key Proof to the Verifier, the attacker also needs to obtain the victim's private key. To limit this, servers are RECOMMENDED to check how the Wallet protects the private keys, using mechanisms such as Attestation-Based Client Authentication as defined in [@!I-D.ietf-oauth-attestation-based-client-auth].
+Note: For the attacker to be able to present a Credential bound to a replayed key proof to the Verifier, the attacker also needs to obtain the victim's private key. To limit this, servers are RECOMMENDED to check how the Wallet protects the private keys, using mechanisms such as Attestation-Based Client Authentication as defined in [@!I-D.ietf-oauth-attestation-based-client-auth].
 
 The `nonce` parameter is the primary countermeasure against key proof replay. To further narrow down the attack vector, the Credential Issuer SHOULD bind a unique `nonce` parameter to the respective Access Token.
 
