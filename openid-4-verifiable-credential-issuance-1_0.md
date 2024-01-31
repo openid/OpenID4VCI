@@ -309,16 +309,16 @@ Credential Offer Endpoint can take one of the following values:
 - A case sensitive URL using the `https` scheme that contains scheme, host and, optionally, port number and path components, but no query or fragment components.
 - Custom URL scheme. For example, `openid-credential-offer://` as defined in (#client-metadata-retrieval).
 - Domain-bound Universal Links/App link.
-- No specific value, user scanning a QR code with Credential Offer using a manually opened Wallet, instead of an arbitrary camera application on a user-device (neither of other options are used).
+- No specific value. The issuer displays a QR code containing the Credential Offer, which the user can scan with a manually opened Wallet, or an arbitrary camera application on the user-device.
 
 How to obtain Credential Offer Endpoint is described in (#client-metadata-retrieval).
 
 ## Credential Offer {#credential-offer}
 
-The Credential Issuer sends Credential Offer using one of the following mechanisms:
+The Credential Issuer sends the Credential Offer using one of the following mechanisms:
 
 - Render a link that the End-User can click resulting in an HTTP GET request to the Credential Offer Endpoint.
-- Render a QR code that can be scanned by the End-User using a Wallet.
+- Render a QR code that can be scanned by the End-User using a Wallet or camera on the user's device.
 - An HTTP redirect to the Credential Offer Endpoint.
 
 The Credential Offer object, which is a JSON-encoded object with the Credential Offer parameters, can be sent by value or by reference.
