@@ -1507,7 +1507,101 @@ It is up to the Credential Issuer whether to update both the signature and the c
 
 # Privacy Considerations
 
-TBD
+When [@!RFC9396] is used, the Privacy Considerations of the specification apply.
+
+The privacy principles of [@ISO.29100] should be adhered to.
+
+## User Consent
+
+The Credential Issuer MUST obtain the End-User consent before issuing Credential(s) to the
+Wallet. It should be made clear to the End-User what information is being included in the
+Credential(s), for what purpose, and to which Wallet it is being issued to.
+
+## Minimum Disclosure
+
+To ensure minimum disclosure and prevent Verifiers from obtaining claims irrelevant for the
+transaction at hand, when issuing Credentials that are meant to be created once and then used a
+number of times by the End-User, the Credential Issuers and the Wallets SHOULD implement
+Credential formats that support selective disclosure, or consider issuing a separate Credential
+for each user claim.
+
+If supported by the Credential format, the Credential Issuer SHOULD provide the End-User with
+the options to choose which claims are selectively disclosable.
+
+## Storage of the Credentials
+
+To prevent a leak of signed End-User data, which risks revealing private data of End-Users to
+third parties Systems implementing this specifications SHOULD be designed to minimize the amount
+of End-User data that is stored. All involved parties SHOULD store Verifiable Credentias
+containing privacy-sensitive data only for as long as needed, including in log files.
+
+After Issuance, Credential Issuers SHOULD NOT store the Issuer-signed Credentials if they
+contain privacy-sensitive data. Wallets SHOULD store Credentials only in encrypted form, and,
+wherever possible, use hardware-backed encryption in particular for the private key used for Key
+Binding. Decentralized storage of data, e.g., on End-User devices, SHOULD be preferred for
+End-User Credentials over centralized storage. Expired Credentials SHOULD be deleted as soon as
+possible.
+
+## Correlation 
+
+### Unique Values Encoded in the Credential
+
+Colluding Issuer/Verifier or Verifier/Verifier pairs could link issuance/presentation or two
+presentation sessions to the same End-User on the basis of unique values encoded in the
+Credential (End-User claims, identifiers, Issuer signature, etc.).
+
+To prevent these types of correlation, Credential Issuers and the Wallets SHOULD use the
+methods, including but not limited to the following ones:
+
+* Issue a batch of Credentials to enable the usage a unique Credential per Verifier using Batch Credential Endpoint defined in (#batch-credential-endpoint). This only helps with Verifier/Verifier unlinkability.
+* Use advanced cryptographic schemes
+
+### Credential Offer
+
+The Privacy Considerations in Section 11.2 of [@!RFC9101] apply to the `credential_offer` and
+`credential_offer_uri` parameters defined in (#credential-offer).
+
+### Authorization Request
+
+The Wallet SHOULD NOT include potentially sensitive information in the Authorization Request,
+such as that including clear-text session information as a `state` parameter value, or encoding
+it in a `redirect_uri` parameter. A third party may observe such information through browser
+history, etc. and start correlating the user's activity using it.
+
+## Credential Issuer Identifier
+
+The Credential Issuer Identifier alone may reveal information about the End-User.
+
+For example, when a military organization or a drug rehabilitation center issues a vaccine
+credential, verifiers can deduce that the owner of the Wallet storing such Credential is a
+military member or may have a substance use disorder.
+
+In addition, when Credential Issuer issues only one type of Credential, it might have privacy implications,
+because if the Wallet has a Credential issued by that Issuer, its type and claim names can be
+determined.
+
+For example, if the National Cancer Institute only issued Credentials with cancer registry
+information, it is possible to deduce that the owner of the Wallet storing such Credential is a
+cancer patient.
+
+To mitigate this issue, a group of Credential Issuers may elect to use a common Credential Issuer
+Identifier. A group signature scheme may also be used, instead of an individual signature.
+
+## Custom URL Scheme
+
+There is a potential for leaking information about the Wallet to the third parties when the
+Wallet reacts to a Credential Offer that was sent to the custom URL scheme that the Wallet
+supports. An attacker may send Credential Offers to different custom URL schemes, see if the
+Wallet reacts (e.g., whether the wallet retrieves Credential Issuer metadata hosted by an
+attacker's server), and, therefore, learn which Wallet is installed. To avoid this, the Wallet
+SHOULD require user interaction before acting on the received Credential Offer.
+
+## Wallet Attestation
+
+The Wallet transmits and stores sensitive information about the End-User. To ensure that the
+Wallet can handle those appropriately (i.e., according to a certain trust framework or a
+regulation), the Credential Issuer SHOULD request an Attestation from the Wallet using the
+methods, including but not limited to those defined in [@!I-D.ietf-oauth-attestation-based-client-auth]. 
 
 {backmatter}
 
