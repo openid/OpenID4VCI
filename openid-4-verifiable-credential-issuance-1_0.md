@@ -302,11 +302,24 @@ For more details and concrete mitigations, see (#security-considerations-pre-aut
 
 # Credential Offer Endpoint {#credential-offer-endpoint}
 
-This endpoint is used by a Credential Issuer that is already interacting with an End-User who wishes to initiate a Credential issuance. It is used to pass available information relevant for the Credential issuance to ensure a convenient and secure process.
+Credential Offer Endpoint is used by a Credential Issuer that is already interacting with an End-User who wishes to initiate a Credential issuance. It is used to pass available information relevant for the Credential issuance to ensure a convenient and secure process as defined in (#credential-offer).
+
+Credential Offer Endpoint can take one of the following values:
+
+- A case sensitive URL using the `https` scheme that contains scheme, host and, optionally, port number and path components, but no query or fragment components.
+- Custom URL scheme. For example, `openid-credential-offer://` as defined in (#client-metadata-retrieval).
+- Domain-bound Universal Links/App link.
+- No specific value, user scanning a QR code with Credential Offer using a manually opened Wallet, instead of an arbitrary camera application on a user-device (neither of other options are used).
+
+How to obtain Credential Offer Endpoint is described in (#client-metadata-retrieval).
 
 ## Credential Offer {#credential-offer}
 
-The Credential Issuer sends Credential Offer using an HTTP GET request or an HTTP redirect to the Wallet's Credential Offer Endpoint defined in (#client-metadata).
+The Credential Issuer sends Credential Offer using one of the following mechanisms:
+
+- Render a link that the End-User can click resulting in an HTTP GET request to the Credential Offer Endpoint.
+- Render a QR code that can be scanned by the End-User using a Wallet.
+- An HTTP redirect to the Credential Offer Endpoint.
 
 The Credential Offer object, which is a JSON-encoded object with the Credential Offer parameters, can be sent by value or by reference.
 
@@ -314,8 +327,6 @@ The Credential Offer contains a single URI query parameter, either `credential_o
 
 * `credential_offer`: Object with the Credential Offer parameters. This MUST NOT be present when the `credential_offer_uri` parameter is present.
 * `credential_offer_uri`: String that is a URL using the `https` scheme referencing a resource containing a JSON object with the Credential Offer parameters. This MUST NOT be present when the `credential_offer` parameter is present.
-
-The Credential Issuer MAY render a QR code containing the Credential Offer that can be scanned by the End-User using a Wallet, or a link that the End-User can click.
 
 For security considerations, see (#credential-offer-security).
 
