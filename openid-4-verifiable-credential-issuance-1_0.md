@@ -1892,7 +1892,7 @@ The following additional claims are defined for authorization details of type `o
 
 * `credential_definition`: OPTIONAL. Object containing a detailed description of the Credential consisting of the following parameter:
   * `type`: OPTIONAL. Array as defined in (#server-metadata-jwt-vc-json). This claim contains the type values the Wallet requests authorization for at the Credential Issuer. It MUST be present if the claim `format` is present in the root of the authorization details object. It MUST not be present otherwise. 
-  * `credentialSubject`: OPTIONAL. Object as defined in (#server-metadata-jwt-vc-json) excluding the `display` parameter.
+  * `credentialSubject`: OPTIONAL. Object as defined in (#server-metadata-sd-jwt-vc) excluding the `display` and `value_type` parameters. `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
 
 The following is a non-normative example of an authorization details object with Credential format `jwt_vc_json`:
 
@@ -1957,7 +1957,7 @@ The following additional claims are defined for authorization details of type `o
 * `credential_definition`: OPTIONAL. Object containing the detailed description of the Credential consisting of the following parameter:
     * `@context`: OPTIONAL. Array as defined in (#server-metadata-ldp-vc). It MUST only be present if the `format` claim is present in the root of the authorization details object. It MUST not be present otherwise. 
     * `type`: OPTIONAL. Array as defined in (#server-metadata-ldp-vc).  This claim contains the type values the Wallet requests authorization for at the Credential Issuer. MUST only be present if the `@context` claim is present. 
-    * `credentialSubject`: OPTIONAL. Object as defined in (#authorization-jwt-vc-json) excluding the `display` parameter.
+    * `credentialSubject`: OPTIONAL. Object as defined in (#server-metadata-sd-jwt-vc) excluding the `display` and `value_type` parameters. `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
 
 The following is a non-normative example of an authorization details object with Credential format `ldp_vc`:
 
@@ -2044,7 +2044,7 @@ The following is a non-normative example of an object containing the `credential
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
 
 * `doctype`: OPTIONAL. String as defined in (#server-metadata-mso-mdoc). This claim contains the type value the Wallet requests authorization for at the Credential Issuer. It MUST only be present if the `format` claim is present. It MUST not be present otherwise. 
-* `claims`: OPTIONAL. Object as defined in (#server-metadata-mso-mdoc) excluding the `display` parameter.
+* `claims`: OPTIONAL. Object as defined in (#server-metadata-sd-jwt-vc) excluding the `display` and `value_type` parameters. `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
 
 The following is a non-normative example of an authorization details object with Credential format `mso_mdoc`:
 
@@ -2096,7 +2096,7 @@ The following is a non-normative example of an object comprising the `credential
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
 
 * `vct`: REQUIRED. String as defined in (#server-metadata-sd-jwt-vc). This claim contains the type values the Wallet requests authorization for at the Credential Issuer. It MUST only be present if the `format` claim is present. It MUST not be present otherwise.
-* `claims`: OPTIONAL. An object as defined in (#server-metadata-sd-jwt-vc) excluding the `display` parameter.
+* `claims`: OPTIONAL. Object as defined in (#server-metadata-sd-jwt-vc) excluding the `display` and `value_type` parameters. `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
 
 The following is a non-normative example of an authorization details object with Credential format `vc+sd-jwt`.
 
