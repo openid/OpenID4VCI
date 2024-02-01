@@ -1515,7 +1515,7 @@ The privacy principles of [@ISO.29100] should be adhered to.
 
 The Credential Issuer should obtain the End-User's consent before issuing Credential(s)
 to the Wallet. It should be made clear to the End-User what information is being included in the
-Credential(s), for what purpose, and to which Wallet it is being issued to.
+Credential(s) and for what purpose.
 
 ## Minimum Disclosure
 
@@ -1525,35 +1525,31 @@ number of times by the End-User, the Credential Issuers and the Wallets SHOULD i
 Credential formats that support selective disclosure, or consider issuing a separate Credential
 for each user claim.
 
-If supported by the Credential format, the Credential Issuer SHOULD provide the End-User with
-the option to choose which claims are selectively disclosable.
-
 ## Storage of the Credentials
 
-To prevent a leak of signed End-User data, which risks revealing private data of End-Users to
+To prevent a leak of End-User data, especially when it is signed, which risks revealing private data of End-Users to
 third parties, systems implementing this specification SHOULD be designed to minimize the amount
 of End-User data that is stored. All involved parties SHOULD store Verifiable Credentials
-containing privacy-sensitive data only for as long as needed, including in log files.
+containing privacy-sensitive data only for as long as needed, including in log files. Any logging of
+End-User data should be carefully considered as to whether it is necessary at all. The time logs are retained
+for should be minimized.
 
 After Issuance, Credential Issuers SHOULD NOT store the Issuer-signed Credentials if they
 contain privacy-sensitive data. Wallets SHOULD store Credentials only in encrypted form, and,
-wherever possible, use hardware-backed encryption in particular for the private key used for Key
-Binding. Decentralized storage of data, e.g., on End-User devices, SHOULD be preferred for
-End-User Credentials over centralized storage. Expired Credentials SHOULD be deleted as soon as
+wherever possible, use hardware-backed encryption. Credentials that are no longer valid to present should be deleted as soon as
 possible.
 
 ## Correlation 
 
 ### Unique Values Encoded in the Credential
 
-Colluding Issuer/Verifier or Verifier/Verifier pairs could link issuance/presentation or two
-presentation sessions to the same End-User on the basis of unique values encoded in the
-Credential (End-User claims, identifiers, Issuer signature, etc.).
+Issuance/presentation or two presentation sessions by the same End-User can be linked on the basis of
+unique values encoded in the Credential (End-User claims, identifiers, Issuer signature, etc.) either by colluding Issuer/Verifier or Verifier/Verifier pairs, or by the same Verifier.
 
 To prevent these types of correlation, Credential Issuers and Wallets SHOULD use
 methods, including but not limited to the following ones:
 
-* Issue a batch of Credentials to enable the usage a unique Credential per Verifier using Batch Credential Endpoint defined in (#batch-credential-endpoint). This only helps with Verifier/Verifier unlinkability.
+* Issue a batch of Credentials to enable the usage a unique Credential per presentation or per Verifier using Batch Credential Endpoint defined in (#batch-credential-endpoint). This only helps with Verifier/Verifier unlinkability.
 * Use cryptographic schemes that can provide non-correlation.
 
 ### Credential Offer
@@ -1594,14 +1590,13 @@ Wallet reacts to a Credential Offer that was sent to the custom URL scheme that 
 supports. An attacker may send Credential Offers to different custom URL schemes, see if the
 Wallet reacts (e.g., whether the wallet retrieves Credential Issuer metadata hosted by an
 attacker's server), and, therefore, learn which Wallet is installed. To avoid this, the Wallet
-SHOULD require user interaction before acting on the received Credential Offer.
+SHOULD require user interaction (or establish trust in the Issuer) before fetching the `credential_offer_uri ` or acting on the received Credential Offer.
 
 ## Untrusted Wallets
 
 The Wallet transmits and stores sensitive information about the End-User. To ensure that the
 Wallet can handle those appropriately (i.e., according to a certain trust framework or a
-regulation), the Credential Issuer SHOULD request an Attestation from the Wallet using
-methods, including but not limited to those defined in [@!I-D.ietf-oauth-attestation-based-client-auth]. 
+regulation), the Credential Issuer should properly authenticate the Wallet and ensure it is a trusted entity. For more details, see (#trust-between-wallet-and-issuer).
 
 {backmatter}
 
