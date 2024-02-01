@@ -1513,8 +1513,8 @@ The privacy principles of [@ISO.29100] should be adhered to.
 
 ## User Consent
 
-The Credential Issuer MUST obtain the End-User consent before issuing Credential(s) to the
-Wallet. It should be made clear to the End-User what information is being included in the
+The Credential Issuer should obtain the End-User's consent before issuing Credential(s)
+to the Wallet. It should be made clear to the End-User what information is being included in the
 Credential(s), for what purpose, and to which Wallet it is being issued to.
 
 ## Minimum Disclosure
