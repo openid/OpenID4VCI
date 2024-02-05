@@ -1549,7 +1549,7 @@ unique values encoded in the Credential (End-User claims, identifiers, Issuer si
 To prevent these types of correlation, Credential Issuers and Wallets SHOULD use
 methods, including but not limited to the following ones:
 
-* Issue a batch of Credentials to enable the usage a unique Credential per presentation or per Verifier using Batch Credential Endpoint defined in (#batch-credential-endpoint). This only helps with Verifier/Verifier unlinkability.
+* Issue a batch of Credentials to enable the usage of a unique Credential per presentation or per Verifier using Batch Credential Endpoint defined in (#batch-credential-endpoint). This only helps with Verifier/Verifier unlinkability.
 * Use cryptographic schemes that can provide non-correlation.
 
 ### Credential Offer
@@ -1560,7 +1560,7 @@ The Privacy Considerations in Section 11.2 of [@!RFC9101] apply to the `credenti
 ### Authorization Request
 
 The Wallet SHOULD NOT include potentially sensitive information in the Authorization Request,
-for example, that including clear-text session information as a `state` parameter value, or encoding
+for example, by including clear-text session information as a `state` parameter value or encoding
 it in a `redirect_uri` parameter. A third party may observe such information through browser
 history, etc. and correlate the user's activity using it.
 
@@ -1585,12 +1585,12 @@ Identifier. A group signature scheme may also be used, instead of an individual 
 
 ## Custom URL Scheme
 
-There is a potential for leaking information about the Wallet to the third parties when the
-Wallet reacts to a Credential Offer that was sent to the custom URL scheme that the Wallet
-supports. An attacker may send Credential Offers to different custom URL schemes, see if the
+There is a potential for leaking information about the Wallet to third parties when the
+Wallet reacts to a Credential Offer that was sent to a custom URL scheme that the Wallet
+supports. An attacker may send Credential Offers using different custom URL schemes, see if the
 Wallet reacts (e.g., whether the wallet retrieves Credential Issuer metadata hosted by an
 attacker's server), and, therefore, learn which Wallet is installed. To avoid this, the Wallet
-SHOULD require user interaction (or establish trust in the Issuer) before fetching the `credential_offer_uri ` or acting on the received Credential Offer.
+SHOULD require user interaction (or establish trust in the Issuer) before fetching any `credential_offer_uri ` or acting on the received Credential Offer.
 
 ## Untrusted Wallets
 
