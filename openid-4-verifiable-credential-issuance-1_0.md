@@ -1167,7 +1167,7 @@ The Credential Issuer MUST invalidate the `transaction_id` after the Credential 
 The following is a non-normative example of a Deferred Credential Request:
 
 ```
-POST /credential HTTP/1.1 
+POST /deferred_credential HTTP/1.1 
 Host: server.example.com
 Content-Type: application/json
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
