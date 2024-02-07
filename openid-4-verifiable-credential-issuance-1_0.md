@@ -306,14 +306,12 @@ This endpoint is used by a Credential Issuer that is already interacting with an
 
 ## Credential Offer {#credential-offer}
 
-The Credential Issuer sends Credential Offer using an HTTP GET request or an HTTP redirect to the Wallet's Credential Offer Endpoint defined in (#client-metadata).
+The Credential Issuer passes the Credential Offer to the Wallet, by value or by reference, using HTTP GET request or an HTTP redirect to the Wallet's Credential Offer Endpoint defined in (#client-metadata). 
 
-The Credential Offer object, which is a JSON-encoded object with the Credential Offer parameters, can be sent by value or by reference.
+The request used to pass the Credential Offer must contain a single URI query parameter, which must be either:
 
-The Credential Offer contains a single URI query parameter, either `credential_offer` or `credential_offer_uri`:
-
-* `credential_offer`: Object with the Credential Offer parameters. This MUST NOT be present when the `credential_offer_uri` parameter is present.
-* `credential_offer_uri`: String that is a URL using the `https` scheme referencing a resource containing a JSON object with the Credential Offer parameters. This MUST NOT be present when the `credential_offer` parameter is present.
+* `credential_offer`: Object with the Credential Offer parameters. This parameter MUST NOT be present when the `credential_offer_uri` parameter is present.
+* or `credential_offer_uri`: URI using the `https` scheme that references a resource containing object with the Credential Offer parameters. This parameter MUST NOT be present when the `credential_offer` parameter is present.
 
 The Credential Issuer MAY render a QR code containing the Credential Offer that can be scanned by the End-User using a Wallet, or a link that the End-User can click.
 
