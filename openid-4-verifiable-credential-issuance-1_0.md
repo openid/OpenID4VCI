@@ -140,19 +140,13 @@ Existing OAuth 2.0 mechanisms are extended as following:
 
 ## Core Concepts
 
-The Wallet sends one Credential Request per individual Credential to the Credential Endpoint. The Wallet MAY use the same Access Token to send multiple Credential Requests to request issuance of the following:
+The Wallet sends one Credential Request per individual Credential to the Credential Endpoint. 
 
-* multiple Credentials of different types/doctypes bound to the same proof, or
-* multiple Credentials of the same type/doctype bound to different proofs, or
-* multiple Credentials of different types/doctypes bound to different proofs.
+To request issuance of multiple Credentials of the same or different types/doctypes bound to the same or different proofs the Wallet MAY:
+* use the same Access Token to send multiple Credential Requests to the Credential Endpoint.
+* send a single Batch Credential Request to the Batch Credential Endpoint to obtain requested Credentials in the Batch Credential Response.
 
 Note: "type" and "doctype" are terms defined by individual Credential formats. For details, see (#format-profiles).
-
-The Wallet MAY send one Batch Credential Request to the Batch Credential Endpoint to request the following in the Batch Credential Response:
-
-* multiple Credentials of different types/doctypes bound to the same proof, or 
-* multiple Credentials of the same type/doctype bound to different proofs, or
-* multiple Credentials of different types/doctypes bound to different proofs.
 
 In the course of the authorization process, the Credential Issuer MAY also request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as described in (#use-case-5).
 
