@@ -1513,8 +1513,8 @@ The privacy principles of [@ISO.29100] should be adhered to.
 
 ## User Consent
 
-The Credential Issuer should obtain the End-User's consent before issuing Credential(s)
-to the Wallet. It should be made clear to the End-User what information is being included in the
+The Credential Issuer SHOULD obtain the End-User's consent before issuing Credential(s)
+to the Wallet. It SHOULD be made clear to the End-User what information is being included in the
 Credential(s) and for what purpose.
 
 ## Minimum Disclosure
@@ -1536,8 +1536,8 @@ for should be minimized.
 
 After Issuance, Credential Issuers SHOULD NOT store the Issuer-signed Credentials if they
 contain privacy-sensitive data. Wallets SHOULD store Credentials only in encrypted form, and,
-wherever possible, use hardware-backed encryption. Credentials that are no longer valid to present should be deleted as soon as
-possible.
+wherever possible, use hardware-backed encryption. Wallets SHOULD not store
+Credentials longer than needed.
 
 ## Correlation 
 
@@ -1552,6 +1552,8 @@ methods, including but not limited to the following ones:
 * Issue a batch of Credentials to enable the usage of a unique Credential per presentation or per Verifier using Batch Credential Endpoint defined in (#batch-credential-endpoint). This only helps with Verifier/Verifier unlinkability.
 * Use cryptographic schemes that can provide non-correlation.
 
+Credential Issuers specifically SHOULD discard values that can be used in collusion with a Verifier to track a user, such as the Issuer's signature or cryptographic key material to which an issued credential was bound to.
+
 ### Credential Offer
 
 The Privacy Considerations in Section 11.2 of [@!RFC9101] apply to the `credential_offer` and
@@ -1564,9 +1566,10 @@ for example, by including clear-text session information as a `state` parameter 
 it in a `redirect_uri` parameter. A third party may observe such information through browser
 history, etc. and correlate the user's activity using it.
 
-## Credential Issuer Identifier
+## Identifier of the Credential Issuer
 
-The Credential Issuer Identifier alone may reveal information about the End-User.
+Information in the credential identifying a particular Credential Issuer, such as a Credential Issuer Identifier,
+issuer's certificate, or issuer's public key may reveal information about the End-User.
 
 For example, when a military organization or a drug rehabilitation center issues a vaccine
 credential, verifiers can deduce that the owner of the Wallet storing such Credential is a
@@ -1580,8 +1583,13 @@ For example, if the National Cancer Institute only issued Credentials with cance
 information, it is possible to deduce that the owner of the Wallet storing such Credential is a
 cancer patient.
 
-To mitigate this issue, a group of Credential Issuers may elect to use a common Credential Issuer
-Identifier. A group signature scheme may also be used, instead of an individual signature.
+To mitigate these issues, a group of organizations may elect to use a common Credential Issuer,
+such that any credentials issued by this Issuer cannot be attributed to a particular organization
+through identifiers of the Credential Issuers alone. A group signature scheme may also be used
+instead of an individual signature.
+
+When a common Credential Issuer is used, appropriate guardrails need to be in place to prevent
+one organization from issuing illegitimate credentials on behalf of other organizations.
 
 ## Custom URL Scheme
 
