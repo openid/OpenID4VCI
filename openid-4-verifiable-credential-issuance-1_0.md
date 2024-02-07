@@ -44,7 +44,7 @@ This specification defines an API for the issuance of Verifiable Credentials.
 
 # Introduction
 
-This specification defines an OAuth protected API for the issuance of Verifiable Credentials. Credentials can be of any format, including, but not limited to, W3C formats [@VC_DATA], mDL [@ISO.18013-5], and SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc].
+This specification defines an OAuth protected API for the issuance of Verifiable Credentials. Credentials can be of any format, including, but not limited to, SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], mDL [@ISO.18013-5], and VCDM [@VC_DATA].
 
 Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. A Verifiable Credential follows a pre-defined schema (the Credential type) and MAY be bound to a certain holder, e.g., through Cryptographic Holder Binding. Verifiable Credentials can be securely presented for the End-User to the RP, without involvement of the Credential Issuer.
 
