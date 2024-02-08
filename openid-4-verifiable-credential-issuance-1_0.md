@@ -1,5 +1,5 @@
 %%%
-title = "OpenID for Verifiable Credential Issuance - Editor's draft"
+title = "OpenID for Verifiable Credential Issuance - draft 13"
 abbrev = "openid-4-verifiable-credential-issuance"
 ipr = "none"
 workgroup = "OpenID Connect"
