@@ -1518,7 +1518,105 @@ It is up to the Credential Issuer whether to update both the signature and the c
 
 # Privacy Considerations
 
-TBD
+When [@!RFC9396] is used, the Privacy Considerations of that specification also apply.
+
+The privacy principles of [@ISO.29100] should be adhered to.
+
+## User Consent
+
+The Credential Issuer SHOULD obtain the End-User's consent before issuing Credential(s)
+to the Wallet. It SHOULD be made clear to the End-User what information is being included in the
+Credential(s) and for what purpose.
+
+## Minimum Disclosure
+
+To ensure minimum disclosure and prevent Verifiers from obtaining claims unnecessary for the
+transaction at hand, when issuing Credentials that are intended to be created once and then used a
+number of times by the End-User, the Credential Issuers and the Wallets SHOULD implement
+Credential formats that support selective disclosure, or consider issuing a separate Credential
+for each user claim.
+
+## Storage of the Credentials
+
+To prevent a leak of End-User data, especially when it is signed, which risks revealing private data of End-Users to
+third parties, systems implementing this specification SHOULD be designed to minimize the amount
+of End-User data that is stored. All involved parties SHOULD store Verifiable Credentials
+containing privacy-sensitive data only for as long as needed, including in log files. Any logging of
+End-User data should be carefully considered as to whether it is necessary at all. The time logs are retained
+for should be minimized.
+
+After Issuance, Credential Issuers SHOULD NOT store the Issuer-signed Credentials if they
+contain privacy-sensitive data. Wallets SHOULD store Credentials only in encrypted form, and,
+wherever possible, use hardware-backed encryption. Wallets SHOULD not store
+Credentials longer than needed.
+
+## Correlation 
+
+### Unique Values Encoded in the Credential
+
+Issuance/presentation or two presentation sessions by the same End-User can be linked on the basis of
+unique values encoded in the Credential (End-User claims, identifiers, Issuer signature, etc.) either by colluding Issuer/Verifier or Verifier/Verifier pairs, or by the same Verifier.
+
+To prevent these types of correlation, Credential Issuers and Wallets SHOULD use
+methods, including but not limited to the following ones:
+
+* Issue a batch of Credentials to enable the usage of a unique Credential per presentation or per Verifier using Batch Credential Endpoint defined in (#batch-credential-endpoint). This only helps with Verifier/Verifier unlinkability.
+* Use cryptographic schemes that can provide non-correlation.
+
+Credential Issuers specifically SHOULD discard values that can be used in collusion with a Verifier to track a user, such as the Issuer's signature or cryptographic key material to which an issued credential was bound to.
+
+### Credential Offer
+
+The Privacy Considerations in Section 11.2 of [@!RFC9101] apply to the `credential_offer` and
+`credential_offer_uri` parameters defined in (#credential-offer).
+
+### Authorization Request
+
+The Wallet SHOULD NOT include potentially sensitive information in the Authorization Request,
+for example, by including clear-text session information as a `state` parameter value or encoding
+it in a `redirect_uri` parameter. A third party may observe such information through browser
+history, etc. and correlate the user's activity using it.
+
+## Identifying the Credential Issuer
+
+Information in the credential identifying a particular Credential Issuer, such as a Credential Issuer Identifier,
+issuer's certificate, or issuer's public key may reveal information about the End-User.
+
+For example, when a military organization or a drug rehabilitation center issues a vaccine
+credential, verifiers can deduce that the owner of the Wallet storing such Credential is a
+military member or may have a substance use disorder.
+
+In addition, when a Credential Issuer issues only one type of Credential, it might have privacy implications,
+because if the Wallet has a Credential issued by that Issuer, its type and claim names can be
+determined.
+
+For example, if the National Cancer Institute only issued Credentials with cancer registry
+information, it is possible to deduce that the owner of the Wallet storing such Credential is a
+cancer patient.
+
+To mitigate these issues, a group of organizations may elect to use a common Credential Issuer,
+such that any credentials issued by this Issuer cannot be attributed to a particular organization
+through identifiers of the Credential Issuers alone. A group signature scheme may also be used
+instead of an individual signature.
+
+When a common Credential Issuer is used, appropriate guardrails need to be in place to prevent
+one organization from issuing illegitimate credentials on behalf of other organizations.
+
+## Identifying the Wallet
+
+There is a potential for leaking information about the Wallet to third parties when the
+Wallet reacts to a Credential Offer. An attacker may send Credential Offers using different
+custom URL schemes or claimed https urls, see if the
+Wallet reacts (e.g., whether the wallet retrieves Credential Issuer metadata hosted by an
+attacker's server), and, therefore, learn which Wallet is installed. To avoid this, the Wallet SHOULD
+require user interaction or establish trust in the Issuer before fetching any `credential_offer_uri `
+or acting on the received Credential Offer.
+
+## Untrusted Wallets
+
+The Wallet transmits and stores sensitive information about the End-User. To ensure that the
+Wallet can handle those appropriately (i.e., according to a certain trust framework or a
+regulation), the Credential Issuer should properly authenticate the Wallet and ensure it is a trusted entity. For more details, see (#trust-between-wallet-and-issuer).
 
 {backmatter}
 
@@ -1846,6 +1944,13 @@ TBD
       <organization>European Parliament</organization>
     </author>
     <date year="2014" month="July" day="23"></date>
+  </front>
+</reference>
+
+<reference anchor="ISO.29100" target="https://standards.iso.org/ittf/PubliclyAvailableStandards/index.html">
+  <front>
+    <author fullname="ISO"></author>
+    <title>ISO/IEC 29100:2011 Information technology — Security techniques — Privacy framework</title>
   </front>
 </reference>
 
