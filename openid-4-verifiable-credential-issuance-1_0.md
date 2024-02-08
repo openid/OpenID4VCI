@@ -1591,7 +1591,7 @@ instead of an individual signature.
 When a common Credential Issuer is used, appropriate guardrails need to be in place to prevent
 one organization from issuing illegitimate credentials on behalf of other organizations.
 
-## Processing of Credential Offers by Wallet prior to User Interaction
+## Identifying the Wallet
 
 There is a potential for leaking information about the Wallet to third parties when the
 Wallet reacts to a Credential Offer. An attacker may send Credential Offers using different
