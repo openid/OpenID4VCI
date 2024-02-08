@@ -2350,7 +2350,7 @@ This specification registers the following media types in the IANA "Media Types"
 
 # Acknowledgements {#Acknowledgements}
 
-We would like to thank Richard Barnes, Paul Bastian, Vittorio Bertocci, Christian Bormann, John Bradley, Brian Campbell, Gabe Cohen, David Chadwick, Andrii Deinega, Giuseppe De Marco, Mark Dobrinic, Daniel Fett, Pedro Felix, George Fletcher, Christian Fries, Timo Glasta, Mark Haine, Fabian Hauck, Roland Hedberg, Joseph Heenan, Alen Horvat, Andrew Hughes, Jacob Ideskog, Edmund Jay, Michael B. Jones, Tom Jones, Judith Kahrer, Takahiko Kawasaki, Niels Klomp, Ronald Koenig, Micha Kraus, Markus Kreusch, Philipp Lehwalder, Adam Lemmon, Dave Longley, David Luna, Daniel McGrogan, Jeremie Miller, Kenichi Nakamura, Rolson Quadras, Nat Sakimura, Sudesh Shetty, Oliver Terbu, Mike Varley, Arjen van Veen, David Waite, Jacob Ward for their valuable feedback and contributions to this specification.
+We would like to thank Richard Barnes, Paul Bastian, Vittorio Bertocci, Christian Bormann, John Bradley, Brian Campbell, Gabe Cohen, David Chadwick, Andrii Deinega, Giuseppe De Marco, Mark Dobrinic, Daniel Fett, Pedro Felix, George Fletcher, Christian Fries, Timo Glasta, Mark Haine, Fabian Hauck, Roland Hedberg, Joseph Heenan, Alen Horvat, Andrew Hughes, Jacob Ideskog, Lukasz Jaromin, Edmund Jay, Michael B. Jones, Tom Jones, Judith Kahrer, Takahiko Kawasaki, Niels Klomp, Ronald Koenig, Micha Kraus, Markus Kreusch, Philipp Lehwalder, Adam Lemmon, Dave Longley, David Luna, Daniel McGrogan, Jeremie Miller, Kenichi Nakamura, Rolson Quadras, Nat Sakimura, Sudesh Shetty, Oliver Terbu, Mike Varley, Arjen van Veen, David Waite, Jacob Ward for their valuable feedback and contributions to this specification.
 
 # Notices
 
@@ -2423,6 +2423,9 @@ Wallet Providers may also provide a marketplace where Issuers can register to be
    * added support for HTTP Accept-Language Header in the request for Credential Issuer Metadata to request a subset for display data
    * clarified how the Credential Issuer indicates that it requires proof of possession of the cryptographic key material in the Credential Request
    * added an option to use data integrity proofs as proof of possession of the cryptographic key material in the Credential Request
+   * added privacy considerations
+   * clarifed that AS that only supports pre-auth grant can omit `response_types_supported` metadata
+   * added `background_image` credential issuer metadata
    * editorial clean-up (fix capitalization, etc.)
 
    -12
