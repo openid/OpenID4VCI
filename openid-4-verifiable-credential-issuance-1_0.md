@@ -1566,7 +1566,7 @@ for example, by including clear-text session information as a `state` parameter 
 it in a `redirect_uri` parameter. A third party may observe such information through browser
 history, etc. and correlate the user's activity using it.
 
-## Identifier of the Credential Issuer
+## Identifying the Credential Issuer
 
 Information in the credential identifying a particular Credential Issuer, such as a Credential Issuer Identifier,
 issuer's certificate, or issuer's public key may reveal information about the End-User.
@@ -1591,14 +1591,15 @@ instead of an individual signature.
 When a common Credential Issuer is used, appropriate guardrails need to be in place to prevent
 one organization from issuing illegitimate credentials on behalf of other organizations.
 
-## Custom URL Scheme
+## Processing of Credential Offers by Wallet prior to User Interaction
 
 There is a potential for leaking information about the Wallet to third parties when the
-Wallet reacts to a Credential Offer that was sent to a custom URL scheme that the Wallet
-supports. An attacker may send Credential Offers using different custom URL schemes, see if the
+Wallet reacts to a Credential Offer. An attacker may send Credential Offers using different
+custom URL schemes or claimed https urls, see if the
 Wallet reacts (e.g., whether the wallet retrieves Credential Issuer metadata hosted by an
-attacker's server), and, therefore, learn which Wallet is installed. To avoid this, the Wallet
-SHOULD require user interaction (or establish trust in the Issuer) before fetching any `credential_offer_uri ` or acting on the received Credential Offer.
+attacker's server), and, therefore, learn which Wallet is installed. To avoid this, the Wallet SHOULD
+require user interaction or establish trust in the Issuer before fetching any `credential_offer_uri `
+or acting on the received Credential Offer.
 
 ## Untrusted Wallets
 
