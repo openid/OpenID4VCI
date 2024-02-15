@@ -1,5 +1,5 @@
 %%%
-title = "OpenID for Verifiable Credential Issuance - draft 13"
+title = "OpenID for Verifiable Credential Issuance - Editor's draft"
 abbrev = "openid-4-verifiable-credential-issuance"
 ipr = "none"
 workgroup = "OpenID Connect"
@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-13"
+value = "openid-4-verifiable-credential-issuance-1_0-14"
 status = "standard"
 
 [[author]]
