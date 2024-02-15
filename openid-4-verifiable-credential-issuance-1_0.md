@@ -143,6 +143,7 @@ Existing OAuth 2.0 mechanisms are extended as following:
 The Wallet sends one Credential Request per individual Credential to the Credential Endpoint. 
 
 To request issuance of multiple Credentials of the same or different types/doctypes bound to the same or different proofs the Wallet MAY:
+
 * use the same Access Token to send multiple Credential Requests to the Credential Endpoint.
 * send a single Batch Credential Request to the Batch Credential Endpoint to obtain requested Credentials in the Batch Credential Response.
 
