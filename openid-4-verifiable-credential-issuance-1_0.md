@@ -287,7 +287,7 @@ Figure: Issuance using Pre-Authorized Code Flow
 
 (4) The Wallet sends the Pre-Authorized Code obtained in Step (2) in the Token Request to the Token Endpoint. The Wallet will additionally send a Transaction Code provided by the End-User, if it was required by the Credential Issuer. This step is defined in (#token-endpoint).
 
-(5) This step is the same as Step (5) in the Authorization Code Flow.
+(5) This step is the same as Step (6) in the Authorization Code Flow.
 
 It is important to note that anyone who possesses a valid Pre-Authorized Code, without further security measures, would be able to receive a VC from the Credential Issuer. Implementers MUST implement mitigations most suitable to the use case.
 
