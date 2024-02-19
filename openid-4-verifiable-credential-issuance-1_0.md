@@ -2119,7 +2119,7 @@ The definitions in (#server-metadata-ldp-vc) apply for metadata of Credentials o
 
 #### Authorization Details
 
-The definitions in (#authorization-ldp-vc) apply for credentials of this type as well.
+The definitions in (#authorization-ldp-vc) apply for Credentials of this type as well.
 
 #### Credential Request
 
