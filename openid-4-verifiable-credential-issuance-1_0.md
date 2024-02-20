@@ -2226,7 +2226,7 @@ For a claims description object, the following keys defined by this
 specification MAY be used to describe the claim or claims (other keys MAY also
 be used):
 
-  * `path`: REQUIRED. Array. Claim path query as defined in (#claim-path-query)
+  * `path`: REQUIRED. Array. Claim path query as defined in (#claims-path-query)
     to identify the claim(s) in the Credential.
   * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the
     Credential Issuer will always include this claim in the issued Credential.
