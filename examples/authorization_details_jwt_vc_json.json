@@ -3,11 +3,11 @@
         "type": "openid_credential",
         "credential_configuration_id": "UniversityDegreeCredential",
         "credential_definition": {
-            "credentialSubject": {
-                "given_name": {},
-                "family_name": {},
-                "degree": {}
-            }
+            "credentialSubject": [
+                {"path": ["given_name"]},
+                {"path": ["family_name"]},
+                {"path": ["degree"]}
+            ]
         }
     }
 ]
