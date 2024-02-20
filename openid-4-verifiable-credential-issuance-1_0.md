@@ -2243,10 +2243,10 @@ be used):
   * `display`: OPTIONAL. Array of objects, where each object contains display
     properties of a certain claim in the Credential for a certain language.
     Below is a non-exhaustive list of valid parameters that MAY be included:
-      * `name`: OPTIONAL. String value of a display name for the claim.
-      * `locale`: OPTIONAL. String value that identifies language of this object
-        represented as language tag values defined in BCP47 [@!RFC5646]. There
-        MUST be only one object for each language identifier.
+     * `name`: OPTIONAL. String value of a display name for the claim.
+     * `locale`: OPTIONAL. String value that identifies language of this object
+       represented as language tag values defined in BCP47 [@!RFC5646]. There
+       MUST be only one object for each language identifier.
 
 The order of claims description objects in the `claims` or `credentialSubject`
 array is used by the Wallet to determine the order in which the claims are
@@ -2297,10 +2297,8 @@ claims:
 
 - `["name"]`: The claim `name` with the value `Arthur Dent` is selected.
 - `["address"]`: The claim `address` with its sub-claims as the value is selected.
-- `["address", "street_address"]`: The claim `street_address` with the value
-  `42 Market Street` is selected.
-- `["degrees", null, "type"]`: All `type` claims in the `degrees` array are
-  selected.
+- `["address", "street_address"]`: The claim `street_address` with the value `42 Market Street` is selected.
+- `["degrees", null, "type"]`: All `type` claims in the `degrees` array are selected.
 - `["nationalities", 1]`: The second nationality is selected.
 
 ## Processing
