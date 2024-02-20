@@ -1955,6 +1955,8 @@ This specification defines several extension points to accommodate the differenc
 
 This section defines Credential Format Profiles for a few of the commonly used Credential formats. Other specifications or deployments can define their own Credential Format Profiles.
 
+
+
 ## W3C Verifiable Credentials
 
 Sections 6.1 and 6.2 of [@VC_DATA] define how Verifiable Credentials MAY or MAY NOT use JSON-LD [@JSON-LD]. As acknowledged in Section 4.1 of [@VC_DATA], implementations can behave differently regarding processing of the `@context` property whether JSON-LD is used or not.
@@ -1987,13 +1989,7 @@ The following additional Credential Issuer metadata parameters are defined for t
 
 * `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of at least the following two parameters:
   * `type`: REQUIRED. Array designating the types a certain Credential type supports, according to [@VC_DATA], Section 4.3.
-  * `credentialSubject`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be an object that includes the following parameters defined by this specification (other parameters MAY also be used):
-      * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default value is `false`.
-      * `value_type`: OPTIONAL. String value determining the type of value of the claim. Valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image). Other values MAY also be used.
-      * `display`: OPTIONAL. Array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
-          * `name`: OPTIONAL. String value of a display name for the claim.
-          * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
-* `order`: OPTIONAL. Array of the claim name values that lists them in the order they should be displayed by the Wallet.
+  * `credentialSubject`: OPTIONAL. A claims description as defined in (#claims-description).
 
 The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `jwt_vc_json`:
 
@@ -2005,7 +2001,7 @@ The following additional claims are defined for authorization details of type `o
 
 * `credential_definition`: OPTIONAL. Object containing a detailed description of the Credential consisting of the following parameter:
   * `type`: OPTIONAL. Array as defined in (#server-metadata-jwt-vc-json). This claim contains the type values the Wallet requests authorization for at the Credential Issuer. It MUST be present if the claim `format` is present in the root of the authorization details object. It MUST not be present otherwise. 
-  * `credentialSubject`: OPTIONAL. Object as defined in (#server-metadata-sd-jwt-vc) excluding the `display` and `value_type` parameters. `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
+  * `credentialSubject`: OPTIONAL. A claims description as defined in (#claims-description) excluding the `display` and `value_type` parameters. The `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
 
 The following is a non-normative example of an authorization details object with Credential format `jwt_vc_json`:
 
@@ -2017,7 +2013,7 @@ The following additional parameters are defined for Credential Requests and this
 
 * `credential_definition`: REQUIRED when the `format` parameter is present in the Credential Request. It MUST NOT be used otherwise. It is an object containing the detailed description of the Credential type. It consists of at least the following parameters:
   * `type`: REQUIRED. Array as defined in (#server-metadata-jwt-vc-json). The credential issued by the Credential Issuer MUST contain at least the values listed in this claim.
-  * `credentialSubject`: OPTIONAL. Object as defined in (#authorization-jwt-vc-json).
+  * `credentialSubject`: OPTIONAL. A claims description as defined in (#claims-description).
 
 The following is a non-normative example of a Credential Request with Credential format `jwt_vc_json`:
 
@@ -2052,13 +2048,7 @@ The following additional Credential Issuer metadata parameters are defined for t
 * `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of at least the following three parameters:
   * `@context`: REQUIRED. Array as defined in [@VC_DATA], Section 4.1.
   * `type`: REQUIRED. Array designating the types a certain credential type supports, according to [@VC_DATA], Section 4.3.
-  * `credentialSubject`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be an object that includes the following parameters defined by this specification (other parameters MAY also be included):
-      * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default value is `false`.
-      * `value_type`: OPTIONAL. String value determining the type of value of the claim. Valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image). Other values MAY also be used.
-      * `display`: OPTIONAL. Array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
-          * `name`: OPTIONAL. String value of a display name for the claim.
-          * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
-* `order`: OPTIONAL. Array of the claim name values that lists them in the order they should be displayed by the Wallet.
+  * `credentialSubject`: OPTIONAL. A claims description as defined in (#claims-description).
 
 
 The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `ldp_vc`:
@@ -2072,7 +2062,7 @@ The following additional claims are defined for authorization details of type `o
 * `credential_definition`: OPTIONAL. Object containing the detailed description of the Credential consisting of the following parameter:
     * `@context`: OPTIONAL. Array as defined in (#server-metadata-ldp-vc). It MUST only be present if the `format` claim is present in the root of the authorization details object. It MUST not be present otherwise. 
     * `type`: OPTIONAL. Array as defined in (#server-metadata-ldp-vc).  This claim contains the type values the Wallet requests authorization for at the Credential Issuer. MUST only be present if the `@context` claim is present. 
-    * `credentialSubject`: OPTIONAL. Object as defined in (#server-metadata-sd-jwt-vc) excluding the `display` and `value_type` parameters. `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
+    * `credentialSubject`: OPTIONAL. A claims description as defined in (#claims-description) excluding the `display` and `value_type` parameters. The `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
 
 The following is a non-normative example of an authorization details object with Credential format `ldp_vc`:
 
@@ -2144,12 +2134,7 @@ Cryptographic algorithm names used in the `credential_signing_alg_values_support
 The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
 * `doctype`: REQUIRED. String identifying the Credential type, as defined in [@!ISO.18013-5].
-* `claims`: OPTIONAL. Object containing a list of name/value pairs, where the name is a certain `namespace` as defined in [@!ISO.18013-5] (or any profile of it), and the value is an object. This object also contains a list of name/value pairs, where the name is a claim name value that is defined in the respective namespace and is offered in the Credential. The value is an object detailing the specifics of the claim with the following non-exhaustive list of parameters that MAY be included:
-    * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the Credential Issuer will always include this claim in the issued Credential. If set to `false`, the claim is not included in the issued Credential if the wallet did not request the inclusion of the claim, and/or if the Credential Issuer chose to not include the claim. If the `mandatory` parameter is omitted, the default value is `false`.
-    * `value_type`: OPTIONAL. String value determining the type of value of the claim. Valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image). Other values MAY also be used.
-    * `display`: OPTIONAL. Array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
-        * `name`: OPTIONAL. String value of a display name for the claim.
-        * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
+* `claims`: OPTIONAL. Object containing a list of name/value pairs, where the name is a certain `namespace` as defined in [@!ISO.18013-5] (or any profile of it), and the value is a claims description as defined in (#claims-description). The namespace applies to the claims in the claims description.
 * `order`: OPTIONAL. Array of namespaced claim name values that lists them in the order they should be displayed by the Wallet. The values MUST be two strings separated by a tilde ('~') character, where the first string is a namespace value and a second is a claim name value. For example, `org.iso.18013.5.1~given_name".
 
 The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `mso_mdoc`:
@@ -2161,7 +2146,7 @@ The following is a non-normative example of an object containing the `credential
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
 
 * `doctype`: OPTIONAL. String as defined in (#server-metadata-mso-mdoc). This claim contains the type value the Wallet requests authorization for at the Credential Issuer. It MUST only be present if the `format` claim is present. It MUST not be present otherwise. 
-* `claims`: OPTIONAL. Object as defined in (#server-metadata-sd-jwt-vc) excluding the `display` and `value_type` parameters. `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
+* `claims`: OPTIONAL. Object as defined in (#server-metadata-mso-mdoc) excluding the `display` and `value_type` parameters. The `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
 
 The following is a non-normative example of an authorization details object with Credential format `mso_mdoc`:
 
@@ -2198,13 +2183,7 @@ The following additional Credential Issuer metadata parameters are defined for t
 
 
 * `vct`: REQUIRED. String designating the type of a Credential, as defined in [@!I-D.ietf-oauth-sd-jwt-vc].
-* `claims`: OPTIONAL. Object containing a list of name/value pairs, where each name identifies a claim about the subject offered in the Credential. The value can be another such object (nested data structures), or an array of such objects. To express the specifics about the claim, the most deeply nested value MAY be an object that includes the following parameters defined by this specification:
-    * `mandatory`: OPTIONAL. Boolean which when set to `true` indicates the claim MUST be present in the issued Credential. If the `mandatory` property is omitted its default should be assumed to be `false`.
-    * `value_type`: OPTIONAL. String value determining the type of value of the claim. Valid values defined by this specification are `string`, `number`, and image media types such as `image/jpeg` as defined in IANA media type registry for images (https://www.iana.org/assignments/media-types/media-types.xhtml#image). Other values MAY also be used.
-    * `display`: OPTIONAL. Array of objects, where each object contains display properties of a certain claim in the Credential for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
-        * `name`: OPTIONAL. String value of a display name for the claim.
-        * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
-* `order`: OPTIONAL. An array of the claim name values that lists them in the order they should be displayed by the Wallet.
+* `claims`: OPTIONAL. A claims description as defined in (#claims-description).
 
 The following is a non-normative example of an object comprising the `credential_configurations_supported` parameter for Credential format `vc+sd-jwt`.
 
@@ -2215,7 +2194,7 @@ The following is a non-normative example of an object comprising the `credential
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
 
 * `vct`: REQUIRED. String as defined in (#server-metadata-sd-jwt-vc). This claim contains the type values the Wallet requests authorization for at the Credential Issuer. It MUST only be present if the `format` claim is present. It MUST not be present otherwise.
-* `claims`: OPTIONAL. Object as defined in (#server-metadata-sd-jwt-vc) excluding the `display` and `value_type` parameters. `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
+* `claims`: OPTIONAL. A claims description as defined in (#claims-description). The `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
 
 The following is a non-normative example of an authorization details object with Credential format `vc+sd-jwt`.
 
@@ -2226,7 +2205,7 @@ The following is a non-normative example of an authorization details object with
 The following additional parameters are defined for Credential Requests and this Credential format.
 
 * `vct`: REQUIRED when the `format` parameter is present in the Credential Request. It MUST NOT be used otherwise. It is a string as defined in (#server-metadata-sd-jwt-vc). This claim contains the type value of the Credential that the Wallet requests the Credential Issuer to issue.
-* `claims`: OPTIONAL. An object as defined in (#server-metadata-sd-jwt-vc).
+* `claims`: OPTIONAL. A claims description as defined in (#claims-description).
 
 The following is a non-normative example of a Credential Request with Credential format `vc+sd-jwt`.
 
@@ -2235,6 +2214,116 @@ The following is a non-normative example of a Credential Request with Credential
 ### Credential Response {#credential-response-jwt-vc-json}
 
 The value of the `credential` claim in the Credential Response MUST be a string that is an SD-JWT VC. Credentials of this format are already suitable for transfer and, therefore, they need not and MUST NOT be re-encoded.
+
+# Claims Description {#claims-description}
+
+A claims description object is an object used to describe how a certain
+claim in the Credential should be displayed to the End-User. It is used in the
+`display` parameter of the `claims` or `credentialSubject` parameters in the
+Credential Issuer metadata defined in (#format-profiles).
+
+For a claims description object, the following keys defined by this
+specification MAY be used to describe the claim or claims (other keys MAY also
+be used):
+
+  * `path`: REQUIRED. Array. Claim path query as defined in (#claim-path-query)
+    to identify the claim(s) in the Credential.
+  * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the
+    Credential Issuer will always include this claim in the issued Credential.
+    If set to `false`, the claim is not included in the issued Credential if the
+    wallet did not request the inclusion of the claim, and/or if the Credential
+    Issuer chose to not include the claim. If the `mandatory` parameter is
+    omitted, the default value is `false`.
+  * `value_type`: OPTIONAL. String value determining the type of value of the
+    claim. Valid values defined by this specification are `string`, `number`,
+    and image media types such as `image/jpeg` as defined in IANA media type
+    registry for images
+    (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
+    Other values MAY also be used.
+  * `display`: OPTIONAL. Array of objects, where each object contains display
+    properties of a certain claim in the Credential for a certain language.
+    Below is a non-exhaustive list of valid parameters that MAY be included:
+      * `name`: OPTIONAL. String value of a display name for the claim.
+      * `locale`: OPTIONAL. String value that identifies language of this object
+        represented as language tag values defined in BCP47 [@!RFC5646]. There
+        MUST be only one object for each language identifier.
+
+# Claims Path Query {#claims-path-query}
+
+The metadata specifications above make use of claims path queries to select a
+particular claim in the credential or a set of such claims. This appendix
+defines the syntax and semantics of claims path queries.
+
+A claims path query MUST be a non-empty array of strings, `null` values, or
+non-negative integers. 
+
+A string indicates that the respective key is to be selected, a `null` value
+indicates that all elements of the currently selected array(s) are to be
+selected, and a non-negative integer indicates that the respective index in an
+array is to be selected.
+
+## Example
+
+The following shows a non-normative, simplified example of a credential:
+
+```json
+{
+  "name": "Arthur Dent",
+  "address": {
+    "street_address": "42 Market Street",
+    "city": "Milliways",
+    "postal_code": "12345"
+  },
+  "degrees": [
+    {
+      "type": "Bachelor of Science",
+      "university": "University of Betelgeuse"
+    },
+    {
+      "type": "Master of Science",
+      "university": "University of Betelgeuse"
+    }
+  ],
+  "nationalities": ["British", "Betelgeusian"]
+}
+```
+
+The following shows examples of claims path queries and the respective selected
+claims:
+
+- `["name"]`: The claim `name` with the value `Arthur Dent` is selected.
+- `["address"]`: The claim `address` with its sub-claims as the value is selected.
+- `["address", "street_address"]`: The claim `street_address` with the value
+  `42 Market Street` is selected.
+- `["degrees", null, "type"]`: All `type` claims in the `degrees` array are
+  selected.
+- `["nationalities", 1]`: The second nationality is selected.
+
+## Processing
+
+In detail, the array is processed from left to right as follows:
+
+ 1. Select the root element of the credential, i.e., the top-level JSON object.
+ 2. Process the query components from left to right:
+    1. If the query component is a string, select the element in the respective
+       key in the currently selected element(s). If any of the currently
+       selected element(s) is not an object, abort processing and return an
+       error. If the key does not exist in any element currently selected,
+       remove that element from the selection.
+    2. If the query component is `null`, select all elements of the currently
+       selected array(s). If any of the currently selected element(s) is not an
+       array, abort processing and return an error.
+    3. If the query component is a non-negative integer, select the element at
+       the respective index in the currently selected array(s). If any of the
+       currently selected element(s) is not an array, abort processing and
+       return an error. If the index does not exist in a selected array, remove
+       that array from the selection.
+  3. If the set of elements currently selected is empty, abort processing and
+     return an error.
+
+The result of the processing is the set of elements to which the respective
+claim metadata applies.
+
 
 # IANA Considerations
 
