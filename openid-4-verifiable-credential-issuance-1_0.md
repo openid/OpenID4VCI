@@ -2268,7 +2268,7 @@ array is to be selected.
 
 ## Example
 
-The following shows a non-normative, simplified example of a credential:
+The following shows a non-normative, simplified example of a Credential:
 
 ```json
 {
