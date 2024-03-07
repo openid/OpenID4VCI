@@ -579,12 +579,13 @@ Below is a non-normative example of a Token Request in an Authorization Code Flo
 POST /token HTTP/1.1
 Host: server.example.com
 Content-Type: application/x-www-form-urlencoded
-Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 grant_type=authorization_code
 &code=SplxlOBeZQQYbYS6WxSbIA
 &code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
-&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb  
+&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb
+&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer
+&client_assertion=eyJhbGciOiJSU...
 ```
 
 Below is a non-normative example of a Token Request in a Pre-Authorized Code Flow (without Client Authentication):
