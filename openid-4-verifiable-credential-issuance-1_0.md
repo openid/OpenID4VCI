@@ -1996,6 +1996,15 @@ The following additional Credential Issuer metadata parameters are defined for t
           * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. Array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
+> The above metadata structure has some known limitations:
+>
+> * It cannot be used to describe claims in credentials that have the name `mandatory`, `value_type` or `display`.
+> * It is not possible to provide `mandatory`, `value_type` or `display` values for objects that contain claims 
+> * The `order` parameter cannot be used for claims within objects
+> * Arrays of unknown size cannot be described
+>
+> These limitations are expected to be resolved in the second Implementer's Draft, a proposal can be viewed in [Issue 266](https://github.com/openid/OpenID4VCI/issues/266).
+
 The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `jwt_vc_json`:
 
 <{{examples/credential_metadata_jwt_vc_json.json}}
@@ -2061,6 +2070,14 @@ The following additional Credential Issuer metadata parameters are defined for t
           * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. Array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
+> The above metadata structure has some known limitations:
+>
+> * It cannot be used to describe claims in credentials that have the name `mandatory`, `value_type` or `display`.
+> * It is not possible to provide `mandatory`, `value_type` or `display` values for objects that contain claims
+> * The `order` parameter cannot be used for claims within objects
+> * Arrays of unknown size cannot be described
+>
+> These limitations are expected to be resolved in the second Implementer's Draft, a proposal can be viewed in [Issue 266](https://github.com/openid/OpenID4VCI/issues/266).
 
 The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `ldp_vc`:
 
@@ -2206,6 +2223,15 @@ The following additional Credential Issuer metadata parameters are defined for t
         * `name`: OPTIONAL. String value of a display name for the claim.
         * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. An array of the claim name values that lists them in the order they should be displayed by the Wallet.
+
+> The above metadata structure has some known limitations:
+>
+> * It cannot be used to describe claims in credentials that have the name `mandatory`, `value_type` or `display`.
+> * It is not possible to provide `mandatory`, `value_type` or `display` values for objects that contain claims
+> * The `order` parameter cannot be used for claims within objects
+> * Arrays of unknown size cannot be described
+>
+> These limitations are expected to be resolved in the second Implementer's Draft, a proposal can be viewed in [Issue 266](https://github.com/openid/OpenID4VCI/issues/266).
 
 The following is a non-normative example of an object comprising the `credential_configurations_supported` parameter for Credential format `vc+sd-jwt`.
 
