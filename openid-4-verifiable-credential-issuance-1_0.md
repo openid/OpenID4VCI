@@ -1088,7 +1088,7 @@ A successful Batch Credential Response MUST contain all the requested Credential
 
 The following parameters are used in the Batch Credential Response:
 
-* `credential_responses`: REQUIRED. Array that contains Credential Response objects, as defined in (#credential-request), and/or Deferred Credential Response objects, as defined in (#deferred-credential-request). Every entry of the array corresponds to the Credential Request object at the same array index in the `credential_requests` parameter of the Batch Credential Request.
+* `credential_responses`: REQUIRED. Array that contains Credential Response objects, as defined in (#credential-response), and/or Deferred Credential Response objects, as defined in (#deferred-credential-response), with the exception of `c_nonce` and `c_nonce_expires_in`. Each element within the array matches the corresponding Credential Request object by array index in the `credential_requests` parameter of the Batch Credential Request.
 * `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response). 
 * `c_nonce_expires_in`: OPTIONAL. The `c_nonce_expires_in` as defined in (#credential-response).
 
