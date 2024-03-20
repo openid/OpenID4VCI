@@ -2409,7 +2409,7 @@ Wallet Providers may also provide a marketplace where Issuers can register to be
    * renamed `credential_configurations` Credential Offer parameter to  `credential_configuration_ids`
    * remove `format` from the Credential Response
    * added `signed_metadata` parameter
-   * clarified that logo can is a uri and not a url only
+   * clarified that a logo can also be a uri, not limited to just a url
    * moved the annex with Credential format profiles to the top of all annexes
    * added a Notification Endpoint used by the Wallet to notify the Credential Issuer of certain events for issued Credentials
    * completed IANA registrations section
