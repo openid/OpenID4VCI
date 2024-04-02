@@ -91,7 +91,7 @@ Verifier:
 :  An entity that requests, receives, and validates Presentations.
 
 Issuer-Holder-Verifier Model:
-:  A model for exchanging claims, where claims are issued in the form of Verifiable Credentials independent of the process of presenting them as  Presentations to the Verifiers. An issued Verifiable Credential can be (but is not necessarily) used multiple times.
+:  A model for exchanging claims, where claims are issued in the form of Verifiable Credentials independent of the process of presenting them as Presentations to the Verifiers. An issued Verifiable Credential can be (but is not necessarily) used multiple times.
 
 Holder Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential.
@@ -630,9 +630,9 @@ In addition to the response parameters defined in [@!RFC6749], the AS MAY return
 * `c_nonce`: OPTIONAL. String containing a nonce to be used when creating a proof of possession of the key proof (see (#credential_request)). When received, the Wallet MUST use this nonce value for its subsequent requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
 * `authorization_details`: REQUIRED when `authorization_details` parameter is used to request issuance of a certain Credential type as defined in (#authorization-details). MUST NOT be used otherwise. An array of objects as defined in Section 7 of [@!RFC9396]. This specification defines the following parameter to be used with authorization details type `openid_credential` in the Token Response:
-  * `credential_identifiers`: OPTIONAL. Array of strings that each uniquely identify a Credential that can be issued using Access Token returned in this response. Each Credential is a unique Credential described using the same entry in the `credentials_supported` Credential Issuer metadata, but can contain different claim values or different subset of claims within the claimset identified by the Credential type. This parameter can also be used to simplify the Credential Request, since as defined in (#credential_request) `credential_identifier` parameter replaces `format` and any other Credential Format specific parameters in the Credential Request. When received, the Wallet MUST use these values together with an Access Token in the subsequent Credential Request(s).
+  * `credential_identifiers`: OPTIONAL. Array of strings that each uniquely identify a Credential that can be issued using the Access Token returned in this response. Each Credential is a unique Credential described using the same entry in the `credentials_supported` Credential Issuer metadata, but can contain different claim values or different subset of claims within the claimset identified by the Credential type. This parameter can also be used to simplify the Credential Request, since as defined in (#credential_request) `credential_identifier` parameter replaces `format` and any other Credential Format specific parameters in the Credential Request. When received, the Wallet MUST use these values together with an Access Token in the subsequent Credential Request(s).
 
-Note: Credential Instance identifier(s) cannot be used when `scope` parameter is used in the Authorization Request to request issuance of a Credential.
+Note: Credential identifier(s) cannot be used when `scope` parameter is used in the Authorization Request to request issuance of a Credential.
 
 Below is a non-normative example of a Token Response when `authorization_details` parameter was used to request issuance of a certain Credential type:
 
