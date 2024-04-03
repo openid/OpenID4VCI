@@ -70,7 +70,7 @@ Credential Format:
 :  A format used to represent a Verifiable Credential. The exact parameters required to describe a Credential Format are defined in the Credential Format Profile. Definition of Credential Formats is out of scope for this specification. Examples for Credential Formats are W3C Verifiable Credentials [@VC_DATA], SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] and ISO/IEC 18013-5 mDL [@ISO.18013-5].
 
 Credential Format Profile:
-:  Sets of parameters specific to individual Credential Formats. Credential Format Profiles for W3C Verifiable Credentials [@VC_DATA] and ISO/IEC 18013-5 mDL [@ISO.18013-5] are provided in (#format_profiles). Other specifications or deployments can define their own Credential Format Profiles using the extension points defined in this specification.
+:  Sets of parameters specific to individual Credential Formats. Credential Format Profiles for W3C Verifiable Credentials [@VC_DATA] and ISO/IEC 18013-5 mDL [@ISO.18013-5] are provided in (#format-profiles). Other specifications or deployments can define their own Credential Format Profiles using the extension points defined in this specification.
 
 Credential Format Identifier:
 :  An identifier for a specific Credential Format in the context of this specification. Implies the usage of the respective Credential Format Profile specific parameters.
@@ -155,7 +155,7 @@ An End-User typically authorizes the issuance of Credentials with a specific Cre
 This specification is Credential Format agnostic and allows implementers to leverage specific capabilities of Credential Formats of their choice.
 To this end, extension points to add Credential Format specific parameters in the Credential Issuer metadata, Credential Offer, Authorization Request, Credential Request, and Batch Credential Request are defined.
 
-Credential Format Profiles for W3C Verifiable Credentials ([@VC_DATA]) and ISO/IEC 18013-5 mDL ([@ISO.18013-5]) are specified in (#format_profiles).
+Credential Format Profiles for W3C Verifiable Credentials ([@VC_DATA]) and ISO/IEC 18013-5 mDL ([@ISO.18013-5]) are specified in (#format-profiles).
 Other specifications or deployments can define their own Credential Format Profiles using the above-mentioned extension points.
 
 ### Multiple Credential Issuance
