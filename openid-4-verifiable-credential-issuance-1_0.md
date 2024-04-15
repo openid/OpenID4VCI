@@ -1043,7 +1043,7 @@ The Client can request issuance of multiple Credentials, that may be:
 * different Credential instances of the same Credential Dataset (with different cryptographic material)
 * a combination of the points above
 
-It is important for Wallets to distinguish these options, as they may imply different behaviour for the user experience as described in (#todo).
+It is important for Wallets to distinguish these options, as they may imply different behaviour for the user experience as described in TODO reference to temrinology.
 
 ## Batch Credential Request {#batch-credential-request}
 
