@@ -1066,7 +1066,7 @@ Content-Type: application/json
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
-   "credential_requests":[
+   "credential_requests": [
       {
          "format":"jwt_vc_json",
          "credential_definition": {
@@ -1084,6 +1084,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
                "proof_type":"jwt",
                "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
             }
+         ]
       },
       {
          "credential_identifier":"CivilEngineeringDegree-2023",
@@ -1092,7 +1093,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
                "proof_type":"jwt",
                "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
             }
-         }
+         ]
       },
       {
          "credential_identifier":"ElectricalEngineeringDegree-2023",
@@ -1101,7 +1102,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
                "proof_type":"jwt",
                "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
             }
-         }
+         ]
       }
    ]
 }
