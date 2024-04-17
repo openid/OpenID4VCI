@@ -79,7 +79,7 @@ W3C Verifiable Presentation:
 :  A Verifiable Presentations compliant to the [@VC_DATA] specification.
 
 Credential Issuer:
-:  An entity that issues Verifiable Credentials. Also called Issuer. In the context of this specification, the Credential Issuer acts as an OAuth 2.0 Authorization Server (see [@!RFC6749]).
+:  An entity that issues Verifiable Credentials. Also called Issuer. In the context of this specification, the Credential Issuer acts as an OAuth 2.0 Resource Server (see [@!RFC6749]).
 
 Holder:
 :  An entity that receives Verifiable Credentials and has control over them to present them to the Verifiers as Verifiable Presentations.
