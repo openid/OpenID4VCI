@@ -687,6 +687,7 @@ The Credential Endpoint issues a Credential as approved by the End-User upon pre
 Communication with the Credential Endpoint MUST utilize TLS.
 
 The Client can request issuance of:
+
 * one Credential of a particular Credential Configurations and Credential Dataset
 * multiple Credential instances a particular Credential Configurations and Credential Dataset (with different cryptographic material)
 
@@ -1059,6 +1060,7 @@ The Batch Credential Endpoint issues multiple Credentials in one Batch Credentia
 Communication with the Batch Credential Endpoint MUST utilize TLS. 
 
 The Client can request issuance of multiple Credentials, that may be:
+
 * different Credential Configurations (with possibly different Credential Formats)
 * different Credential Datasets
 * different Credential instances of the same Credential Dataset (with different cryptographic material)
@@ -1077,6 +1079,7 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 * `credential_response_encryption`: OPTIONAL. See (#credential-request).
 
 Below is a non-normative example of a Batch Credential Request requesting:
+
 * 2 Credentials for the same Credential Configuration and Credential Dataset but with different cryptographic binding keys
 * 2 Credentials for the same Credential Configuration but with different Credential Dataset
 
