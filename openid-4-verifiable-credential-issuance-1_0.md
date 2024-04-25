@@ -684,7 +684,11 @@ This specification also uses the error codes `authorization_pending` and `slow_d
 
 The Credential Endpoint issues a Credential as approved by the End-User upon presentation of a valid Access Token representing this approval. Support for this endpoint is REQUIRED.
 
-Communication with the Credential Endpoint MUST utilize TLS. 
+Communication with the Credential Endpoint MUST utilize TLS.
+
+The Client can request issuance of:
+* one Credential of a particular Credential Configurations and Credential Dataset
+* multiple Credential instances a particular Credential Configurations and Credential Dataset (with different cryptographic material)
 
 The Client can request issuance of a Credential of a certain type multiple times, e.g., to associate the Credential with different public keys/Decentralized Identifiers (DIDs) or to refresh a certain Credential.
 
