@@ -688,7 +688,7 @@ Communication with the Credential Endpoint MUST utilize TLS.
 
 The Client can request issuance of:
 
-* one Credential of a particular Credential Configurations and Credential Dataset
+* one Credential instance of a particular Credential Configurations and Credential Dataset
 * multiple Credential instances a particular Credential Configurations and Credential Dataset (with different cryptographic material)
 
 The Client can request issuance of a Credential of a certain type multiple times, e.g., to associate the Credential with different public keys/Decentralized Identifiers (DIDs) or to refresh a certain Credential.
@@ -1066,7 +1066,7 @@ The Client can request issuance of multiple Credentials, that may be:
 * different Credential instances of the same Credential Dataset (with different cryptographic material)
 * a combination of the points above
 
-It is important for Wallets to distinguish these options, as they may imply different behaviour for the user experience as described in TODO reference to temrinology.
+It is important for Wallets to distinguish these options, as they may imply different behaviour for the user experience as described in TODO reference to terminology.
 
 ## Batch Credential Request {#batch-credential-request}
 
