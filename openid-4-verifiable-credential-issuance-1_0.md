@@ -686,14 +686,12 @@ The Credential Endpoint issues a Credential as approved by the End-User upon pre
 
 Communication with the Credential Endpoint MUST utilize TLS.
 
-The Client can request issuance of:
+The Client may send a Credential Request to ask for the issuance of:
 
 * one Credential instance of a particular Credential Configurations and Credential Dataset
 * multiple Credential instances a particular Credential Configurations and Credential Dataset (with different cryptographic material)
 
-The Client can request issuance of a Credential of a certain type multiple times, e.g., to associate the Credential with different public keys/Decentralized Identifiers (DIDs) or to refresh a certain Credential.
-
-If the Access Token is valid for requesting issuance of multiple Credentials, it is at the Client's discretion to decide the order in which to request issuance of multiple Credentials requested in the Authorization Request.
+The Client may send multiple successive Credential Requests to ask for the issuance of multiple Credentials of different Credential Configurations or Credential Datasets. If the Access Token is valid for requesting issuance of multiple Credentials, it is at the Client's discretion to decide the order in which to request issuance of multiple Credentials.
 
 ## Binding the Issued Credential to the Identifier of the End-User Possessing that Credential {#credential-binding}
 
