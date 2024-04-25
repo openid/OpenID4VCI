@@ -2458,6 +2458,7 @@ Wallet Providers may also provide a marketplace where Issuers can register to be
    -14
 
    * changed Batch Issuance endpoint to differentiate between issuance Credential Configuration, Credential Dataset and instances of Credentials with different key material
+   * changed Credential Endpoint to enable requesting multiple instances of a particular Credential Configuration and Dataset with different cryptographic material
    
    -13
 
