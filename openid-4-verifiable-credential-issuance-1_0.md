@@ -688,10 +688,10 @@ Communication with the Credential Endpoint MUST utilize TLS.
 
 The Client may send a Credential Request to ask for the issuance of:
 
-* one Credential instance of a particular Credential Configuration and Credential Dataset
-* multiple Credential instances of a particular Credential Configuration and Credential Dataset (with different cryptographic material)
+* one Credential instance of a particular Credential Configuration and Credential Dataset;
+* multiple Credential instances of a particular Credential Configuration and Credential Dataset, each with distinct cryptographic materials.
 
-The Client may send multiple successive Credential Requests to ask for the issuance of multiple Credentials of different Credential Configurations or Credential Datasets. If the Access Token is valid for requesting issuance of multiple Credentials, it is at the Client's discretion to decide the order in which to request issuance of multiple Credentials.
+The Client can send several consecutive Credential Requests to obtain multiple Credentials with varying Credential Configurations or Credential Datasets. If the Access Token allows the request for multiple Credentials, the Client has the flexibility to determine the sequence in which these Credentials are requested.
 
 ## Binding the Issued Credential to the Identifier of the End-User Possessing that Credential {#credential-binding}
 
@@ -710,9 +710,9 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 
 * `format`: REQUIRED when the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. It is a String that determines the format of the Credential to be issued, which may determine the type and any other information related to the Credential to be issued. Credential Format Profiles consist of the Credential format specific parameters that are defined in (#format-profiles). When this parameter is used, the `credential_identifier` Credential Request parameter MUST NOT be present.
 * `credential_identifier`: REQUIRED when `credential_identifiers` parameter was returned from the Token Response. It MUST NOT be used otherwise. It is a String that identifies a Credential that is being requested to be issued. When this parameter is used, the `format` parameter and any other Credential format specific parameters such as those defined in (#format-profiles) MUST NOT be present.
-* `proof`: OPTIONAL. Object containing a proof of possession of the cryptographic key material that the issued Credential shall be bound to. It MUST NOT be present if `proofs` is used. Either `proof` or `proofs` parameter is REQUIRED if the `proof_types_supported` parameter is non-empty and present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential`. The `proof` object MUST contain the following:
-    * `proof_type`: REQUIRED. String denoting the key proof type. The value of this parameter determines other parameters in the key proof object and its respective processing rules. Key proof types defined in this specification can be found in (#proof-types).
-* `proofs`: OPTIONAL. Array of objects containing proof of possessions of the cryptographic key material that the issued Credential instances shall be bound to. It MUST NOT be present if `proofs` is used. Either `proof` or `proofs` parameter is REQUIRED if the `proof_types_supported` parameter is non-empty and present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential. MUST NOT be used when `proofs` is present. The `proofs` object MUST contain an array of objects equivalent to the values defined by the `proof` object.
+* `proof`: OPTIONAL. Object containing a proof of possession of the cryptographic key material that the issued Credential SHALL be bound to. It MUST NOT be present if `proofs` is used. If the `proof_types_supported` parameter is non-empty and included in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential, then either the proof or proofs parameter is REQUIRED. The `proof` object MUST contain the following:
+    * `proof_type`: REQUIRED. String specifing the key proof type. The value set for this parameter determines the additional parameters in the key proof object and their corresponding processing rules. The key proof types outlined in this specification are detailed in (#proof-types).
+* `proofs`: OPTIONAL. Array of objects that provide proof of possessions of the cryptographic key material to which the issued Credential instances SHALL be bound to. It MUST NOT be present if `proofs` is used. Either `proof` or `proofs` parameter is REQUIRED if the `proof_types_supported` parameter is non-empty and present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential. MUST NOT be used when `proofs` is present. The `proofs` object MUST contain an array of objects that correspond to the values defined in the `proof` object.
 * `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If this request element is not present, the corresponding credential response returned is not encrypted.
     * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
     * `alg`: REQUIRED. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] for encrypting Credential Responses.
@@ -1011,7 +1011,7 @@ If the Wallet is requesting the issuance of a Credential that is not supported b
   * `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
   * `unsupported_credential_type`: Requested Credential type is not supported.
   * `unsupported_credential_format`: Requested Credential format is not supported.
-  * `invalid_proof`: The `proof` or `proofs` in the Credential Request is invalid. Both the `proof` and `proofs` field are not present or both are present. One of the provided key proof is invalid or not bound to a nonce provided by the Credential Issuer.
+  * `invalid_proof`: The `proof` or `proofs` in the Credential Request is invalid because either both fields are missing, or both are present simultaneously. Additionally, one of the provided key proofs is either invalid or not linked to a nonce provided by the Credential Issuer.
   * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
 * `error_description`: OPTIONAL. The `error_description` parameter MUST be a human-readable ASCII [@!USASCII] text, providing any additional information used to assist the Client implementers in understanding the occurred error. The values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
@@ -1064,16 +1064,16 @@ The Client can request issuance of multiple Credentials, that may be:
 * different Credential instances of the same Credential Dataset (with different cryptographic material)
 * a combination of the points above
 
-It is important for Wallets to distinguish these options, as they may imply different behaviour for the user experience as described in TODO reference to terminology.
+Wallets need to differentiate between these options because they can lead to variations in User experience, as outlined in the TODO reference to terminology.
 
 ## Batch Credential Request {#batch-credential-request}
 
-A Client makes a Credential Request to the Credential Endpoint by sending the following parameters as a JSON object in the entity-body of an HTTP POST request using the `application/json` media type with the following parameters:
+A Client submits a Credential Request to the Credential Endpoint by sending a JSON object containing the following parameters in the entity-body of an HTTP POST request, using the `application/json` media type.
 
 * `credential_requests`: REQUIRED. Array that contains Batch Credential Request objects, each of these objects may refer to a different Credential Configuration or the same Credential Configuration with a different Credential Dataset.
   * `format`: REQUIRED if the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
   * `credential_identifier`: REQUIRED if `credential_identifiers` parameter was returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
-  * `proofs`: REQUIRED if the `proof_types_supported` parameter is non-empty and present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential. It contains an array of proof of possessions the cryptographic key material the issued Credential would be bound to. Each element within the array  contains an object of a proof as defined in (#proof-types). Each of these proofs requests an instance of a Credential with the same Credential Configuration and Credential Dataset but with different cryptographic binding.
+  * `proofs`: REQUIRED if the `proof_types_supported` parameter is non-empty and present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential. This parameter contains an array of proof of possessions of the cryptographic key material to which the issued Credential SHALL be bound to. Each element in the array is an object representing a proof, as specified in (#proof-types). Each proofs corresponds to a request for a Credential instance with the same Credential Configuration and Credential Dataset, but with a different cryptographic binding.
 * `credential_response_encryption`: OPTIONAL. See (#credential-request).
 
 Below is a non-normative example of a Batch Credential Request requesting:
@@ -1132,9 +1132,9 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Batch Credential Response {#batch-credential-response}
 
-Batch Credential Response behaves similar to Credential Response. The response for each request within the `credential_requests` of the Batch Credential Request may be either immediate or deferred. Therefore, the Credential Issuer MAY be able to immediately issue the requested Credentials or MAY respond with a `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready.
+The Batch Credential Response behaves similarly to the Credential Response. Each response to the requests within the `credential_requests` of the Batch Credential Request can be either immediate or deferred. Consequently, the Credential Issuer MAY immediately issue the requested Credentials or MAY provide a `transaction_id` parameter to the Client, which can be used later to retrieve the Credential once it is ready.
 
-In case that all requests are responded with a `transaction_id`, the Issuer MUST use the HTTP status code 202 (see Section 15.3.3 of [@!RFC9110]), otherwise the status code 200 is used for a successful Batch Credential Response.
+If all requests are responded to with a `transaction_id`, the Issuer MUST use the HTTP status code 202 (as detailed in Section 15.3.3 of [@!RFC9110]). If not, the HTTP status code 200 MUST be used for a successful Batch Credential Response.
 
 The Batch Credential Response may be encrypted if the `credential_response_encryption` object was present in the request, see (#credential-response) for details.
 If the Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
