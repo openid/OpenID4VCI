@@ -967,7 +967,6 @@ Below is a non-normative example of a Credential Response in an immediate issuan
 ```
 HTTP/1.1 200 OK
 Content-Type: application/json
-Cache-Control: no-store
 
 {
   "credentials": [
