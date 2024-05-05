@@ -682,11 +682,11 @@ This specification also uses the error codes `authorization_pending` and `slow_d
 
 # Credential Endpoint {#credential-endpoint}
 
-The Credential Endpoint issues a Credential as approved by the End-User upon presentation of a valid Access Token representing this approval. Support for this endpoint is REQUIRED.
+The Credential Endpoint issues one or more instances of a Credential Configuration or Credential Dataset as approved by the End-User upon presentation of a valid Access Token representing this approval. Support for this endpoint is REQUIRED.
 
 Communication with the Credential Endpoint MUST utilize TLS.
 
-The Client may send a Credential Request to ask for the issuance of:
+The Client may send a Credential Request to obtain:
 
 * one Credential instance of a particular Credential Configuration and Credential Dataset;
 * multiple Credential instances of a particular Credential Configuration and Credential Dataset, each with distinct cryptographic materials.
@@ -962,7 +962,7 @@ Cache-Control: no-store
 }
 ```
 
-Below is a non-normative example of a Credential Response in an immediate issuance flow for a batch of Credential instances in JWT VC format (JSON encoded):
+Below is a non-normative example of a Credential Response in an immediate issuance flow for multiple Credential instances in JWT VC format (JSON encoded):
 
 ```
 HTTP/1.1 200 OK
