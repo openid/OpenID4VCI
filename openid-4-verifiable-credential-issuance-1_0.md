@@ -148,7 +148,7 @@ The Credential Format defines how the data (or Dataset) within final Verifiable 
 This can include the specific parameters needed to describe the Credential, which are established in the Credential Format Profile.
 While in principle independent of each other, the Credential Dataset and the Credential Format can have a relationship in the sense that an Issuer may only offer certain Credential Formats for certain Credential Datasets.
 
-An End-User typically authorizes the issuance of Credentials with a specific Credential Dataset, but do not usually care about the Credential Format. The same Credential Dataset may even be issued in different Credential Formats.
+An End-User typically authorizes the issuance of Credentials with a specific Credential Dataset, but do not usually care about the Credential Format. The same Credential Dataset may even be issued in different Credential Formats or with multiple Credential instances.
 
 ### Credential Formats and Credential Format Profiles
 
