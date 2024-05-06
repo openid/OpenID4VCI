@@ -133,7 +133,6 @@ Existing OAuth 2.0 mechanisms are extended as following:
 
 * A new Grant Type "Pre-Authorized Code" is defined to facilitate flows where the preparation of the Credential issuance is conducted before the actual OAuth flow starts (see (#pre-authz-code-flow)).
 * A new authorization details [@!RFC9396] type `openid_credential` is defined to convey the details about the Credentials (including formats and types) the Wallet wants to obtain (see (#authorization-details)).
-* The Token Response error codes `authorization_pending` and `slow_down` are used to allow for deferred authorization of Credential issuance. These error codes are supported for the Pre-Authorized Code grant type.
 * Client metadata is used to convey the Wallet's metadata. The new Client metadata parameter `credential_offer_endpoint` is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (see (#client-metadata)).
 * Authorization Endpoint: The additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated Credential Offer (see (#credential-authz-request)). Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Verifiable Presentations from the calling Wallet during Authorization Request processing.
 * Token Endpoint: Optional response parameters `c_nonce` and `c_nonce_expires_in` are added to the Token Endpoint, Credential Endpoint, and Batch Credential Endpoint to provide the Client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential Endpoint (see (#token-response)).
@@ -333,7 +332,6 @@ The following values are defined by this specification:
     * `input_mode` : OPTIONAL. String specifying the input character set. Possible values are `numeric` (only digits) and `text` (any characters). The default is `numeric`.
     * `length`: OPTIONAL. Integer specifying the length of the Transaction Code. This helps the Wallet to render the input screen and improve the user experience.
     * `description`: OPTIONAL. String containing guidance for the Holder of the Wallet on how to obtain the Transaction Code, e.g., describing over which communication channel it is delivered. The Wallet is RECOMMENDED to display this description next to the Transaction Code input screen to improve the user experience. The length of the string MUST NOT exceed 300 characters. The `description` does not support internationalization, however the Issuer MAY detect the Holder's language by previous communication or an HTTP Accept-Language header within an HTTP GET request for a Credential Offer URI.
-  * `interval`: OPTIONAL. The minimum amount of time in seconds that the Wallet SHOULD wait between polling requests to the token endpoint (in case the Authorization Server responds with error code `authorization_pending` - see (#token-error-response)). If no value is provided, Wallets MUST use `5` as the default.
   * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. It MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
   
 The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two different Credentials (which may even be of different formats):
@@ -669,16 +667,6 @@ Cache-Control: no-store
    "error": "invalid_request"
 }
 ```
-
-This specification also uses the error codes `authorization_pending` and `slow_down` defined in [@!RFC8628] for the Pre-Authorized Code grant type:
-
- `authorization_pending`:
-
-- This error code is used if the Authorization Server is waiting for an End-User interaction or a downstream process to complete. The Wallet SHOULD repeat the access token request to the token endpoint (a process known as polling). Before each new request, the Wallet MUST wait at least the number of seconds specified by the `interval` claim of the Credential Offer (see (#credential-offer-parameters)) or the authorization response (see (#authorization-response)), or 5 seconds if none was provided, and respect any increase in the polling interval required by the "slow_down" error.
-
-`slow_down`:
-
-- A variant of `authorization_pending` error code, the authorization request is still pending and polling should continue, but the interval MUST be increased by 5 seconds for this and all subsequent requests.
 
 # Credential Endpoint {#credential-endpoint}
 
@@ -1428,7 +1416,6 @@ The Credential Issuer MUST ensure the release of any privacy-sensitive data in C
 The Pre-Authorized Code Flow is vulnerable to the replay of the Pre-Authorized Code, because by design, it is not bound to a certain device (as the Authorization Code Flow does with PKCE). This means an attacker can replay the Pre-Authorized Code meant for a victim at another device, e.g., the attacker can scan the QR code while it is displayed on the victim's screen, and thereby get access to the Credential. Such replay attacks must be prevented using other means. The design facilitates the following options:
 
 * Transaction Code: the Credential Issuer might set up a Transaction Code with the End-User (e.g., via text message or email) that needs to be presented in the Token Request.
-* Callback to device where the transaction originated: upon receiving the Token Request, the Credential Issuer asks the End-User to confirm on the originating device (the device that displayed the QR code) that the Credential Issuer MAY proceed with the Credential issuance process. While the Credential Issuer reaches out to the End-User on the other device to get confirmation, the Credential Issuer's Authorization Server returns an error code `authorization_pending` or `slow_down` to the Wallet, as described in (#token-error-response). The Wallet is required to call the Token Endpoint again to obtain the Access Token. If the End-User does not confirm, the Token Request is returned with the `access_denied` error code. This flow gives the End-User on the originating device more control over the issuance process.
 
 ### Transaction Code Phishing
 
@@ -2404,6 +2391,7 @@ Wallet Providers may also provide a marketplace where Issuers can register to be
    
    -13
 
+   * remove use of the `authorization_pending` and `slow_down` error codes
    * change the structure of `proof_types` from an array to a `proof_types_supported` map that contains a required `proof_signing_alg_values_supported` parameter
    * renamed `cryptographic_suites_supported` to `credential_signing_alg_values_supported` to clarify the purpose of the parameter
    * renamed `credential_configurations` Credential Offer parameter to  `credential_configuration_ids`
