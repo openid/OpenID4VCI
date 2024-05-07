@@ -155,7 +155,7 @@ An End-User typically authorizes the issuance of Credentials with a specific Cre
 This specification is Credential Format agnostic and allows implementers to leverage specific capabilities of Credential Formats of their choice.
 To this end, extension points to add Credential Format specific parameters in the Credential Issuer metadata, Credential Offer, Authorization Request, Credential Request, and Batch Credential Request are defined.
 
-Credential Format Profiles for SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], mDL [@ISO.18013-5], and W3C VCDM [@VC_DATA] are specified in (#format-profiles).
+Credential Format Profiles for IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], ISO mDL [@ISO.18013-5], and W3C VCDM [@VC_DATA] are specified in (#format-profiles).
 Other specifications or deployments can define their own Credential Format Profiles using the above-mentioned extension points.
 
 ### Multiple Credential Issuance
