@@ -2,7 +2,7 @@
 title = "OpenID for Verifiable Credential Issuance - Editor's draft"
 abbrev = "openid-4-verifiable-credential-issuance"
 ipr = "none"
-workgroup = "OpenID Connect"
+workgroup = "OpenID Digital Credentials Protocols"
 keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
