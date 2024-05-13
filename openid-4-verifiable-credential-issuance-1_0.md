@@ -2433,6 +2433,7 @@ Wallet Providers may also provide a market place where Issuers can register to b
 
    -14
 
+   * Clarify Batch Endpoint Encryption
    * Define Credential Format as a term
    * Define Credential Dataset as a term
    * Define Credential Configuration as a term
