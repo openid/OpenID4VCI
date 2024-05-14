@@ -710,9 +710,9 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 
 * `format`: REQUIRED when the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. It is a String that determines the format of the Credential to be issued, which may determine the type and any other information related to the Credential to be issued. Credential Format Profiles consist of the Credential format specific parameters that are defined in (#format-profiles). When this parameter is used, the `credential_identifier` Credential Request parameter MUST NOT be present.
 * `credential_identifier`: REQUIRED when `credential_identifiers` parameter was returned from the Token Response. It MUST NOT be used otherwise. It is a String that identifies a Credential that is being requested to be issued. When this parameter is used, the `format` parameter and any other Credential format specific parameters such as those defined in (#format-profiles) MUST NOT be present.
-* `proof`: OPTIONAL. Object containing a proof of possession of the cryptographic key material that the issued Credential SHALL be bound to. It MUST NOT be present if `proofs` is used. If the `proof_types_supported` parameter is non-empty and included in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential, then either the proof or proofs parameter is REQUIRED. The `proof` object MUST contain the following:
+* `proof`: OPTIONAL. Object containing a proof of possession of the cryptographic key material that the issued Credential SHALL be bound to. `proof` MUST NOT be present if `proofs` is used.  The `proof` object MUST contain the following:
     * `proof_type`: REQUIRED. String specifing the key proof type. The value set for this parameter determines the additional parameters in the key proof object and their corresponding processing rules. The key proof types outlined in this specification are detailed in (#proof-types).
-* `proofs`: OPTIONAL. Array of objects that provide proof of possessions of the cryptographic key material to which the issued Credential instances SHALL be bound to. It MUST NOT be present if `proofs` is used. Either `proof` or `proofs` parameter is REQUIRED if the `proof_types_supported` parameter is non-empty and present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential. MUST NOT be used when `proofs` is present. The `proofs` object MUST contain an array of objects that correspond to the values defined in the `proof` object.
+* `proofs`: OPTIONAL. Array of objects that provide proof of possessions of the cryptographic key material to which the issued Credential instances SHALL be bound to. Each object MUST contain the values as defined in the `proof` object. `proofs` MUST NOT be present if `proof` is used. 
 * `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If this request element is not present, the corresponding credential response returned is not encrypted.
     * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
     * `alg`: REQUIRED. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] for encrypting Credential Responses.
@@ -741,7 +741,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
    }
 }
 ```
-
+Note: Either proof or proofs parameter is REQUIRED if the proof_types_supported parameter is non-empty and present in the credential_configurations_supported parameter of the Issuer metadata for the requested Credential.
 Below is a non-normative example of a Credential Request for two Credential instances in an IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format using a Credential instance identifier and key proof type `jwt`:
 
 ```
