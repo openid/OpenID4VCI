@@ -689,7 +689,7 @@ Communication with the Credential Endpoint MUST utilize TLS.
 The Client may send a Credential Request to obtain:
 
 * one Credential of a particular Credential Configuration and Credential Dataset;
-* multiple Credential instances of a particular Credential Configuration and Credential Dataset, each with distinct cryptographic materials.
+* multiple instances of a Credential of a particular Credential Configuration and Credential Dataset, each with distinct cryptographic materials.
 
 The Client can send several consecutive Credential Requests to obtain multiple Credentials with varying Credential Configurations or Credential Datasets. If the Access Token allows the request for multiple Credentials, the Client has the flexibility to determine the sequence in which these Credentials are requested.
 
