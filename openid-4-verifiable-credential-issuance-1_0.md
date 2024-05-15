@@ -1113,7 +1113,7 @@ A successful Batch Credential Response MUST contain all the requested Credential
 
 If the Client requested an encrypted response, the Batch Credential Response MUST be sent as a JWT using the parameters from the `credential_response_encryption` object and using the `application/jwt` media type. If encryption was requested in the Batch Credential Request and the Batch Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
 
-If the Batch Credential Response is not encrypteed, it MUST be sent as a JSON object using the `application/json` media type.
+If the Batch Credential Response is not encrypted, it MUST be sent as a JSON object using the `application/json` media type.
 
 The following parameters are used in the Batch Credential Response:
 
