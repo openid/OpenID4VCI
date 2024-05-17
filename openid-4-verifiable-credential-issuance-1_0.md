@@ -106,7 +106,7 @@ Biometrics-based Holder Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential by demonstrating a certain biometric trait, such as fingerprint or face. One example of a Verifiable Credential with Biometrics-based Holder Binding is a mobile driving license [@ISO.18013-5], which contains a portrait of the holder.
 
 Wallet:
-:  An entity used by the Holder to request, receive, store, present, and manage Verifiable Credentials and cryptographic key material. There is no single deployment model of a Wallet: Credentials and keys can be stored and managed either locally, through a remote self-hosted service, or via a remote third-party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Client (see [@!RFC6749]) since it obtains an Access Token to access an OAuth 2.0 Resource Server (Credential Endpoint).
+:  An entity used by the Holder to request, receive, store, present, and manage Verifiable Credentials and cryptographic key material. There is no single deployment model of a Wallet: Credentials and keys can be stored and managed either locally, through a remote self-hosted service, or via a remote third-party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Client (see [@!RFC6749]) and obtains an Access Token to access an OAuth 2.0 Resource Server (Credential Endpoint).
 
 Deferred Credential Issuance:
 :  Issuance of Credentials not directly in the response to a Credential issuance request but following a period of time that can be used to perform certain offline business processes.
