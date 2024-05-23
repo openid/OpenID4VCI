@@ -752,16 +752,12 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
    "credential_identifier": "CivilEngineeringDegree-2023",
-   "proofs": [
-      {
-        "proof_type": "jwt",
-        "jwt": "eyJ0eXAiOiJvcGVuaWQ0dmNpLXBy...mlkLb9zioZoipdP-jvh1WlA"
-      },
-      {
-        "proof_type": "jwt",
-        "jwt": "eyJ0eXAiOiJvcGVuaWQ0dmNpLXBy...mlkLb9zioZoipdP-jvh1WlA"
-      }
-   ]
+   "proofs": {
+      "jwt": [
+         "eyJ0eXAiOiJvcGVuaWQ0dmNpL...Lb9zioZoipdP-jvh1WlA",
+         "eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
+      ]
+   }
 }
 ```
 
@@ -1097,16 +1093,12 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
              "UniversityDegreeCredential"
            ]
          },
-         "proofs": [
-            {
-               "proof_type":"jwt",
-               "jwt":"eyJ0eXAiOiJvcGVuaWQ0dmNpL...Lb9zioZoipdP-jvh1WlA"
-            },
-            {
-               "proof_type":"jwt",
-               "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
-            }
-         ]
+         "proofs": {
+            "jwt": [
+               "eyJ0eXAiOiJvcGVuaWQ0dmNpL...Lb9zioZoipdP-jvh1WlA",
+               "eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
+            ]
+         }
       },
       {
          "credential_identifier":"CivilEngineeringDegree-2023",
