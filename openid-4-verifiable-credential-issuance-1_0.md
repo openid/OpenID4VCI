@@ -698,7 +698,7 @@ The Credential Endpoint issues a Credential as approved by the End-User upon pre
 
 Communication with the Credential Endpoint MUST utilize TLS. 
 
-The Client can request issuance of a Credential of a certain type multiple times, e.g., to associate the Credential with different public keys/Decentralized Identifiers (DIDs) or to refresh a certain Credential. 
+The Client can request issuance of a Credential of a certain type multiple times, e.g., to associate the Credential with different public keys/Decentralized Identifiers (DIDs) or to refresh a certain Credential.
 
 If the Access Token is valid for requesting issuance of multiple Credentials, it is at the Client's discretion to decide the order in which to request issuance of multiple Credentials requested in the Authorization Request.
 
