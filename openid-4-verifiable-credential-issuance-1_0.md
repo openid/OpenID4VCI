@@ -1735,7 +1735,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
       <organization>Self-Issued Consulting</organization>
     </author>
     <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
-      <organization>sprind.org</organization>
+      <organization>German Federal Agency for Disruptive Innovation (SPRIND)</organization>
     </author>
    <date day="28" month="November" year="2023"/>
   </front>
@@ -1858,7 +1858,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
          <organization>Mattr</organization>
         </author>
         <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
-          <organization>sprind.org</organization>
+          <organization>German Federal Agency for Disruptive Innovation (SPRIND)</organization>
         </author>
         <author initials="K." surname="Yasuda" fullname="Kristina Yasuda">
           <organization>German Federal Agency for Disruptive Innovation (SPRIND)</organization>
