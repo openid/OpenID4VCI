@@ -438,7 +438,7 @@ The following is a non-normative example of an `authorization_details` object wi
 
 <{{examples/authorization_details.json}}
 
-The following is a non-normative example of an `authorization_details` object with a `format`:
+The following is a non-normative example of an `authorization_details` object with a `format` parameter of Credential format `vc+sd-jwt`:
 
 <{{examples/authorization_details_sd_jwt_vc.json}}
 
@@ -1059,7 +1059,7 @@ The following parameters are used in the Batch Credential Request:
 
 * `credential_requests`: REQUIRED. Array that contains Credential Request objects, as defined in (#credential-request).
 
-Below is a non-normative example of a Batch Credential Request:
+Below is a non-normative example of a Batch Credential Request for two Credentials in an IETF SD-JWT VC [@VC_DATA] format and [@ISO.18013-5] format:
 
 ```
 POST /batch_credential HTTP/1.1
@@ -1390,9 +1390,9 @@ Depending on the Credential Format, additional parameters might be present in th
 
 The Authorization Server MUST be able to determine from the Issuer metadata what claims are disclosed by the requested Credentials to be able to render meaningful End-User consent.
 
-The following is a non-normative example of Credential Issuer metadata:
+The following is a non-normative example of Credential Issuer metadata with Credential format `vc+sd-jwt`:
 
-<{{examples/credential_issuer_metadata_jwt_vc_json.json}}
+<{{examples/credential_metadata_sd_jwt_vc.json}}
 
 Note: The Client MAY use other mechanisms to obtain information about the Verifiable Credentials that a Credential Issuer can issue.
 
