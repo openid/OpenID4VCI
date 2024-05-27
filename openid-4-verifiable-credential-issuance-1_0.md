@@ -378,7 +378,7 @@ openid-credential-offer://?credential_offer=%7B%22credential_issuer%22:%22https:
 
 ### Sending Credential Offer by Reference Using `credential_offer_uri` Parameter
 
-Upon receipt of the `credential_offer_uri`, the Wallet MUST send an HTTP GET request to URI to retrieve the referenced Credential Offer Object, unless it is already cached, and parse it to recreate the Credential Offer parameters.
+Upon receipt of the `credential_offer_uri`, the Wallet MUST send an HTTP GET request to the URI to retrieve the referenced Credential Offer Object, unless it is already cached, and parse it to recreate the Credential Offer parameters.
 
 Note: The Credential Issuer SHOULD use a unique URI for each Credential Offer utilizing distinct parameters, or otherwise prevent the Credential Issuer from caching the `credential_offer_uri`.
 
@@ -393,11 +393,12 @@ The response from the Credential Issuer that contains a Credential Offer Object 
 
 This ability to pass the Credential Offer by reference is particularly useful for large requests.
 
-Below is a non-normative example of the Credential Offer displayed by the Credential Issuer as a QR code when the Credential Offer is passed by reference:
+When the Credential Offer is passed by reference, the Credential Offer can be displayed by the Credential Issuer as a QR code. Below is a non-normative example:
 
 ```
 openid-credential-offer://?
   credential_offer_uri=https%3A%2F%2Fserver%2Eexample%2Ecom%2Fcredential-offer.json
+  %2FGkurKxf5T0Y-mnPFCHqWOMiZi4VS138cQO_V7PZHAdM
 ```
 
 Below is a non-normative example of a response from the Credential Issuer that contains a Credential Offer Object used to encourage the Wallet to start an Authorization Code Flow:
@@ -1617,7 +1618,7 @@ Wallet reacts to a Credential Offer. An attacker may send Credential Offers usin
 custom URL schemes or claimed https urls, see if the
 Wallet reacts (e.g., whether the wallet retrieves Credential Issuer metadata hosted by an
 attacker's server), and, therefore, learn which Wallet is installed. To avoid this, the Wallet SHOULD
-require user interaction or establish trust in the Issuer before fetching any `credential_offer_uri `
+require user interaction or establish trust in the Issuer before fetching any `credential_offer_uri`
 or acting on the received Credential Offer.
 
 ## Untrusted Wallets
