@@ -698,7 +698,7 @@ The Credential Endpoint issues one or more instances of a Credential Configurati
 
 Communication with the Credential Endpoint MUST utilize TLS.
 
-The Client may send a Credential Request to obtain:
+The Client sends a Credential Request to obtain:
 
 * one Credential of a particular Credential Configuration and Credential Dataset;
 * multiple instances of a Credential of a particular Credential Configuration and Credential Dataset, each with distinct cryptographic materials.
