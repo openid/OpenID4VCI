@@ -859,7 +859,7 @@ When a W3C Verifiable Presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] si
   * `domain`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
   * `challenge`: REQUIRED when the Credential Issuer has provided a `c_nonce`. It MUST NOT be used otherwise. String, where the value is a server-provided `c_nonce`. It MUST be present when the Wallet received a server-provided `c_nonce`.
 
-The Credential Issuer MUST validate that the W3C Verifiable Presentation is actually signed with a key in the possession of the Holder.
+The Credential Issuer MUST validate that the W3C Verifiable Presentation used as a proof is actually signed with a key in the possession of the Holder.
 
 Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@LD_Suite_Registry].
 
@@ -937,8 +937,8 @@ If the Credential Response is not encrypted, the media type of the response MUST
 
 The following parameters are used in the JSON-encoded Credential Response body:
 
-* `credential`: OPTIONAL. Contains issued Credential. It MUST not be used  if `credentials` or `transaction_id` is present. It MAY be a string or an object, depending on the Credential format. See (#format-profiles) for the Credential format specific encoding requirements.
-* `credentials`: OPTIONAL. Contains an array of issued Credentials. It MUST not be used  if `credential` or `transaction_id` is present. The values in the array MAY be a string or an object, depending on the Credential format. See (#format-profiles) for the Credential format specific encoding requirements.
+* `credential`: OPTIONAL. Contains issued Credential. It MUST NOT be used if `credentials` or `transaction_id` parameter is present. It MAY be a string or an object, depending on the Credential format. See (#format-profiles) for the Credential format specific encoding requirements.
+* `credentials`: OPTIONAL. Contains an array of issued Credentials. It MUST NOT be used if `credential` or `transaction_id` parameter is present. The values in the array MAY be a string or an object, depending on the Credential format. See (#format-profiles) for the Credential format specific encoding requirements.
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer was unable to immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used  if `credential` or `credentials` is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. String containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential-request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
@@ -1012,7 +1012,7 @@ If the Wallet is requesting the issuance of a Credential that is not supported b
   * `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
   * `unsupported_credential_type`: Requested Credential type is not supported.
   * `unsupported_credential_format`: Requested Credential format is not supported.
-  * `invalid_proof`: The `proof` or `proofs` in the Credential Request is invalid because either both fields are missing, or both are present simultaneously. Additionally, one of the provided key proofs is either invalid or not linked to a nonce provided by the Credential Issuer.
+  * `invalid_proof`: The `proof` or `proofs` parameter in the Credential Request is invalid. For example, because either both fields are missing or both are present simultaneously, or one of the provided key proofs is either invalid or not linked to a nonce provided by the Credential Issuer.
   * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
 * `error_description`: OPTIONAL. The `error_description` parameter MUST be a human-readable ASCII [@!USASCII] text, providing any additional information used to assist the Client implementers in understanding the occurred error. The values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
@@ -1058,7 +1058,7 @@ The Batch Credential Endpoint issues multiple Credentials in one Batch Credentia
 
 Communication with the Batch Credential Endpoint MUST utilize TLS. 
 
-The Client can request issuance of multiple Credentials, that may be:
+The Client can request issuance of multiple Credentials that can be:
 
 * different Credential Configurations (with possibly different Credential Formats)
 * different Credential Datasets
@@ -1069,7 +1069,7 @@ Wallets need to differentiate between these options because they can lead to var
 
 ## Batch Credential Request {#batch-credential-request}
 
-A Client submits a Credential Request to the Credential Endpoint by sending a JSON object containing the following parameters in the entity-body of an HTTP POST request, using the `application/json` media type.
+A Client submits a Batch Credential Request to the Batch Credential Endpoint by sending a JSON object containing the following parameters in the entity-body of an HTTP POST request, using the `application/json` media type.
 
 * `credential_requests`: REQUIRED. Array that contains Batch Credential Request objects, each of these objects may refer to a different Credential Configuration or the same Credential Configuration with a different Credential Dataset.
   * `format`: REQUIRED if the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
@@ -1130,6 +1130,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 ## Batch Credential Response {#batch-credential-response}
 
 The Batch Credential Response behaves similarly to the Credential Response. Each response to the requests within the `credential_requests` of the Batch Credential Request can be either immediate or deferred. Consequently, the Credential Issuer MAY immediately issue the requested Credentials or MAY provide a `transaction_id` parameter to the Client, which can be used later to retrieve the Credential once it is ready.
+If at least one of the requested credentials cannot be issued either immediately or deferred, the Credential Issuer MUST return an error.
 
 If all requests are responded to with a `transaction_id`, the Issuer MUST use the HTTP status code 202 (as detailed in Section 15.3.3 of [@!RFC9110]). If not, the HTTP status code 200 MUST be used for a successful Batch Credential Response.
 
