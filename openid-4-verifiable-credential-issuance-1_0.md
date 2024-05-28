@@ -694,7 +694,7 @@ Cache-Control: no-store
 
 # Credential Endpoint {#credential-endpoint}
 
-The Credential Endpoint issues one or more instances of a Credential Configuration or Credential Dataset as approved by the End-User upon presentation of a valid Access Token representing this approval. Support for this endpoint is REQUIRED.
+The Credential Endpoint issues one or more Credentials of the same Credential Configuration and Credential Dataset, as approved by the End-User upon presentation of a valid Access Token representing this approval. Support for this endpoint is REQUIRED.
 
 Communication with the Credential Endpoint MUST utilize TLS.
 
