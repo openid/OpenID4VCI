@@ -1058,7 +1058,8 @@ The Batch Credential Endpoint allows a Client to send multiple Credential Reques
 
 The following parameters are used in the Batch Credential Request:
 
-* `credential_requests`: REQUIRED. Array that contains Credential Request objects, as defined in (#credential-request).
+* `credential_requests`: REQUIRED. Array that contains Credential Request objects, as defined in (#credential-request). The individual Credential Request objects MUST NOT contain `credential_response_encryption`.
+* `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Batch Credential Response. It contains the same parameters as defined in #{credential-request}. If this request element is not present, the corresponding Batch Credential Response returned is not encrypted.
 
 Below is a non-normative example of a Batch Credential Request:
 
@@ -1097,7 +1098,11 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Batch Credential Response {#batch-credential-response}
 
-A successful Batch Credential Response MUST contain all the requested Credentials. The Batch Credential Response MUST be sent as a JSON object using the `application/json` media type.
+A successful Batch Credential Response MUST contain all the requested Credentials.
+
+If the Client requested an encrypted response, the Batch Credential Response MUST be sent as a JWT using the parameters from the `credential_response_encryption` object and using the `application/jwt` media type. If encryption was requested in the Batch Credential Request and the Batch Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
+
+If the Batch Credential Response is not encrypted, it MUST be sent as a JSON object using the `application/json` media type.
 
 The following parameters are used in the Batch Credential Response:
 
@@ -2416,6 +2421,7 @@ Wallet Providers may also provide a market place where Issuers can register to b
 
    -14
 
+   * Clarify Batch Endpoint Encryption
    * Define Credential Format as a term
    * Define Credential Dataset as a term
    * Define Credential Configuration as a term
