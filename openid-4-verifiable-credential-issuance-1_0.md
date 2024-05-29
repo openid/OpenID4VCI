@@ -1065,7 +1065,7 @@ The Client can request issuance of multiple Credentials that can be:
 * different Credential instances of the same Credential Dataset (with different cryptographic material)
 * a combination of the points above
 
-Wallets need to differentiate between these options because they can lead to variations in User experience, as outlined in the TODO reference to terminology.
+Wallets need to differentiate between these options because they can lead to variations in user experience. While Credentials with the same Credential Configuration but different Credential Dataset should be displayed separately (e.g. vehicle registration credentials for multiple cars), Credentials with the same Credential Configuration and Credential Dataset (e.g. multiple age proofs for unlinkability) should only appear as a single Credential in the Wallet user interface, as these technical details are not relevant to the average End-user. 
 
 ## Batch Credential Request {#batch-credential-request}
 
