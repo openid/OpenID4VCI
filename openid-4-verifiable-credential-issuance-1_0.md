@@ -1076,7 +1076,7 @@ A Client submits a Batch Credential Request to the Batch Credential Endpoint by 
 * `credential_requests`: REQUIRED. Array that contains Batch Credential Request objects, each of these objects may refer to a different Credential Configuration or the same Credential Configuration with a different Credential Dataset.
   * `format`: REQUIRED if the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
   * `credential_identifier`: REQUIRED if `credential_identifiers` parameter was returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
-  * `proofs`: OPTIONAL. Object providing one or more proof of possessions of the cryptographic key material to which the issued Credential instances SHALL be bound to. The `proofs` object contains exactly one parameter named as the proof type in (#proof-types), the value set for this parameter is an array containing parameters as defined by the corresponding proof type. The `proofs` parameter is REQUIRED if the `proof_types_supported` parameter is non-empty and present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential.
+  * `proofs`: OPTIONAL. See (#credential-request).
 * `credential_response_encryption`: OPTIONAL. See (#credential-request).
 
 Below is a non-normative example of a Batch Credential Request requesting:
