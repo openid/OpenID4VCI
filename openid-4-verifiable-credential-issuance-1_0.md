@@ -1006,7 +1006,7 @@ If the Credential Request does not contain an Access Token that enables issuance
 
 #### Credential Request Errors {#credential-request-errors}
 
-For the errors specific to the payload of the Credential Request such as those caused by `type`, `format`, `proof`, or encryption parameters in the request, the error codes values defined in this section MUST be used instead of a generic `invalid_request` parameter defined in Section 3.1 of [@!RFC6750].
+For errors related to the Credential Request's payload, such as issues with `type`, `format`, `proof`, encryption parameters, or if the request is denied, the specific error codes from this section MUST be used instead of the generic `invalid_request` parameter defined in Section 3.1 of [@!RFC6750].
 
 If the Wallet is requesting the issuance of a Credential that is not supported by the Credential Endpoint, the HTTP response MUST use the HTTP status code 400 (Bad Request) and set the content type to `application/json` with the following parameters in the JSON-encoded response body:
 
@@ -1016,6 +1016,7 @@ If the Wallet is requesting the issuance of a Credential that is not supported b
   * `unsupported_credential_format`: Requested Credential format is not supported.
   * `invalid_proof`: The `proof` or `proofs` parameter in the Credential Request is invalid. For example, because either both fields are missing or both are present simultaneously, or one of the provided key proofs is either invalid or not linked to a nonce provided by the Credential Issuer.
   * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
+  * `credential_request_denied`: The Credential Request has not been accepted by the Credential Issuer.
 * `error_description`: OPTIONAL. The `error_description` parameter MUST be a human-readable ASCII [@!USASCII] text, providing any additional information used to assist the Client implementers in understanding the occurred error. The values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
 The usage of these parameters takes precedence over the `invalid_request` parameter defined in (#authorization-errors), since they provide more details about the errors.
@@ -1077,7 +1078,7 @@ A Client submits a Batch Credential Request to the Batch Credential Endpoint by 
   * `format`: REQUIRED if the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
   * `credential_identifier`: REQUIRED if `credential_identifiers` parameter was returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
   * `proofs`: OPTIONAL. See (#credential-request).
-* `credential_response_encryption`: OPTIONAL. See (#credential-request).
+* `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Batch Credential Response. It contains the same parameters as defined in #{credential-request}. If this request element is not present, the corresponding Batch Credential Response returned is not encrypted.
 
 Below is a non-normative example of a Batch Credential Request requesting:
 
@@ -1136,8 +1137,8 @@ If at least one of the requested credentials cannot be issued either immediately
 
 If all requests are responded to with a `transaction_id`, the Issuer MUST use the HTTP status code 202 (as detailed in Section 15.3.3 of [@!RFC9110]). If not, the HTTP status code 200 MUST be used for a successful Batch Credential Response.
 
-The Batch Credential Response may be encrypted if the `credential_response_encryption` object was present in the request, see (#credential-response) for details.
-If the Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
+If the Client requested an encrypted response, the Batch Credential Response MUST be sent as a JWT using the parameters from the `credential_response_encryption` object and using the `application/jwt` media type. If encryption was requested in the Batch Credential Request and the Batch Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
+If the Batch Credential Response is not encrypted, it MUST be sent as a JSON object using the `application/json` media type.
 
 The following parameters are used in the JSON-encoded Batch Credential Response body:
 
@@ -2462,6 +2463,7 @@ Wallet Providers may also provide a market place where Issuers can register to b
    * changes proof type descriptions to accomodate for the batch issuance changes
    * changed Batch Issuance endpoint to differentiate between issuance Credential Configuration, Credential Dataset and instances of Credentials with different key material
    * changed Credential Endpoint to enable requesting multiple instances of a particular Credential Configuration and Dataset with different cryptographic material
+   * Clarify Batch Endpoint Encryption
    * Define Credential Format as a term
    * Define Credential Dataset as a term
    * Define Credential Configuration as a term
