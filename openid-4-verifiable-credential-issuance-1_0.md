@@ -701,7 +701,7 @@ Communication with the Credential Endpoint MUST utilize TLS.
 The Client sends a Credential Request to obtain:
 
 * one Credential;
-* multiple Credentials of the same Credential Configuration and Credential Dataset, each with distinct cryptographic material.
+* multiple Credential instances of the same Credential Configuration and Credential Dataset, each with distinct cryptographic material.
 
 The Client can send several consecutive Credential Requests to obtain multiple Credentials with the same or different Credential Datasets. If the Access Token allows the request for multiple Credentials, the Client has the flexibility to determine the sequence in which they are requested.
 
@@ -1062,9 +1062,9 @@ Communication with the Batch Credential Endpoint MUST utilize TLS.
 
 The Client can request issuance of multiple Credentials that can be:
 
-* different Credential Configurations (with possibly different Credential Formats)
-* different Credential Datasets
-* different Credential instances of the same Credential Dataset (with different cryptographic material)
+* different Credential instances of the different Credential Configurations
+* different Credential instances of the same Credential Configuration but the different Credential Dataset
+* different Credential instances of the same Credential Configuration and the same Credential Dataset (with different cryptographic material)
 * a combination of the points above
 
 Wallets need to differentiate between these options because they can lead to variations in user experience. While Credentials with the same Credential Configuration but different Credential Dataset should be displayed separately (e.g. vehicle registration credentials for multiple cars), Credentials with the same Credential Configuration and Credential Dataset (e.g. multiple age proofs for unlinkability) should only appear as a single Credential in the Wallet user interface, as these technical details are not relevant to the average End-user. 
