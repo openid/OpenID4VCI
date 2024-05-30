@@ -753,7 +753,9 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
    }
 }
 ```
-Note: Either proof or proofs parameter is REQUIRED if the proof_types_supported parameter is non-empty and present in the credential_configurations_supported parameter of the Issuer metadata for the requested Credential.
+
+Either `proof` or `proofs` parameter MUST be present if the `proof_types_supported` parameter is present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential.
+
 Below is a non-normative example of a Credential Request for two Credential instances in an IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format using a Credential instance identifier and key proof type `jwt`:
 
 ```
