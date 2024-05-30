@@ -1073,7 +1073,7 @@ Wallets need to differentiate between these options because they can lead to var
 
 A Client submits a Batch Credential Request to the Batch Credential Endpoint by sending a JSON object containing the following parameters in the entity-body of an HTTP POST request, using the `application/json` media type.
 
-* `credential_requests`: REQUIRED. Array that contains Batch Credential Request objects, each of these objects may refer to a different Credential Configuration or the same Credential Configuration with a different Credential Dataset.
+* `credential_requests`: REQUIRED. Array that contains Batch Credential Request objects, each of these objects may refer to a different Credential Configuration or the same Credential Configuration with a different Credential Dataset. A Batch Credential Request object contains either a `format` parameter (and possibly further Credential Format specific parameters) or a `credential_identifier` parameter, an optional `proofs` parameter, but no `proof` or `credential_response_encryption` parameter.
   * `format`: REQUIRED if the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
   * `credential_identifier`: REQUIRED if `credential_identifiers` parameter was returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
   * `proofs`: OPTIONAL. See (#credential-request).
