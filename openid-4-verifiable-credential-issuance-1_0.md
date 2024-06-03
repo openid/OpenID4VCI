@@ -561,8 +561,6 @@ Location: https://Wallet.example.org/cb?
 
 The Authorization Error Response MUST be made as defined in [@!RFC6749].
 
-When the requested scope value is invalid, unknown, or malformed, the Authorization Server should respond with the error code `invalid_scope` defined in Section 4.1.2.1 of [@!RFC6749].
-
 Below is a non-normative example of an unsuccessful Authorization Response.
 
 ```json=
