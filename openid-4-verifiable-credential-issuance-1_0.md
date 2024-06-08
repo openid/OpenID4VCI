@@ -391,9 +391,9 @@ Host: server.example.com
 
 The response from the Credential Issuer that contains a Credential Offer Object MUST use the media type `application/json`.
 
-This ability to pass the Credential Offer by reference is particularly useful for large requests.
+This ability to pass the Credential Offer by reference is particularly useful for large Credential Offer objects.
 
-When the Credential Offer is passed by reference, the Credential Offer can be displayed by the Credential Issuer as a QR code. Below is a non-normative example:
+When the Credential Offer is displayed as a QR code, it would usually contain the Credential Offer by reference due to the size limitations of the QR codes. Below is a non-normative example:
 
 ```
 openid-credential-offer://?
