@@ -284,31 +284,40 @@ The following diagram is based on the Credential Issuer-initiated flow, as descr
 
 !---
 ~~~ ascii-art
-+--------------+   +-----------+                                    +-------------------+
-|   End-User   |   |   Wallet  |                                    | Credential Issuer |
-+--------------+   +-----------+                                    +-------------------+
-        |                |                                                    |
-        |                |  (1) End-User provides  information required       |
-        |                |      for the issuance of a certain Credential      |
-        |-------------------------------------------------------------------->|
-        |                |                                                    |
-        |                |  (2) Credential Offer (Pre-Authorized Code)        |
-        |                |<---------------------------------------------------|
-        |                |  (3) Obtains Issuer's Credential Issuer metadata   |
-        |                |<-------------------------------------------------->|
-        |   interacts    |                                                    |
-        |--------------->|                                                    |
-        |                |                                                    |
-        |                |  (4) Token Request (Pre-Authorized Code, tx_code)  |
-        |                |--------------------------------------------------->|
-        |                |      Token Response (access_token)                 |
-        |                |<---------------------------------------------------|
-        |                |                                                    |
-        |                |  (5) Credential Request (access_token, proof(s))   |
-        |                |--------------------------------------------------->| 
-        |                |      Credential Response                           |
-        |                |      (Credential(s))                               |
-        |                |<---------------------------------------------------|             
++--------------+   +-----------+            +----------------------+   +-------------------+
+|   End-User   |   |   Wallet  |            | Authorization Server |   | Credential Issuer |
++--------------+   +-----------+            +----------------------+   +-------------------+
+        |                |                              |                        |
+        |                |  (1) End-User provides       |                        |
+        |                |      information required    |                        |
+        |                |      for the issuance of     |                        |
+        |                |      a certain Credential    |                        |
+        |                |------------------------------------------------------>|
+        |                |                              |                        |
+        |                |  (2) Credential Offer        |                        |
+        |                |      (Pre-Authorized Code)   |                        |
+        |                |<------------------------------------------------------|
+        |                |  (3) Obtains Issuer's        |                        |
+        |                |      Credential Issuer       |                        |
+        |                |      metadata                |                        |
+        |                |------------------------------------------------------>|
+        |   interacts    |                              |                        |
+        |--------------->|                              |                        |
+        |                |                              |                        |
+        |                |  (4) Token Request           |                        |
+        |                |      (Pre-Authorized Code,   |                        |
+        |                |       tx_code)               |                        |
+        |                |----------------------------->|                        |
+        |                |      Token Response          |                        |
+        |                |      (access_token)          |                        |
+        |                |<-----------------------------|                        |
+        |                |                              |                        |
+        |                |  (5) Credential Request      |                        |
+        |                |      (access_token, proof(s))|                        |
+        |                |------------------------------------------------------>|
+        |                |      Credential Response     |                        |
+        |                |      (Credential(s))         |                        |
+        |                |<------------------------------------------------------|         
 ~~~
 !---
 Figure: Issuance using Pre-Authorized Code Flow 
