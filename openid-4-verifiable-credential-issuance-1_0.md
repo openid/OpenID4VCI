@@ -206,47 +206,46 @@ Please note that the diagram does not illustrate all the optional features defin
 
 !---
 ~~~ ascii-art
-+----------+   +-----------+            +-------------------+     +----------------------+
-| End-User |   |   Wallet  |            | Credential Issuer |     | Authorization Server |
-+----------+   +-----------+            +-------------------+     +----------------------+
++----------+   +-----------+            +----------------------+     +-------------------+
+| End-User |   |   Wallet  |            | Authorization Server |     | Credential Issuer |
++----------+   +-----------+            +----------------------+     +-------------------+
     |                |                              |                        |
     | (1a) End-User  |                              |                        |
     |  selects       |  (1b) Credential Offer       |                        |
     |  Credential--->|  (credential type)           |                        |
-    |                |<-----------------------------|                        |
+    |                |<------------------------------------------------------|
     |                |                              |                        |
     |                |  (2) Obtains Issuer's        |                        |
     |                |      Credential Issuer       |                        |
     |                |      metadata                |                        |
-    |                |----------------------------->|                        |
+    |                |------------------------------------------------------>|
     |                |                              |                        |
     |                |                              |  (3) Authorization     |
     |                |                              |      Request           |
     |                |                              |      (type(s) of       |
     |                |                              |      Credentials to    |
     |                |                              |      be issued)        |
-    |                |------------------------------------------------------>|
+    |                |----------------------------->|                        |
     |                |                              |                        |
     |  End-User Authentication / Consent            |                        |
     |                |                              |  (4) Authorization     |
     |                |                              |      Response (code)   |
-    |                |<------------------------------------------------------|
+    |                |<-----------------------------|                        |
     |                |                              |                        |
     |                |                              |  (5) Token Request     |
     |                |                              |      (code)            |
-    |                |------------------------------------------------------>|
-    |                |                              |      Token Response    |
+    |                |----------------------------->|      Token Response    |
     |                |                              |      (Access Token)    |
-    |                |<------------------------------------------------------|
+    |                |<-----------------------------|                        |
     |                |                              |                        |
     |                |  (6) Credential Request      |                        |
     |                |      (Access Token, proof(s))|                        |
-    |                |----------------------------->|                        |
+    |                |------------------------------------------------------>|
     |                |                              |                        |
     |                |      Credential Response     |                        |
     |                |      with Credential(s) OR   |                        |
     |                |      Transaction ID          |                        |
-    |                |<-----------------------------|                        |
+    |                |<-----------------------------------------------------|
 ~~~
 !---
 Figure: Issuance using Authorization Code Flow 
