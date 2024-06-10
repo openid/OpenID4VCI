@@ -809,7 +809,7 @@ The Credential Issuer MUST validate that the JWT used as a proof is actually sig
 
 Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@IANA.JOSE.ALGS].
 
-Below is a non-normative example of a `proof` parameter:
+Below is a non-normative example of a `proof` parameter (with line breaks within values for display purposes only):
 
 ```json
 {
