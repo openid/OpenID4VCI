@@ -703,7 +703,7 @@ The Client sends a Credential Request to obtain:
 * one Credential; or
 * multiple Credential instances of the same Credential Configuration and Credential Dataset, each with distinct cryptographic material.
 
-The Client can send several consecutive Credential Requests to obtain multiple Credentials with the same or different Credential Datasets. If the Access Token allows the request for multiple Credentials, the Client has the flexibility to determine the sequence in which they are requested.
+If the Issuer supports the issuance of multiple Credentials, the Client can send several consecutive Credential Requests to obtain multiple Credentials in a sequence of his choice.
 
 ## Binding the Issued Credential to the Identifier of the End-User Possessing that Credential {#credential-binding}
 
