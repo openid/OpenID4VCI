@@ -397,7 +397,7 @@ When the Credential Offer is displayed as a QR code, it would usually contain th
 
 ```
 openid-credential-offer://?
-  credential_offer_uri=https%3A%2F%2Fserver%2Eexample%2Ecom%2Fcredential-offer.json
+  credential_offer_uri=https%3A%2F%2Fserver%2Eexample%2Ecom%2Fcredential-offer
   %2FGkurKxf5T0Y-mnPFCHqWOMiZi4VS138cQO_V7PZHAdM
 ```
 
