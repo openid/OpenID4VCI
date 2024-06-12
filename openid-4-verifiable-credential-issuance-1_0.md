@@ -695,13 +695,16 @@ Cache-Control: no-store
 
 # Credential Endpoint {#credential-endpoint}
 
-The Credential Endpoint issues a Credential as approved by the End-User upon presentation of a valid Access Token representing this approval. Support for this endpoint is REQUIRED.
+The Credential Endpoint issues one or more Credentials of the same Credential Configuration and Credential Dataset (as approved by the End-User) upon presentation of a valid Access Token representing this approval. Support for this endpoint is REQUIRED.
 
-Communication with the Credential Endpoint MUST utilize TLS. 
+Communication with the Credential Endpoint MUST utilize TLS.
 
-The Client can request issuance of a Credential of a certain type multiple times, e.g., to associate the Credential with different public keys/Decentralized Identifiers (DIDs) or to refresh a certain Credential.
+The Client sends a Credential Request to obtain:
 
-If the Access Token is valid for requesting issuance of multiple Credentials, it is at the Client's discretion to decide the order in which to request issuance of multiple Credentials requested in the Authorization Request.
+* one Credential; or
+* multiple Credential instances of the same Credential Configuration and Credential Dataset, each with distinct cryptographic material.
+
+If the Issuer supports the issuance of multiple Credentials, the Client can send several consecutive Credential Requests to obtain multiple Credentials in a chosen sequence.
 
 ## Binding the Issued Credential to the Identifier of the End-User Possessing that Credential {#credential-binding}
 
@@ -719,9 +722,10 @@ For cryptographic binding, the Client has the following options defined in (#cre
 A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
 * `format`: REQUIRED when the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. It is a String that determines the format of the Credential to be issued, which may determine the type and any other information related to the Credential to be issued. Credential Format Profiles consist of the Credential format specific parameters that are defined in (#format-profiles). When this parameter is used, the `credential_identifier` Credential Request parameter MUST NOT be present.
-* `proof`: OPTIONAL. Object containing the proof of possession of the cryptographic key material the issued Credential would be bound to. The `proof` object is REQUIRED if the `proof_types_supported` parameter is non-empty and present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential. The `proof` object MUST contain the following:
-    * `proof_type`: REQUIRED. String denoting the key proof type. The value of this parameter determines other parameters in the key proof object and its respective processing rules. Key proof types defined in this specification can be found in (#proof-types).
 * `credential_identifier`: REQUIRED when `credential_identifiers` parameter was returned from the Token Response. It MUST NOT be used otherwise. It is a String that identifies a Credential that is being requested to be issued. When this parameter is used, the `format` parameter and any other Credential format specific parameters such as those defined in (#format-profiles) MUST NOT be present.
+* `proof`: OPTIONAL. Object providing a single proof of possession of the cryptographic key material to which the issued Credential instance will be bound to. `proof` parameter MUST NOT be present if `proofs` parameter is used.  The `proof` object MUST contain the following:
+    * `proof_type`: REQUIRED. String specifying the key proof type. The value set for this parameter determines the additional parameters in the key proof object and their corresponding processing rules. The key proof types outlined in this specification are detailed in (#proof-types).
+* `proofs`: OPTIONAL. Object providing one or more proof of possessions of the cryptographic key material to which the issued Credential instances will be bound to. The `proofs` parameter MUST NOT be present if `proof` parameter is used. `proofs` object contains exactly one parameter named as the proof type in (#proof-types), the value set for this parameter is an array containing parameters as defined by the corresponding proof type.
 * `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If this request element is not present, the corresponding credential response returned is not encrypted.
     * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
     * `alg`: REQUIRED. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] for encrypting Credential Responses.
@@ -751,7 +755,9 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 }
 ```
 
-Below is a non-normative example of a Credential Request for a Credential in an IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format using a Credential instance identifier and key proof type `jwt`:
+Either the `proof` or `proofs` parameter MUST be present if the `proof_types_supported` parameter is present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential.
+
+Below is a non-normative example of a Credential Request for two Credential instances in an IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format using a Credential instance identifier and key proof type `jwt`:
 
 ```
 POST /credential HTTP/1.1
@@ -761,16 +767,11 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
    "credential_identifier": "CivilEngineeringDegree-2023",
-   "proof": {
-      "proof_type": "jwt",
-      "jwt":
-      "eyJ0eXAiOiJvcGVuaWQ0dmNpLXByb29mK2p3dCIsImFsZyI6IkVTMjU2IiwiandrI
-      jp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiblVXQW9BdjNYWml0aDhFN2k
-      xOU9kYXhPTFlGT3dNLVoyRXVNMDJUaXJUNCIsInkiOiJIc2tIVThCalVpMVU5WHFpN
-      1N3bWo4Z3dBS18weGtjRGpFV183MVNvc0VZIn19.eyJhdWQiOiJodHRwczovL2NyZW
-      RlbnRpYWwtaXNzdWVyLmV4YW1wbGUuY29tIiwiaWF0IjoxNzAxOTYwNDQ0LCJub25j
-      ZSI6IkxhclJHU2JtVVBZdFJZTzZCUTR5bjgifQ.-a3EDsxClUB4O3LeDD5DVGEnNMT
-      01FCQW4P6-2-BNBqc_Zxf0Qw4CWayLEpqkAomlkLb9zioZoipdP-jvh1WlA"
+   "proofs": {
+      "jwt": [
+         "eyJ0eXAiOiJvcGVuaWQ0dmNpL...Lb9zioZoipdP-jvh1WlA",
+         "eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
+      ]
    }
 }
 ```
@@ -781,11 +782,11 @@ The Credential Issuer indicates support for encrypted responses by including the
 
 ### Proof Types {#proof-types}
 
-This specification defines the following values for the `proof_type` property:
+This specification defines the following proof types:
 
-* `jwt`: A JWT [@!RFC7519] is used as proof of possession. When `proof_type` is `jwt`, a `proof` object MUST include a `jwt` claim containing a JWT defined in (#jwt-proof-type).
-* `cwt`: A CWT [@!RFC8392] is used as proof of possession. When `proof_type` is `cwt`, a `proof` object MUST include a `cwt` claim containing a CWT defined in (#cwt-proof-type).
-* `ldp_vp`: A W3C Verifiable Presentation object signed using the Data Integrity Proof as defined in [@VC_DATA_2.0] or [@VC_DATA], and where the proof of possession MUST be done in accordance with [@VC_Data_Integrity]. When `proof_type` is set to `ldp_vp`, the `proof` object MUST include a `ldp_vp` claim containing a [W3C Verifiable Presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp-vp-proof-type).
+* `jwt`: A JWT [@!RFC7519] is used for proof of possession. When a `proof_type` parameter in a `proof` object is set to `jwt`, it MUST also contain a `jwt` parameter that includes a JWT as defined in (#jwt-proof-type). When a `proofs` object is using a `jwt` proof type, it MUST include a `jwt` parameter with its value being an array of JWTs, where each JWT is formed as defined in (#jwt-proof-type).
+* `cwt`: A CWT [@!RFC8392] is used for proof of possession. When a `proof_type` parameter in a `proof` object is set to `cwt`, it MUST also contain a `cwt` parameter that includes a CWT as defined in (#cwt-proof-type). When a `proofs` object is using a `cwt` proof type, it MUST include a `cwt` parameter with its value being an array of CWTs, where each CWT is formed as defined in (#cwt-proof-type).
+* `ldp_vp`: A W3C Verifiable Presentation object signed using the Data Integrity Proof [@VC_Data_Integrity] as defined in [@VC_DATA_2.0] or [@VC_DATA] is used for proof of possession. When a `proof_type` parameter in a `proof` object is set to `ldp_vp`, it MUST also contain an `ldp_vp` parameter that includes a [W3C Verifiable Presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp-vp-proof-type). When a `proofs` object is using a `ldp_vp` proof type, it MUST include an `ldp_vp` parameter with its value being an array of [W3C Verifiable Presentations](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0), where each of these W3C Verifiable Presentation is formed as defined in (#ldp-vp-proof-type).
 
 #### `jwt` Proof Type {#jwt-proof-type}
 
@@ -805,7 +806,7 @@ The JWT MUST contain the following elements:
   * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the key proof was issued using the syntax defined in [@!RFC7519].
   * `nonce`: OPTIONAL (string). The value type of this claim MUST be a string, where the value is a server-provided `c_nonce`. It MUST be present when the Wallet received a server-provided `c_nonce`.
 
-The Credential Issuer MUST validate that the `proof` is actually signed by a key identified in the JOSE Header.
+The Credential Issuer MUST validate that the JWT used as a proof is actually signed by a key identified in the JOSE Header.
 
 Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@IANA.JOSE.ALGS].
 
@@ -868,7 +869,7 @@ When a W3C Verifiable Presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] si
   * `domain`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
   * `challenge`: REQUIRED when the Credential Issuer has provided a `c_nonce`. It MUST NOT be used otherwise. String, where the value is a server-provided `c_nonce`. It MUST be present when the Wallet received a server-provided `c_nonce`.
 
-The Credential Issuer MUST validate that the `proof` is actually signed with a key in the possession of the Holder.
+The Credential Issuer MUST validate that the W3C Verifiable Presentation used as a proof is actually signed with a key in the possession of the Holder.
 
 Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@LD_Suite_Registry].
 
@@ -946,8 +947,9 @@ If the Credential Response is not encrypted, the media type of the response MUST
 
 The following parameters are used in the JSON-encoded Credential Response body:
 
-* `credential`: OPTIONAL. Contains issued Credential. It MUST be present when `transaction_id` is not returned. It MAY be a string or an object, depending on the Credential format. See (#format-profiles) for the Credential format specific encoding requirements.
-* `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer was unable to immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST be present when the `credential` parameter is not returned. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
+* `credential`: OPTIONAL. Contains issued Credential. It MUST NOT be used if `credentials` or `transaction_id` parameter is present. It MAY be a string or an object, depending on the Credential format. See (#format-profiles) for the Credential format specific encoding requirements.
+* `credentials`: OPTIONAL. Contains an array of issued Credentials. It MUST NOT be used if `credential` or `transaction_id` parameter is present. The values in the array MAY be a string or an object, depending on the Credential format. See (#format-profiles) for the Credential format specific encoding requirements.
+* `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used  if `credential` or `credentials` is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. String containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential-request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
 * `notification_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the Notification Request as defined in (#notification). This parameter MUST NOT be present if `credential` parameter is not present.
@@ -969,6 +971,22 @@ Cache-Control: no-store
   "credential": "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
   "c_nonce": "fGFF7UkhLa",
   "c_nonce_expires_in": 86400  
+}
+```
+
+Below is a non-normative example of a Credential Response in an immediate issuance flow for multiple Credential instances in JWT VC format (JSON encoded):
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "credentials": [
+    "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
+    "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
+  ],
+  "c_nonce": "fGFF7UkhLa",
+  "c_nonce_expires_in": 86400
 }
 ```
 
@@ -1003,8 +1021,8 @@ If the Wallet is requesting the issuance of a Credential that is not supported b
 * `error`: REQUIRED. The `error` parameter SHOULD be a single ASCII [@!USASCII] error code from the following:
   * `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
   * `unsupported_credential_type`: Requested Credential type is not supported.
-  * `unsupported_credential_format`: Requested Credential Format is not supported.
-  * `invalid_proof`: The `proof` in the Credential Request is invalid. The `proof` field is not present or the provided key proof is invalid or not bound to a nonce provided by the Credential Issuer.
+  * `unsupported_credential_format`: Requested Credential format is not supported.
+  * `invalid_proof`: The `proof` or `proofs` parameter in the Credential Request is invalid. For example, because either both fields are missing or both are present simultaneously, or one of the provided key proofs is either invalid or not linked to a nonce provided by the Credential Issuer.
   * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
   * `credential_request_denied`: The Credential Request has not been accepted by the Credential Issuer.
 * `error_description`: OPTIONAL. The `error_description` parameter MUST be a human-readable ASCII [@!USASCII] text, providing any additional information used to assist the Client implementers in understanding the occurred error. The values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
@@ -1051,18 +1069,29 @@ The Batch Credential Endpoint issues multiple Credentials in one Batch Credentia
 
 Communication with the Batch Credential Endpoint MUST utilize TLS. 
 
-The Client can request issuance of multiple Credentials of certain types and formats in one Batch Credential Request. This includes Credentials of the same type and multiple formats, different types and one format, or both. 
+The Client can request issuance of multiple Credentials that can be:
 
-## Batch Credential Request {#batch-credential_request}
+* different Credential instances of the different Credential Configurations; or
+* different Credential instances of the same Credential Configuration but the different Credential Dataset; or
+* different Credential instances of the same Credential Configuration and the same Credential Dataset (with different cryptographic material); or
+* a combination of the points above.
 
-The Batch Credential Endpoint allows a Client to send multiple Credential Request objects (see (#credential-request)) to request the issuance of multiple Credentials at once. A Batch Credential Request MUST be sent as a JSON object using the `application/json` media type.
+Wallets need to differentiate between these options because they can lead to variations in user experience. While Credentials with the same Credential Configuration but different Credential Dataset should be displayed separately (e.g. vehicle registration credentials for multiple cars), Credentials with the same Credential Configuration and Credential Dataset (e.g. multiple age proofs for unlinkability) should only appear as a single Credential in the Wallet user interface, as these technical details are not relevant to the average End-user. 
 
-The following parameters are used in the Batch Credential Request:
+## Batch Credential Request {#batch-credential-request}
 
-* `credential_requests`: REQUIRED. Array that contains Credential Request objects, as defined in (#credential-request). The individual Credential Request objects MUST NOT contain `credential_response_encryption`.
+A Client submits a Batch Credential Request to the Batch Credential Endpoint by sending a JSON object containing the following parameters in the entity-body of an HTTP POST request, using the `application/json` media type.
+
+* `credential_requests`: REQUIRED. Array that contains Batch Credential Request objects, each of these objects may refer to a different Credential Configuration or the same Credential Configuration with a different Credential Dataset. A Batch Credential Request object contains either a `format` parameter (and possibly further Credential Format specific parameters) or a `credential_identifier` parameter, and additionally an optional `proofs` parameter. A Batch Credential Request object must not contain `proof` or `credential_response_encryption` parameters.
+  * `format`: REQUIRED if the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
+  * `credential_identifier`: REQUIRED if `credential_identifiers` parameter was returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
+  * `proofs`: OPTIONAL. See (#credential-request).
 * `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Batch Credential Response. It contains the same parameters as defined in #{credential-request}. If this request element is not present, the corresponding Batch Credential Response returned is not encrypted.
 
-Below is a non-normative example of a Batch Credential Request:
+Below is a non-normative example of a Batch Credential Request requesting:
+
+* 2 Credentials for the same Credential Configuration and Credential Dataset but with different cryptographic binding keys;
+* 2 Credentials for the same Credential Configuration but with different Credential Dataset.
 
 ```
 POST /batch_credential HTTP/1.1
@@ -1071,7 +1100,7 @@ Content-Type: application/json
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
-   "credential_requests":[
+   "credential_requests": [
       {
          "format":"jwt_vc_json",
          "credential_definition": {
@@ -1080,18 +1109,30 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
              "UniversityDegreeCredential"
            ]
          },
-         "proof":{
-            "proof_type":"jwt",
-            "jwt":"eyJ0eXAiOiJvcGVuaWQ0dmNpL...Lb9zioZoipdP-jvh1WlA"
+         "proofs": {
+            "jwt": [
+               "eyJ0eXAiOiJvcGVuaWQ0dmNpL...Lb9zioZoipdP-jvh1WlA",
+               "eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
+            ]
          }
       },
       {
-         "format":"mso_mdoc",
-         "doctype":"org.iso.18013.5.1.mDL",
-         "proof":{
-            "proof_type":"jwt",
-            "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
-         }
+         "credential_identifier":"CivilEngineeringDegree-2023",
+         "proofs": [
+            {
+               "proof_type":"jwt",
+               "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
+            }
+         ]
+      },
+      {
+         "credential_identifier":"ElectricalEngineeringDegree-2023",
+         "proofs": [
+            {
+               "proof_type":"jwt",
+               "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
+            }
+         ]
       }
    ]
 }
@@ -1099,19 +1140,31 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Batch Credential Response {#batch-credential-response}
 
-A successful Batch Credential Response MUST contain all the requested Credentials.
+The Batch Credential Response behaves similarly to the Credential Response. Each response to the requests within the `credential_requests` of the Batch Credential Request can be either immediate or deferred. Consequently, the Credential Issuer MAY immediately issue the requested Credentials or MAY provide a `transaction_id` parameter to the Client, which can be used later to retrieve the Credential once it is ready.
+If at least one of the requested Credentials cannot be issued either immediately or deferred, the Credential Issuer MUST return an error.
+
+If all requests are responded to using a `transaction_id`, the Issuer MUST use the HTTP status code 202 (as detailed in Section 15.3.3 of [@!RFC9110]). If not, the HTTP status code 200 MUST be used for a successful Batch Credential Response.
 
 If the Client requested an encrypted response, the Batch Credential Response MUST be sent as a JWT using the parameters from the `credential_response_encryption` object and using the `application/jwt` media type. If encryption was requested in the Batch Credential Request and the Batch Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
-
 If the Batch Credential Response is not encrypted, it MUST be sent as a JSON object using the `application/json` media type.
 
-The following parameters are used in the Batch Credential Response:
+The following parameters are used in the JSON-encoded Batch Credential Response body:
 
-* `credential_responses`: REQUIRED. Array that contains Credential Response objects, as defined in (#credential-response), and/or Deferred Credential Response objects, as defined in (#deferred-credential-response), with the exception of `c_nonce` and `c_nonce_expires_in`. Each element within the array matches the corresponding Credential Request object by array index in the `credential_requests` parameter of the Batch Credential Request.
-* `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response). 
+* `credential_responses`: REQUIRED. Array that contains Batch Credential Response objects each corresponding to every Batch Credential Request objects. Each element within the array matches the corresponding Batch Credential Request object by array index in the `credential_requests` parameter. A Batch Credential Response object contains either a `credentials` object (and possibly a `notification_id`) or a `transaction_id` parameter, but not `c_nonce` and `c_nonce_expires_in` parameters. Each element may refer to a different Credential Configuration or the same Credential Configuration with a different Credential Dataset.
+  * `credentials`: REQUIRED if `transaction_id` is not present within a particular Batch Credential Response object. The `credentials` as defined in (#credential-response).
+  * `notification_id`: OPTIONAL. The `notification_id` as defined in (#credential-response).
+  * `transaction_id`: REQUIRED if `credentials` is not present within a particular Batch Credential Response object. The `transaction_id` as defined in (#credential-response).
+* `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response).
 * `c_nonce_expires_in`: OPTIONAL. The `c_nonce_expires_in` as defined in (#credential-response).
 
-Below is a non-normative example of a Batch Credential Response in an immediate issuance flow:
+The encoding of the Credential returned in the `credential` parameter depends on the Credential Format. Credential formats expressed as binary data MUST be base64url-encoded and returned as a string.
+
+More details such as Credential Format identifiers are defined in the Credential Format Profiles in (#format-profiles).
+
+Below is a non-normative example of a Batch Credential Response containing:
+* 2 Credentials for the same Credential Configuration and Credential Dataset but with different cryptographic binding keys
+* 1 Credential for a different  Credential Configuration and Credential Dataset
+* 1 Transaction ID for a request that could not be immediately fulfilled
 
 ```
 HTTP/1.1 200 OK
@@ -1119,35 +1172,25 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "credential_responses": [{
-    "credential": "eyJraWQiOiJkaWQ6ZXhhbXBsZTpl...C_aZKPxgihac0aW9EkL1nOzM"
-  },
-  {
-    "credential": "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
-  }],
+  "credential_responses": [
+     {
+        "credentials": [
+           "eyJraWQiOiJkaWQ6ZXhhbXBsZTpl...C_aZKPxgihac0aW9EkL1nOzM",
+           "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
+        ]
+     },
+     {
+        "credentials": [
+           "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
+        ],
+        "notification_id" : "3fwe98js"
+     },
+     {
+        "transaction_id":"8xLOxBtZp8"
+     }
+  ],
   "c_nonce": "fGFF7UkhLa",
   "c_nonce_expires_in": 86400
-}
-```
-
-Below is a non-normative example of a Batch Credential Response that contains Deferred Credential Response and Credential Response objects:
-
-```
-HTTP/1.1 200 OK
-Content-Type: application/json
-Cache-Control: no-store
-
-{
-   "credential_responses":[
-      {
-         "transaction_id":"8xLOxBtZp8"
-      },
-      {
-         "credential":"YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
-      }
-   ],
-   "c_nonce":"fGFF7UkhLa",
-   "c_nonce_expires_in":86400
 }
 ```
 
@@ -1159,7 +1202,7 @@ Error codes extensions defined in (#credential-error-response) apply.
 
 The Batch Credential Request MUST fail entirely if there is even one Credential that failed to be issued. `transaction_id` MUST NOT be returned in this case.
 
-When the Credential Issuer requires `proof` objects to be present in the Batch Credential Request, but does not receive them, it will return a Batch Credential Error Response with a `c_nonce` using `invalid_proof` error code, as defined in (#issuer-provided-nonce).
+When the Credential Issuer requires the `proofs` parameter to be present in the Batch Credential Request, but does not receive them, it will return a Batch Credential Error Response with a `c_nonce` using `invalid_proof` error code, as defined in (#issuer-provided-nonce).
 
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
@@ -1363,6 +1406,9 @@ This specification defines the following Credential Issuer Metadata parameters:
   * `enc_values_supported`: REQUIRED. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
   * `encryption_required`: REQUIRED. Boolean value specifying whether the Credential Issuer requires the additional encryption on top of TLS for the Credential Response. If the value is `true`, the Credential Issuer requires encryption for every Credential Response and therefore the Wallet MUST provide encryption keys in the Credential Request. If the value is `false`, the Wallet MAY chose whether it provides encryption keys or not.
 * `credential_identifiers_supported`: OPTIONAL. Boolean value specifying whether the Credential Issuer supports returning `credential_identifiers` parameter in the `authorization_details` Token Response parameter, with `true` indicating support. If omitted, the default value is `false`.
+* `batch_credential_issuance`: OPTIONAL. Object containing information about the Credential Issuer's supports for batch issuance of Credentials. When this parameter is present, but the Credential Issuer does not support Batch Credential Endpoint, it means that Credential Issuer issues Credential Batches only from the Credential Endpoint.
+  * `credential_endpoint_supported`: REQUIRED. Boolean value specifying whether the Credential Issuer's Credential Edpoint supports the `proofs` parameter in the Credential Request, with `true` indicating support.
+  * `batch_size`: REQUIRED. Integer value specifying the maximum array size for the `proofs` parameter in a Credential Request or Batch Credential Request.
 * `signed_metadata`: OPTIONAL. String that is a signed JWT. This JWT contains Credential Issuer metadata parameters as claims. The signed metadata MUST be secured using JSON Web Signature (JWS) [@!RFC7515] and MUST contain an `iat` (Issued At) claim, an `iss` (Issuer) claim denoting the party attesting to the claims in the signed metadata, and `sub` (Subject) claim matching the Credential Issuer identifier. If the Wallet supports signed metadata, metadata values conveyed in the signed JWT MUST take precedence over the corresponding values conveyed using plain JSON elements. If the Credential Issuer wants to enforce use of signed metadata, it omits the respective metadata parameters from the unsigned part of the Credential Issuer metadata. A `signed_metadata` metadata value MUST NOT appear as a claim in the JWT. The Wallet MUST establish trust in the signer of the metadata, and obtain the keys to validate the signature before processing the metadata. The concrete mechanism how to do that is out of scope of this specification and MAY be defined in the profiles of this specification.
 * `display`: OPTIONAL. Array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
   * `name`: OPTIONAL. String value of a display name for the Credential Issuer.
@@ -2426,6 +2472,9 @@ Wallet Providers may also provide a market place where Issuers can register to b
 
    -14
 
+   * changes proof type descriptions to accomodate for the batch issuance changes
+   * changed Batch Issuance endpoint to differentiate between issuance Credential Configuration, Credential Dataset and instances of Credentials with different key material
+   * changed Credential Endpoint to enable requesting multiple instances of a particular Credential Configuration and Dataset with different cryptographic material
    * clarify optionality of scope and authorization_details for Authorization Request
    * Clarify Batch Endpoint Encryption
    * Define Credential Format as a term
