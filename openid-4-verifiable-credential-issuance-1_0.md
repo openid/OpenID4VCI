@@ -1059,7 +1059,7 @@ The following parameters are used in the Batch Credential Request:
 
 * `credential_requests`: REQUIRED. Array that contains Credential Request objects, as defined in (#credential-request).
 
-Below is a non-normative example of a Batch Credential Request for two Credentials in an [@VC_DATA] format and [@ISO.18013-5] format:
+Below is a non-normative example of a Batch Credential Request for two Credentials; one in [@VC_DATA] format and another in [@ISO.18013-5] format:
 
 ```
 POST /batch_credential HTTP/1.1
