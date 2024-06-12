@@ -703,7 +703,7 @@ The Client sends a Credential Request to obtain:
 * one Credential; or
 * multiple Credential instances of the same Credential Configuration and Credential Dataset, each with distinct cryptographic material.
 
-If the Issuer supports the issuance of multiple Credentials, the Client can send several consecutive Credential Requests to obtain multiple Credentials in a sequence of his choice.
+If the Issuer supports the issuance of multiple Credentials, the Client can send several consecutive Credential Requests to obtain multiple Credentials in a chosen sequence.
 
 ## Binding the Issued Credential to the Identifier of the End-User Possessing that Credential {#credential-binding}
 
@@ -948,7 +948,7 @@ The following parameters are used in the JSON-encoded Credential Response body:
 
 * `credential`: OPTIONAL. Contains issued Credential. It MUST NOT be used if `credentials` or `transaction_id` parameter is present. It MAY be a string or an object, depending on the Credential format. See (#format-profiles) for the Credential format specific encoding requirements.
 * `credentials`: OPTIONAL. Contains an array of issued Credentials. It MUST NOT be used if `credential` or `transaction_id` parameter is present. The values in the array MAY be a string or an object, depending on the Credential format. See (#format-profiles) for the Credential format specific encoding requirements.
-* `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer was unable to immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used  if `credential` or `credentials` is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
+* `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used  if `credential` or `credentials` is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. String containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential-request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
 * `notification_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the Notification Request as defined in (#notification). This parameter MUST NOT be present if `credential` parameter is not present.
@@ -1073,7 +1073,7 @@ The Client can request issuance of multiple Credentials that can be:
 * different Credential instances of the different Credential Configurations; or
 * different Credential instances of the same Credential Configuration but the different Credential Dataset; or
 * different Credential instances of the same Credential Configuration and the same Credential Dataset (with different cryptographic material); or
-* a combination of the points above
+* a combination of the points above.
 
 Wallets need to differentiate between these options because they can lead to variations in user experience. While Credentials with the same Credential Configuration but different Credential Dataset should be displayed separately (e.g. vehicle registration credentials for multiple cars), Credentials with the same Credential Configuration and Credential Dataset (e.g. multiple age proofs for unlinkability) should only appear as a single Credential in the Wallet user interface, as these technical details are not relevant to the average End-user. 
 
@@ -1081,7 +1081,7 @@ Wallets need to differentiate between these options because they can lead to var
 
 A Client submits a Batch Credential Request to the Batch Credential Endpoint by sending a JSON object containing the following parameters in the entity-body of an HTTP POST request, using the `application/json` media type.
 
-* `credential_requests`: REQUIRED. Array that contains Batch Credential Request objects, each of these objects may refer to a different Credential Configuration or the same Credential Configuration with a different Credential Dataset. A Batch Credential Request object contains either a `format` parameter (and possibly further Credential Format specific parameters) or a `credential_identifier` parameter, an optional `proofs` parameter, but no `proof` or `credential_response_encryption` parameter.
+* `credential_requests`: REQUIRED. Array that contains Batch Credential Request objects, each of these objects may refer to a different Credential Configuration or the same Credential Configuration with a different Credential Dataset. A Batch Credential Request object contains either a `format` parameter (and possibly further Credential Format specific parameters) or a `credential_identifier` parameter, and additionally an optional `proofs` parameter. A Batch Credential Request object must not contain `proof` or `credential_response_encryption` parameters.
   * `format`: REQUIRED if the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
   * `credential_identifier`: REQUIRED if `credential_identifiers` parameter was returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
   * `proofs`: OPTIONAL. See (#credential-request).
@@ -1089,8 +1089,8 @@ A Client submits a Batch Credential Request to the Batch Credential Endpoint by 
 
 Below is a non-normative example of a Batch Credential Request requesting:
 
-* 2 Credentials for the same Credential Configuration and Credential Dataset but with different cryptographic binding keys
-* 2 Credentials for the same Credential Configuration but with different Credential Dataset
+* 2 Credentials for the same Credential Configuration and Credential Dataset but with different cryptographic binding keys;
+* 2 Credentials for the same Credential Configuration but with different Credential Dataset.
 
 ```
 POST /batch_credential HTTP/1.1
@@ -1140,9 +1140,9 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 ## Batch Credential Response {#batch-credential-response}
 
 The Batch Credential Response behaves similarly to the Credential Response. Each response to the requests within the `credential_requests` of the Batch Credential Request can be either immediate or deferred. Consequently, the Credential Issuer MAY immediately issue the requested Credentials or MAY provide a `transaction_id` parameter to the Client, which can be used later to retrieve the Credential once it is ready.
-If at least one of the requested credentials cannot be issued either immediately or deferred, the Credential Issuer MUST return an error.
+If at least one of the requested Credentials cannot be issued either immediately or deferred, the Credential Issuer MUST return an error.
 
-If all requests are responded to with a `transaction_id`, the Issuer MUST use the HTTP status code 202 (as detailed in Section 15.3.3 of [@!RFC9110]). If not, the HTTP status code 200 MUST be used for a successful Batch Credential Response.
+If all requests are responded to using a `transaction_id`, the Issuer MUST use the HTTP status code 202 (as detailed in Section 15.3.3 of [@!RFC9110]). If not, the HTTP status code 200 MUST be used for a successful Batch Credential Response.
 
 If the Client requested an encrypted response, the Batch Credential Response MUST be sent as a JWT using the parameters from the `credential_response_encryption` object and using the `application/jwt` media type. If encryption was requested in the Batch Credential Request and the Batch Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
 If the Batch Credential Response is not encrypted, it MUST be sent as a JSON object using the `application/json` media type.
