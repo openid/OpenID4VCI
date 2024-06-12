@@ -425,9 +425,11 @@ When the grant type `authorization_code` is used, it is RECOMMENDED to use PKCE 
 
 An Authorization Request is an OAuth 2.0 Authorization Request as defined in Section 4.1.1 of [@!RFC6749], which requests that access be granted to the Credential Endpoint, as defined in (#credential-endpoint).
 
-There are two possible ways to request issuance of a specific Credential type in an Authorization Request. One way is to use the `authorization_details` request parameter, as defined in [@!RFC9396], with one or more authorization details objects of type `openid_credential`, per (#authorization-details). The other is through the use of scopes as defined in (#credential-request-using-type-specific-scope).
+There are two possible methods for requesting the issuance of a specific Credential type in an Authorization Request. The first method involves using the `authorization_details` request parameter, as defined in [@!RFC9396], containing one or more authorization details of type `openid_credential`, as specified in (#authorization-details). The second method utilizes scopes, as outlined in (#credential-request-using-type-specific-scope).
 
 ### Request Issuance of a Certain Credential Type using `authorization_details` Parameter {#authorization-details}
+
+Credential Issuers MAY support requesting authorization to issue a Credential using the `authorization_details` parameter.
 
 The request parameter `authorization_details` defined in Section 2 of [@!RFC9396] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following parameters to be used with this authorization details type:
 
@@ -470,7 +472,7 @@ Note: Applications MAY combine authorization details of type `openid_credential`
 
 ### Using `scope` Parameter to Request Issuance of a Credential {#credential-request-using-type-specific-scope}
 
-In addition to a mechanism defined in (#credential-authz-request), Credential Issuers MAY support requesting authorization to issue a Credential using the OAuth 2.0 `scope` parameter.
+Credential Issuers MAY support requesting authorization to issue a Credential using the OAuth 2.0 `scope` parameter.
 
 When the Wallet does not know which scope value to use to request issuance of a certain Credential, it can discover it using the `scope` Credential Issuer metadata parameter defined in (#credential-issuer-parameters). When the flow starts with a Credential Offer, the Wallet can use the `credential_configuration_ids` parameter values to identify object(s) in the `credential_configurations_supported` map in the Credential Issuer metadata parameter and use the `scope` parameter value from that object.
 
@@ -2424,6 +2426,7 @@ Wallet Providers may also provide a market place where Issuers can register to b
 
    -14
 
+   * clarify optionality of scope and authorization_details for Authorization Request
    * Clarify Batch Endpoint Encryption
    * Define Credential Format as a term
    * Define Credential Dataset as a term
