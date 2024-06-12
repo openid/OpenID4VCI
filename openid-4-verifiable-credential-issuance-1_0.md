@@ -424,7 +424,7 @@ When the grant type `authorization_code` is used, it is RECOMMENDED to use PKCE 
 
 An Authorization Request is an OAuth 2.0 Authorization Request as defined in Section 4.1.1 of [@!RFC6749], which requests that access be granted to the Credential Endpoint, as defined in (#credential-endpoint).
 
-There are two possible methods for requesting the issuance of a specific Credential type in an Authorization Request. The first method involves using the `authorization_details` request parameter, as defined in [@!RFC9396], containing one or more authorization details of type `openid_credential`, as specified in (#authorization-details). The second method utilizes scopes, as outlined in (#credential-request-using-type-specific-scope). A Client MUST use one of these methods to request Credentials and MAY use both simultaneously.
+There are two possible methods for requesting the issuance of a specific Credential type in an Authorization Request. The first method involves using the `authorization_details` request parameter, as defined in [@!RFC9396], containing one or more authorization details of type `openid_credential`, as specified in (#authorization-details). The second method utilizes scopes, as outlined in (#credential-request-using-type-specific-scope).
 
 ### Request Issuance of a Certain Credential Type using `authorization_details` Parameter {#authorization-details}
 
