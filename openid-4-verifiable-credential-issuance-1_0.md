@@ -982,7 +982,7 @@ Content-Type: application/json
 {
   "credentials": [
     "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
-    "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy",
+    "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
   ],
   "c_nonce": "fGFF7UkhLa",
   "c_nonce_expires_in": 86400
