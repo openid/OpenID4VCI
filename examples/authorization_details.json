@@ -1,6 +1,6 @@
 [
-   {
-      "type": "openid_credential",
-      "credential_configuration_id": "UniversityDegreeCredential"
-   }
+  {
+    "type": "openid_credential",
+    "credential_configuration_id": "UniversityDegreeCredential"
+  }
 ]
