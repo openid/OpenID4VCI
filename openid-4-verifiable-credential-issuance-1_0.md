@@ -427,7 +427,7 @@ An Authorization Request is an OAuth 2.0 Authorization Request as defined in Sec
 
 There are two possible methods for requesting the issuance of a specific Credential type in an Authorization Request. The first method involves using the `authorization_details` request parameter, as defined in [@!RFC9396], containing one or more authorization details of type `openid_credential`, as specified in (#authorization-details). The second method utilizes scopes, as outlined in (#credential-request-using-type-specific-scope).
 
-### Using `authorization_details` Parameter to Request Issuance of a Credential {#authorization-details}
+### Using Authorization Details Parameter {#authorization-details}
 
 Credential Issuers MAY support requesting authorization to issue a Credential using the `authorization_details` parameter.
 
