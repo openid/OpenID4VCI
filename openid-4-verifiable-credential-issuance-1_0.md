@@ -2479,7 +2479,7 @@ Wallet Providers may also provide a market place where Issuers can register to b
 
    -14
 
-   * enable authorization_details in Token Request for Pre-Authorized Code Flow unambiguity when multiple Credential Configurations are present in the Credential Offer
+   * clarify that authorization_details can be present in the Token Request for Pre-Authorized Code Flow when multiple Credential Configurations are present in the Credential Offer
    * make `credential_identifiers` mandatory for authorization_details flow
    * changes proof type descriptions to accommodate for the batch issuance changes
    * changed Batch Issuance endpoint to differentiate between issuance Credential Configuration, Credential Dataset and instances of Credentials with different key material
