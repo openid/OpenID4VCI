@@ -613,9 +613,9 @@ grant_type=authorization_code
 
 ### Request Issuance of a Certain Credential using authorization_details Parameter
 
-Credential Issuers MAY support requesting authorization to issue a Credential using the authorization_details parameter.
+Credential Issuers MAY support requesting authorization to issue a Credential using the authorization_details parameter. This is particularly useful, if the Credential Issuer offered multiple Credential Configurations in the Credential Offer of a Pre-Authorized Code Flow. 
 
-This is particularly useful, if the Credential Issuer offered multiple Credential Configurations in the Credential Offer of a Pre-Authorized Code Flow. The Wallet may use `authorization_details` in the Token Request to request a specific Credential Configuration. The value of the `authorization_details` parameter is defined in (#(authorization-details)).
+The Wallet can use `authorization_details` in the Token Request to request a specific Credential Configuration in both Authorization Code Flow and Pre-Authorized Code Flow. The value of the `authorization_details` parameter is defined in (#(authorization-details)).
 
 Below is a non-normative example of a Token Request in a Pre-Authorized Code Flow (without Client Authentication):
 
