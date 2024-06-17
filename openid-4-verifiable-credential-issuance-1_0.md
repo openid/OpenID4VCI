@@ -441,7 +441,7 @@ The following is a non-normative example of an `authorization_details` object wi
 
 <{{examples/authorization_details.json}}
 
-The following is a non-normative example of an `authorization_details` object with a `format` parameter of the Credential format `vc+sd-jwt`:
+The following is a non-normative example of an `authorization_details` object requesting a Credential in an IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format:
 
 <{{examples/authorization_details_sd_jwt_vc.json}}
 
@@ -1438,7 +1438,7 @@ Depending on the Credential Format, additional parameters might be present in th
 
 The Authorization Server MUST be able to determine from the Issuer metadata what claims are disclosed by the requested Credentials to be able to render meaningful End-User consent.
 
-The following is a non-normative example of Credential Issuer metadata with the Credential format `vc+sd-jwt`:
+The following is a non-normative example of Credential Issuer metadata of a Credential in an IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format:
 
 <{{examples/credential_metadata_sd_jwt_vc.json}}
 
