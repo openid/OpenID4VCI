@@ -106,7 +106,7 @@ Biometrics-based Holder Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential by demonstrating a certain biometric trait, such as fingerprint or face. One example of a Verifiable Credential with Biometrics-based Holder Binding is a mobile driving license [@ISO.18013-5], which contains a portrait of the holder.
 
 Wallet:
-:  An entity used by the Holder to request, receive, store, present, and manage Verifiable Credentials and cryptographic key material. There is no single deployment model of a Wallet: Credentials and keys can be stored and managed either locally, through a remote self-hosted service, or via a remote third-party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Client (see [@!RFC6749]).
+:  An entity used by the Holder to request, receive, store, present, and manage Verifiable Credentials and cryptographic key material. There is no single deployment model of a Wallet: Credentials and keys can be stored and managed either locally, through a remote self-hosted service, or via a remote third-party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Client (see [@!RFC6749]) and obtains an Access Token to access an OAuth 2.0 Resource Server (Credential Endpoint).
 
 Deferred Credential Issuance:
 :  Issuance of Credentials not directly in the response to a Credential issuance request but following a period of time that can be used to perform certain offline business processes.
@@ -128,7 +128,7 @@ Both the Credential and the Batch Credential Endpoints have the (optional) abili
 
 ## OAuth 2.0
 
-Every Credential Issuer utilizes an OAuth 2.0 [@!RFC6749] Authorization Server to authorize access. The same OAuth 2.0 Authorization Server can protect one or more Credential Issuers. Wallets determine the Credential Issuer's Authorization Server using the Credential Issuer's metadata (see (#credential-issuer-metadata)).
+According to the OAuth 2.0 framework, each Credential Issuer acts as a Resource Server that is protected by an Access Token issued by an Authorization Server, as defined in OAuth 2.0 [@!RFC6749]. The same Authorization Server can protect one or more Credential Issuers. Wallets identify the Authorization Server for a Credential Issuer by referring to the Credential Issuer's metadata (see (#credential-issuer-metadata)).
 
 All OAuth 2.0 Grant Types and extensions mechanisms can be used in conjunction with the Credential issuance API. Aspects not defined in this specification are expected to follow [@!RFC6749]. 
 
@@ -205,36 +205,46 @@ Please note that the diagram does not illustrate all the optional features defin
 
 !---
 ~~~ ascii-art
-+----------+        +-----------+                                    +-------------------+
-| End-User |        |   Wallet  |                                    | Credential Issuer |
-+----------+        +-----------+                                    +-------------------+
-    |                     |                                                    |
-    | (1a) End-User       |                                                    |
-    |  selects Credential |  (1b) Credential Offer (credential type)           |
-    |-------------------->|<---------------------------------------------------|
-    |                     |                                                    |
-    |                     |  (2) Obtains Issuer's Credential Issuer metadata   |
-    |                     |<-------------------------------------------------->|
-    |                     |                                                    |
-    |                     |  (3) Authorization Request                         |
-    |                     |      (type(s) of Credentials to be issued)         |
-    |                     |--------------------------------------------------->|
-    |                     |                                                    |
-    |           End-User Authentication / Consent                              |
-    |                     |                                                    |
-    |                     |  (4)   Authorization Response (code)               |
-    |                     |<---------------------------------------------------|
-    |                     |                                                    |
-    |                     |  (5) Token Request (code)                          |
-    |                     |--------------------------------------------------->|
-    |                     |      Token Response (Access Token)                 |
-    |                     |<---------------------------------------------------|
-    |                     |                                                    |
-    |                     |  (6) Credential Request (Access Token, proof(s))   |
-    |                     |--------------------------------------------------->|
-    |                     |      Credential Response                           |
-    |                     |      (Credential(s) OR Transaction ID)             |
-    |                     |<---------------------------------------------------|
++----------+   +-----------+            +----------------------+     +-------------------+
+| End-User |   |   Wallet  |            | Authorization Server |     | Credential Issuer |
++----------+   +-----------+            +----------------------+     +-------------------+
+    |                |                              |                        |
+    | (1a) End-User  |                              |                        |
+    |  selects       |  (1b) Credential Offer       |                        |
+    |  Credential--->|  (credential type)           |                        |
+    |                |<------------------------------------------------------|
+    |                |                              |                        |
+    |                |  (2) Obtains Issuer's        |                        |
+    |                |      Credential Issuer       |                        |
+    |                |      metadata                |                        |
+    |                |------------------------------------------------------>|
+    |                |                              |                        |
+    |                |                              |  (3) Authorization     |
+    |                |                              |      Request           |
+    |                |                              |      (type(s) of       |
+    |                |                              |      Credentials to    |
+    |                |                              |      be issued)        |
+    |                |----------------------------->|                        |
+    |                |                              |                        |
+    |  End-User Authentication / Consent            |                        |
+    |                |                              |  (4) Authorization     |
+    |                |                              |      Response (code)   |
+    |                |<-----------------------------|                        |
+    |                |                              |                        |
+    |                |                              |  (5) Token Request     |
+    |                |                              |      (code)            |
+    |                |----------------------------->|      Token Response    |
+    |                |                              |      (Access Token)    |
+    |                |<-----------------------------|                        |
+    |                |                              |                        |
+    |                |  (6) Credential Request      |                        |
+    |                |      (Access Token, proof(s))|                        |
+    |                |------------------------------------------------------>|
+    |                |                              |                        |
+    |                |      Credential Response     |                        |
+    |                |      with Credential(s) OR   |                        |
+    |                |      Transaction ID          |                        |
+    |                |<-----------------------------------------------------|
 ~~~
 !---
 Figure: Issuance using Authorization Code Flow 
@@ -243,7 +253,7 @@ Figure: Issuance using Authorization Code Flow
 
 (1b) The Issuer-initiated flow begins as the Credential Issuer generates a Credential Offer for certain Credential(s) that it communicates to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL and the information about the Credential(s) being offered. This step is defined in (#credential-offer).
 
-(2) The Wallet uses the Credential Issuer's URL to fetch the Credential Issuer metadata, as described in (#credential-issuer-metadata). The Wallet needs the metadata to learn the Credential types and formats that the Credential Issuer supports and to determine the Authorization Endpoint (OAuth 2.0 Authorization Server) as well as Credential Endpoint required to start the request. This specification enables deployments where the Credential Endpoint and the Authorization Endpoint are provided by different entities. Please note that in this example, the Credential Issuer and OAuth 2.0 Authorization Server correspond to the same entity.
+(2) The Wallet uses the Credential Issuer's URL to fetch the Credential Issuer metadata, as described in (#credential-issuer-metadata). The Wallet needs the metadata to learn the Credential types and formats that the Credential Issuer supports and to determine the Authorization Endpoint (OAuth 2.0 Authorization Server) as well as Credential Endpoint required to start the request. This specification supports configurations where the Credential Endpoint and the Authorization Endpoint are managed by either separate entities or a single entity.
 
 (3) The Wallet sends an Authorization Request to the Authorization Endpoint. The Authorization Endpoint processes the Authorization Request, which typically includes authenticating the End-User and gathering End-User consent. Note: The Authorization Request may be sent as a Pushed Authorization Request.
 
@@ -273,31 +283,40 @@ The following diagram is based on the Credential Issuer-initiated flow, as descr
 
 !---
 ~~~ ascii-art
-+--------------+   +-----------+                                    +-------------------+
-|   End-User   |   |   Wallet  |                                    | Credential Issuer |
-+--------------+   +-----------+                                    +-------------------+
-        |                |                                                    |
-        |                |  (1) End-User provides  information required       |
-        |                |      for the issuance of a certain Credential      |
-        |-------------------------------------------------------------------->|
-        |                |                                                    |
-        |                |  (2) Credential Offer (Pre-Authorized Code)        |
-        |                |<---------------------------------------------------|
-        |                |  (3) Obtains Issuer's Credential Issuer metadata   |
-        |                |<-------------------------------------------------->|
-        |   interacts    |                                                    |
-        |--------------->|                                                    |
-        |                |                                                    |
-        |                |  (4) Token Request (Pre-Authorized Code, tx_code)  |
-        |                |--------------------------------------------------->|
-        |                |      Token Response (access_token)                 |
-        |                |<---------------------------------------------------|
-        |                |                                                    |
-        |                |  (5) Credential Request (access_token, proof(s))   |
-        |                |--------------------------------------------------->| 
-        |                |      Credential Response                           |
-        |                |      (Credential(s))                               |
-        |                |<---------------------------------------------------|             
++--------------+   +-----------+            +----------------------+   +-------------------+
+|   End-User   |   |   Wallet  |            | Authorization Server |   | Credential Issuer |
++--------------+   +-----------+            +----------------------+   +-------------------+
+        |                |                              |                        |
+        |                |  (1) End-User provides       |                        |
+        |                |      information required    |                        |
+        |                |      for the issuance of     |                        |
+        |                |      a certain Credential    |                        |
+        |                |------------------------------------------------------>|
+        |                |                              |                        |
+        |                |  (2) Credential Offer        |                        |
+        |                |      (Pre-Authorized Code)   |                        |
+        |                |<------------------------------------------------------|
+        |                |  (3) Obtains Issuer's        |                        |
+        |                |      Credential Issuer       |                        |
+        |                |      metadata                |                        |
+        |                |------------------------------------------------------>|
+        |   interacts    |                              |                        |
+        |--------------->|                              |                        |
+        |                |                              |                        |
+        |                |  (4) Token Request           |                        |
+        |                |      (Pre-Authorized Code,   |                        |
+        |                |       tx_code)               |                        |
+        |                |----------------------------->|                        |
+        |                |      Token Response          |                        |
+        |                |      (access_token)          |                        |
+        |                |<-----------------------------|                        |
+        |                |                              |                        |
+        |                |  (5) Credential Request      |                        |
+        |                |      (access_token, proof(s))|                        |
+        |                |------------------------------------------------------>|
+        |                |      Credential Response     |                        |
+        |                |      (Credential(s))         |                        |
+        |                |<------------------------------------------------------|         
 ~~~
 !---
 Figure: Issuance using Pre-Authorized Code Flow 
