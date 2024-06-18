@@ -1,16 +1,16 @@
 [
-    {
-        "type":"openid_credential",
-        "credential_configuration_id": "org.iso.18013.5.1.mDL",
-        "claims": {
-            "org.iso.18013.5.1": {
-                "given_name": {},
-                "family_name": {},
-                "birth_date": {}
-            },
-            "org.iso.18013.5.1.aamva": {
-                "organ_donor": {}
-            }
-        }
+  {
+    "type": "openid_credential",
+    "credential_configuration_id": "org.iso.18013.5.1.mDL",
+    "claims": {
+      "org.iso.18013.5.1": {
+        "given_name": {},
+        "family_name": {},
+        "birth_date": {}
+      },
+      "org.iso.18013.5.1.aamva": {
+        "organ_donor": {}
+      }
     }
+  }
 ]

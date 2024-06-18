@@ -557,7 +557,7 @@ Below is a non-normative example of a successful Authorization Response:
 ```
 HTTP/1.1 302 Found
 Location: https://Wallet.example.org/cb?
-    code=SplxlOBeZQQYbYS6WxSbIA
+  code=SplxlOBeZQQYbYS6WxSbIA
 ```
 
 ## Authorization Error Response
@@ -569,8 +569,8 @@ Below is a non-normative example of an unsuccessful Authorization Response.
 ```json=
 HTTP/1.1 302 Found
 Location: https://client.example.net/cb?
-    error=invalid_request
-    &error_description=Unsupported%20response_type%20value
+  error=invalid_request
+  &error_description=Unsupported%20response_type%20value
 ```
 
 # Token Endpoint {#token-endpoint}
@@ -645,20 +645,20 @@ HTTP/1.1 200 OK
 Content-Type: application/json
 Cache-Control: no-store
 
-  {
-    "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ",
-    "token_type": "bearer",
-    "expires_in": 86400,
-    "c_nonce": "tZignsnFbp",
-    "c_nonce_expires_in": 86400,
-    "authorization_details": [
-      {
-        "type": "openid_credential",
-        "credential_configuration_id": "UniversityDegreeCredential",
-        "credential_identifiers": [ "CivilEngineeringDegree-2023", "ElectricalEngineeringDegree-2023" ]
-      }
-    ]
-  }
+{
+  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ",
+  "token_type": "bearer",
+  "expires_in": 86400,
+  "c_nonce": "tZignsnFbp",
+  "c_nonce_expires_in": 86400,
+  "authorization_details": [
+    {
+      "type": "openid_credential",
+      "credential_configuration_id": "UniversityDegreeCredential",
+      "credential_identifiers": [ "CivilEngineeringDegree-2023", "ElectricalEngineeringDegree-2023" ]
+    }
+  ]
+}
 ```
 
 ## Token Error Response {#token-error-response}
@@ -689,7 +689,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-   "error": "invalid_request"
+  "error": "invalid_request"
 }
 ```
 
@@ -746,12 +746,12 @@ Content-Type: application/json
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
-   "format":"mso_mdoc",
-   "doctype":"org.iso.18013.5.1.mDL",
-   "proof": {
-      "proof_type": "cwt",
-      "cwt": "..."
-   }
+  "format":"mso_mdoc",
+  "doctype":"org.iso.18013.5.1.mDL",
+  "proof": {
+    "proof_type": "cwt",
+    "cwt": "..."
+  }
 }
 ```
 
@@ -766,13 +766,13 @@ Content-Type: application/json
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
-   "credential_identifier": "CivilEngineeringDegree-2023",
-   "proofs": {
-      "jwt": [
-         "eyJ0eXAiOiJvcGVuaWQ0dmNpL...Lb9zioZoipdP-jvh1WlA",
-         "eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
-      ]
-   }
+  "credential_identifier": "CivilEngineeringDegree-2023",
+  "proofs": {
+    "jwt": [
+      "eyJ0eXAiOiJvcGVuaWQ0dmNpL...Lb9zioZoipdP-jvh1WlA",
+      "eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
+    ]
+  }
 }
 ```
 
@@ -879,28 +879,28 @@ Below is a non-normative example of a `proof` parameter:
 {
   "proof_type": "ldp_vp",
   "ldp_vp": {
-         "@context": [
-             "https://www.w3.org/ns/credentials/v2",
-             "https://www.w3.org/ns/credentials/examples/v2"
-         ],
-         "type": [
-            "VerifiablePresentation"
-         ],
-         "holder": "did:key:z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro",
-         "proof": [
-            {
-               "type": "DataIntegrityProof",
-               "cryptosuite": "eddsa-2022",
-               "proofPurpose": "authentication",
-               "verificationMethod": "did:key:z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro#z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro",
-               "created": "2023-03-01T14:56:29.280619Z",
-               "challenge": "82d4cb36-11f6-4273-b9c6-df1ac0ff17e9",
-               "domain": "did:web:audience.company.com",
-               "proofValue": "z5hrbHzZiqXHNpLq6i7zePEUcUzEbZKmWfNQzXcUXUrqF7bykQ7ACiWFyZdT2HcptF1zd1t7NhfQSdqrbPEjZceg7"
-            }
-         ]
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://www.w3.org/ns/credentials/examples/v2"
+    ],
+    "type": [
+      "VerifiablePresentation"
+    ],
+    "holder": "did:key:z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro",
+    "proof": [
+      {
+        "type": "DataIntegrityProof",
+        "cryptosuite": "eddsa-2022",
+        "proofPurpose": "authentication",
+        "verificationMethod": "did:key:z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro#z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro",
+        "created": "2023-03-01T14:56:29.280619Z",
+        "challenge": "82d4cb36-11f6-4273-b9c6-df1ac0ff17e9",
+        "domain": "did:web:audience.company.com",
+        "proofValue": "z5hrbHzZiqXHNpLq6i7zePEUcUzEbZKmWfNQzXcUXUrqF7bykQ7ACiWFyZdT2HcptF1zd1t7NhfQSdqrbPEjZceg7"
       }
+    ]
   }
+}
 
 ```
 
@@ -1037,7 +1037,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-   "error": "unsupported_credential_format"
+  "error": "unsupported_credential_format"
 }
 ```
 
@@ -1057,7 +1057,7 @@ Cache-Control: no-store
 {
   "error": "invalid_proof"
   "error_description":
-       "Credential Issuer requires key proof to be bound to a Credential Issuer provided nonce.",
+    "Credential Issuer requires key proof to be bound to a Credential Issuer provided nonce.",
   "c_nonce": "8YE9hCnyV2",
   "c_nonce_expires_in": 86400  
 }
@@ -1100,41 +1100,41 @@ Content-Type: application/json
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
-   "credential_requests": [
-      {
-         "format":"jwt_vc_json",
-         "credential_definition": {
-           "type":[
-             "VerifiableCredential",
-             "UniversityDegreeCredential"
-           ]
-         },
-         "proofs": {
-            "jwt": [
-               "eyJ0eXAiOiJvcGVuaWQ0dmNpL...Lb9zioZoipdP-jvh1WlA",
-               "eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
-            ]
-         }
+  "credential_requests": [
+    {
+      "format": "jwt_vc_json",
+      "credential_definition": {
+        "type": [
+          "VerifiableCredential",
+          "UniversityDegreeCredential"
+        ]
       },
-      {
-         "credential_identifier":"CivilEngineeringDegree-2023",
-         "proofs": [
-            {
-               "proof_type":"jwt",
-               "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
-            }
-         ]
-      },
-      {
-         "credential_identifier":"ElectricalEngineeringDegree-2023",
-         "proofs": [
-            {
-               "proof_type":"jwt",
-               "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
-            }
-         ]
+      "proofs": {
+        "jwt": [
+          "eyJ0eXAiOiJvcGVuaWQ0dmNpL...Lb9zioZoipdP-jvh1WlA",
+          "eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
+        ]
       }
-   ]
+    },
+    {
+      "credential_identifier": "CivilEngineeringDegree-2023",
+      "proofs": [
+        {
+          "proof_type": "jwt",
+          "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
+        }
+      ]
+    },
+    {
+      "credential_identifier": "ElectricalEngineeringDegree-2023",
+      "proofs": [
+        {
+          "proof_type": "jwt",
+          "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
+        }
+      ]
+    }
+  ]
 }
 ```
 
@@ -1173,21 +1173,21 @@ Cache-Control: no-store
 
 {
   "credential_responses": [
-     {
-        "credentials": [
-           "eyJraWQiOiJkaWQ6ZXhhbXBsZTpl...C_aZKPxgihac0aW9EkL1nOzM",
-           "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
-        ]
-     },
-     {
-        "credentials": [
-           "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
-        ],
-        "notification_id" : "3fwe98js"
-     },
-     {
-        "transaction_id":"8xLOxBtZp8"
-     }
+    {
+      "credentials": [
+        "eyJraWQiOiJkaWQ6ZXhhbXBsZTpl...C_aZKPxgihac0aW9EkL1nOzM",
+        "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
+      ]
+    },
+    {
+      "credentials": [
+        "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
+      ],
+      "notification_id": "3fwe98js"
+    },
+    {
+      "transaction_id": "8xLOxBtZp8"
+    }
   ],
   "c_nonce": "fGFF7UkhLa",
   "c_nonce_expires_in": 86400
@@ -1231,7 +1231,7 @@ Content-Type: application/json
 Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
-   "transaction_id": "8xLOxBtZp8"
+  "transaction_id": "8xLOxBtZp8"
 }
 ```
 
@@ -1258,7 +1258,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-   "error": "invalid_transaction_id"
+  "error": "invalid_transaction_id"
 }
 ```
 
@@ -1340,7 +1340,7 @@ HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Cache-Control: no-store
 {
-   "error": "invalid_notification_id"
+  "error": "invalid_notification_id"
 }
 ```
 
@@ -2472,6 +2472,7 @@ The technology described in this specification was made available from contribut
 
    -14
 
+   * fix indentation of examples
    * changes proof type descriptions to accomodate for the batch issuance changes
    * changed Batch Issuance endpoint to differentiate between issuance Credential Configuration, Credential Dataset and instances of Credentials with different key material
    * changed Credential Endpoint to enable requesting multiple instances of a particular Credential Configuration and Dataset with different cryptographic material
