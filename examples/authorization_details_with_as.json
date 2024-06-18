@@ -1,9 +1,9 @@
 [
-   {
-      "type": "openid_credential",
-      "locations": [
-         "https://credential-issuer.example.com"
-      ],
-      "credential_configuration_id": "UniversityDegreeCredential"
-   }
+  {
+    "type": "openid_credential",
+    "locations": [
+      "https://credential-issuer.example.com"
+    ],
+    "credential_configuration_id": "UniversityDegreeCredential"
+  }
 ]
