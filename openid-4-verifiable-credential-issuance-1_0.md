@@ -2018,7 +2018,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
 
 This specification defines several extension points to accommodate the differences across Credential Formats. Sets of Credential Format-specific parameters or claims referred to as Credential Format Profiles are identified by the Credential Format Identifier and used at these extension points.
 
-This section defines Credential Format Profiles for a few of the commonly used Credential Formats. Other specifications or deployments can define their own Credential Format Profiles.
+This section defines Credential Format Profiles for a few of the commonly used Credential Formats. Other specifications or deployments can define their own Credential Format Profiles. It is RECOMMENDED that new Credential Format Profiles use the media type of the particular Credential Format for the Credential Format Identifier.
 
 ## W3C Verifiable Credentials
 
@@ -2200,7 +2200,7 @@ This section defines a Credential Format Profile for Credentials complying with 
 
 ### Format Identifier
 
-The Credential Format Identifier is `mso_mdoc`.
+The Credential Format Identifier is `mso_mdoc`. This refers to the Mobile Security Object (MSO) which secures the mdoc data model encoded as CBOR.
 
 ### Credential Issuer Metadata {#server-metadata-mso-mdoc}
 
