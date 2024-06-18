@@ -164,7 +164,7 @@ This specification allows for the issuance of Verifiable Credentials through two
 1. Single Credential Endpoint: This endpoint is used when a single Credential is to be issued. The request to this endpoint includes the necessary parameters for the issuance of one Credential. The response from this endpoint will contain one issued Credential.
 2. Batch Credential Endpoint: This endpoint is used when multiple Credentials need to be issued at once. The request to this endpoint includes the necessary parameters for the issuance of multiple Credentials. The response from this endpoint will contain all the issued Credentials.
 
-Credentials can vary in their format (Credential Format including Credential Format Profile specific parameters), in their contents (the Credential Dataset), as well as in the cryptographic data, e.g. Issuer signatures, hashes and keys used for Cryptographic Holder Binding.
+Credentials can vary in their format (Credential Format including Credential Format Profile-specific parameters), in their contents (the Credential Dataset), as well as in the cryptographic data, e.g. Issuer signatures, hashes and keys used for Cryptographic Holder Binding.
 Multiple Credentials, either issued in multiple Credential Requests or all at once at the Batch Credential Endpoint, can therefore vary in the following dimensions:
 
 - Credential Dataset
@@ -634,7 +634,7 @@ In addition to the response parameters defined in [@!RFC6749], the Authorization
 * `c_nonce`: OPTIONAL. String containing a nonce to be used when creating a proof of possession of the key proof (see (#credential-request)). When received, the Wallet MUST use this nonce value for its subsequent requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
 * `authorization_details`: REQUIRED when `authorization_details` parameter is used to request issuance of a certain Credential type as defined in (#authorization-details). It MUST NOT be used otherwise. It is an array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
-  * `credential_identifiers`: OPTIONAL. Array of strings, each uniquely identifying a Credential that can be issued using the Access Token returned in this response. Each of these Credentials corresponds to the same entry in the `credential_configurations_supported` Credential Issuer metadata but can contain different claim values or a different subset of claims within the claims set identified by that Credential type. This parameter can be used to simplify the Credential Request, as defined in (#credential-request), where the `credential_identifier` parameter replaces the `format` parameter and any other Credential format-specific parameters in the Credential Request. When received, the Wallet MUST use these values together with an Access Token in subsequent Credential Requests.
+  * `credential_identifiers`: OPTIONAL. Array of strings, each uniquely identifying a Credential that can be issued using the Access Token returned in this response. Each of these Credentials corresponds to the same entry in the `credential_configurations_supported` Credential Issuer metadata but can contain different claim values or a different subset of claims within the claims set identified by that Credential type. This parameter can be used to simplify the Credential Request, as defined in (#credential-request), where the `credential_identifier` parameter replaces the `format` parameter and any other Credential Format-specific parameters in the Credential Request. When received, the Wallet MUST use these values together with an Access Token in subsequent Credential Requests.
 
 Note: Credential Instance identifier(s) cannot be used when the `scope` parameter is used in the Authorization Request to request issuance of a Credential.
 
@@ -721,8 +721,8 @@ For cryptographic binding, the Client has the following options defined in (#cre
 
 A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
-* `format`: REQUIRED when the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. It is a String that determines the format of the Credential to be issued, which may determine the type and any other information related to the Credential to be issued. Credential Format Profiles consist of the Credential format specific parameters that are defined in (#format-profiles). When this parameter is used, the `credential_identifier` Credential Request parameter MUST NOT be present.
-* `credential_identifier`: REQUIRED when `credential_identifiers` parameter was returned from the Token Response. It MUST NOT be used otherwise. It is a String that identifies a Credential that is being requested to be issued. When this parameter is used, the `format` parameter and any other Credential format specific parameters such as those defined in (#format-profiles) MUST NOT be present.
+* `format`: REQUIRED when the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. It is a String that determines the format of the Credential to be issued, which may determine the type and any other information related to the Credential to be issued. Credential Format Profiles consist of the Credential Format-specific parameters that are defined in (#format-profiles). When this parameter is used, the `credential_identifier` Credential Request parameter MUST NOT be present.
+* `credential_identifier`: REQUIRED when `credential_identifiers` parameter was returned from the Token Response. It MUST NOT be used otherwise. It is a String that identifies a Credential that is being requested to be issued. When this parameter is used, the `format` parameter and any other Credential Format-specific parameters such as those defined in (#format-profiles) MUST NOT be present.
 * `proof`: OPTIONAL. Object providing a single proof of possession of the cryptographic key material to which the issued Credential instance will be bound to. `proof` parameter MUST NOT be present if `proofs` parameter is used.  The `proof` object MUST contain the following:
     * `proof_type`: REQUIRED. String specifying the key proof type. The value set for this parameter determines the additional parameters in the key proof object and their corresponding processing rules. The key proof types outlined in this specification are detailed in (#proof-types).
 * `proofs`: OPTIONAL. Object providing one or more proof of possessions of the cryptographic key material to which the issued Credential instances will be bound to. The `proofs` parameter MUST NOT be present if `proof` parameter is used. `proofs` object contains exactly one parameter named as the proof type in (#proof-types), the value set for this parameter is an array containing parameters as defined by the corresponding proof type.
@@ -737,7 +737,7 @@ The `proof` element MUST incorporate the Credential Issuer Identifier (audience)
 
 The initial `c_nonce` value can be returned in a successful Token Response as defined in (#token-response), in a Credential Error Response as defined in (#issuer-provided-nonce), or in a Batch Credential Error Response as defined in (#batch-credential-error-response).
 
-Below is a non-normative example of a Credential Request for a Credential in [@ISO.18013-5] format using Credential format specific parameters and a key proof type `cwt`:
+Below is a non-normative example of a Credential Request for a Credential in [@ISO.18013-5] format using Credential Format-specific parameters and a key proof type `cwt`:
 
 ```
 POST /credential HTTP/1.1
@@ -947,8 +947,8 @@ If the Credential Response is not encrypted, the media type of the response MUST
 
 The following parameters are used in the JSON-encoded Credential Response body:
 
-* `credential`: OPTIONAL. Contains issued Credential. It MUST NOT be used if `credentials` or `transaction_id` parameter is present. It MAY be a string or an object, depending on the Credential format. See (#format-profiles) for the Credential format specific encoding requirements.
-* `credentials`: OPTIONAL. Contains an array of issued Credentials. It MUST NOT be used if `credential` or `transaction_id` parameter is present. The values in the array MAY be a string or an object, depending on the Credential format. See (#format-profiles) for the Credential format specific encoding requirements.
+* `credential`: OPTIONAL. Contains issued Credential. It MUST NOT be used if `credentials` or `transaction_id` parameter is present. It MAY be a string or an object, depending on the Credential Format. See (#format-profiles) for the Credential Format-specific encoding requirements.
+* `credentials`: OPTIONAL. Contains an array of issued Credentials. It MUST NOT be used if `credential` or `transaction_id` parameter is present. The values in the array MAY be a string or an object, depending on the Credential Format. See (#format-profiles) for the Credential Format-specific encoding requirements.
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used  if `credential` or `credentials` is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. String containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential-request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
@@ -958,7 +958,7 @@ The format of the Credential in the Credential Response is determined by the val
 
 The encoding of the Credential returned in the `credential` parameter depends on the Credential Format. Credential Formats expressed as binary data MUST be base64url-encoded and returned as a string.
 
-More details such as Credential Format identifiers are defined in the Credential Format Profiles in (#format-profiles). 
+More details such as Credential Format Identifiers are defined in the Credential Format Profiles in (#format-profiles). 
 
 Below is a non-normative example of a Credential Response in an immediate issuance flow for a Credential in JWT VC format (JSON encoded):
 
@@ -1021,7 +1021,7 @@ If the Wallet is requesting the issuance of a Credential that is not supported b
 * `error`: REQUIRED. The `error` parameter SHOULD be a single ASCII [@!USASCII] error code from the following:
   * `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
   * `unsupported_credential_type`: Requested Credential type is not supported.
-  * `unsupported_credential_format`: Requested Credential format is not supported.
+  * `unsupported_credential_format`: Requested Credential Format is not supported.
   * `invalid_proof`: The `proof` or `proofs` parameter in the Credential Request is invalid. For example, because either both fields are missing or both are present simultaneously, or one of the provided key proofs is either invalid or not linked to a nonce provided by the Credential Issuer.
   * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
   * `credential_request_denied`: The Credential Request has not been accepted by the Credential Issuer.
@@ -1082,7 +1082,7 @@ Wallets need to differentiate between these options because they can lead to var
 
 A Client submits a Batch Credential Request to the Batch Credential Endpoint by sending a JSON object containing the following parameters in the entity-body of an HTTP POST request, using the `application/json` media type.
 
-* `credential_requests`: REQUIRED. Array that contains Batch Credential Request objects, each of these objects may refer to a different Credential Configuration or the same Credential Configuration with a different Credential Dataset. A Batch Credential Request object contains either a `format` parameter (and possibly further Credential Format specific parameters) or a `credential_identifier` parameter, and additionally an optional `proofs` parameter. A Batch Credential Request object must not contain `proof` or `credential_response_encryption` parameters.
+* `credential_requests`: REQUIRED. Array that contains Batch Credential Request objects, each of these objects may refer to a different Credential Configuration or the same Credential Configuration with a different Credential Dataset. A Batch Credential Request object contains either a `format` parameter (and possibly further Credential Format-specific parameters) or a `credential_identifier` parameter, and additionally an optional `proofs` parameter. A Batch Credential Request object must not contain `proof` or `credential_response_encryption` parameters.
   * `format`: REQUIRED if the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
   * `credential_identifier`: REQUIRED if `credential_identifiers` parameter was returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
   * `proofs`: OPTIONAL. See (#credential-request).
@@ -1157,9 +1157,9 @@ The following parameters are used in the JSON-encoded Batch Credential Response 
 * `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response).
 * `c_nonce_expires_in`: OPTIONAL. The `c_nonce_expires_in` as defined in (#credential-response).
 
-The encoding of the Credential returned in the `credential` parameter depends on the Credential Format. Credential formats expressed as binary data MUST be base64url-encoded and returned as a string.
+The encoding of the Credential returned in the `credential` parameter depends on the Credential Format. Credential Formats expressed as binary data MUST be base64url-encoded and returned as a string.
 
-More details such as Credential Format identifiers are defined in the Credential Format Profiles in (#format-profiles).
+More details such as Credential Format Identifiers are defined in the Credential Format Profiles in (#format-profiles).
 
 Below is a non-normative example of a Batch Credential Response containing:
 * 2 Credentials for the same Credential Configuration and Credential Dataset but with different cryptographic binding keys
@@ -1420,7 +1420,7 @@ This specification defines the following Credential Issuer Metadata parameters:
   * `format`: REQUIRED. A JSON string identifying the format of this Credential, i.e., `jwt_vc_json` or `ldp_vc`. Depending on the format value, the object contains further elements defining the type and (optionally) particular claims the Credential MAY contain and information about how to display the Credential. (#format-profiles) contains Credential Format Profiles introduced by this specification.
   * `scope`: OPTIONAL. A JSON string identifying the scope value that this Credential Issuer supports for this particular Credential. The value can be the same across multiple `credential_configurations_supported` objects. The Authorization Server MUST be able to uniquely identify the Credential Issuer based on the scope value. The Wallet can use this value in the Authorization Request as defined in (#credential-request-using-type-specific-scope). Scope values in this Credential Issuer metadata MAY duplicate those in the `scopes_supported` parameter of the Authorization Server.
   * `cryptographic_binding_methods_supported`: OPTIONAL. Array of case sensitive strings that identify the representation of the cryptographic key material that the issued Credential is bound to, as defined in (#credential-binding). Support for keys in JWK format [@!RFC7517] is indicated by the value `jwk`. Support for keys expressed as a COSE Key object [@!RFC8152] (for example, used in [@!ISO.18013-5]) is indicated by the value `cose_key`. When the Cryptographic Binding Method is a DID, valid values are a `did:` prefix followed by a method-name using a syntax as defined in Section 3.1 of [@!DID-Core], but without a `:`and method-specific-id. For example, support for the DID method with a method-name "example" would be represented by `did:example`.
-  * `credential_signing_alg_values_supported`: OPTIONAL. Array of case sensitive strings that identify the algorithms that the Issuer uses to sign the issued Credential. Algorithm names used are determined by the Credential format and are defined in (#format-profiles).
+  * `credential_signing_alg_values_supported`: OPTIONAL. Array of case sensitive strings that identify the algorithms that the Issuer uses to sign the issued Credential. Algorithm names used are determined by the Credential Format and are defined in (#format-profiles).
   * `proof_types_supported`: OPTIONAL. Object that describes specifics of the key proof(s) that the Credential Issuer supports. This object contains a list of name/value pairs, where each name is a unique identifier of the supported proof type(s). Valid values are defined in (#proof-types), other values MAY be used. This identifier is also used by the Wallet in the Credential Request as defined in (#credential-request). The value in the name/value pair is an object that contains metadata about the key proof and contains the following parameters defined by this specification:
     * `proof_signing_alg_values_supported`: REQUIRED. Array of case sensitive strings that identify the algorithms that the Issuer supports for this proof type. The Wallet uses one of them to sign the proof. Algorithm names used are determined by the key proof type and are defined in (#proof-types).
   * `display`: OPTIONAL. Array of objects, where each object contains the display properties of the supported Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included.
@@ -1439,7 +1439,7 @@ An Authorization Server that only supports the Pre-Authorized Code grant type MA
 
 Note: It can be challenging for a Credential Issuer that accepts tokens from multiple Authorization Servers to introspect an Access Token to check the validity and determine the permissions granted. Some ways to achieve this are relying on Authorization Servers that use [@!RFC9068] or by the Credential Issuer understanding the proprietary Access Token structures of the Authorization Servers.
 
-Depending on the Credential Format, additional parameters might be present in the `credential_configurations_supported` object values, such as information about claims in the Credential. For Credential Format specific claims, see the "Credential Issuer Metadata" subsections in (#format-profiles).
+Depending on the Credential Format, additional parameters might be present in the `credential_configurations_supported` object values, such as information about claims in the Credential. For Credential Format-specific claims, see the "Credential Issuer Metadata" subsections in (#format-profiles).
 
 The Authorization Server MUST be able to determine from the Issuer metadata what claims are disclosed by the requested Credentials to be able to render meaningful End-User consent.
 
@@ -1593,7 +1593,7 @@ Credential(s) and for what purpose.
 To ensure minimum disclosure and prevent Verifiers from obtaining claims unnecessary for the
 transaction at hand, when issuing Credentials that are intended to be created once and then used a
 number of times by the End-User, the Credential Issuers and the Wallets SHOULD implement
-Credential formats that support selective disclosure, or consider issuing a separate Credential
+Credential Formats that support selective disclosure, or consider issuing a separate Credential
 for each user claim.
 
 ## Storage of the Credentials
@@ -2016,15 +2016,15 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
 
 # Credential Format Profiles {#format-profiles}
 
-This specification defines several extension points to accommodate the differences across Credential formats. Sets of Credential format specific parameters or claims referred to as Credential format identifiers are identified by the Credential format identifier and used at these extension points.
+This specification defines several extension points to accommodate the differences across Credential Formats. Sets of Credential Format-specific parameters or claims referred to as Credential Format Profiles are identified by the Credential Format Identifier and used at these extension points.
 
-This section defines Credential Format Profiles for a few of the commonly used Credential formats. Other specifications or deployments can define their own Credential Format Profiles.
+This section defines Credential Format Profiles for a few of the commonly used Credential Formats. Other specifications or deployments can define their own Credential Format Profiles.
 
 ## W3C Verifiable Credentials
 
 Sections 6.1 and 6.2 of [@VC_DATA] define how Verifiable Credentials MAY or MAY NOT use JSON-LD [@JSON-LD]. As acknowledged in Section 4.1 of [@VC_DATA], implementations can behave differently regarding processing of the `@context` property whether JSON-LD is used or not.
 
-This specification therefore differentiates between the following three Credential formats for W3C Verifiable Credentials:
+This specification therefore differentiates between the following three Credential Formats for W3C Verifiable Credentials:
 
 * VC signed as a JWT, not using JSON-LD (`jwt_vc_json`)
 * VC signed as a JWT, using JSON-LD (`jwt_vc_json-ld`)
@@ -2032,7 +2032,7 @@ This specification therefore differentiates between the following three Credenti
 
 Note: VCs secured using Data Integrity MAY NOT necessarily use JSON-LD and MAY NOT necessarily use proof suites requiring Linked Data canonicalization. Credential Format Profiles for them may be defined in the future versions of this specification.
 
-Distinct Credential format identifiers, extension parameters/claims, and processing rules are defined for each of the above-mentioned Credential formats.
+Distinct Credential Format Identifiers, extension parameters/claims, and processing rules are defined for each of the above-mentioned Credential Formats.
 
 It is on purpose that the Credential Offer does not contain `credentialSubject` property, while Authorization Details and Credential Request do. This is because this property is meant to be used by the Wallet to specify which claims it is requesting to be issued out of all the claims the Credential Issuer is capable of issuing for this particular Credential (data minimization), while Credential Offer is a mere "invitation" from the Credential Issuer to the Wallet to start the issuance flow.
 
@@ -2040,7 +2040,7 @@ It is on purpose that the Credential Offer does not contain `credentialSubject` 
 
 #### Format Identifier
 
-The Credential format identifier is `jwt_vc_json`.
+The Credential Format Identifier is `jwt_vc_json`.
 
 When the `format` value is `jwt_vc_json`, the entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules.
 
@@ -2048,7 +2048,7 @@ When the `format` value is `jwt_vc_json`, the entire Credential Offer, Authoriza
 
 Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in [@IANA.JOSE.ALGS].
 
-The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
+The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
 * `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of the following parameters defined by this specification:
   * `type`: REQUIRED. Array designating the types a certain Credential type supports, according to [@VC_DATA], Section 4.3.
@@ -2060,31 +2060,31 @@ The following additional Credential Issuer metadata parameters are defined for t
           * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. Array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
-The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `jwt_vc_json`:
+The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential Format `jwt_vc_json`:
 
 <{{examples/credential_metadata_jwt_vc_json.json}}
 
 #### Authorization Details {#authorization-jwt-vc-json}
 
-The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
+The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.
 
 * `credential_definition`: OPTIONAL. Object containing a detailed description of the Credential consisting of the following parameter:
   * `type`: OPTIONAL. Array as defined in (#server-metadata-jwt-vc-json). This claim contains the type values the Wallet requests authorization for at the Credential Issuer. It MUST be present if the claim `format` is present in the root of the authorization details object. It MUST not be present otherwise. 
   * `credentialSubject`: OPTIONAL. Object as defined in (#server-metadata-sd-jwt-vc) excluding the `display` and `value_type` parameters. `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
 
-The following is a non-normative example of an authorization details object with Credential format `jwt_vc_json`:
+The following is a non-normative example of an authorization details object with Credential Format `jwt_vc_json`:
 
 <{{examples/authorization_details_jwt_vc_json.json}}
 
 #### Credential Request
 
-The following additional parameters are defined for Credential Requests and this Credential format.  
+The following additional parameters are defined for Credential Requests and this Credential Format.  
 
 * `credential_definition`: REQUIRED when the `format` parameter is present in the Credential Request. It MUST NOT be used otherwise. It is an object containing the detailed description of the Credential type. It consists of the following parameters defined by this specification:
   * `type`: REQUIRED. Array as defined in (#server-metadata-jwt-vc-json). The credential issued by the Credential Issuer MUST contain at least the values listed in this claim.
   * `credentialSubject`: OPTIONAL. Object as defined in (#authorization-jwt-vc-json).
 
-The following is a non-normative example of a Credential Request with Credential format `jwt_vc_json`:
+The following is a non-normative example of a Credential Request with Credential Format `jwt_vc_json`:
 
 <{{examples/credential_request_jwt_vc_json_with_claims.json}}
 
@@ -2092,7 +2092,7 @@ The following is a non-normative example of a Credential Request with Credential
 
 The value of the `credential` claim in the Credential Response MUST be a JWT. Credentials of this format are already a sequence of base64url-encoded values separated by period characters and MUST NOT be re-encoded. 
 
-The following is a non-normative example of a Credential Response with Credential format `jwt_vc_json`:
+The following is a non-normative example of a Credential Response with Credential Format `jwt_vc_json`:
 
 <{{examples/credential_response_jwt_vc_json.txt}}
 
@@ -2100,19 +2100,19 @@ The following is a non-normative example of a Credential Response with Credentia
 
 #### Format Identifier
 
-The Credential format identifier is `ldp_vc`.
+The Credential Format Identifier is `ldp_vc`.
 
 When the `format` value is `ldp_vc`, the entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules. 
 
 The `@context` value in the `credential_definition` object can be used by the Wallet to check whether it supports a certain VC or not. If necessary, the Wallet could apply JSON-LD processing to the Credential issued by the Credential Issuer.
 
-Note: Data Integrity used to be called Linked Data Proofs, hence the "ldp" in the Credential format identifier.
+Note: Data Integrity used to be called Linked Data Proofs, hence the "ldp" in the Credential Format Identifier.
 
 #### Credential Issuer Metadata {#server-metadata-ldp-vc}
 
 Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in [@LD_Suite_Registry].
 
-The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters):
+The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters):
 
 * `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of the following parameters defined by this specification:
   * `@context`: REQUIRED. Array as defined in [@VC_DATA], Section 4.1.
@@ -2126,37 +2126,37 @@ The following additional Credential Issuer metadata parameters are defined for t
 * `order`: OPTIONAL. Array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
 
-The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `ldp_vc`:
+The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential Format `ldp_vc`:
 
 <{{examples/credential_metadata_ldp_vc.json}}
 
 #### Authorization Details {#authorization-ldp-vc}
 
-The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.  
+The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.  
 
 * `credential_definition`: OPTIONAL. Object containing the detailed description of the Credential. It consists of the following parameters defined by this specification:
     * `@context`: OPTIONAL. Array as defined in (#server-metadata-ldp-vc). It MUST only be present if the `format` claim is present in the root of the authorization details object. It MUST not be present otherwise. 
     * `type`: OPTIONAL. Array as defined in (#server-metadata-ldp-vc).  This claim contains the type values the Wallet requests authorization for at the Credential Issuer. MUST only be present if the `@context` claim is present. 
     * `credentialSubject`: OPTIONAL. Object as defined in (#server-metadata-sd-jwt-vc) excluding the `display` and `value_type` parameters. `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
 
-The following is a non-normative example of an authorization details object with Credential format `ldp_vc`:
+The following is a non-normative example of an authorization details object with Credential Format `ldp_vc`:
 
 <{{examples/authorization_details_ldp_vc.json}}
 
 #### Credential Request {#credential-request-ldp-vc}
 
-The following additional parameters are defined for Credential Requests and this Credential format.  
+The following additional parameters are defined for Credential Requests and this Credential Format.  
 
 * `credential_definition`: REQUIRED when the `format` parameter is present in the Credential Request. It MUST NOT be used otherwise. It is an object containing the detailed description of the Credential type. It consists of the following parameters defined by this specification:
   * `@context`: REQUIRED. Array as defined in (#server-metadata-ldp-vc).
   * `type`: REQUIRED. Array as defined in (#server-metadata-ldp-vc). The Credential issued by the Credential Issuer MUST contain at least the values listed in this claim.
   * `credentialSubject`: OPTIONAL. Object as defined in (#authorization-ldp-vc).
 
-The following is a non-normative example of a Credential Request with Credential format `ldp_vc` with the key proof type `jwt`:
+The following is a non-normative example of a Credential Request with Credential Format `ldp_vc` with the key proof type `jwt`:
 
 <{{examples/credential_request_ldp_vc.json}}
 
-The following is a non-normative example of a Credential Request with Credential format `ldp_vc` with the key proof type `ldp_vp`:
+The following is a non-normative example of a Credential Request with Credential Format `ldp_vc` with the key proof type `ldp_vp`:
 
 <{{examples/credential_request_ldp_vc_vp.json}}
 
@@ -2164,7 +2164,7 @@ The following is a non-normative example of a Credential Request with Credential
 
 The value of the `credential` claim in the Credential Response MUST be a JSON object. Credentials of this format MUST NOT be re-encoded.
 
-The following is a non-normative example of a Credential Response with Credential format `ldp_vc`:
+The following is a non-normative example of a Credential Response with Credential Format `ldp_vc`:
 
 <{{examples/credential_response_ldp_vc.txt}}
 
@@ -2172,7 +2172,7 @@ The following is a non-normative example of a Credential Response with Credentia
 
 #### Format Identifier
 
-The Credential format identifier is `jwt_vc_json-ld`.
+The Credential Format Identifier is `jwt_vc_json-ld`.
 
 When the `format` value is `jwt_vc_json-ld`, the entire Credential Offer, Authorization Details, Credential Request and Credential Issuer metadata, including `credential_definition` object, MUST NOT be processed using JSON-LD rules.
 
@@ -2200,13 +2200,13 @@ This section defines a Credential Format Profile for Credentials complying with 
 
 ### Format Identifier
 
-The Credential format identifier is `mso_mdoc`.
+The Credential Format Identifier is `mso_mdoc`.
 
 ### Credential Issuer Metadata {#server-metadata-mso-mdoc}
 
 Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in [@!ISO.18013-5].
 
-The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
+The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
 * `doctype`: REQUIRED. String identifying the Credential type, as defined in [@!ISO.18013-5].
 * `claims`: OPTIONAL. Object containing a list of name/value pairs, where the name is a certain `namespace` as defined in [@!ISO.18013-5] (or any profile of it), and the value is an object. This object also contains a list of name/value pairs, where the name is a claim name value that is defined in the respective namespace and is offered in the Credential. The value is an object detailing the specifics of the claim with the following non-exhaustive list of parameters that MAY be included:
@@ -2217,29 +2217,29 @@ The following additional Credential Issuer metadata parameters are defined for t
         * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. Array of namespaced claim name values that lists them in the order they should be displayed by the Wallet. The values MUST be two strings separated by a tilde ('~') character, where the first string is a namespace value and a second is a claim name value. For example, `org.iso.18013.5.1~given_name".
 
-The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential format `mso_mdoc`:
+The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential Format `mso_mdoc`:
 
 <{{examples/credential_metadata_mso_mdoc.json}}
 
 ### Authorization Details
 
-The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
+The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.
 
 * `doctype`: OPTIONAL. String as defined in (#server-metadata-mso-mdoc). This claim contains the type value the Wallet requests authorization for at the Credential Issuer. It MUST only be present if the `format` claim is present. It MUST not be present otherwise. 
 * `claims`: OPTIONAL. Object as defined in (#server-metadata-sd-jwt-vc) excluding the `display` and `value_type` parameters. `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
 
-The following is a non-normative example of an authorization details object with Credential format `mso_mdoc`:
+The following is a non-normative example of an authorization details object with Credential Format `mso_mdoc`:
 
 <{{examples/authorization_details_mso_doc.json}}
 
 ### Credential Request
 
-The following additional parameters are defined for Credential Requests and this Credential format.  
+The following additional parameters are defined for Credential Requests and this Credential Format.  
 
 * `doctype`: REQUIRED when the `format` parameter is present in the Credential Request. It MUST NOT be used otherwise. It is a string as defined in (#server-metadata-mso-mdoc). The Credential issued by the Credential Issuer MUST contain at least the values listed in this claim.
 * `claims`: OPTIONAL. Object as defined in (#server-metadata-mso-mdoc).
 
-The following is a non-normative example of a Credential Request with Credential format `mso_mdoc`:
+The following is a non-normative example of a Credential Request with Credential Format `mso_mdoc`:
 
 <{{examples/credential_request_iso_mdl_with_claims.json}}
 
@@ -2253,13 +2253,13 @@ This section defines a Credential Format Profile for Credentials complying with 
 
 ### Format Identifier
 
-The Credential format identifier is `vc+sd-jwt`.
+The Credential Format Identifier is `vc+sd-jwt`.
 
 ### Credential Issuer Metadata {#server-metadata-sd-jwt-vc}
 
 Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in [@IANA.JOSE.ALGS].
 
-The following additional Credential Issuer metadata parameters are defined for this Credential format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
+The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
 
 * `vct`: REQUIRED. String designating the type of a Credential, as defined in [@!I-D.ietf-oauth-sd-jwt-vc].
@@ -2271,29 +2271,29 @@ The following additional Credential Issuer metadata parameters are defined for t
         * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. An array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
-The following is a non-normative example of an object comprising the `credential_configurations_supported` parameter for Credential format `vc+sd-jwt`.
+The following is a non-normative example of an object comprising the `credential_configurations_supported` parameter for Credential Format `vc+sd-jwt`.
 
 <{{examples/credential_metadata_sd_jwt_vc.json}}
 
 ### Authorization Details {#authorization-sd-jwt-vc}
 
-The following additional claims are defined for authorization details of type `openid_credential` and this Credential format.
+The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.
 
 * `vct`: REQUIRED. String as defined in (#server-metadata-sd-jwt-vc). This claim contains the type values the Wallet requests authorization for at the Credential Issuer. It MUST only be present if the `format` claim is present. It MUST not be present otherwise.
 * `claims`: OPTIONAL. Object as defined in (#server-metadata-sd-jwt-vc) excluding the `display` and `value_type` parameters. `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
 
-The following is a non-normative example of an authorization details object with Credential format `vc+sd-jwt`.
+The following is a non-normative example of an authorization details object with Credential Format `vc+sd-jwt`.
 
 <{{examples/authorization_details_sd_jwt_vc.json}}
 
 ### Credential Request
 
-The following additional parameters are defined for Credential Requests and this Credential format.
+The following additional parameters are defined for Credential Requests and this Credential Format.
 
 * `vct`: REQUIRED when the `format` parameter is present in the Credential Request. It MUST NOT be used otherwise. It is a string as defined in (#server-metadata-sd-jwt-vc). This claim contains the type value of the Credential that the Wallet requests the Credential Issuer to issue.
 * `claims`: OPTIONAL. An object as defined in (#server-metadata-sd-jwt-vc).
 
-The following is a non-normative example of a Credential Request with Credential format `vc+sd-jwt`.
+The following is a non-normative example of a Credential Request with Credential Format `vc+sd-jwt`.
 
 <{{examples/credential_request_sd_jwt_vc.json}}
 
