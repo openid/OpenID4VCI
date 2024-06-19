@@ -1091,7 +1091,7 @@ A Client submits a Batch Credential Request to the Batch Credential Endpoint by 
 Below is a non-normative example of a Batch Credential Request requesting four Credentials:
 
 * Two Credentials for the same Credential Configuration and Credential Dataset but with different cryptographic binding keys in an IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format;
-* Two Credentials for the same Credential Configuration but with different Credential Dataset in [@VC_DATA] format.
+* Two Credentials for the same Credential Configuration but with different Credential Datasets in the [@VC_DATA] format.
 
 ```
 POST /batch_credential HTTP/1.1
