@@ -460,7 +460,7 @@ The following is a non-normative example of an `authorization_details` object wi
 
 <{{examples/authorization_details.json}}
 
-The following is a non-normative example of an `authorization_details` object with a `format`:
+The following is a non-normative example of an `authorization_details` object requesting a Credential in the IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format:
 
 <{{examples/authorization_details_sd_jwt_vc.json}}
 
@@ -1107,10 +1107,10 @@ A Client submits a Batch Credential Request to the Batch Credential Endpoint by 
   * `proofs`: OPTIONAL. See (#credential-request).
 * `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Batch Credential Response. It contains the same parameters as defined in #{credential-request}. If this request element is not present, the corresponding Batch Credential Response returned is not encrypted.
 
-Below is a non-normative example of a Batch Credential Request requesting:
+Below is a non-normative example of a Batch Credential Request requesting four Credentials:
 
-* 2 Credentials for the same Credential Configuration and Credential Dataset but with different cryptographic binding keys;
-* 2 Credentials for the same Credential Configuration but with different Credential Dataset.
+* Two Credentials for the same Credential Configuration and Credential Dataset but with different cryptographic binding keys in the IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format;
+* Two Credentials for the same Credential Configuration but with different Credential Datasets in the [@VC_DATA] format.
 
 ```
 POST /batch_credential HTTP/1.1
@@ -1121,13 +1121,8 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 {
   "credential_requests": [
     {
-      "format": "jwt_vc_json",
-      "credential_definition": {
-        "type": [
-          "VerifiableCredential",
-          "UniversityDegreeCredential"
-        ]
-      },
+      "format": "vc+sd-jwt",
+      "vct": "SD_JWT_VC_example_in_OpenID4VCI",
       "proofs": {
         "jwt": [
           "eyJ0eXAiOiJvcGVuaWQ0dmNpL...Lb9zioZoipdP-jvh1WlA",
@@ -1136,20 +1131,20 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
       }
     },
     {
-      "credential_identifier": "CivilEngineeringDegree-2023",
+      "credential_identifier":"CivilEngineeringDegree-2023",
       "proofs": [
         {
-          "proof_type": "jwt",
-          "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
+          "proof_type":"jwt",
+          "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
         }
       ]
     },
     {
-      "credential_identifier": "ElectricalEngineeringDegree-2023",
+      "credential_identifier":"ElectricalEngineeringDegree-2023",
       "proofs": [
         {
-          "proof_type": "jwt",
-          "jwt": "eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
+          "proof_type":"jwt",
+          "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
         }
       ]
     }
@@ -1462,9 +1457,9 @@ Depending on the Credential Format, additional parameters might be present in th
 
 The Authorization Server MUST be able to determine from the Issuer metadata what claims are disclosed by the requested Credentials to be able to render meaningful End-User consent.
 
-The following is a non-normative example of Credential Issuer metadata:
+The following is a non-normative example of Credential Issuer metadata of a Credential in the IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format:
 
-<{{examples/credential_issuer_metadata_jwt_vc_json.json}}
+<{{examples/credential_metadata_sd_jwt_vc.json}}
 
 Note: The Client MAY use other mechanisms to obtain information about the Verifiable Credentials that a Credential Issuer can issue.
 
