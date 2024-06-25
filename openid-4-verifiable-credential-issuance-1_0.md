@@ -164,7 +164,7 @@ This specification allows for the issuance of Verifiable Credentials through two
 1. Single Credential Endpoint: This endpoint is used when a single Credential is to be issued. The request to this endpoint includes the necessary parameters for the issuance of one Credential. The response from this endpoint will contain one issued Credential.
 2. Batch Credential Endpoint: This endpoint is used when multiple Credentials need to be issued at once. The request to this endpoint includes the necessary parameters for the issuance of multiple Credentials. The response from this endpoint will contain all the issued Credentials.
 
-Credentials can vary in their format (Credential Format including Credential Format Profile-specific parameters), in their contents (the Credential Dataset), as well as in the cryptographic data, e.g. Issuer signatures, hashes and keys used for Cryptographic Holder Binding.
+Credentials can vary in their format, including Credential Format Profile-specific parameters, in their contents known as the Credential Dataset, and in the cryptographic data such as issuer signatures, hashes, and keys used for Cryptographic Holder Binding.
 Multiple Credentials, either issued in multiple Credential Requests or all at once at the Batch Credential Endpoint, can therefore vary in the following dimensions:
 
 - Credential Dataset
