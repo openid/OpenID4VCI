@@ -613,9 +613,9 @@ grant_type=authorization_code
 
 ### Request Issuance of a Certain Credential using authorization_details Parameter
 
-Credential Issuers MAY support requesting authorization to issue a Credential using the authorization_details parameter. This is particularly useful, if the Credential Issuer offered multiple Credential Configurations in the Credential Offer of a Pre-Authorized Code Flow. 
+Credential Issuers MAY support requesting authorization to issue a Credential using the `authorization_details` parameter. This is particularly useful, if the Credential Issuer offered multiple Credential Configurations in the Credential Offer of a Pre-Authorized Code Flow. 
 
-The Wallet can use `authorization_details` in the Token Request to request a specific Credential Configuration in both Authorization Code Flow and Pre-Authorized Code Flow. The value of the `authorization_details` parameter is defined in (#(authorization-details)).
+The Wallet can use `authorization_details` in the Token Request to request a specific Credential Configuration in both the Authorization Code Flow and the Pre-Authorized Code Flow. The value of the `authorization_details` parameter is defined in (#(authorization-details)).
 
 Below is a non-normative example of a Token Request in a Pre-Authorized Code Flow (without Client Authentication):
 
@@ -641,10 +641,10 @@ In addition to the response parameters defined in [@!RFC6749], the Authorization
 
 * `c_nonce`: OPTIONAL. String containing a nonce to be used when creating a proof of possession of the key proof (see (#credential-request)). When received, the Wallet MUST use this nonce value for its subsequent requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
-* `authorization_details`: REQUIRED when `authorization_details` parameter is used to request issuance of a certain Credential Configuration as defined in (#authorization-details). It MUST NOT be used otherwise. It is an array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
+* `authorization_details`: REQUIRED when the `authorization_details` parameter is used to request issuance of a certain Credential Configuration as defined in (#authorization-details). It MUST NOT be used otherwise. It is an array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
   * `credential_identifiers`: REQUIRED. Array of strings, each uniquely identifying a Credential Dataset that can be issued using the Access Token returned in this response. Each of these Credential Datasets corresponds to the same Credential Configuration in the `credential_configurations_supported` parameter of the Credential Issuer metadata. The Wallet MUST use these identifiers together with an Access Token in subsequent Credential Requests.
 
-Note: `credential_identifiers` parameters cannot be used when the `scope` parameter is used in the Authorization Request to request issuance of a Credential.
+Note: The `credential_identifiers` parameter cannot be used when the `scope` parameter is used in the Authorization Request to request issuance of a Credential.
 
 Below is a non-normative example of a Token Response when the `authorization_details` parameter was used to request issuance of a certain Credential type:
 
@@ -2480,11 +2480,11 @@ Wallet Providers may also provide a market place where Issuers can register to b
    -14
 
    * clarify that authorization_details can be present in the Token Request for Pre-Authorized Code Flow when multiple Credential Configurations are present in the Credential Offer
-   * make `credential_identifiers` mandatory for authorization_details flow
+   * make `credential_identifiers` mandatory for `authorization_details` flow
    * changes proof type descriptions to accommodate for the batch issuance changes
    * changed Batch Issuance endpoint to differentiate between issuance Credential Configuration, Credential Dataset and instances of Credentials with different key material
    * changed Credential Endpoint to enable requesting multiple instances of a particular Credential Configuration and Dataset with different cryptographic material
-   * clarify optionality of scope and authorization_details for Authorization Request
+   * clarify optionality of scope and `authorization_details` for Authorization Request
    * Clarify Batch Endpoint Encryption
    * Define Credential Format as a term
    * Define Credential Dataset as a term
