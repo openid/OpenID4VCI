@@ -1,7 +1,7 @@
 [
-    {
-        "type": "openid_credential",
-        "format": "vc+sd-jwt",
-        "vct": "SD_JWT_VC_example_in_OpenID4VCI"
-    }
+  {
+    "type": "openid_credential",
+    "format": "vc+sd-jwt",
+    "vct": "SD_JWT_VC_example_in_OpenID4VCI"
+  }
 ]
