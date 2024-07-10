@@ -446,7 +446,7 @@ An Authorization Request is an OAuth 2.0 Authorization Request as defined in Sec
 
 There are two possible methods for requesting the issuance of a specific Credential type in an Authorization Request. The first method involves using the `authorization_details` request parameter, as defined in [@!RFC9396], containing one or more authorization details of type `openid_credential`, as specified in (#authorization-details). The second method utilizes scopes, as outlined in (#credential-request-using-type-specific-scope).
 
-### Request Issuance of a Certain Credential Type using `authorization_details` Parameter {#authorization-details}
+### Using Authorization Details Parameter {#authorization-details}
 
 Credential Issuers MAY support requesting authorization to issue a Credential using the `authorization_details` parameter.
 
@@ -630,6 +630,12 @@ grant_type=authorization_code
 &client_assertion=eyJhbGciOiJSU...
 ```
 
+### Request Issuance of a Certain Credential using authorization_details Parameter
+
+Credential Issuers MAY support requesting authorization to issue a Credential using the `authorization_details` parameter. This is particularly useful, if the Credential Issuer offered multiple Credential Configurations in the Credential Offer of a Pre-Authorized Code Flow. 
+
+The Wallet can use `authorization_details` in the Token Request to request a specific Credential Configuration in both the Authorization Code Flow and the Pre-Authorized Code Flow. The value of the `authorization_details` parameter is defined in (#(authorization-details)).
+
 Below is a non-normative example of a Token Request in a Pre-Authorized Code Flow (without Client Authentication):
 
 ```
@@ -640,6 +646,8 @@ Content-Type: application/x-www-form-urlencoded
 grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
 &pre-authorized_code=SplxlOBeZQQYbYS6WxSbIA
 &tx_code=493536
+&authorization_details=%5B%7B%22type%22%3A%20%22openid_credential%22%2C%20%22
+    credential_configuration_id%22%3A%20%22UniversityDegreeCredential%22%7D%5D
 ```
 
 ## Successful Token Response {#token-response}
@@ -652,10 +660,10 @@ In addition to the response parameters defined in [@!RFC6749], the Authorization
 
 * `c_nonce`: OPTIONAL. String containing a nonce to be used when creating a proof of possession of the key proof (see (#credential-request)). When received, the Wallet MUST use this nonce value for its subsequent requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
-* `authorization_details`: REQUIRED when `authorization_details` parameter is used to request issuance of a certain Credential type as defined in (#authorization-details). It MUST NOT be used otherwise. It is an array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
-  * `credential_identifiers`: OPTIONAL. Array of strings, each uniquely identifying a Credential that can be issued using the Access Token returned in this response. Each of these Credentials corresponds to the same entry in the `credential_configurations_supported` Credential Issuer metadata but can contain different claim values or a different subset of claims within the claims set identified by that Credential type. This parameter can be used to simplify the Credential Request, as defined in (#credential-request), where the `credential_identifier` parameter replaces the `format` parameter and any other Credential Format-specific parameters in the Credential Request. When received, the Wallet MUST use these values together with an Access Token in subsequent Credential Requests.
-
-Note: Credential Instance identifier(s) cannot be used when the `scope` parameter is used in the Authorization Request to request issuance of a Credential.
+* `authorization_details`: REQUIRED when the `authorization_details` parameter is used to request issuance of a certain Credential Configuration as defined in (#authorization-details). It MUST NOT be used otherwise. It is an array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
+  * `credential_identifiers`: REQUIRED. Array of strings, each uniquely identifying a Credential Dataset that can be issued using the Access Token returned in this response. Each of these Credential Datasets corresponds to the same Credential Configuration in the `credential_configurations_supported` parameter of the Credential Issuer metadata. The Wallet MUST use these identifiers together with an Access Token in subsequent Credential Requests.
+  
+Note: The `credential_identifiers` parameter cannot be used when the `scope` parameter is used in the Authorization Request to request issuance of a Credential.
 
 Below is a non-normative example of a Token Response when the `authorization_details` parameter was used to request issuance of a certain Credential type:
 
@@ -740,8 +748,8 @@ For cryptographic binding, the Client has the following options defined in (#cre
 
 A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
-* `format`: REQUIRED when the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. It is a String that determines the format of the Credential to be issued, which may determine the type and any other information related to the Credential to be issued. Credential Format Profiles consist of the Credential Format-specific parameters that are defined in (#format-profiles). When this parameter is used, the `credential_identifier` Credential Request parameter MUST NOT be present.
-* `credential_identifier`: REQUIRED when `credential_identifiers` parameter was returned from the Token Response. It MUST NOT be used otherwise. It is a String that identifies a Credential that is being requested to be issued. When this parameter is used, the `format` parameter and any other Credential Format-specific parameters such as those defined in (#format-profiles) MUST NOT be present.
+* `credential_identifier`: REQUIRED when an Authorization Details of type `openid_credential` was returned from the Token Response. It MUST NOT be used otherwise. A string that identifies a Credential Dataset that is requested for issuance. When this parameter is used, the `format` parameter and any other Credential format specific parameters such as those defined in (#format-profiles) MUST NOT be present.
+* `format`: REQUIRED if an Authorization Details of type `openid_credential` was not returned from the Token Response (e.g. when the credential was requested using a `scope` value in the authorization request or a pre-authorisation code was used that did not return an Authorization Details). It MUST NOT be used otherwise. A string that determines the format of the Credential to be issued, which may determine the type and any other information related to the Credential to be issued. Credential Format Profiles consist of the Credential format specific parameters that are defined in (#format-profiles). When this parameter is used, the `credential_identifier` Credential Request parameter MUST NOT be present.
 * `proof`: OPTIONAL. Object providing a single proof of possession of the cryptographic key material to which the issued Credential instance will be bound to. `proof` parameter MUST NOT be present if `proofs` parameter is used.  The `proof` object MUST contain the following:
     * `proof_type`: REQUIRED. String specifying the key proof type. The value set for this parameter determines the additional parameters in the key proof object and their corresponding processing rules. The key proof types outlined in this specification are detailed in (#proof-types).
 * `proofs`: OPTIONAL. Object providing one or more proof of possessions of the cryptographic key material to which the issued Credential instances will be bound to. The `proofs` parameter MUST NOT be present if `proof` parameter is used. `proofs` object contains exactly one parameter named as the proof type in (#proof-types), the value set for this parameter is an array containing parameters as defined by the corresponding proof type.
@@ -1419,7 +1427,6 @@ This specification defines the following Credential Issuer Metadata parameters:
   * `alg_values_supported`: REQUIRED. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`alg` values) [@!RFC7518] supported by the Credential and Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
   * `enc_values_supported`: REQUIRED. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
   * `encryption_required`: REQUIRED. Boolean value specifying whether the Credential Issuer requires the additional encryption on top of TLS for the Credential Response. If the value is `true`, the Credential Issuer requires encryption for every Credential Response and therefore the Wallet MUST provide encryption keys in the Credential Request. If the value is `false`, the Wallet MAY chose whether it provides encryption keys or not.
-* `credential_identifiers_supported`: OPTIONAL. Boolean value specifying whether the Credential Issuer supports returning `credential_identifiers` parameter in the `authorization_details` Token Response parameter, with `true` indicating support. If omitted, the default value is `false`.
 * `batch_credential_issuance`: OPTIONAL. Object containing information about the Credential Issuer's supports for batch issuance of Credentials. When this parameter is present, but the Credential Issuer does not support Batch Credential Endpoint, it means that Credential Issuer issues Credential Batches only from the Credential Endpoint.
   * `credential_endpoint_supported`: REQUIRED. Boolean value specifying whether the Credential Issuer's Credential Edpoint supports the `proofs` parameter in the Credential Request, with `true` indicating support.
   * `batch_size`: REQUIRED. Integer value specifying the maximum array size for the `proofs` parameter in a Credential Request or Batch Credential Request.
@@ -2486,11 +2493,14 @@ The technology described in this specification was made available from contribut
 
    -14
 
+   * clarify that authorization_details can be present in the Token Request for Pre-Authorized Code Flow when multiple Credential Configurations are present in the Credential Offer
+   * make `credential_identifiers` mandatory for `authorization_details` flow
+   * changes proof type descriptions to accommodate for the batch issuance changes
    * fix indentation of examples
    * changes proof type descriptions to accomodate for the batch issuance changes
    * changed Batch Issuance endpoint to differentiate between issuance Credential Configuration, Credential Dataset and instances of Credentials with different key material
    * changed Credential Endpoint to enable requesting multiple instances of a particular Credential Configuration and Dataset with different cryptographic material
-   * clarify optionality of scope and authorization_details for Authorization Request
+   * clarify optionality of scope and `authorization_details` for Authorization Request
    * Clarify Batch Endpoint Encryption
    * Define Credential Format as a term
    * Define Credential Dataset as a term
