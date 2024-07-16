@@ -1042,7 +1042,7 @@ Cache-Control: no-store
 
 ### Credential Issuer Provided Nonce {#issuer-provided-nonce}
 
-The Credential Issuer that requires the Client to send a key proof of possession of the key material for the Credential to be bound to (`proof` or `proofs`) MAY receive a Credential Request without a server-provided `c_nonce` value included in the `proof` or `proofs` parameter. In such a case, the Credential Issuer MUST provide the Client with a `c_nonce` defined in (#credential-response) in a Credential Error Response using `invalid_proof` error code defined in (#credential-error-response). 
+The Credential Issuer that requires the Client to send a key proof of possession of the key material for the Credential to be bound to (`proof` or `proofs`) MAY receive a Credential Request without a server-provided `c_nonce` value included in the `proof` or `proofs` parameter. In such a case, the Credential Issuer MUST provide the Client with a `c_nonce` defined in (#credential-response) in a Credential Error Response using `invalid_proof` error code defined in (#credential-error-response).
 
 If the Client has not received a `c_nonce` and the Credential Issuer Metadata contains `proof_types_supported` indicating a key proof is required for the requested Credential, the Client MUST send a Credential Request that contains a `proof` or `proofs` parameter that is fully valid but does not include a server-provided `c_nonce` value. It is the Credential Issuer policy whether or not a `c_nonce` value is required in the key proofs.
 
