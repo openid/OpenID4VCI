@@ -2266,7 +2266,11 @@ The following is a non-normative example of a Credential Request with Credential
 
 ### Credential Response
 
-The value of the `credential` claim in the Credential Response MUST be a string that is the base64url-encoded representation of the issued Credential.
+The value of the `credential` claim in the Credential Response MUST be a string that is the base64url-encoded representation of the CBOR-encoded `IssuerSigned` structure, as defined in [@!ISO.18013-5].
+
+The following is a non-normative example of a Credential Response containing a Credential of format `mso_mdoc`.
+
+<{{examples/credential_response_mso_mdoc.txt}}
 
 ## IETF SD-JWT VC
 
