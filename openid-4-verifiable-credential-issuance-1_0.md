@@ -169,7 +169,7 @@ Credentials can therefore vary in the following dimensions:
 - Cryptographic Data
 
 In the context of a single request, all issued Credentials MUST share the same Credential Format and Credential Dataset. However, they MAY contain different Cryptographic Data, such as being bound to different cryptographic keys (e.g., to ensure unlinkability between the Credentials).
-Issuance of multiple Verifiable Credentials with different Credential Formats or different Credential Datasets requires sending multiple requests to the Credential Endpoint.
+To issue multiple Verifiable Credentials with differing Credential Formats or Credential Datasets, multiple requests MUST be sent to the Credential Endpoint.
 
 In the course of the authorization process, the Credential Issuer MAY also request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as described in (#use-case-5).
 
