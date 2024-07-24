@@ -2345,6 +2345,7 @@ The technology described in this specification was made available from contribut
 
    -14
 
+   * removes the Batch Credential Endpoint
    * clarify that authorization_details can be present in the Token Request for Pre-Authorized Code Flow when multiple Credential Configurations are present in the Credential Offer
    * make `credential_identifiers` mandatory for `authorization_details` flow
    * changes proof type descriptions to accommodate for the batch issuance changes
@@ -2355,7 +2356,6 @@ The technology described in this specification was made available from contribut
    * Define Credential Format as a term
    * Define Credential Dataset as a term
    * Define Credential Configuration as a term
-   * Removes the Batch Credential Endpoint
    
    -13
 
