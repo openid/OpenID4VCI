@@ -158,8 +158,8 @@ Other specifications or deployments can define their own Credential Format Profi
 
 ### Multiple Credential Issuance
 
-This specification allows for the issuance of Verifiable Credentials through the Credential Endpoint.
-A single request message sent to this endpoint requests the issuance one or more Verifiable Credentials.
+This specification enables the issuance of Verifiable Credentials through the Credential Endpoint. 
+A single request message to this endpoint may request the issuance of one or more Verifiable Credentials.
 
 Credentials can vary in their format, including Credential Format Profile-specific parameters, in their contents known as the Credential Dataset, and in the cryptographic data such as Issuer signatures, hashes, and keys used for Cryptographic Holder Binding.
 Credentials can therefore vary in the following dimensions:
