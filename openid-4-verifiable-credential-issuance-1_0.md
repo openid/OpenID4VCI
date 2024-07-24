@@ -162,7 +162,7 @@ This specification allows for the issuance of Verifiable Credentials through the
 A single request message sent to this endpoint requests the issuance one or more Verifiable Credentials.
 
 Credentials can vary in their format, including Credential Format Profile-specific parameters, in their contents known as the Credential Dataset, and in the cryptographic data such as Issuer signatures, hashes, and keys used for Cryptographic Holder Binding.
-Multiple Credentials can therefore vary in the following dimensions:
+Credentials can therefore vary in the following dimensions:
 
 - Credential Dataset
 - Credential Format
