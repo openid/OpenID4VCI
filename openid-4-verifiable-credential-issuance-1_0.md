@@ -2352,7 +2352,6 @@ The technology described in this specification was made available from contribut
    * changes proof type descriptions to accomodate for the batch issuance changes
    * changed Credential Endpoint to enable requesting multiple instances of a particular Credential Configuration and Dataset with different cryptographic material
    * clarify optionality of scope and `authorization_details` for Authorization Request
-
    * Define Credential Format as a term
    * Define Credential Dataset as a term
    * Define Credential Configuration as a term
