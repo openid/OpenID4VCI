@@ -123,7 +123,7 @@ This specification defines an API for Credential issuance provided by a Credenti
 * An optional mechanism for the Credential Issuer to receive from the Wallet notification(s) of the status of the Credential(s) that have been issued.
 * A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing (see (#credential-issuer-metadata)).
 
-The Credential Endpoint has the (optional) ability to bind an issued Credential to certain cryptographic key material. Credential requests therefore enable conveying proof of possession for the key material. Multiple key proof types are supported.
+The Credential Endpoint may bind an issued Credential to specific cryptographic key material. Credential requests thus should include proof of possession for the key material. Multiple key proof types are supported.
 
 ## OAuth 2.0
 
