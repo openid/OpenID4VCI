@@ -117,7 +117,7 @@ Deferred Credential Issuance:
 
 This specification defines an API for Credential issuance provided by a Credential Issuer. The API is comprised of the following endpoints:
 
-* A mandatory Credential Endpoint from which Credentials can be issued (see (#credential-endpoint)).
+* A mandatory Credential Endpoint from which Credentials can be issued (see (#credential-endpoint)). From this endpoint, one Credential, or multiple Credentials with the same Credential Dataset can be issued in one request.
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of Credentials (see (#deferred-credential-issuance)).
 * An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow (see (#credential-offer-endpoint)).
 * An optional mechanism for the Credential Issuer to receive from the Wallet notification(s) of the status of the Credential(s) that have been issued.
@@ -1493,7 +1493,7 @@ unique values encoded in the Credential (End-User claims, identifiers, Issuer si
 To prevent these types of correlation, Credential Issuers and Wallets SHOULD use
 methods, including but not limited to the following ones:
 
-* Issue a batch of Credentials with the same Credential Dataset to enable the usage of a unique Credential per presentation or per Verifier. This only helps with Verifier/Verifier unlinkability.
+* Issue a batch of Credentials with the same Credential Dataset to facilitate the use of a unique Credential per presentation or per Verifier. This approach solely aids in achieving Verifier-to-Verifier unlinkability.
 * Use cryptographic schemes that can provide non-correlation.
 
 Credential Issuers specifically SHOULD discard values that can be used in collusion with a Verifier to track a user, such as the Issuer's signature or cryptographic key material to which an issued credential was bound to.
