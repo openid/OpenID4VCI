@@ -754,7 +754,7 @@ The `proof` element MUST incorporate the Credential Issuer Identifier (audience)
 
 The initial `c_nonce` value can be returned in a successful Token Response as defined in (#token-response), or in a Credential Error Response as defined in (#issuer-provided-nonce).
 
-Below is a non-normative example of a Credential Request for a Credential in [@ISO.18013-5] format using Credential Format-specific parameters and a key proof type `cwt`:
+Below is a non-normative example of a Credential Request for a Credential in [@ISO.18013-5] format using Credential Format-specific parameters and a key proof type `jwt`:
 
 ```
 POST /credential HTTP/1.1
@@ -766,8 +766,8 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
   "format":"mso_mdoc",
   "doctype":"org.iso.18013.5.1.mDL",
   "proof": {
-    "proof_type": "cwt",
-    "cwt": "..."
+    "proof_type": "jwt",
+    "jwt": "..."
   }
 }
 ```
@@ -802,7 +802,6 @@ The Credential Issuer indicates support for encrypted responses by including the
 This specification defines the following proof types:
 
 * `jwt`: A JWT [@!RFC7519] is used for proof of possession. When a `proof_type` parameter in a `proof` object is set to `jwt`, it MUST also contain a `jwt` parameter that includes a JWT as defined in (#jwt-proof-type). When a `proofs` object is using a `jwt` proof type, it MUST include a `jwt` parameter with its value being an array of JWTs, where each JWT is formed as defined in (#jwt-proof-type).
-* `cwt`: A CWT [@!RFC8392] is used for proof of possession. When a `proof_type` parameter in a `proof` object is set to `cwt`, it MUST also contain a `cwt` parameter that includes a CWT as defined in (#cwt-proof-type). When a `proofs` object is using a `cwt` proof type, it MUST include a `cwt` parameter with its value being an array of CWTs, where each CWT is formed as defined in (#cwt-proof-type).
 * `ldp_vp`: A W3C Verifiable Presentation object signed using the Data Integrity Proof [@VC_Data_Integrity] as defined in [@VC_DATA_2.0] or [@VC_DATA] is used for proof of possession. When a `proof_type` parameter in a `proof` object is set to `ldp_vp`, it MUST also contain an `ldp_vp` parameter that includes a [W3C Verifiable Presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp-vp-proof-type). When a `proofs` object is using a `ldp_vp` proof type, it MUST include an `ldp_vp` parameter with its value being an array of [W3C Verifiable Presentations](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0), where each of these W3C Verifiable Presentation is formed as defined in (#ldp-vp-proof-type).
 
 #### `jwt` Proof Type {#jwt-proof-type}
@@ -920,23 +919,6 @@ Below is a non-normative example of a `proof` parameter:
 }
 
 ```
-
-#### `cwt` Proof Type {#cwt-proof-type}
-
-The CWT MUST contain the following elements:
-
-* in the COSE protected header (see [@!RFC8152], Section 3.1.),
-  * Label 1 (`alg`): REQUIRED. A digital signature algorithm identifier such as per IANA "COSE Algorithms" registry [@IANA.COSE.ALGS]. It MUST NOT be an identifier for a symmetric algorithm (MAC).
-  * Label 3 (`content type`): REQUIRED. MUST be `openid4vci-proof+cwt`, which explicitly types the key proof CWT.
-  * (string-valued) Label `COSE_Key`: OPTIONAL (byte string). COSE key material the new Credential shall be bound to. It MUST NOT be present if `x5chain` is present.
-  * Label 33 (`x5chain`): OPTIONAL (byte string). As defined in [@!RFC9360], it contains an ordered array of X.509 certificates corresponding to the key used to sign the CWT. It MUST NOT be present if `COSE_Key` is present.
-* in the content of the message (see [@!RFC8392], Section 4),
-  * Claim Key 1 (`iss`): OPTIONAL (text string). The value of this claim MUST be the `client_id` of the Client making the Credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
-  * Claim Key 3 (`aud`): REQUIRED (text string). The value of this claim MUST be the Credential Issuer Identifier.
-  * Claim Key 6 (`iat`): REQUIRED (integer or floating-point number). The value of this claim MUST be the time at which the key proof was issued.
-  * Claim Key 10 (`Nonce`): OPTIONAL (byte string). The value of this claim MUST be a server-provided `c_nonce` converted from string to bytes. It MUST be present when the Wallet received a server-provided `c_nonce`.
-
-Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@IANA.COSE.ALGS].
 
 ### Verifying Proof {#verifying-key-proof}
 
@@ -2271,25 +2253,6 @@ This specification registers the following media types in the IANA "Media Types"
 * Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Provisional registration? No
 
-* Type name: `application`
-* Subtype name: `openid4vci-proof+cwt`
-* Required parameters: n/a
-* Optional parameters: n/a
-* Encoding considerations: Binary CBOR, as specified in [@!RFC9052]
-* Security considerations: See the Security Considerations in [@!RFC8392].
-* Interoperability considerations: n/a
-* Published specification: (#cwt-proof-type) of this specification
-* Applications that use this media type: Applications that issue and store verifiable credentials
-* Additional information:
-  - Magic number(s): n/a
-  - File extension(s): n/a
-  - Macintosh file type code(s): n/a
-* Person & email address to contact for further information: Torsten Lodderstedt, torsten@lodderstedt.net
-* Intended usage: COMMON
-* Restrictions on usage: none
-* Author: Torsten Lodderstedt, torsten@lodderstedt.net
-* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Provisional registration? No
 
 # Use Cases
 
@@ -2344,7 +2307,8 @@ The technology described in this specification was made available from contribut
    [[ To be removed from the final specification ]]
 
    -14
-
+   
+   * removes CWT proof type
    * removes the Batch Credential Endpoint
    * clarify that authorization_details can be present in the Token Request for Pre-Authorized Code Flow when multiple Credential Configurations are present in the Credential Offer
    * make `credential_identifiers` mandatory for `authorization_details` flow
@@ -2382,7 +2346,7 @@ The technology described in this specification was made available from contribut
    * clarified how the Credential Issuer indicates that it requires proof of possession of the cryptographic key material in the Credential Request
    * added an option to use data integrity proofs as proof of possession of the cryptographic key material in the Credential Request
    * added privacy considerations
-   * clarifed that AS that only supports pre-auth grant can omit `response_types_supported` metadata
+   * clarified that AS that only supports pre-auth grant can omit `response_types_supported` metadata
    * added `background_image` credential issuer metadata
    * editorial clean-up (fix capitalization, etc.)
 
