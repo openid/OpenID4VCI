@@ -117,14 +117,13 @@ Deferred Credential Issuance:
 
 This specification defines an API for Credential issuance provided by a Credential Issuer. The API is comprised of the following endpoints:
 
-* A mandatory Credential Endpoint from which Credentials can be issued (see (#credential-endpoint)).
-* An optional Batch Credential Endpoint from which multiple Credentials can be issued in one request (see (#batch-credential-endpoint)).
+* A mandatory Credential Endpoint from which Credentials can be issued (see (#credential-endpoint)). From this endpoint, one Credential, or multiple Credentials with the same Credential Dataset can be issued in one request.
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of Credentials (see (#deferred-credential-issuance)).
 * An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow (see (#credential-offer-endpoint)).
 * An optional mechanism for the Credential Issuer to receive from the Wallet notification(s) of the status of the Credential(s) that have been issued.
 * A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing (see (#credential-issuer-metadata)).
 
-Both the Credential and the Batch Credential Endpoints have the (optional) ability to bind an issued Credential to certain cryptographic key material. Both requests therefore enable conveying proof of possession for the key material. Multiple key proof types are supported.
+The Credential Endpoint may bind an issued Credential to specific cryptographic key material. Credential requests thus should include proof of possession for the key material. Multiple key proof types are supported.
 
 ## OAuth 2.0
 
@@ -138,7 +137,7 @@ Existing OAuth 2.0 mechanisms are extended as following:
 * A new authorization details [@!RFC9396] type `openid_credential` is defined to convey the details about the Credentials (including Credential Dataset, Credential Formats, and Credential types) the Wallet wants to obtain (see (#authorization-details)).
 * Client metadata is used to convey the Wallet's metadata. The new Client metadata parameter `credential_offer_endpoint` is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (see (#client-metadata)).
 * Authorization Endpoint: The additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated Credential Offer (see (#credential-authz-request)). Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Verifiable Presentations from the calling Wallet during Authorization Request processing.
-* Token Endpoint: Optional response parameters `c_nonce` and `c_nonce_expires_in` are added to the Token Endpoint, Credential Endpoint, and Batch Credential Endpoint to provide the Client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential Endpoint (see (#token-response)).
+* Token Endpoint: Optional response parameters `c_nonce` and `c_nonce_expires_in` are added to the Token Endpoint, and Credential Endpoint to provide the Client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential Endpoint (see (#token-response)).
 
 ## Core Concepts
 
@@ -152,32 +151,25 @@ An End-User typically authorizes the issuance of Credentials with a specific Cre
 ### Credential Formats and Credential Format Profiles
 
 This specification is Credential Format agnostic and allows implementers to leverage specific capabilities of Credential Formats of their choice.
-To this end, extension points to add Credential Format specific parameters in the Credential Issuer metadata, Credential Offer, Authorization Request, Credential Request, and Batch Credential Request are defined.
+To this end, extension points to add Credential Format specific parameters in the Credential Issuer metadata, Credential Offer, Authorization Request, and Credential Request are defined.
 
 Credential Format Profiles for IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], ISO mDL [@ISO.18013-5], and W3C VCDM [@VC_DATA] are specified in (#format-profiles).
 Other specifications or deployments can define their own Credential Format Profiles using the above-mentioned extension points.
 
 ### Multiple Credential Issuance
 
-This specification allows for the issuance of Verifiable Credentials through two types of endpoints: the Single Credential Endpoint and the Batch Credential Endpoint.
-
-1. Single Credential Endpoint: This endpoint is used when a single Credential is to be issued. The request to this endpoint includes the necessary parameters for the issuance of one Credential. The response from this endpoint will contain one issued Credential.
-2. Batch Credential Endpoint: This endpoint is used when multiple Credentials need to be issued at once. The request to this endpoint includes the necessary parameters for the issuance of multiple Credentials. The response from this endpoint will contain all the issued Credentials.
+This specification enables the issuance of Verifiable Credentials through the Credential Endpoint. 
+A single request message to this endpoint may request the issuance of one or more Verifiable Credentials.
 
 Credentials can vary in their format, including Credential Format Profile-specific parameters, in their contents known as the Credential Dataset, and in the cryptographic data such as Issuer signatures, hashes, and keys used for Cryptographic Holder Binding.
-Multiple Credentials, either issued in multiple Credential Requests or all at once at the Batch Credential Endpoint, can therefore vary in the following dimensions:
+Credentials can therefore vary in the following dimensions:
 
 - Credential Dataset
 - Credential Format
 - Cryptographic Data
 
-For example, a batch of Credentials may be issued where all Credentials have the same Credential Dataset and Format, but all are bound to different cryptographic keys (e.g., for unlinkability between the credentials).
-As another example, an Issuer may offer two Credentials that differ in their contents and format, but are bound to the same key.
-These combinations allow for flexibility in how Verifiable Credentials are issued, accommodating a variety of use cases and requirements.
-
-The choice between using the Single Credential Endpoint or the Batch Credential Endpoint depends on the specific use case.
-If only one Verifiable Credential needs to be issued, the Single Credential Endpoint would be used.
-If multiple Verifiable Credentials need to be issued at once, the Batch Credential Endpoint would be more efficient.
+In the context of a single request, all issued Credentials MUST share the same Credential Format and Credential Dataset. However, they MAY contain different Cryptographic Data, such as being bound to different cryptographic keys (e.g., to ensure unlinkability between the Credentials).
+To issue multiple Verifiable Credentials with differing Credential Formats or Credential Datasets, multiple requests MUST be sent to the Credential Endpoint.
 
 In the course of the authorization process, the Credential Issuer MAY also request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as described in (#use-case-5).
 
@@ -266,8 +258,6 @@ Note: Steps (3) and (4) happen in the front channel, by redirecting the End-User
 (6) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and (optionally) the proof of possession of the private key of a key pair to which the Credential Issuer should bind the issued Credential to. Upon successfully validating Access Token and proof, the Credential Issuer returns a Credential in the Credential Response. This step is defined in (#credential-endpoint).
 
 If the Credential Issuer requires more time to issue a Credential, the Credential Issuer may return a Transaction ID and a time interval in the Credential Response. The Wallet may send a Deferred Credential Request with the Transaction ID to obtain a Credential after the specified time interval has passed, as defined in (#deferred-credential-issuance).
-
-If the Credential Issuer wants to issue multiple Credentials in one response, the Credential Issuer may support the Batch Credential Endpoint. In this case, the Wallet may send a Batch Credential Request to the Batch Credential Endpoint, as defined in (#batch-credential-endpoint).
 
 Note: This flow is based on OAuth 2.0 and the Authorization Code Grant type, but this specification can be used with other OAuth 2.0 grant types as well.
 
@@ -762,7 +752,7 @@ The `proof_type` parameter is an extension point that enables the use of differe
 
 The `proof` element MUST incorporate the Credential Issuer Identifier (audience), and a `c_nonce` value generated by the Authorization Server or the Credential Issuer to allow the Credential Issuer to detect replay. The way that data is incorporated depends on the key proof type. In a JWT, for example, the `c_nonce` value is conveyed in the `nonce` claim, whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the key proof object and the Credential Issuer (the intended audience) is included as the `domain` element.
 
-The initial `c_nonce` value can be returned in a successful Token Response as defined in (#token-response), in a Credential Error Response as defined in (#issuer-provided-nonce), or in a Batch Credential Error Response as defined in (#batch-credential-error-response).
+The initial `c_nonce` value can be returned in a successful Token Response as defined in (#token-response), or in a Credential Error Response as defined in (#issuer-provided-nonce).
 
 Below is a non-normative example of a Credential Request for a Credential in [@ISO.18013-5] format using Credential Format-specific parameters and a key proof type `cwt`:
 
@@ -1090,147 +1080,11 @@ Cache-Control: no-store
 }
 ```
 
-# Batch Credential Endpoint {#batch-credential-endpoint}
-
-The Batch Credential Endpoint issues multiple Credentials in one Batch Credential Response as approved by the End-User upon presentation of a valid Access Token representing this approval. Support for this endpoint is OPTIONAL.
-
-Communication with the Batch Credential Endpoint MUST utilize TLS. 
-
-The Client can request issuance of multiple Credentials that can be:
-
-* different Credential instances of the different Credential Configurations; or
-* different Credential instances of the same Credential Configuration but the different Credential Dataset; or
-* different Credential instances of the same Credential Configuration and the same Credential Dataset (with different cryptographic material); or
-* a combination of the points above.
-
-Wallets need to differentiate between these options because they can lead to variations in user experience. While Credentials with the same Credential Configuration but different Credential Dataset should be displayed separately (e.g. vehicle registration credentials for multiple cars), Credentials with the same Credential Configuration and Credential Dataset (e.g. multiple age proofs for unlinkability) should only appear as a single Credential in the Wallet user interface, as these technical details are not relevant to the average End-user. 
-
-## Batch Credential Request {#batch-credential-request}
-
-A Client submits a Batch Credential Request to the Batch Credential Endpoint by sending a JSON object containing the following parameters in the entity-body of an HTTP POST request, using the `application/json` media type.
-
-* `credential_requests`: REQUIRED. Array that contains Batch Credential Request objects, each of these objects may refer to a different Credential Configuration or the same Credential Configuration with a different Credential Dataset. A Batch Credential Request object contains either a `format` parameter (and possibly further Credential Format-specific parameters) or a `credential_identifier` parameter, and additionally an optional `proofs` parameter. A Batch Credential Request object must not contain `proof` or `credential_response_encryption` parameters.
-  * `format`: REQUIRED if the `credential_identifiers` parameter was not returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
-  * `credential_identifier`: REQUIRED if `credential_identifiers` parameter was returned from the Token Response. It MUST NOT be used otherwise. See (#credential-request).
-  * `proofs`: OPTIONAL. See (#credential-request).
-* `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Batch Credential Response. It contains the same parameters as defined in #{credential-request}. If this request element is not present, the corresponding Batch Credential Response returned is not encrypted.
-
-Below is a non-normative example of a Batch Credential Request requesting four Credentials:
-
-* Two Credentials for the same Credential Configuration and Credential Dataset but with different cryptographic binding keys in the IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format;
-* Two Credentials for the same Credential Configuration but with different Credential Datasets in the [@VC_DATA] format.
-
-```
-POST /batch_credential HTTP/1.1
-Host: server.example.com
-Content-Type: application/json
-Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
-
-{
-  "credential_requests": [
-    {
-      "format": "vc+sd-jwt",
-      "vct": "SD_JWT_VC_example_in_OpenID4VCI",
-      "proofs": {
-        "jwt": [
-          "eyJ0eXAiOiJvcGVuaWQ0dmNpL...Lb9zioZoipdP-jvh1WlA",
-          "eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
-        ]
-      }
-    },
-    {
-      "credential_identifier":"CivilEngineeringDegree-2023",
-      "proofs": [
-        {
-          "proof_type":"jwt",
-          "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
-        }
-      ]
-    },
-    {
-      "credential_identifier":"ElectricalEngineeringDegree-2023",
-      "proofs": [
-        {
-          "proof_type":"jwt",
-          "jwt":"eyJraWQiOiJkaWQ6ZXhhbXBsZ...KPxgihac0aW9EkL1nOzM"
-        }
-      ]
-    }
-  ]
-}
-```
-
-## Batch Credential Response {#batch-credential-response}
-
-The Batch Credential Response behaves similarly to the Credential Response. Each response to the requests within the `credential_requests` of the Batch Credential Request can be either immediate or deferred. Consequently, the Credential Issuer MAY immediately issue the requested Credentials or MAY provide a `transaction_id` parameter to the Client, which can be used later to retrieve the Credential once it is ready.
-If at least one of the requested Credentials cannot be issued either immediately or deferred, the Credential Issuer MUST return an error.
-
-If all requests are responded to using a `transaction_id`, the Issuer MUST use the HTTP status code 202 (as detailed in Section 15.3.3 of [@!RFC9110]). If not, the HTTP status code 200 MUST be used for a successful Batch Credential Response.
-
-If the Client requested an encrypted response, the Batch Credential Response MUST be sent as a JWT using the parameters from the `credential_response_encryption` object and using the `application/jwt` media type. If encryption was requested in the Batch Credential Request and the Batch Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
-If the Batch Credential Response is not encrypted, it MUST be sent as a JSON object using the `application/json` media type.
-
-The following parameters are used in the JSON-encoded Batch Credential Response body:
-
-* `credential_responses`: REQUIRED. Array that contains Batch Credential Response objects each corresponding to every Batch Credential Request objects. Each element within the array matches the corresponding Batch Credential Request object by array index in the `credential_requests` parameter. A Batch Credential Response object contains either a `credentials` object (and possibly a `notification_id`) or a `transaction_id` parameter, but not `c_nonce` and `c_nonce_expires_in` parameters. Each element may refer to a different Credential Configuration or the same Credential Configuration with a different Credential Dataset.
-  * `credentials`: REQUIRED if `transaction_id` is not present within a particular Batch Credential Response object. The `credentials` as defined in (#credential-response).
-  * `notification_id`: OPTIONAL. The `notification_id` as defined in (#credential-response).
-  * `transaction_id`: REQUIRED if `credentials` is not present within a particular Batch Credential Response object. The `transaction_id` as defined in (#credential-response).
-* `c_nonce`: OPTIONAL. The `c_nonce` as defined in (#credential-response).
-* `c_nonce_expires_in`: OPTIONAL. The `c_nonce_expires_in` as defined in (#credential-response).
-
-The encoding of the Credential returned in the `credential` parameter depends on the Credential Format. Credential Formats expressed as binary data MUST be base64url-encoded and returned as a string.
-
-More details such as Credential Format Identifiers are defined in the Credential Format Profiles in (#format-profiles).
-
-Below is a non-normative example of a Batch Credential Response containing:
-* 2 Credentials for the same Credential Configuration and Credential Dataset but with different cryptographic binding keys
-* 1 Credential for a different  Credential Configuration and Credential Dataset
-* 1 Transaction ID for a request that could not be immediately fulfilled
-
-```
-HTTP/1.1 200 OK
-Content-Type: application/json
-Cache-Control: no-store
-
-{
-  "credential_responses": [
-    {
-      "credentials": [
-        "eyJraWQiOiJkaWQ6ZXhhbXBsZTpl...C_aZKPxgihac0aW9EkL1nOzM",
-        "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
-      ]
-    },
-    {
-      "credentials": [
-        "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
-      ],
-      "notification_id": "3fwe98js"
-    },
-    {
-      "transaction_id": "8xLOxBtZp8"
-    }
-  ],
-  "c_nonce": "fGFF7UkhLa",
-  "c_nonce_expires_in": 86400
-}
-```
-
-## Batch Credential Error Response {#batch-credential-error-response}
-
-The Batch Credential Endpoint MUST respond with an HTTP 400 (Bad Request) status code in case of an error, unless specified otherwise.
-
-Error codes extensions defined in (#credential-error-response) apply.
-
-The Batch Credential Request MUST fail entirely if there is even one Credential that failed to be issued. `transaction_id` MUST NOT be returned in this case.
-
-When the Credential Issuer requires the `proofs` parameter to be present in the Batch Credential Request, but does not receive them, it will return a Batch Credential Error Response with a `c_nonce` using `invalid_proof` error code, as defined in (#issuer-provided-nonce).
-
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
-This endpoint is used to issue a Credential previously requested at the Credential Endpoint or Batch Credential Endpoint in cases where the Credential Issuer was not able to immediately issue this Credential. Support for this endpoint is OPTIONAL.
+This endpoint is used to issue a Credential previously requested at the Credential Endpoint in cases where the Credential Issuer was not able to immediately issue this Credential. Support for this endpoint is OPTIONAL.
 
-The Wallet MUST present to the Deferred Endpoint an Access Token that is valid for the issuance of the Credential previously requested at the Credential Endpoint or the Batch Credential Endpoint. 
+The Wallet MUST present to the Deferred Endpoint an Access Token that is valid for the issuance of the Credential previously requested at the Credential Endpoint. 
 
 Communication with the Deferred Credential Endpoint MUST utilize TLS. 
 
@@ -1238,7 +1092,7 @@ Communication with the Deferred Credential Endpoint MUST utilize TLS.
 
 The Deferred Credential Request is an HTTP POST request. It MUST be sent using the `application/json` media type.
 
-The following parameter is used in the Batch Credential Request:
+The following parameter is used in the Deferred Credential Request:
 
 * `transaction_id`: REQUIRED. String identifying a Deferred Issuance transaction.
 
@@ -1286,7 +1140,7 @@ Cache-Control: no-store
 
 # Notification Endpoint {#notification-endpoint}
 
-This endpoint is used by the Wallet to notify the Credential Issuer of certain events for issued Credentials. These events enable the Credential Issuer to take subsequent actions after issuance. The Credential Issuer needs to return one or more `notification_id` parameters in the Credential Response or the Batch Credential Response for the Wallet to be able to use this Endpoint. Support for this endpoint is OPTIONAL. The Issuer cannot assume that a notification will be sent for every issued credential since the use of this Endpoint is not mandatory for the Wallet.
+This endpoint is used by the Wallet to notify the Credential Issuer of certain events for issued Credentials. These events enable the Credential Issuer to take subsequent actions after issuance. The Credential Issuer needs to return one or more `notification_id` parameters in the Credential Response for the Wallet to be able to use this endpoint. Support for this endpoint is OPTIONAL. The Issuer cannot assume that a notification will be sent for every issued Credential since the use of this Endpoint is not mandatory for the Wallet.
 
 The Wallet MUST present to the Notification Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token-endpoint). 
 
@@ -1300,7 +1154,7 @@ Communication with the Notification Endpoint MUST utilize TLS.
 
 The Wallet sends an HTTP POST request to the Notification Endpoint with the following parameters in the entity-body and using the `application/json` media type. If the Wallet supports the Notification Endpoint, the Wallet MAY send one or more Notification Requests per Credential issued.
 
-* `notification_id`: REQUIRED. String received in the Credential Response or the Batch Credential Response.
+* `notification_id`: REQUIRED. String received in the Credential Response.
 * `event`: REQUIRED. Type of the notification event. It MUST be a case sensitive string whose value is either `credential_accepted`, `credential_failure`, or `credential_deleted`. `credential_accepted` is to be used when the Credential was successfully stored in the Wallet, with or without user action. `credential_deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `credential_failure` is to be used.
 * `event_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the event that occurred. Values for the `event_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
@@ -1420,16 +1274,14 @@ This specification defines the following Credential Issuer Metadata parameters:
 * `credential_issuer`: REQUIRED. The Credential Issuer's identifier, as defined in (#credential-issuer-identifier).
 * `authorization_servers`: OPTIONAL. Array of strings, where each string is an identifier of the OAuth 2.0 Authorization Server (as defined in [@!RFC8414]) the Credential Issuer relies on for authorization. If this parameter is omitted, the entity providing the Credential Issuer is also acting as the Authorization Server, i.e., the Credential Issuer's identifier is used to obtain the Authorization Server metadata. The actual OAuth 2.0 Authorization Server metadata is obtained from the `oauth-authorization-server` well-known location as defined in Section 3 of [@!RFC8414]. When there are multiple entries in the array, the Wallet may be able to determine which Authorization Server to use by querying the metadata; for example, by examining the `grant_types_supported` values, the Wallet can filter the server to use based on the grant type it plans to use. When the Wallet is using `authorization_server` parameter in the Credential Offer as a hint to determine which Authorization Server to use out of multiple, the Wallet MUST NOT proceed with the flow if the `authorization_server` Credential Offer parameter value does not match any of the entries in the `authorization_servers` array.
 * `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint, as defined in (#credential-request). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components.
-* `batch_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Batch Credential Endpoint, as defined in (#batch-credential-endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Batch Credential Endpoint.
 * `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint, as defined in (#deferred-credential-issuance). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
 * `notification_endpoint`: OPTIONAL. URL of the Credential Issuer's Notification Endpoint, as defined in (#notification-endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Notification Endpoint.
-* `credential_response_encryption`: OPTIONAL. Object containing information about whether the Credential Issuer supports encryption of the Credential and Batch Credential Response on top of TLS.
-  * `alg_values_supported`: REQUIRED. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`alg` values) [@!RFC7518] supported by the Credential and Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
-  * `enc_values_supported`: REQUIRED. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential and Batch Credential Endpoint to encode the Credential or Batch Credential Response in a JWT [@!RFC7519].
+* `credential_response_encryption`: OPTIONAL. Object containing information about whether the Credential Issuer supports encryption of the Credential Credential Response on top of TLS.
+  * `alg_values_supported`: REQUIRED. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`alg` values) [@!RFC7518] supported by the Credential Endpoint to encode the Credential Response in a JWT [@!RFC7519].
+  * `enc_values_supported`: REQUIRED. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential Endpoint to encode the Credential Response in a JWT [@!RFC7519].
   * `encryption_required`: REQUIRED. Boolean value specifying whether the Credential Issuer requires the additional encryption on top of TLS for the Credential Response. If the value is `true`, the Credential Issuer requires encryption for every Credential Response and therefore the Wallet MUST provide encryption keys in the Credential Request. If the value is `false`, the Wallet MAY chose whether it provides encryption keys or not.
-* `batch_credential_issuance`: OPTIONAL. Object containing information about the Credential Issuer's supports for batch issuance of Credentials. When this parameter is present, but the Credential Issuer does not support Batch Credential Endpoint, it means that Credential Issuer issues Credential Batches only from the Credential Endpoint.
-  * `credential_endpoint_supported`: REQUIRED. Boolean value specifying whether the Credential Issuer's Credential Edpoint supports the `proofs` parameter in the Credential Request, with `true` indicating support.
-  * `batch_size`: REQUIRED. Integer value specifying the maximum array size for the `proofs` parameter in a Credential Request or Batch Credential Request.
+* `batch_credential_issuance`: OPTIONAL. Object containing information about the Credential Issuer's supports for batch issuance of Credentials on the Credential Endpoint. The presence of this parameter means that the issuer supports the `proofs` parameter in the Credential Request so can issue more than one Verifiable Credential for the same Credential Dataset in a single request/response.
+  * `batch_size`: REQUIRED. Integer value specifying the maximum array size for the `proofs` parameter in a Credential Request.
 * `signed_metadata`: OPTIONAL. String that is a signed JWT. This JWT contains Credential Issuer metadata parameters as claims. The signed metadata MUST be secured using JSON Web Signature (JWS) [@!RFC7515] and MUST contain an `iat` (Issued At) claim, an `iss` (Issuer) claim denoting the party attesting to the claims in the signed metadata, and `sub` (Subject) claim matching the Credential Issuer identifier. If the Wallet supports signed metadata, metadata values conveyed in the signed JWT MUST take precedence over the corresponding values conveyed using plain JSON elements. If the Credential Issuer wants to enforce use of signed metadata, it omits the respective metadata parameters from the unsigned part of the Credential Issuer metadata. A `signed_metadata` metadata value MUST NOT appear as a claim in the JWT. The Wallet MUST establish trust in the signer of the metadata, and obtain the keys to validate the signature before processing the metadata. The concrete mechanism how to do that is out of scope of this specification and MAY be defined in the profiles of this specification.
 * `display`: OPTIONAL. Array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
   * `name`: OPTIONAL. String value of a display name for the Credential Issuer.
@@ -1589,7 +1441,7 @@ The Wallet MAY check the binding between the Credential Issuer Identifier and th
 
 After a Verifiable Credential has been issued to the Holder, claim values about the subject of a Credential or a signature on the Credential may need to be updated. There are two possible mechanisms to do so.
 
-First, the Wallet may receive an updated version of a Credential from a Credential Endpoint or a Batch Credential Endpoint using a valid Access Token. This does not involve interaction with the End-User. If the Credential Issuer issued a Refresh Token to the Wallet, the Wallet would obtain a fresh Access Token by making a request to the Token Endpoint, as defined in Section 6 of [@!RFC6749].
+First, the Wallet may receive an updated version of a Credential from a Credential Endpoint using a valid Access Token. This does not involve interaction with the End-User. If the Credential Issuer issued a Refresh Token to the Wallet, the Wallet would obtain a fresh Access Token by making a request to the Token Endpoint, as defined in Section 6 of [@!RFC6749].
 
 Second, the Credential Issuer can reissue the Credential by starting the issuance process from the beginning. This would involve interaction with the End-User. A Credential needs to be reissued if the Wallet does not have a valid Access Token or a valid Refresh Token. With this approach, when a new Credential is issued, the Wallet might need to check if it already has a Credential of the same type and, if necessary, delete the old Credential. Otherwise, the Wallet might end up with more than one Credential of the same type, without knowing which one is the latest.
 
@@ -1641,7 +1493,7 @@ unique values encoded in the Credential (End-User claims, identifiers, Issuer si
 To prevent these types of correlation, Credential Issuers and Wallets SHOULD use
 methods, including but not limited to the following ones:
 
-* Issue a batch of Credentials to enable the usage of a unique Credential per presentation or per Verifier using Batch Credential Endpoint defined in (#batch-credential-endpoint). This only helps with Verifier/Verifier unlinkability.
+* Issue a batch of Credentials with the same Credential Dataset to facilitate the use of a unique Credential per presentation or per Verifier. This approach solely aids in achieving Verifier-to-Verifier unlinkability.
 * Use cryptographic schemes that can provide non-correlation.
 
 Credential Issuers specifically SHOULD discard values that can be used in collusion with a Verifier to track a user, such as the Issuer's signature or cryptographic key material to which an issued credential was bound to.
@@ -2493,15 +2345,14 @@ The technology described in this specification was made available from contribut
 
    -14
 
+   * removes the Batch Credential Endpoint
    * clarify that authorization_details can be present in the Token Request for Pre-Authorized Code Flow when multiple Credential Configurations are present in the Credential Offer
    * make `credential_identifiers` mandatory for `authorization_details` flow
    * changes proof type descriptions to accommodate for the batch issuance changes
    * fix indentation of examples
    * changes proof type descriptions to accomodate for the batch issuance changes
-   * changed Batch Issuance endpoint to differentiate between issuance Credential Configuration, Credential Dataset and instances of Credentials with different key material
    * changed Credential Endpoint to enable requesting multiple instances of a particular Credential Configuration and Dataset with different cryptographic material
    * clarify optionality of scope and `authorization_details` for Authorization Request
-   * Clarify Batch Endpoint Encryption
    * Define Credential Format as a term
    * Define Credential Dataset as a term
    * Define Credential Configuration as a term
