@@ -664,7 +664,7 @@ Cache-Control: no-store
 
 {
   "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ",
-  "token_type": "bearer",
+  "token_type": "Bearer",
   "expires_in": 86400,
   "c_nonce": "tZignsnFbp",
   "c_nonce_expires_in": 86400,
@@ -760,7 +760,7 @@ Below is a non-normative example of a Credential Request for a Credential in [@I
 POST /credential HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
-Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
   "format":"mso_mdoc",
@@ -780,7 +780,7 @@ Below is a non-normative example of a Credential Request for two Credential inst
 POST /credential HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
-Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
   "credential_identifier": "CivilEngineeringDegree-2023",
@@ -1088,7 +1088,7 @@ The following is a non-normative example of a Deferred Credential Request:
 POST /deferred_credential HTTP/1.1 
 Host: server.example.com
 Content-Type: application/json
-Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
   "transaction_id": "8xLOxBtZp8"
