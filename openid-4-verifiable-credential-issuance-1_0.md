@@ -14,7 +14,7 @@ status = "standard"
 initials="T."
 surname="Lodderstedt"
 fullname="Torsten Lodderstedt"
-organization="German Federal Agency for Disruptive Innovation (SPRIND)"
+organization="SPRIND"
     [author.address]
     email = "torsten@lodderstedt.net"
 
@@ -22,7 +22,7 @@ organization="German Federal Agency for Disruptive Innovation (SPRIND)"
 initials="K."
 surname="Yasuda"
 fullname="Kristina Yasuda"
-organization="German Federal Agency for Disruptive Innovation (SPRIND)"
+organization="SPRIND"
     [author.address]
     email = "kristina.yasuda@sprind.org"
 
