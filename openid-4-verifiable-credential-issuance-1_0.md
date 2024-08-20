@@ -2324,10 +2324,10 @@ The technology described in this specification was made available from contribut
    * Define Credential Format as a term
    * Define Credential Dataset as a term
    * Define Credential Configuration as a term
-   
+   * remove use of the `authorization_pending` and `slow_down` error codes
+
    -13
 
-   * remove use of the `authorization_pending` and `slow_down` error codes
    * change the structure of `proof_types` from an array to a `proof_types_supported` map that contains a required `proof_signing_alg_values_supported` parameter
    * renamed `cryptographic_suites_supported` to `credential_signing_alg_values_supported` to clarify the purpose of the parameter
    * renamed `credential_configurations` Credential Offer parameter to  `credential_configuration_ids`
