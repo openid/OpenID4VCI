@@ -333,7 +333,8 @@ This endpoint is used by a Credential Issuer that is already interacting with an
 
 ## Credential Offer {#credential-offer}
 
-The Credential Issuer sends Credential Offer using an HTTP GET request or an HTTP redirect to the Wallet's Credential Offer Endpoint defined in (#client-metadata).
+The Credential Issuer makes a Credential Offer by directing the resource owner's
+user-agent to the Wallet's Credential Offer Endpoint defined in (#client-metadata).
 
 The Credential Offer object, which is a JSON-encoded object with the Credential Offer parameters, can be sent by value or by reference.
 
