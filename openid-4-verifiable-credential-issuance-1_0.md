@@ -828,7 +828,7 @@ This specification defines the following proof types:
 * `ldp_vp`: A W3C Verifiable Presentation object signed using the Data Integrity Proof [@VC_Data_Integrity] as defined in [@VC_DATA_2.0] or [@VC_DATA] is used for proof of possession. When a `proof_type` parameter in a `proof` object is set to `ldp_vp`, it MUST also contain an `ldp_vp` parameter that includes a [W3C Verifiable Presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp-vp-proof-type). When a `proofs` object is using a `ldp_vp` proof type, it MUST include an `ldp_vp` parameter with its value being an array of [W3C Verifiable Presentations](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0), where each of these W3C Verifiable Presentation is formed as defined in (#ldp-vp-proof-type).
 
 Additional proof types MAY be defined and used.
-Proof types used MUST be understood by both the Wallet and the Credential Issuer.
+Proof types MUST be recognized and supported by both the Wallet and the Credential Issuer in order to bind an issued Credential to specific cryptographic key material.
 
 #### `jwt` Proof Type {#jwt-proof-type}
 
