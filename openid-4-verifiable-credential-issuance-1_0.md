@@ -2166,6 +2166,90 @@ The following is a non-normative example of a Credential Response containing a C
 
 <{{examples/credential_response_sd_jwt_vc.txt}}
 
+# Key Attestations {#keyattestation}
+
+A key attestation is an interoperable mechanism to proof the authenticity and security properties of a key and its storage component. Keys may be stored in various key storage components, that differ regarding the private key's protection against extraction and duplication as well as the user's authentication to unlock key operations. Key storage components may be software-based or hardware-based and may be on the same device as the wallet, external security tokens or remote services that enable cryptographic key operations.
+
+A Wallet may provide key attestations to inform the Issuer about the properties of the provided keys. Credential Issuers may want to evaluate key attestations to decide whether keys are eligible to its own security requirements, which can results from regulatory requirements and laws or internal design decisions. An Issuer SHOULD communicate his requirements through his metadata or out-of-band.
+
+todo: motivate interoperability for issuers
+
+todo: explain usage of this within proof type or DPoP Proof
+
+## Key Attestation in JWT format
+
+The JWT is signed by the Wallet Provider or the Wallet's key storage component itself and contains the following elements:
+
+* in the JOSE header,
+  * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE.ALGS]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
+  * `typ`: REQUIRED. MUST be `openid4vci-keyattestation+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
+
+The key attestation may use `x5c`, `kid`, `trust_chain` or other mechanisms to convey the public key and the associated trust mechanism to sign the key attestation.
+
+* in the JWT body,
+  * `iat`: REQUIRED (number). Integer for the time at which the key attestation was issued using the syntax defined in [@!RFC7519].
+  * `exp`: REQUIRED (number). Integer for the time at which the key attestation expires using the syntax defined in [@!RFC7519].
+  * `keys` : REQUIRED. Array of attested keys using the syntax of JWK as defined in [@!RFC7517].
+  * `key_type` : OPTIONAL. String that asserts the key storage component and its security mechanism of attested keys from `keys`. This specification defines initial values in (#keyattestation-keytypes).
+  * `user_authentication` : OPTIONAL. String that asserts the security mechanism the key storage component uses to authenticate the End-User to authorize access to the private key from `keys`. This specification defines initial values in (#keyattestation-auth).
+  * `apr` : OPTIONAL. String that asserts the resistance to a certain attack potential as described
+  * `nonce`: OPTIONAL. String that represents a nonce provided by the Issuer to proof that a key attestation was freshly generated.
+
+todo: add optional `status` parameter
+
+The Credential Issuer MUST validate that the JWT used as a proof is actually signed by a key identified in the JOSE Header.
+
+This is an example of a Wallet Instance Attestation:
+
+```json
+{
+  "typ": "openid4vci-keyattestation+jwt",
+  "alg": "ES256",
+  "kid": "1"
+}
+.
+{
+  "iss": "<identifier of the issuer of this key attestation>",
+  "iat": 1516247022,
+  "exp": 1541493724,
+  "key_type": "strong_box",
+  "user_authentication": "system_pin",
+  "apr" : "https://trust-list.eu/apr/high",
+  "keys": [
+    {
+      "kty": "EC",
+      "crv": "P-256",
+      "x": "TCAER19Zvu3OHF4j4W4vfSVoHIP1ILilDls7vCeGemc",
+      "y": "ZxjiWWbZMQGHVWKVQ4hbSIirsVfuecCE6t4jT9F2HZQ"
+    }
+  ]
+}
+```
+
+## Key Types {#keyattestation-keytypes}
+
+This specification defines the following values for `key_type`:
+
+* `software`: It MUST be used when the Wallet uses software-based key management.
+* `hardware`: It MUST be used when the wallet uses hardware-based key management.
+* `tee`: It SHOULD be used when the Wallet uses the Trusted Execution Environment for key management.
+* `secure_enclave`: It SHOULD be used when the Wallet uses the Secure Enclave for key management.
+* `strong_box`: It SHOULD be used when the Wallet uses the Strongbox for key management.
+* `secure_element`: It SHOULD be used when the Wallet uses a Secure Element for key management.
+* `hsm`: It SHOULD be used when the Wallet uses Hardware Security Module (HSM).
+
+## User Authentication Types {#keyattestation-auth}
+
+This specification defines the following values for `user_authentication`:
+
+* `system_biometry`: It MUST be used when the key usage is authorized by the mobile operating system using a biometric factor.
+* `system_pin`: It MUST be used when the key usage is authorized by the mobile operating system using personal identification number (PIN).
+* `internal_biometry`: It MUST be used when the key usage is authorized by the Wallet using a biometric factor.
+* `internal_pin`: It MUST be used when the key usage is authorized by the Wallet using PIN.
+* `secure_element_pin` It MUST be used when the key usage is authorized by the secure element managing the key itself using PIN.
+
+todo: text about Level of assurance and attack potential resistance
+
 # IANA Considerations
 
 ## Sub-Namespace Registration
