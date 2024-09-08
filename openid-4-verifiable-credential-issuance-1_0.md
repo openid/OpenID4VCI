@@ -1131,6 +1131,9 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 The Deferred Credential Response uses the `credential` parameter as defined in (#credential-response).
 
+Additional Deferred Credential Response parameters MAY be defined and used.
+The Wallet MUST ignore any unrecognized parameters.
+
 The Deferred Credential Response MUST be sent using the `application/json` media type.
 
 ## Deferred Credential Error Response {#deferred-credential-error-response}
@@ -1175,7 +1178,7 @@ The Wallet sends an HTTP POST request to the Notification Endpoint with the foll
 * `event_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the event that occurred. Values for the `event_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
 Additional Notification Request parameters MAY be defined and used.
-The Wallet MUST ignore any unrecognized parameters.
+The Credential Issuer MUST ignore any unrecognized parameters.
 
 Below is a non-normative example of a Notification Request when a credential was successfully accepted by the End-User:
 
