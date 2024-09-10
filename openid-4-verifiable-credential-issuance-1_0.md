@@ -708,7 +708,7 @@ Cache-Control: no-store
 
 # Nonce Endpoint {#nonce-endpoint}
 
-A Credential Issuer that requires `c_nonce` values to be incorporated into proofs in the Credential Request (see (#credential-request)) MUST offer a Nonce Endpoint. This endpoint allows a Client to acquire a fresh `c_nonce` value without the overhead of a full Credential Request.
+This endpoint allows a Client to acquire a fresh `c_nonce` value without the overhead of a full Credential Request. A Credential Issuer that requires `c_nonce` values to be incorporated into proofs in the Credential Request (see (#credential-request)) MUST offer a Nonce Endpoint.
 
 The `nonce_endpoint` Credential Issuer Metadata parameter, as defined in (#credential-issuer-parameters), contains the URL of the Credential Issuer's Nonce Endpoint.
 
