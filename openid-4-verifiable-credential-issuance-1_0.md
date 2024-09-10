@@ -333,8 +333,7 @@ This endpoint is used by a Credential Issuer that is already interacting with an
 
 ## Credential Offer {#credential-offer}
 
-The Credential Issuer makes a Credential Offer by directing the End-User's
-user-agent to the Wallet's Credential Offer Endpoint defined in (#client-metadata). The Credential Issuer MAY render a QR code containing the Credential Offer that can be scanned by the End-User using a Wallet, or a link that the End-User can click.
+The Credential Issuer makes a Credential Offer by allowing the End-User to invoke the Wallet using the Wallet's Credential Offer Endpoint defined in (#client-metadata) (for example by clicking a link) and/or rendering a QR code containing the Credential Offer that the End-User can scan in a wallet or an arbitrary camera application.
 
 The Credential Offer object, which is a JSON-encoded object with the Credential Offer parameters, can be sent by value or by reference.
 
