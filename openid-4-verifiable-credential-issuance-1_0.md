@@ -2231,7 +2231,6 @@ This is an example of a Wallet Instance Attestation:
 This specification defines the following values for `key_type`:
 
 * `software`: It MUST be used when the Wallet uses software-based key management.
-* `hardware`: It MUST be used when the wallet uses hardware-based key management.
 * `tee`: It SHOULD be used when the Wallet uses the Trusted Execution Environment for key management.
 * `secure_enclave`: It SHOULD be used when the Wallet uses the Secure Enclave for key management.
 * `strong_box`: It SHOULD be used when the Wallet uses the Strongbox for key management.
