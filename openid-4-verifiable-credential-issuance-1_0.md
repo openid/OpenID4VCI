@@ -2182,6 +2182,20 @@ The order of claims description objects in the `claims` or `credentialSubject`
 array is used by the Wallet to determine the order in which the claims are
 displayed to the End-User, unless another mechanism is defined by the profile.
 
+When a repeated or contradictory claim description is provided, the processing
+MUST be aborted. This is in particular the case if 
+
+ - the same claim is addressed by two or more claims description objects in the
+   `claims` or `credentialSubject` array, or
+ - there is a claims description object with a `path` that addresses a set of
+   claims in an array (using `null`, as defined in (#claims-path-query)) and
+   another object that uses a non-negative integer to address a specific claim
+   in the same array, or
+ - there is a claims description object indicating that a certain claim is an array
+   (implied by using `null` or a non-negative integer in the `path`), and another
+   object indicating that the same claim is an object (implied by using a string
+   in the `path`).
+
 # Claims Path Query {#claims-path-query}
 
 The metadata specifications above make use of claims path queries to select a
