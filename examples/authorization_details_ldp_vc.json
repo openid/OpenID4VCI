@@ -1,13 +1,13 @@
 [
-    {
-        "type": "openid_credential",
-        "credential_configuration_id": "UniversityDegree_LDP_VC",
-        "credential_definition": {
-            "credentialSubject": [
-                {"path": ["given_name"]},
-                {"path": ["family_name"]},
-                {"path": ["degree"]}
-            ]
-        }
+  {
+    "type": "openid_credential",
+    "credential_configuration_id": "UniversityDegree_LDP_VC",
+    "credential_definition": {
+      "credentialSubject": [
+        {"path": ["given_name"]},
+        {"path": ["family_name"]},
+        {"path": ["degree"]}
+      ]
     }
+  }
 ]
