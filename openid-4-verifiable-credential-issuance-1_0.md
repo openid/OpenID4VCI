@@ -451,7 +451,7 @@ The request parameter `authorization_details` defined in Section 2 of [@!RFC9396
 
 Additional `authorization_details` data fields MAY be defined and used,
 as described in [@!RFC9396].
-The Wallet MUST ignore any unrecognized parameters.
+The Credential Issuer MUST ignore any unrecognized parameters.
 
 The following is a non-normative example of an `authorization_details` object with a `credential_configuration_id`:
 
