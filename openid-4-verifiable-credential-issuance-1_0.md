@@ -946,12 +946,12 @@ If the Credential Response is not encrypted, the media type of the response MUST
 
 The following parameters are used in the JSON-encoded Credential Response body:
 
-* `credential`: OPTIONAL. Contains issued Credential. It MUST NOT be used if `credentials` or `transaction_id` parameter is present. It MAY be a string or an object, depending on the Credential Format. See (#format-profiles) for the Credential Format-specific encoding requirements.
-* `credentials`: OPTIONAL. Contains an array of issued Credentials. It MUST NOT be used if `credential` or `transaction_id` parameter is present. The values in the array MAY be a string or an object, depending on the Credential Format. See (#format-profiles) for the Credential Format-specific encoding requirements.
-* `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used  if `credential` or `credentials` is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
+* `credentials`: OPTIONAL. Contains an array of issued Credentials. It MUST NOT be used if the `transaction_id` parameter is present. The values in the array MUST be an object, depending on the Credential Format. See (#format-profiles) for the Credential Format-specific encoding requirements. The array MUST contain one or more objects. The following parameters are used inside this object (other parameters MAY also be included):
+   * `credential`: REQUIRED. Contains the issued Credential. It MAY be a string or an object, depending on the Credential Format. See Appendix A for the Credential Format-specific encoding requirements.
+   * `notification_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the Notification Request as defined in (#notification).
+* `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used  if the `credentials` parameter is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. String containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential-request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
-* `notification_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the Notification Request as defined in (#notification). This parameter MUST NOT be present if `credential` parameter is not present.
 
 The format of the Credential in the Credential Response is determined by the value of the `format` parameter specified in the Credential Request.
 
@@ -967,9 +967,13 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "credential": "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
+  "credentials": [
+    {
+      "credential": "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L"
+    }
+  ],
   "c_nonce": "fGFF7UkhLa",
-  "c_nonce_expires_in": 86400  
+  "c_nonce_expires_in": 86400
 }
 ```
 
@@ -981,8 +985,14 @@ Content-Type: application/json
 
 {
   "credentials": [
-    "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
-    "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
+    {
+      "credential": "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
+      "notification_id": "3fwe98js"
+    },
+    {
+      "credential": "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy",
+      "notification_id": "3gks39lk"
+    }
   ],
   "c_nonce": "fGFF7UkhLa",
   "c_nonce_expires_in": 86400
@@ -1066,9 +1076,9 @@ Cache-Control: no-store
 
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
-This endpoint is used to issue a Credential previously requested at the Credential Endpoint in cases where the Credential Issuer was not able to immediately issue this Credential. Support for this endpoint is OPTIONAL.
+This endpoint is used to issue one or more Credential previously requested at the Credential Endpoint in cases where the Credential Issuer was not able to immediately issue this Credential. Support for this endpoint is OPTIONAL.
 
-The Wallet MUST present to the Deferred Endpoint an Access Token that is valid for the issuance of the Credential previously requested at the Credential Endpoint. 
+The Wallet MUST present to the Deferred Endpoint an Access Token that is valid for the issuance of the Credential(s) previously requested at the Credential Endpoint. 
 
 Communication with the Deferred Credential Endpoint MUST utilize TLS. 
 
@@ -1097,7 +1107,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Deferred Credential Response {#deferred-credential-response}
 
-The Deferred Credential Response uses the `credential` parameter as defined in (#credential-response).
+The Deferred Credential Response uses the `credentials` parameter as defined in (#credential-response).
 
 The Deferred Credential Response MUST be sent using the `application/json` media type.
 
@@ -1138,7 +1148,7 @@ Communication with the Notification Endpoint MUST utilize TLS.
 
 The Wallet sends an HTTP POST request to the Notification Endpoint with the following parameters in the entity-body and using the `application/json` media type. If the Wallet supports the Notification Endpoint, the Wallet MAY send one or more Notification Requests per Credential issued.
 
-* `notification_id`: REQUIRED. String received in the Credential Response.
+* `notification_id`: REQUIRED. String received in the Credential Response within the `credentials` parameter.
 * `event`: REQUIRED. Type of the notification event. It MUST be a case sensitive string whose value is either `credential_accepted`, `credential_failure`, or `credential_deleted`. `credential_accepted` is to be used when the Credential was successfully stored in the Wallet, with or without user action. `credential_deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `credential_failure` is to be used.
 * `event_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the event that occurred. Values for the `event_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
@@ -2311,6 +2321,10 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -15
+
+   * credential response always returns an array when not returning a transaction_i with the option for additional meta-data
 
    -14
    
