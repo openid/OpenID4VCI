@@ -2324,7 +2324,9 @@ The technology described in this specification was made available from contribut
 
    -15
 
-   * credential response always returns an array when not returning a transaction_i with the option for additional meta-data
+   * credential response always returns an array when not returning a transaction_id with the option for additional meta-data
+   * deferred credential response always returns an array (same as credential response)
+   * moved notification_id to the metadata in the credential response
 
    -14
    
