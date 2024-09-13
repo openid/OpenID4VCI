@@ -449,8 +449,11 @@ The request parameter `authorization_details` defined in Section 2 of [@!RFC9396
 * `credential_configuration_id`: REQUIRED when `format` parameter is not present. String specifying a unique identifier of the Credential being described in the `credential_configurations_supported` map in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). The referenced object in the `credential_configurations_supported` map conveys the details, such as the format, for issuance of the requested Credential. This specification defines Credential Format specific Issuer Metadata in (#format-profiles). It MUST NOT be present if `format` parameter is present.
 * `format`: REQUIRED when `credential_configuration_id` parameter is not present. String identifying the format of the Credential the Wallet needs. This Credential Format Identifier determines further claims in the authorization details object needed to identify the Credential type in the requested format. This specification defines Credential Format Profiles in (#format-profiles). It MUST NOT be present if `credential_configuration_id` parameter is present.
 
-Additional `authorization_details` data fields MAY be defined and used,
-as described in [@!RFC9396].
+Additional `authorization_details` data fields MAY be defined and used
+when the `type` value is `openid_credential`.
+Note that when using this type, this overrides the language
+"The AS MUST abort processing and respond with an error ``invalid_authorization_details` to the client if [an object in the authorization_details structure] ...
+is an object of known type but containing unknown fields" in [@!RFC9396].
 The Credential Issuer MUST ignore any unrecognized parameters.
 
 The following is a non-normative example of an `authorization_details` object with a `credential_configuration_id`:
