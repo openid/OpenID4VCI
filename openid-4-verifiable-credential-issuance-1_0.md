@@ -738,8 +738,9 @@ For cryptographic binding, the Client has the following options defined in (#cre
 
 A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
-* `credential_identifier`: REQUIRED when an Authorization Details of type `openid_credential` was returned from the Token Response. It MUST NOT be used otherwise. A string that identifies a Credential Dataset that is requested for issuance. When this parameter is used, the `format` parameter and any other Credential format specific parameters such as those defined in (#format-profiles) MUST NOT be present.
-* `format`: REQUIRED if an Authorization Details of type `openid_credential` was not returned from the Token Response (e.g. when the credential was requested using a `scope` value in the authorization request or a pre-authorisation code was used that did not return an Authorization Details). It MUST NOT be used otherwise. A string that determines the format of the Credential to be issued, which may determine the type and any other information related to the Credential to be issued. Credential Format Profiles consist of the Credential format specific parameters that are defined in (#format-profiles). When this parameter is used, the `credential_identifier` Credential Request parameter MUST NOT be present.
+* `credential_identifier`: REQUIRED when an Authorization Details of type `openid_credential` was returned from the Token Response. It MUST NOT be used otherwise. A string that identifies a Credential Dataset that is requested for issuance. When this parameter is used, the `credential_configuration_id` parameter nor `format` parameter with any other Credential format specific parameters such as those defined in (#format-profiles) MUST NOT be present.
+* `credential_configuration_id`: REQUIRED if an Authorization Details of type `openid_credential` was not returned from the Token Response or if `format` parameter is not present. It MUST NOT be used otherwise. A string that identifies one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The value of this parameter MUST match with one of those in the Credential Issuer metadata. When this parameter is used, the `credential_identifier` parameter nor `format` parameter with any other Credential format specific parameters such as those defined in (#format-profiles) MUST NOT be present.
+* `format`: REQUIRED if an Authorization Details of type `openid_credential` was not returned from the Token Response or if `credential_configuration_id`. It MUST NOT be used otherwise. A string that determines the format of the Credential to be issued, which may determine the type and any other information related to the Credential to be issued. Credential Format Profiles consist of the Credential format specific parameters that are defined in (#format-profiles). When this parameter is used, the `credential_identifier` nor `credential_configuration_id` parameters MUST NOT be present.
 * `proof`: OPTIONAL. Object providing a single proof of possession of the cryptographic key material to which the issued Credential instance will be bound to. `proof` parameter MUST NOT be present if `proofs` parameter is used.  The `proof` object MUST contain the following:
     * `proof_type`: REQUIRED. String specifying the key proof type. The value set for this parameter determines the additional parameters in the key proof object and their corresponding processing rules. The key proof types outlined in this specification are detailed in (#proof-types).
 * `proofs`: OPTIONAL. Object providing one or more proof of possessions of the cryptographic key material to which the issued Credential instances will be bound to. The `proofs` parameter MUST NOT be present if `proof` parameter is used. `proofs` object contains exactly one parameter named as the proof type in (#proof-types), the value set for this parameter is an array containing parameters as defined by the corresponding proof type.
@@ -747,6 +748,8 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
     * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
     * `alg`: REQUIRED. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] for encrypting Credential Responses.
     * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
+
+`credential_configuration_id` or `format` parameters are used when the Credential issuance was requested using a `scope` value in the Authorization Request or a pre-authorisation code was used that did not return an Authorization Details.
 
 The `proof_type` parameter is an extension point that enables the use of different types of proofs for different cryptographic schemes.
 
@@ -765,6 +768,23 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 {
   "format":"mso_mdoc",
   "doctype":"org.iso.18013.5.1.mDL",
+  "proof": {
+    "proof_type": "jwt",
+    "jwt": "..."
+  }
+}
+```
+
+Below is a non-normative example of a Credential Request for a Credential in [@!I-D.ietf-oauth-sd-jwt-vc] format using Credential Format-specific parameters and a key proof type `jwt`:
+
+```
+POST /credential HTTP/1.1
+Host: server.example.com
+Content-Type: application/json
+Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+{
+  "credential_configuration_id":"SD_JWT_VC_example_in_OpenID4VCI",
   "proof": {
     "proof_type": "jwt",
     "jwt": "..."
