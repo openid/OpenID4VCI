@@ -731,6 +731,8 @@ The Credential Issuer provides a nonce value in the HTTP response with a 2xx sta
 * `c_nonce`: REQUIRED. String containing a nonce to be used when creating a proof of possession of the key proof (see (#credential-request)).
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
 
+Due to the temporal and contextually sensitive nature of the `c_nonce` value, the Credential Issuer MUST make the response uncacheable by adding a `Cache-Control` header field including the value `no-store`.
+
 Below is a non-normative example of a Nonce Response:
 
 ```
