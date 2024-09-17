@@ -2168,11 +2168,11 @@ The following is a non-normative example of a Credential Response containing a C
 
 # Key Attestations {#keyattestation}
 
-A key attestation is an interoperable mechanism to proof the authenticity and security properties of a key and its storage component. Keys may be stored in various key storage components, that differ regarding the private key's protection against extraction and duplication as well as the user's authentication to unlock key operations. Key storage components may be software-based or hardware-based and may be on the same device as the wallet, external security tokens or remote services that enable cryptographic key operations.
+A key attestation is an interoperable, verifiable statement that provides evidence of the authenticity and security properties of a key and its storage component. Keys can be stored in various key storage components, which differ in their ability to protect the private key against extraction and duplication, as well as in the methods used for End-User authentication to unlock key operations. These key storage components may be software-based or hardware-based, and can be located on the same device as the Wallet, on external security tokens, or on remote services that enable cryptographic key operations.
 
-A Wallet may provide key attestations to inform the Issuer about the properties of the provided keys. Credential Issuers may want to evaluate key attestations to decide whether keys are eligible to its own security requirements, which can results from regulatory requirements and laws or internal design decisions. An Issuer SHOULD communicate his requirements through his metadata or out-of-band.
+A Wallet MAY provide key attestations to inform the Credential Issuer about the properties of the provided cryptographic public keys. Credential Issuers may want to evaluate these key attestations to determine whether the keys meet their own security requirements, which can result from the trust framework in use, regulatory requirements, laws, or internal design decisions. An Issuer SHOULD communicate this requirement to evaluate key attestations through its metadata or using some sort of out-of-band mechanism.
 
-todo: motivate interoperability for issuers
+Since the key attestations may have large audience as many Credential Issuers that not necessarly uses the same trust framework or internal design decisions, it is required to use a common approach to facilitate interoperability. Therefore, key attestations SHOULD use a common format,allowing Issuers to develop consistent evaluation processes, reducing complexity and potential errors. Common formats makes easy for Issuers to demonstrate compliance with regulatory requirements across different jurisdictions, they also facilitate the development of shared best practices and security benchmarks.
 
 todo: explain usage of this within proof type or DPoP Proof
 
@@ -2194,12 +2194,11 @@ The key attestation may use `x5c`, `kid`, `trust_chain` or other mechanisms to c
   * `user_authentication` : OPTIONAL. String that asserts the security mechanism the key storage component uses to authenticate the End-User to authorize access to the private key from `keys`. This specification defines initial values in (#keyattestation-auth).
   * `apr` : OPTIONAL. String that asserts the resistance to a certain attack potential as described
   * `nonce`: OPTIONAL. String that represents a nonce provided by the Issuer to proof that a key attestation was freshly generated.
-
-todo: add optional `status` parameter
+  * `status`: OPTIONAL. JSON Object representing the supported revocation check mechanisms, such as the one defined in [status list]
 
 The Credential Issuer MUST validate that the JWT used as a proof is actually signed by a key identified in the JOSE Header.
 
-This is an example of a Wallet Instance Attestation:
+This is an example of a Key Attestation:
 
 ```json
 {
@@ -2241,7 +2240,7 @@ This specification defines the following values for `key_type`:
 
 This specification defines the following values for `user_authentication`:
 
-* `system_biometry`: It MUST be used when the key usage is authorized by the mobile operating system using a biometric factor.
+* `system_biometry`: It MUST be used when the key usage is authorized by the operating system using a biometric factor, such as the one provided by mobile devices.
 * `system_pin`: It MUST be used when the key usage is authorized by the mobile operating system using personal identification number (PIN).
 * `internal_biometry`: It MUST be used when the key usage is authorized by the Wallet using a biometric factor.
 * `internal_pin`: It MUST be used when the key usage is authorized by the Wallet using PIN.
