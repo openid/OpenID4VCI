@@ -675,7 +675,10 @@ Note: The `credential_identifiers` parameter cannot be used when the `scope` par
 
 Additional Token Response parameters MAY be defined and used,
 as described in [@!RFC6749].
-The Wallet MUST ignore any unrecognized parameters.
+The Wallet MUST ignore any unrecognized parameters in the Token Response.
+An included `authorization_details` parameter MAY also have additional data fields defined and used
+when the `type` value is `openid_credential`.
+The Wallet MUST ignore any unrecognized data fields in the `authorization_details` present in the Token Response.
 
 Below is a non-normative example of a Token Response when the `authorization_details` parameter was used to request issuance of a certain Credential type:
 
