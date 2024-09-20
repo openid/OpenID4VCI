@@ -2202,7 +2202,7 @@ This is an example of a Key Attestation:
 
 ```json
 {
-  "typ": "openid4vci-keyattestation+jwt",
+  "typ": "keyattestation+jwt",
   "alg": "ES256",
   "kid": "1"
 }
