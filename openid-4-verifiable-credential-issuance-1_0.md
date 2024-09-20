@@ -1360,7 +1360,7 @@ This specification also defines a new OAuth 2.0 Authorization Server metadata [@
 
 Additional Authorization Server metadata parameters MAY be defined and used,
 as described in [@!RFC8414].
-The wallet MUST ignore any unrecognized parameters.
+The Wallet MUST ignore any unrecognized parameters.
 
 # Security Considerations {#security-considerations}
 
