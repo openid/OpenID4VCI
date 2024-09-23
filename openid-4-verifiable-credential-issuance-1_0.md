@@ -2189,7 +2189,7 @@ The key attestation may use `x5c`, `kid`, `trust_chain` or other mechanisms to c
 * in the JWT body,
   * `iat`: REQUIRED (number). Integer for the time at which the key attestation was issued using the syntax defined in [@!RFC7519].
   * `exp`: REQUIRED (number). Integer for the time at which the key attestation expires using the syntax defined in [@!RFC7519].
-  * `keys` : REQUIRED. Array of attested keys using the syntax of JWK as defined in [@!RFC7517].
+  * `attested_keys` : REQUIRED. Array of attested keys using the syntax of JWK as defined in [@!RFC7517].
   * `key_type` : OPTIONAL. String that asserts the key storage component and its security mechanism of attested keys from `keys`. This specification defines initial values in (#keyattestation-keytypes).
   * `user_authentication` : OPTIONAL. String that asserts the security mechanism the key storage component uses to authenticate the End-User to authorize access to the private key from `keys`. This specification defines initial values in (#keyattestation-auth).
   * `apr` : OPTIONAL. String that asserts the resistance to a certain attack potential as described
@@ -2214,7 +2214,7 @@ This is an example of a Key Attestation:
   "key_type": "strong_box",
   "user_authentication": "system_pin",
   "apr" : "https://trust-list.eu/apr/high",
-  "keys": [
+  "attested_keys": [
     {
       "kty": "EC",
       "crv": "P-256",
