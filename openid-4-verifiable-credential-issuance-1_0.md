@@ -2192,7 +2192,7 @@ The key attestation may use `x5c`, `kid`, `trust_chain` or other mechanisms to c
   * `attested_keys` : REQUIRED. Array of attested keys using the syntax of JWK as defined in [@!RFC7517].
   * `key_type` : OPTIONAL. String that asserts the key storage component and its security mechanism of attested keys from `keys`. This specification defines initial values in (#keyattestation-keytypes).
   * `user_authentication` : OPTIONAL. String that asserts the security mechanism the key storage component uses to authenticate the End-User to authorize access to the private key from `keys`. This specification defines initial values in (#keyattestation-auth).
-  * `apr` : OPTIONAL. String that asserts the resistance to a certain attack potential as described
+  * `apr` : OPTIONAL. String that asserts the resistance to a specified attack potential. The value contains an URL that identifies the given attack potential.
   * `nonce`: OPTIONAL. String that represents a nonce provided by the Issuer to proof that a key attestation was freshly generated.
   * `status`: OPTIONAL. JSON Object representing the supported revocation check mechanisms, such as the one defined in [status list]
 
