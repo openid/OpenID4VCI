@@ -813,7 +813,7 @@ The JWT MUST contain the following elements:
   * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
   * `kid`: OPTIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. It MUST NOT be present if `jwk` is present.
   * `jwk`: OPTIONAL. JOSE Header containing the key material the new Credential shall be bound to. It MUST NOT be present if `kid` is present.
-  * `x5c`: OPTIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element MAY be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties.
+  * `key_attestation`: OPTIONAL. JOSE Header containing a key attestation as described in (#keyattestation).
   * `trust_chain`: OPTIONAL. JOSE Header containing an [@!OpenID.Federation] Trust Chain. This element MAY be used to convey key attestation, metadata, metadata policies, federation Trust Marks and any other information related to a specific federation, if available in the chain. When used for signature verification, the header parameter `kid` MUST be present.
 
 * in the JWT body,
@@ -865,8 +865,10 @@ Here is another example JWT not only proving possession of a private key but als
 
 ```json
 {
+  "typ": "openid4vci-proof+jwt",
   "alg": "ES256",
-  "x5c": [<key certificate + certificate chain for attestation>]
+  "kid": 0,
+  "key_attestation": [<key attestation in JWT format>]
 }.
 {
   "iss": "s6BhdRkqt3",
