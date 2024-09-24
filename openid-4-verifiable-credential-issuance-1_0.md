@@ -948,7 +948,7 @@ If the Credential Response is not encrypted, the media type of the response MUST
 
 The following parameters are used in the JSON-encoded Credential Response body:
 
-* `credentials`: OPTIONAL. Contains an array of one or more issued Credentials. It MUST NOT be used if the `transaction_id` parameter is present. The elements of the array MUST be objects. The following parameters are used inside this object (other parameters MAY also be included):
+* `credentials`: OPTIONAL. Contains an array of one or more issued Credentials. It MUST NOT be used if the `transaction_id` parameter is present. The elements of the array MUST be objects. This specification defines the following parameters to be used inside this object:
    * `credential`: REQUIRED. Contains one issued Credential. It MAY be a string or an object, depending on the Credential Format. See Appendix A for the Credential Format-specific encoding requirements.
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used if the `credentials` parameter is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. String containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential-request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
