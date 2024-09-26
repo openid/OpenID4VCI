@@ -451,10 +451,7 @@ The request parameter `authorization_details` defined in Section 2 of [@!RFC9396
 
 Additional `authorization_details` data fields MAY be defined and used
 when the `type` value is `openid_credential`.
-Note that when using this type, this overrides the language
-"The AS MUST abort processing and respond with an error `invalid_authorization_details` to the client if [an object in the authorization_details structure] ...
-is an object of known type but containing unknown fields" in [@!RFC9396].
-The Credential Issuer MUST ignore any unrecognized parameters.
+Note that this effectively defines the type such that it is never considered invalid due to unknown fields.
 
 The following is a non-normative example of an `authorization_details` object with a `credential_configuration_id`:
 
