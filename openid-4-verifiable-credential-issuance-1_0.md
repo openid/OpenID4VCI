@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-14"
+value = "openid-4-verifiable-credential-issuance-1_0-15"
 status = "standard"
 
 [[author]]
@@ -354,6 +354,9 @@ This specification defines the following parameters for the JSON-encoded Credent
 * `credential_configuration_ids`: REQUIRED. Array of unique strings that each identify one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The Wallet uses these string values to obtain the respective object that contains information about the Credential being offered as defined in (#credential-issuer-parameters). For example, these string values can be used to obtain `scope` values to be used in the Authorization Request.
 * `grants`: OPTIONAL. Object indicating to the Wallet the Grant Types the Credential Issuer's Authorization Server is prepared to process for this Credential Offer. Every grant is represented by a name/value pair. The name is the Grant Type identifier; the value is an object that contains parameters either determining the way the Wallet MUST use the particular grant and/or parameters the Wallet MUST send with the respective request(s). If `grants` is not present or is empty, the Wallet MUST determine the Grant Types the Credential Issuer's Authorization Server supports using the respective metadata. When multiple grants are present, it is at the Wallet's discretion which one to use.
 
+Additional Credential Offer parameters MAY be defined and used.
+The Wallet MUST ignore any unrecognized parameters.
+
 The following values are defined by this specification: 
 
 * Grant Type `authorization_code`:
@@ -446,6 +449,10 @@ The request parameter `authorization_details` defined in Section 2 of [@!RFC9396
 * `credential_configuration_id`: REQUIRED when `format` parameter is not present. String specifying a unique identifier of the Credential being described in the `credential_configurations_supported` map in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). The referenced object in the `credential_configurations_supported` map conveys the details, such as the format, for issuance of the requested Credential. This specification defines Credential Format specific Issuer Metadata in (#format-profiles). It MUST NOT be present if `format` parameter is present.
 * `format`: REQUIRED when `credential_configuration_id` parameter is not present. String identifying the format of the Credential the Wallet needs. This Credential Format Identifier determines further claims in the authorization details object needed to identify the Credential type in the requested format. This specification defines Credential Format Profiles in (#format-profiles). It MUST NOT be present if `credential_configuration_id` parameter is present.
 
+Additional `authorization_details` data fields MAY be defined and used
+when the `type` value is `openid_credential`.
+Note that this effectively defines an authorization details type that is never considered invalid due to unknown fields.
+
 The following is a non-normative example of an `authorization_details` object with a `credential_configuration_id`:
 
 <{{examples/authorization_details.json}}
@@ -526,6 +533,10 @@ This specification defines the following request parameters that can be supplied
 
 Note: When processing the Authorization Request, the Credential Issuer MUST take into account that the `issuer_state` is not guaranteed to originate from this Credential Issuer in all circumstances. It could have been injected by an attacker.
 
+Additional Authorization Request parameters MAY be defined and used,
+as described in [@!RFC6749].
+The Authorization Server MUST ignore any unrecognized parameters.
+
 ### Pushed Authorization Request
 
 Use of Pushed Authorization Requests is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues caused by large requests sizes.
@@ -605,6 +616,10 @@ If the Token Request contains a scope value related to Credential issuance and t
 
 When the Pre-Authorized Grant Type is used, it is RECOMMENDED that the Credential Issuer issues an Access Token valid only for the Credentials indicated in the Credential Offer (see (#credential-offer)). The Wallet SHOULD obtain a separate Access Token if it wants to request issuance of any Credentials that were not included in the Credential Offer, but were discoverable from the Credential Issuer's `credential_configurations_supported` metadata parameter.
 
+Additional Token Request parameters MAY be defined and used,
+as described in [@!RFC6749].
+The Authorization Server MUST ignore any unrecognized parameters.
+
 Below is a non-normative example of a Token Request in an Authorization Code Flow:
 
 ```
@@ -654,6 +669,13 @@ In addition to the response parameters defined in [@!RFC6749], the Authorization
   * `credential_identifiers`: REQUIRED. Array of strings, each uniquely identifying a Credential Dataset that can be issued using the Access Token returned in this response. Each of these Credential Datasets corresponds to the same Credential Configuration in the `credential_configurations_supported` parameter of the Credential Issuer metadata. The Wallet MUST use these identifiers together with an Access Token in subsequent Credential Requests.
   
 Note: The `credential_identifiers` parameter cannot be used when the `scope` parameter is used in the Authorization Request to request issuance of a Credential.
+
+Additional Token Response parameters MAY be defined and used,
+as described in [@!RFC6749].
+The Wallet MUST ignore any unrecognized parameters in the Token Response.
+An included `authorization_details` parameter MAY also have additional data fields defined and used
+when the `type` value is `openid_credential`.
+The Wallet MUST ignore any unrecognized data fields in the `authorization_details` present in the Token Response.
 
 Below is a non-normative example of a Token Response when the `authorization_details` parameter was used to request issuance of a certain Credential type:
 
@@ -754,6 +776,9 @@ The proof(s) in the `proof` or  `proofs` parameter MUST incorporate the Credenti
 
 The initial `c_nonce` value can be returned in a successful Token Response as defined in (#token-response), or in a Credential Error Response as defined in (#issuer-provided-nonce).
 
+Additional Credential Request parameters MAY be defined and used.
+The Credential Issuer MUST ignore any unrecognized parameters.
+
 Below is a non-normative example of a Credential Request for a Credential in [@ISO.18013-5] format using Credential Format-specific parameters and a key proof type `jwt`:
 
 ```
@@ -803,6 +828,8 @@ This specification defines the following proof types:
 
 * `jwt`: A JWT [@!RFC7519] is used for proof of possession. When a `proof_type` parameter in a `proof` object is set to `jwt`, it MUST also contain a `jwt` parameter that includes a JWT as defined in (#jwt-proof-type). When a `proofs` object is using a `jwt` proof type, it MUST include a `jwt` parameter with its value being an array of JWTs, where each JWT is formed as defined in (#jwt-proof-type).
 * `ldp_vp`: A W3C Verifiable Presentation object signed using the Data Integrity Proof [@VC_Data_Integrity] as defined in [@VC_DATA_2.0] or [@VC_DATA] is used for proof of possession. When a `proof_type` parameter in a `proof` object is set to `ldp_vp`, it MUST also contain an `ldp_vp` parameter that includes a [W3C Verifiable Presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp-vp-proof-type). When a `proofs` object is using a `ldp_vp` proof type, it MUST include an `ldp_vp` parameter with its value being an array of [W3C Verifiable Presentations](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0), where each of these W3C Verifiable Presentation is formed as defined in (#ldp-vp-proof-type).
+
+Additional proof types MAY be defined and used.
 
 #### `jwt` Proof Type {#jwt-proof-type}
 
@@ -959,6 +986,9 @@ The encoding of the Credential returned in the `credential` parameter depends on
 
 More details such as Credential Format Identifiers are defined in the Credential Format Profiles in (#format-profiles). 
 
+Additional Credential Response parameters MAY be defined and used.
+The Wallet MUST ignore any unrecognized parameters.
+
 Below is a non-normative example of a Credential Response in an immediate issuance flow for a Credential in JWT VC format (JSON encoded):
 
 ```
@@ -1082,6 +1112,9 @@ The following parameter is used in the Deferred Credential Request:
 
 The Credential Issuer MUST invalidate the `transaction_id` after the Credential for which it was meant has been obtained by the Wallet.
 
+Additional Deferred Credential Request parameters MAY be defined and used.
+The Credential Issuer MUST ignore any unrecognized parameters.
+
 The following is a non-normative example of a Deferred Credential Request:
 
 ```
@@ -1098,6 +1131,9 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 ## Deferred Credential Response {#deferred-credential-response}
 
 The Deferred Credential Response uses the `credential` parameter as defined in (#credential-response).
+
+Additional Deferred Credential Response parameters MAY be defined and used.
+The Wallet MUST ignore any unrecognized parameters.
 
 The Deferred Credential Response MUST be sent using the `application/json` media type.
 
@@ -1141,6 +1177,9 @@ The Wallet sends an HTTP POST request to the Notification Endpoint with the foll
 * `notification_id`: REQUIRED. String received in the Credential Response.
 * `event`: REQUIRED. Type of the notification event. It MUST be a case sensitive string whose value is either `credential_accepted`, `credential_failure`, or `credential_deleted`. `credential_accepted` is to be used when the Credential was successfully stored in the Wallet, with or without user action. `credential_deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `credential_failure` is to be used.
 * `event_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the event that occurred. Values for the `event_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
+
+Additional Notification Request parameters MAY be defined and used.
+The Credential Issuer MUST ignore any unrecognized parameters.
 
 Below is a non-normative example of a Notification Request when a credential was successfully accepted by the End-User:
 
@@ -1211,6 +1250,10 @@ Cache-Control: no-store
 This specification defines the following new Client Metadata parameter in addition to those defined by [@!RFC7591] for Wallets acting as OAuth 2.0 Client:
 
 * `credential_offer_endpoint`: OPTIONAL. Credential Offer Endpoint of a Wallet.
+
+Additional Client metadata parameters MAY be defined and used,
+as described in [@!RFC7591].
+The Wallet MUST ignore any unrecognized parameters.
 
 ### Client Metadata Retrieval {#client-metadata-retrieval}
 
@@ -1300,6 +1343,9 @@ Depending on the Credential Format, additional parameters might be present in th
 
 The Authorization Server MUST be able to determine from the Issuer metadata what claims are disclosed by the requested Credentials to be able to render meaningful End-User consent.
 
+Additional Credential Issuer metadata parameters MAY be defined and used.
+The Wallet MUST ignore any unrecognized parameters.
+
 The following is a non-normative example of Credential Issuer metadata of a Credential in the IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format:
 
 <{{examples/credential_metadata_sd_jwt_vc.json}}
@@ -1311,6 +1357,10 @@ Note: The Client MAY use other mechanisms to obtain information about the Verifi
 This specification also defines a new OAuth 2.0 Authorization Server metadata [@!RFC8414] parameter to publish whether the Authorization Server that the Credential Issuer relies on for authorization supports anonymous Token Requests with the Pre-Authorized Grant Type. It is defined as follows:
 
 * `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A boolean indicating whether the Credential Issuer accepts a Token Request with a Pre-Authorized Code but without a `client_id`. The default is `false`. 
+
+Additional Authorization Server metadata parameters MAY be defined and used,
+as described in [@!RFC8414].
+The Wallet MUST ignore any unrecognized parameters.
 
 # Security Considerations {#security-considerations}
 
@@ -2311,6 +2361,10 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -15
+
+   * Fixed #375: Enabled non-breaking extensibility.
 
    -14
    
