@@ -1713,25 +1713,25 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         </front>
 </reference>
 
-<reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
+<reference anchor="OpenID.Core" target="https://openid.net/specs/openid-connect-core-1_0.html">
   <front>
     <title>OpenID Connect Core 1.0 incorporating errata set 2</title>
-    <author initials="N." surname="Sakimura" fullname="Nat Sakimura">
-      <organization>NRI</organization>
+    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+      <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
     </author>
-    <author initials="J." surname="Bradley" fullname="John Bradley">
-      <organization>Ping Identity</organization>
+    <author fullname="John Bradley" initials="J." surname="Bradley">
+      <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
     </author>
-    <author initials="M." surname="Jones" fullname="Michael B. Jones">
-      <organization>Microsoft</organization>
+    <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+      <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
     </author>
-    <author initials="B." surname="de Medeiros" fullname="Breno de Medeiros">
-      <organization>Google</organization>
+    <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
+      <organization abbrev="Google">Google</organization>
     </author>
-    <author initials="C." surname="Mortimore" fullname="Chuck Mortimore">
-      <organization>Salesforce</organization>
+    <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
+      <organization abbrev="Disney (was at Salesforce)">Disney</organization>
     </author>
-   <date day="15" month="December" year="2023"/>
+    <date day="15" month="December" year="2023"/>
   </front>
 </reference>
 
@@ -1798,15 +1798,6 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
 <reference anchor="IANA.JOSE.ALGS" target="https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms">
         <front>
           <title>JSON Web Signature and Encryption Algorithms</title>
-          <author>
-            <organization>IANA</organization>
-          </author>
-        </front>
-</reference>
-
-<reference anchor="IANA.COSE.ALGS" target="https://www.iana.org/assignments/cose/cose.xhtml#algorithms">
-        <front>
-          <title>COSE Algorithms</title>
           <author>
             <organization>IANA</organization>
           </author>
@@ -1882,11 +1873,11 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
           <author fullname="Vladimir Dzhuvinov">
             <organization>Connect2id</organization>
           </author>
-          <date day="4" month="December" year="2023"/>
+          <date day="15" month="September" year="2024"/>
         </front>
 </reference>
 
-<reference anchor="IANA.OAuth.Parameters" target="https://www.iana.org/assignments/oauth-parameters">
+<reference anchor="IANA.OAuth" target="https://www.iana.org/assignments/oauth-parameters">
   <front>
     <title>OAuth Parameters</title>
     <author>
@@ -2220,9 +2211,13 @@ The following is a non-normative example of a Credential Response containing a C
 
 # IANA Considerations
 
-## Sub-Namespace Registration
+## OAuth URI Registry
 
-This specification registers the following URN in the IANA "OAuth URI" registry [@!IANA.OAuth.Parameters] established by [@!RFC6755].
+This specification registers the following URN
+in the IANA "OAuth URI" registry [@IANA.OAuth]
+established by [@!RFC6755].
+
+### urn:ietf:params:oauth:grant-type:pre-authorized_code
 
 * URN: urn:ietf:params:oauth:grant-type:pre-authorized_code
 * Common Name: Pre-Authorized Code
@@ -2231,37 +2226,53 @@ This specification registers the following URN in the IANA "OAuth URI" registry 
 
 ## OAuth Parameters Registry
 
-This specification registers the following parameter names in the IANA "OAuth Parameters" registry [@!IANA.OAuth.Parameters] established by [@!RFC6749].
+This specification registers the following parameter names
+in the IANA "OAuth Parameters" registry [@IANA.OAuth]
+established by [@!RFC6749].
+
+### wallet_issuer
 
 * Parameter Name: wallet_issuer
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential-authz-request) of this specification
 
+### user_hint
+
 * Parameter Name: user_hint
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential-authz-request) of this specification
+
+### issuer_state
 
 * Parameter Name: issuer_state
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential-authz-request) of this specification
 
+### pre-authorized_code
+
 * Parameter Name: pre-authorized_code
 * Parameter Usage Location: token request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-request) of this specification
+
+### tx_code
 
 * Parameter Name: tx_code
 * Parameter Usage Location: token request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-request) of this specification
 
+### c_nonce
+
 * Parameter Name: c_nonce
 * Parameter Usage Location: token response
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-response) of this specification
+
+### c_nonce_expires_in
 
 * Parameter Name: c_nonce_expires_in
 * Parameter Usage Location: token response
@@ -2270,7 +2281,9 @@ This specification registers the following parameter names in the IANA "OAuth Pa
 
 ## OAuth Dynamic Client Registration Metadata Registry
 
-This specification registers the following client metadata name in the IANA "OAuth Dynamic Client Registration Metadata" registry [@!IANA.OAuth.Parameters] established by [@!RFC7591].
+This specification registers the following client metadata name in the IANA "OAuth Dynamic Client Registration Metadata" registry [@IANA.OAuth] established by [@!RFC7591].
+
+### credential_offer_endpoint
 
 * Client Metadata Name: credential_offer_endpoint
 * Client Metadata Description: Credential Offer Endpoint
@@ -2280,16 +2293,24 @@ This specification registers the following client metadata name in the IANA "OAu
 
 ## Well-Known URI Registry
 
-This specification registers the following well-known URI in the IANA "Well-Known URI" registry established by [@!RFC5785].
+This specification registers the following well-known URI
+in the IANA "Well-Known URI" registry [@IANA.OAuth]
+established by [@!RFC5785].
+
+### .well-known/openid-credential-issuer
 
 * URI suffix: openid-credential-issuer
 * Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Specification document: (#credential-issuer-wellknown) of this document
+* Specification document: (#credential-issuer-wellknown) of this specification
 * Related information: (none)
 
 ## Media Types Registry
 
-This specification registers the following media types in the IANA "Media Types" registry [@!IANA.MediaTypes] in the manner described in [@!RFC6838].
+This specification registers the following media type [@RFC2046]
+in the IANA "Media Types" registry [@IANA.MediaTypes]
+in the manner described in [@RFC6838].
+
+### application/openid4vci-proof+jwt
 
 * Type name: `application`
 * Subtype name: `openid4vci-proof+jwt`
