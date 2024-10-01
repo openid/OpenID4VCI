@@ -1282,6 +1282,10 @@ This specification defines the following Credential Issuer Metadata parameters:
   * `credential_signing_alg_values_supported`: OPTIONAL. Array of case sensitive strings that identify the algorithms that the Issuer uses to sign the issued Credential. Algorithm names used are determined by the Credential Format and are defined in (#format-profiles).
   * `proof_types_supported`: OPTIONAL. Object that describes specifics of the key proof(s) that the Credential Issuer supports. This object contains a list of name/value pairs, where each name is a unique identifier of the supported proof type(s). Valid values are defined in (#proof-types), other values MAY be used. This identifier is also used by the Wallet in the Credential Request as defined in (#credential-request). The value in the name/value pair is an object that contains metadata about the key proof and contains the following parameters defined by this specification:
     * `proof_signing_alg_values_supported`: REQUIRED. Array of case sensitive strings that identify the algorithms that the Issuer supports for this proof type. The Wallet uses one of them to sign the proof. Algorithm names used are determined by the key proof type and are defined in (#proof-types).
+    * `key_attestations_required`: OPTIONAL. Object that describes the requirement for key attestations as described in (#keyattestation), which the Credential Issuer expects the Wallet to send within the proof of the Credential Request. If the Credential Issuer does not expect a key attestation, this object is absent. If no `length` or `description` is given, this object may be empty, indicating that a key attestation without further constraints is required.
+      * `key_type`: OPTIONAL. Array defining values specified in (#keyattestation-keytypes) accepted by the Credential Issuer.
+      * `user_authentication`: OPTIONAL. Array defining values specified in (#keyattestation-keytypes) accepted by the Credential Issuer.
+      * `apr`: OPTIONAL. Array defining values specified in (#keyattestation-apr) accepted by the Credential Issuer.
   * `display`: OPTIONAL. Array of objects, where each object contains the display properties of the supported Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included.
       * `name`: REQUIRED. String value of a display name for the Credential.
       * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. Multiple `display` objects MAY be included for separate languages. There MUST be only one object for each language identifier.
@@ -2194,7 +2198,7 @@ The key attestation may use `x5c`, `kid`, `trust_chain` or other mechanisms to c
   * `attested_keys` : REQUIRED. Array of attested keys from the same key storage component using the syntax of JWK as defined in [@!RFC7517].
   * `key_type` : OPTIONAL. String that asserts the key storage component and its security mechanism of attested keys from the `attested_keys` parameter. This specification defines initial values in (#keyattestation-keytypes).
   * `user_authentication` : OPTIONAL. String that asserts the security mechanism the key storage component uses to authenticate the End-User to authorize access to the private key from `keys`. This specification defines initial values in (#keyattestation-auth).
-  * `apr` : OPTIONAL. String that asserts the resistance to a specified attack potential. The value contains an URL that identifies the given attack potential.
+  * `apr` : OPTIONAL. String that asserts the resistance to a specified attack potential. The value contains an URN that identifies the given attack potential.
   * `nonce`: OPTIONAL. String that represents a nonce provided by the Issuer to proof that a key attestation was freshly generated.
   * `status`: OPTIONAL. JSON Object representing the supported revocation check mechanisms, such as the one defined in [status list]
 
@@ -2248,7 +2252,9 @@ This specification defines the following values for `user_authentication`:
 * `internal_pin`: It MUST be used when the key usage is authorized by the Wallet using PIN.
 * `secure_element_pin` It MUST be used when the key usage is authorized by the secure element managing the key itself using PIN.
 
-todo: text about Level of assurance and attack potential resistance
+## Attack Potential Resistance {#keyattestation-apr}
+
+This specification does not define any specific vaues for `apr`. Ecosystems may define their own values, any URN is a valid value. It is RECOMMENDED that the value is a URL that gives further information about the attack potential resistance and possible relations to level of assurances.
 
 # IANA Considerations
 
