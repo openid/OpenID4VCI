@@ -2426,6 +2426,7 @@ The technology described in this specification was made available from contribut
 
    -14
    
+   * add key attestation as additional information in a proof of possesion and new proof type
    * removes CWT proof type
    * removes the Batch Credential Endpoint
    * clarify that authorization_details can be present in the Token Request for Pre-Authorized Code Flow when multiple Credential Configurations are present in the Credential Offer
