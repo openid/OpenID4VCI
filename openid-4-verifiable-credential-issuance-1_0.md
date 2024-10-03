@@ -838,7 +838,7 @@ Additional proof types MAY be defined and used.
 The JWT MUST contain the following elements:
 
 * in the JOSE header,
-  * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE.ALGS]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
+  * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
   * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
   * `kid`: OPTIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. It MUST NOT be present if `jwk` is present.
   * `jwk`: OPTIONAL. JOSE Header containing the key material the new Credential shall be bound to. It MUST NOT be present if `kid` is present.
@@ -853,7 +853,7 @@ The JWT MUST contain the following elements:
 
 The Credential Issuer MUST validate that the JWT used as a proof is actually signed by a key identified in the JOSE Header.
 
-Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@IANA.JOSE.ALGS].
+Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@IANA.JOSE].
 
 Below is a non-normative example of a `proof` parameter (with line breaks within values for display purposes only):
 
@@ -1795,9 +1795,9 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         </front>
 </reference>
 
-<reference anchor="IANA.JOSE.ALGS" target="https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms">
+<reference anchor="IANA.JOSE" target="https://www.iana.org/assignments/jose">
         <front>
-          <title>JSON Web Signature and Encryption Algorithms</title>
+          <title>JSON Object Signing and Encryption (JOSE)</title>
           <author>
             <organization>IANA</organization>
           </author>
