@@ -2195,14 +2195,12 @@ A key attestation is an interoperable, verifiable statement that provides eviden
 A Wallet MAY provide key attestations to inform the Credential Issuer about the properties of the provided cryptographic public keys, e.g. for proof types sent in the Credential Request. Credential Issuers may want to evaluate these key attestations to determine whether the keys meet their own security requirements, based on the trust framework in use, regulatory requirements, laws, or internal design decisions. An Issuer SHOULD communicate this requirement to evaluate key attestations through its metadata or using some sort of out-of-band mechanism.
 
 There are two flows how key attestations can be used within Credential issuance:
-- The Wallet uses the `jwt` proof type in the Credential Request to create a proof of possession of the key and adds the key attestation in the JOSE header.
-- The Wallet uses the `attestation` proof type in the Credential Request with the key attestation without a proof of possession of the key itself.
+- The Wallet uses the `jwt` proof type in the Credential Request to create a proof of possession of the key and adds the key attestation in the JOSE header as specified in (#jwt-proof-type).
+- The Wallet uses the `attestation` proof type in the Credential Request with the key attestation without a proof of possession of the key itself as specified in (#attestation-proof-type).
 
 The latter may avoid unnecessary user interaction during the Credential issuance, as the key itself is not performing a signature operation.
 
 Since the key attestations may have large audience as many Credential Issuers that not necessarly uses the same trust framework or internal design decisions, it is required to use a common approach to facilitate interoperability. Therefore, key attestations SHOULD use a common format,allowing Issuers to develop consistent evaluation processes, reducing complexity and potential errors. Common formats makes easy for Issuers to demonstrate compliance with regulatory requirements across different jurisdictions, they also facilitate the development of shared best practices and security benchmarks.
-
-todo: explain usage of this within proof type or DPoP Proof
 
 ## Key Attestation in JWT format {#keyattestation-jwt}
 
