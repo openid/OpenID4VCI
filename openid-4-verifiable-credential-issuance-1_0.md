@@ -923,7 +923,7 @@ Below is a non-normative example of a `proof` parameter:
 
 ```
 
-#### `attestation` Proof Type {#keyattestation-proof-type}
+#### `attestation` Proof Type {#attestation-proof-type}
 
 A key attestation in JWT format as defined in (#keyattestation-jwt).
 
