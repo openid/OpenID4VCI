@@ -2229,7 +2229,7 @@ established by [@!RFC6755].
 
 ### urn:ietf:params:oauth:grant-type:pre-authorized_code
 
-* URN: urn:ietf:params:oauth:grant-type:pre-authorized_code
+* URN: `urn:ietf:params:oauth:grant-type:pre-authorized_code`
 * Common Name: Pre-Authorized Code
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential-offer-parameters) of this specification
@@ -2242,56 +2242,56 @@ established by [@!RFC6749].
 
 ### wallet_issuer
 
-* Name: wallet_issuer
+* Name: `wallet_issuer`
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential-authz-request) of this specification
 
 ### user_hint
 
-* Name: user_hint
+* Name: `user_hint`
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential-authz-request) of this specification
 
 ### issuer_state
 
-* Name: issuer_state
+* Name: `issuer_state`
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential-authz-request) of this specification
 
 ### pre-authorized_code
 
-* Name: pre-authorized_code
+* Name: `pre-authorized_code`
 * Parameter Usage Location: token request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-request) of this specification
 
 ### tx_code
 
-* Name: tx_code
+* Name: `tx_code`
 * Parameter Usage Location: token request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-request) of this specification
 
 ### c_nonce
 
-* Name: c_nonce
+* Name: `c_nonce`
 * Parameter Usage Location: token response
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-response) of this specification
 
 ### c_nonce_expires_in
 
-* Name: c_nonce_expires_in
+* Name: `c_nonce_expires_in`
 * Parameter Usage Location: token response
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-response) of this specification
 
 ### credential_identifiers
 
-* Name: credential_identifiers
+* Name: `credential_identifiers`
 * Parameter Usage Location: token response
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-response) of this specification
@@ -2304,7 +2304,7 @@ established by [@!RFC8414].
 
 ### pre-authorized_grant_anonymous_access_supported
 
-* Metadata Name: pre-authorized_grant_anonymous_access_supported
+* Metadata Name: `pre-authorized_grant_anonymous_access_supported`
 * Metadata Description: Boolean indicating whether Credential Issuer accepts Token Request with Pre-Authorized Code but without `client_id`
 * Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 * Reference: (#as-metadata) of this specification
@@ -2317,7 +2317,7 @@ established by [@!RFC7591].
 
 ### credential_offer_endpoint
 
-* Client Metadata Name: credential_offer_endpoint
+* Client Metadata Name: `credential_offer_endpoint`
 * Client Metadata Description: Credential Offer Endpoint
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#client-metadata) of this specification
@@ -2330,7 +2330,7 @@ established by [@!RFC5785].
 
 ### .well-known/openid-credential-issuer
 
-* URI suffix: openid-credential-issuer
+* URI suffix: `openid-credential-issuer`
 * Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Specification document: (#credential-issuer-wellknown) of this specification
 * Related information: (none)
