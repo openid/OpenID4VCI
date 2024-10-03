@@ -803,6 +803,7 @@ This specification defines the following proof types:
 
 * `jwt`: A JWT [@!RFC7519] is used for proof of possession. When a `proof_type` parameter in a `proof` object is set to `jwt`, it MUST also contain a `jwt` parameter that includes a JWT as defined in (#jwt-proof-type). When a `proofs` object is using a `jwt` proof type, it MUST include a `jwt` parameter with its value being an array of JWTs, where each JWT is formed as defined in (#jwt-proof-type).
 * `ldp_vp`: A W3C Verifiable Presentation object signed using the Data Integrity Proof [@VC_Data_Integrity] as defined in [@VC_DATA_2.0] or [@VC_DATA] is used for proof of possession. When a `proof_type` parameter in a `proof` object is set to `ldp_vp`, it MUST also contain an `ldp_vp` parameter that includes a [W3C Verifiable Presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp-vp-proof-type). When a `proofs` object is using a `ldp_vp` proof type, it MUST include an `ldp_vp` parameter with its value being an array of [W3C Verifiable Presentations](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0), where each of these W3C Verifiable Presentation is formed as defined in (#ldp-vp-proof-type).
+* `attestation`:  A JWT [@!RFC7519] representing a key attestation is used instead of a proof of possession. When a `proof_type` parameter in a `proof` object is set to `attestation`, it MUST also contain an `attestation` parameter that includes a JWT as defined in (#attestation-proof-type).
 
 #### `jwt` Proof Type {#jwt-proof-type}
 
@@ -920,6 +921,21 @@ Below is a non-normative example of a `proof` parameter:
   }
 }
 
+```
+
+#### `attestation` Proof Type {#keyattestation-proof-type}
+
+A key attestation in JWT format as defined in (#keyattestation-jwt).
+
+When a key attestation is used as proof type, it MUST contain the `nonce` claim if a `c_nonce` was provided by the Credential Issuer and its value must be equal to the value of the server-provided `c_nonce`.
+
+Below is a non-normative example of a `proof` parameter (with line breaks within values for display purposes only):
+
+```json
+{
+  "proof_type": "attestation",
+  "attestation": "<TODO: generate proper example>"
+}
 ```
 
 ### Verifying Proof {#verifying-key-proof}
@@ -2178,17 +2194,17 @@ A key attestation is an interoperable, verifiable statement that provides eviden
 
 A Wallet MAY provide key attestations to inform the Credential Issuer about the properties of the provided cryptographic public keys, e.g. for proof types sent in the Credential Request. Credential Issuers may want to evaluate these key attestations to determine whether the keys meet their own security requirements, based on the trust framework in use, regulatory requirements, laws, or internal design decisions. An Issuer SHOULD communicate this requirement to evaluate key attestations through its metadata or using some sort of out-of-band mechanism.
 
-There are two flows how key attestations may be used:
-- The Wallet generates new key(s) in the key storage component and receives key attestation(s) from the Wallet Provider. Lateron, the Wallet uses `jwt` proof type in the Credential Request to create a proof of possession of the key and adds the key attestation in the JOSE header.
-- The Wallet starts an issuance flow and receives a nonce from the issuer. The Wallet generates new key(s) in the key storage component and requests a key attestation that includes the nonce. The Wallet uses `attestation` proof type in the Credential Request with the key attestation without a proof of possession of the key itself.
+There are two flows how key attestations can be used within Credential issuance:
+- The Wallet uses the `jwt` proof type in the Credential Request to create a proof of possession of the key and adds the key attestation in the JOSE header.
+- The Wallet uses the `attestation` proof type in the Credential Request with the key attestation without a proof of possession of the key itself.
 
-The latter may avoid unnecessary user interaction during the credential issuance, as the key itself is not performing a signature operation.
+The latter may avoid unnecessary user interaction during the Credential issuance, as the key itself is not performing a signature operation.
 
 Since the key attestations may have large audience as many Credential Issuers that not necessarly uses the same trust framework or internal design decisions, it is required to use a common approach to facilitate interoperability. Therefore, key attestations SHOULD use a common format,allowing Issuers to develop consistent evaluation processes, reducing complexity and potential errors. Common formats makes easy for Issuers to demonstrate compliance with regulatory requirements across different jurisdictions, they also facilitate the development of shared best practices and security benchmarks.
 
 todo: explain usage of this within proof type or DPoP Proof
 
-## Key Attestation in JWT format
+## Key Attestation in JWT format {#keyattestation-jwt}
 
 The JWT is signed by the Wallet Provider or the Wallet's key storage component itself and contains the following elements:
 
