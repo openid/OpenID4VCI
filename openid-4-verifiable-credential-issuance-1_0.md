@@ -1354,7 +1354,7 @@ The following is a non-normative example of Credential Issuer metadata of a Cred
 
 Note: The Client MAY use other mechanisms to obtain information about the Verifiable Credentials that a Credential Issuer can issue.
 
-## OAuth 2.0 Authorization Server Metadata
+## OAuth 2.0 Authorization Server Metadata {#as-metadata}
 
 This specification also defines a new OAuth 2.0 Authorization Server metadata [@!RFC8414] parameter to publish whether the Authorization Server that the Credential Issuer relies on for authorization supports anonymous Token Requests with the Pre-Authorized Grant Type. It is defined as follows:
 
@@ -1877,7 +1877,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         </front>
 </reference>
 
-<reference anchor="IANA.OAuth" target="https://www.iana.org/assignments/oauth-parameters">
+<reference anchor="IANA.OAuth.Parameters" target="https://www.iana.org/assignments/oauth-parameters">
   <front>
     <title>OAuth Parameters</title>
     <author>
@@ -2214,7 +2214,7 @@ The following is a non-normative example of a Credential Response containing a C
 ## OAuth URI Registry
 
 This specification registers the following URN
-in the IANA "OAuth URI" registry [@IANA.OAuth]
+in the IANA "OAuth URI" registry [@IANA.OAuth.Parameters]
 established by [@!RFC6755].
 
 ### urn:ietf:params:oauth:grant-type:pre-authorized_code
@@ -2222,79 +2222,100 @@ established by [@!RFC6755].
 * URN: urn:ietf:params:oauth:grant-type:pre-authorized_code
 * Common Name: Pre-Authorized Code
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#token-request) of this specification
+* Reference: (#credential-offer-parameters) of this specification
 
 ## OAuth Parameters Registry
 
-This specification registers the following parameter names
-in the IANA "OAuth Parameters" registry [@IANA.OAuth]
+This specification registers the following OAuth parameters
+in the IANA "OAuth Parameters" registry [@IANA.OAuth.Parameters]
 established by [@!RFC6749].
 
 ### wallet_issuer
 
-* Parameter Name: wallet_issuer
+* Name: wallet_issuer
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential-authz-request) of this specification
 
 ### user_hint
 
-* Parameter Name: user_hint
+* Name: user_hint
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential-authz-request) of this specification
 
 ### issuer_state
 
-* Parameter Name: issuer_state
+* Name: issuer_state
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential-authz-request) of this specification
 
 ### pre-authorized_code
 
-* Parameter Name: pre-authorized_code
+* Name: pre-authorized_code
 * Parameter Usage Location: token request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-request) of this specification
 
 ### tx_code
 
-* Parameter Name: tx_code
+* Name: tx_code
 * Parameter Usage Location: token request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-request) of this specification
 
 ### c_nonce
 
-* Parameter Name: c_nonce
+* Name: c_nonce
 * Parameter Usage Location: token response
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-response) of this specification
 
 ### c_nonce_expires_in
 
-* Parameter Name: c_nonce_expires_in
+* Name: c_nonce_expires_in
 * Parameter Usage Location: token response
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-response) of this specification
 
+### credential_identifiers
+
+* Name: credential_identifiers
+* Parameter Usage Location: token response
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token-response) of this specification
+
+## OAuth Authorization Server Metadata Registry
+
+This specification registers the following authorization server metadata parameter
+in the IANA "OAuth Authorization Server Metadata" registry [@IANA.OAuth.Parameters]
+established by [@!RFC8414].
+
+### pre-authorized_grant_anonymous_access_supported
+
+* Metadata Name: pre-authorized_grant_anonymous_access_supported
+* Metadata Description: Boolean indicating whether Credential Issuer accepts Token Request with Pre-Authorized Code but without `client_id`
+* Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+* Reference: (#as-metadata) of this specification
+
 ## OAuth Dynamic Client Registration Metadata Registry
 
-This specification registers the following client metadata name in the IANA "OAuth Dynamic Client Registration Metadata" registry [@IANA.OAuth] established by [@!RFC7591].
+This specification registers the following client metadata parameter
+in the IANA "OAuth Dynamic Client Registration Metadata" registry [@IANA.OAuth.Parameters]
+established by [@!RFC7591].
 
 ### credential_offer_endpoint
 
 * Client Metadata Name: credential_offer_endpoint
 * Client Metadata Description: Credential Offer Endpoint
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#credential-offer-endpoint) of this specification
-
+* Reference: (#client-metadata) of this specification
 
 ## Well-Known URI Registry
 
 This specification registers the following well-known URI
-in the IANA "Well-Known URI" registry [@IANA.OAuth]
+in the IANA "Well-Known URI" registry [@IANA.OAuth.Parameters]
 established by [@!RFC5785].
 
 ### .well-known/openid-credential-issuer
@@ -2332,6 +2353,19 @@ in the manner described in [@RFC6838].
 * Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Provisional registration? No
 
+## Uniform Resource Identifier (URI) Schemes Registry
+
+This specification registers the following URI scheme
+in the IANA "Uniform Resource Identifier (URI) Schemes" registry [@IANA.URI.Schemes].
+
+### openid-credential-offer
+
+* URI Scheme: openid-credential-offer
+* Description: Custom scheme used for credential offers
+* Status: Provisional
+* Well-Known URI Support: -
+* Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+* Reference: (#client-metadata-retrieval) of this specification
 
 # Use Cases
 
@@ -2388,6 +2422,7 @@ The technology described in this specification was made available from contribut
    -15
 
    * Fixed #375: Enabled non-breaking extensibility.
+   * Fixed #239: Completed IANA Considerations section.
 
    -14
    
