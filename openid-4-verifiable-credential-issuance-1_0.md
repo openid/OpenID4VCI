@@ -335,6 +335,8 @@ This endpoint is used by a Credential Issuer that is already interacting with an
 
 The Credential Issuer makes a Credential Offer by allowing the End-User to invoke the Wallet using the Wallet's Credential Offer Endpoint defined in (#client-metadata) (for example by clicking a link) and/or rendering a QR code containing the Credential Offer that the End-User can scan in a wallet or an arbitrary camera application.
 
+Credential Issuers MAY also communicate Credential Offers directly to a Wallet's backend but any mechanism for doing so is currently outside the scope of this specification.
+
 The Credential Offer object, which is a JSON-encoded object with the Credential Offer parameters, can be sent by value or by reference.
 
 The Credential Offer contains a single URI query parameter, either `credential_offer` or `credential_offer_uri`:
