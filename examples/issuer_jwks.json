@@ -1,0 +1,13 @@
+{
+  "jwks": [
+    {
+      "kid": "urn:ietf:params:oauth:jwk-thumbprint:sha-256:mlUpog7vEewFBem6Ul09c2dtTwc8dFzVpIDX3sqGWW0",
+      "kty": "EC",
+      "crv": "P-256",
+      "alg": "ES256",
+      "x": "_LC1FTUl0MltKAOQzXNsofVMpWFV2obLGrNCat_CQ-g",
+      "y": "kBjoyjNuMVAOq--qVUgylDoLKuMdk4imS-Kk5ahuYIU",
+      "d": "tIZfJ9SQr-FBRgU9JL_zR_-Kp4iwLRHH97znsyFlm7M"
+    }
+  ]
+}
