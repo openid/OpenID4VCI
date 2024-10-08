@@ -934,7 +934,7 @@ Below is a non-normative example of a `proof` parameter (with line breaks within
 ```json
 {
   "proof_type": "attestation",
-  "attestation": "<TODO: generate proper example>"
+  "attestation": "<key attestation in JWT format>"
 }
 ```
 
