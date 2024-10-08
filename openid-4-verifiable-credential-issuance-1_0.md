@@ -2033,7 +2033,7 @@ The following is a non-normative example of a Credential Response with Credentia
 
 <{{examples/credential_response_jwt_vc_json.txt}}
 
-The following is a non-normative example of a dereferenced document for the Issuer HTTP URL identifier.
+The following is the dereferenced document for the Issuer HTTP URL identifier that matches the Credential in the above example:
 
 <{{examples/issuer_jwks.json}}
 
