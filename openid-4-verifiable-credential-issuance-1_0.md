@@ -2372,7 +2372,7 @@ in the IANA "Uniform Resource Identifier (URI) Schemes" registry [@IANA.URI.Sche
 
 * URI Scheme: openid-credential-offer
 * Description: Custom scheme used for credential offers
-* Status: Provisional
+* Status: Permanent
 * Well-Known URI Support: -
 * Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 * Reference: (#client-metadata-retrieval) of this specification
