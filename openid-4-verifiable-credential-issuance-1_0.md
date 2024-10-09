@@ -120,6 +120,7 @@ Deferred Credential Issuance:
 This specification defines an API for Credential issuance provided by a Credential Issuer. The API is comprised of the following endpoints:
 
 * A mandatory Credential Endpoint from which Credentials can be issued (see (#credential-endpoint)). From this endpoint, one Credential, or multiple Credentials with the same Credential Dataset can be issued in one request.
+* An optional Nonce Endpoint from which a fresh `c_nonce` value can be obtained to be used in proof of possession of key material in a subsequent request to the Credential Endpoint (see (#nonce-endpoint)).
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of Credentials (see (#deferred-credential-issuance)).
 * An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow (see (#credential-offer-endpoint)).
 * An optional mechanism for the Credential Issuer to receive from the Wallet notification(s) of the status of the Credential(s) that have been issued.
@@ -139,7 +140,6 @@ Existing OAuth 2.0 mechanisms are extended as following:
 * A new authorization details [@!RFC9396] type `openid_credential` is defined to convey the details about the Credentials (including Credential Dataset, Credential Formats, and Credential types) the Wallet wants to obtain (see (#authorization-details)).
 * Client metadata is used to convey the Wallet's metadata. The new Client metadata parameter `credential_offer_endpoint` is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (see (#client-metadata)).
 * Authorization Endpoint: The additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated Credential Offer (see (#credential-authz-request)). Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Verifiable Presentations from the calling Wallet during Authorization Request processing.
-* Token Endpoint: Optional response parameters `c_nonce` and `c_nonce_expires_in` are added to the Token Endpoint, and Credential Endpoint to provide the Client with a nonce to be used for proof of possession of key material in a subsequent request to the Credential Endpoint (see (#token-response)).
 
 ## Core Concepts
 
@@ -665,12 +665,8 @@ The Authorization Server might decide to authorize issuance of multiple instance
 
 In addition to the response parameters defined in [@!RFC6749], the Authorization Server MAY return the following parameters:
 
-* `c_nonce`: OPTIONAL. String containing a nonce to be used when creating a proof of possession of the key proof (see (#credential-request)). When received, the Wallet MUST use this nonce value for its subsequent requests until the Credential Issuer provides a fresh nonce.
-* `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
 * `authorization_details`: REQUIRED when the `authorization_details` parameter is used to request issuance of a certain Credential Configuration as defined in (#authorization-details). It MUST NOT be used otherwise. It is an array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
   * `credential_identifiers`: REQUIRED. Array of strings, each uniquely identifying a Credential Dataset that can be issued using the Access Token returned in this response. Each of these Credential Datasets corresponds to the same Credential Configuration in the `credential_configurations_supported` parameter of the Credential Issuer metadata. The Wallet MUST use these identifiers together with an Access Token in subsequent Credential Requests.
-  
-Note: The `credential_identifiers` parameter cannot be used when the `scope` parameter is used in the Authorization Request to request issuance of a Credential.
 
 Additional Token Response parameters MAY be defined and used,
 as described in [@!RFC6749].
@@ -690,8 +686,6 @@ Cache-Control: no-store
   "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ",
   "token_type": "bearer",
   "expires_in": 86400,
-  "c_nonce": "tZignsnFbp",
-  "c_nonce_expires_in": 86400,
   "authorization_details": [
     {
       "type": "openid_credential",
@@ -734,6 +728,48 @@ Cache-Control: no-store
 }
 ```
 
+# Nonce Endpoint {#nonce-endpoint}
+
+This endpoint allows a Client to acquire a fresh `c_nonce` value without the overhead of a full Credential Request. A Credential Issuer that requires `c_nonce` values to be incorporated into proofs in the Credential Request (see (#credential-request)) MUST offer a Nonce Endpoint.
+
+The `nonce_endpoint` Credential Issuer Metadata parameter, as defined in (#credential-issuer-parameters), contains the URL of the Credential Issuer's Nonce Endpoint.
+
+
+## Nonce Request {#nonce-request}
+
+A request for a nonce is made by sending an HTTP POST request to the URL provided in the `nonce_endpoint` Credential Issuer Metadata parameter.
+
+Below is a non-normative example of a Nonce Request:
+
+```
+POST /nonce HTTP/1.1
+Host: credential-issuer.example.com
+Content-Length: 0
+```
+
+## Nonce Response {#nonce-response}
+
+The Credential Issuer provides a nonce value in the HTTP response with a 2xx status code and the following parameters included as top-level members in the message body of the HTTP response using the application/json media type:
+
+* `c_nonce`: REQUIRED. String containing a nonce to be used when creating a proof of possession of the key proof (see (#credential-request)).
+* `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`. This value serves only as a hint to the Client, indicating how long the Credential Issuer is likely to accept the `c_nonce` as valid.
+
+Due to the temporal and contextually sensitive nature of the `c_nonce` value, the Credential Issuer MUST make the response uncacheable by adding a `Cache-Control` header field including the value `no-store`.
+
+Below is a non-normative example of a Nonce Response:
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "c_nonce": "wKI4LT17ac15ES9bw8ac4",
+  "c_nonce_expires_in": 120
+}
+```
+
+
 # Credential Endpoint {#credential-endpoint}
 
 The Credential Endpoint issues one or more Credentials of the same Credential Configuration and Credential Dataset (as approved by the End-User) upon presentation of a valid Access Token representing this approval. Support for this endpoint is REQUIRED.
@@ -774,9 +810,9 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 
 The `proof_type` parameter is an extension point that enables the use of different types of proofs for different cryptographic schemes.
 
-The proof(s) in the `proof` or  `proofs` parameter MUST incorporate the Credential Issuer Identifier (audience), and optionally a `c_nonce` value generated by the Authorization Server or the Credential Issuer to allow the Credential Issuer to detect replay. The way that data is incorporated depends on the key proof type. In a JWT, for example, the `c_nonce` value is conveyed in the `nonce` claim, whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the key proof object and the Credential Issuer (the intended audience) is included as the `domain` element.
+The proof(s) in the `proof` or  `proofs` parameter MUST incorporate the Credential Issuer Identifier (audience), and optionally a `c_nonce` value generated by the Credential Issuer to allow the Credential Issuer to detect replay. The way that data is incorporated depends on the key proof type. In a JWT, for example, the `c_nonce` value is conveyed in the `nonce` claim, whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the key proof object and the Credential Issuer (the intended audience) is included as the `domain` element.
 
-The initial `c_nonce` value can be returned in a successful Token Response as defined in (#token-response), or in a Credential Error Response as defined in (#issuer-provided-nonce).
+The initial `c_nonce` value can be returned in a Nonce Response as defined in (#nonce-response), or in a Credential Error Response as defined in (#issuer-provided-nonce).
 
 Additional Credential Request parameters MAY be defined and used.
 The Credential Issuer MUST ignore any unrecognized parameters.
@@ -965,9 +1001,11 @@ These checks may be performed in any order.
 
 ## Credential Response {#credential-response}
 
-Credential Response can be immediate or deferred. The Credential Issuer MAY be able to immediately issue a requested Credential and send it to the Client.
+Credential Response can contain one or more Credentials depending on the Credential Request.
 
-In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would want to send a `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready. The HTTP status code MUST be 202 (see Section 15.3.3 of [@!RFC9110]).
+Credential Response can be immediate or deferred and can contain one or more Credentials with the same Credential Configuration and Credential Dataset depending on the Credential Request. The Credential Issuer MAY be able to immediately issue requested Credentials and send them to the Client. In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would send a `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready.
+
+The HTTP status code MUST be 202 (see Section 15.3.3 of [@!RFC9110]).
 
 If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Credential Response as a JWT using the  parameters from the `credential_response_encryption` object. If the Credential Response is encrypted, the media type of the response MUST be set to `application/jwt`. If encryption was requested in the Credential Request and the Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
 
@@ -975,12 +1013,12 @@ If the Credential Response is not encrypted, the media type of the response MUST
 
 The following parameters are used in the JSON-encoded Credential Response body:
 
-* `credential`: OPTIONAL. Contains issued Credential. It MUST NOT be used if `credentials` or `transaction_id` parameter is present. It MAY be a string or an object, depending on the Credential Format. See (#format-profiles) for the Credential Format-specific encoding requirements.
-* `credentials`: OPTIONAL. Contains an array of issued Credentials. It MUST NOT be used if `credential` or `transaction_id` parameter is present. The values in the array MAY be a string or an object, depending on the Credential Format. See (#format-profiles) for the Credential Format-specific encoding requirements.
-* `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This claim is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used  if `credential` or `credentials` is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
+* `credentials`: OPTIONAL. Contains an array of one or more issued Credentials. It MUST NOT be used if the `transaction_id` parameter is present. The elements of the array MUST be objects. This specification defines the following parameters to be used inside this object:
+   * `credential`: REQUIRED. Contains one issued Credential. It MAY be a string or an object, depending on the Credential Format. See Appendix A for the Credential Format-specific encoding requirements.
+* `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This parameter is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used if the `credentials` parameter is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `c_nonce`: OPTIONAL. String containing a nonce to be used to create a proof of possession of key material when requesting a Credential (see (#credential-request)). When received, the Wallet MUST use this nonce value for its subsequent Credential Requests until the Credential Issuer provides a fresh nonce.
 * `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`.
-* `notification_id`: OPTIONAL. String identifying an issued Credential that the Wallet includes in the Notification Request as defined in (#notification). This parameter MUST NOT be present if `credential` parameter is not present.
+* `notification_id`: OPTIONAL. String identifying one or more Credentials issued in one Credential Response. It MUST be included in the Notification Request as defined in (#notification). It MUST not be used if the `credentials` parameter is not present.
 
 The format of the Credential in the Credential Response is determined by the value of the `format` parameter specified in the Credential Request.
 
@@ -999,13 +1037,17 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "credential": "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
+  "credentials": [
+    {
+      "credential": "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L"
+    }
+  ],
   "c_nonce": "fGFF7UkhLa",
-  "c_nonce_expires_in": 86400  
+  "c_nonce_expires_in": 86400
 }
 ```
 
-Below is a non-normative example of a Credential Response in an immediate issuance flow for multiple Credential instances in JWT VC format (JSON encoded):
+Below is a non-normative example of a Credential Response in an immediate issuance flow for multiple Credential instances in JWT VC format (JSON encoded) with an additional `notification_id` parameter:
 
 ```
 HTTP/1.1 200 OK
@@ -1013,11 +1055,16 @@ Content-Type: application/json
 
 {
   "credentials": [
-    "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L",
-    "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
+    {
+      "credential": "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L"
+    },
+    {
+      "credential": "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
+    }
   ],
   "c_nonce": "fGFF7UkhLa",
-  "c_nonce_expires_in": 86400
+  "c_nonce_expires_in": 86400,
+  "notification_id": "3fwe98js"
 }
 ```
 
@@ -1076,7 +1123,7 @@ Cache-Control: no-store
 
 The Credential Issuer MAY provide the Client with a `c_nonce` as defined in (#credential-response) in a Credential Error Response using `invalid_proof` error code defined in (#credential-error-response) if the Credential Issuer Metadata contains `proof_types_supported` indicating a key proof is required for the requested Credential. Depending on the Credential Issuer policy, this occurs if they receive a Credential Request without a `c_nonce` or with an invalid `c_nonce` value included in the proof(s) in the `proof` or `proofs` parameter.
 
-If the Client has not received a `c_nonce` and the Credential Issuer Metadata contains `proof_types_supported` indicating a key proof is required for the requested Credential, the Client MUST send a Credential Request that contains a `proof` or `proofs` parameter that is fully valid but does not include a `c_nonce` value. It is the Credential Issuer policy whether or not a `c_nonce` value is required in the key proofs.
+If the Credential Issuer Metadata contains a `nonce_endpoint` and a `proof_types_supported` indicating a key proof is required for the requested Credential and the Client does not have a valid `c_nonce`, the Client MUST obtain a `c_nonce` value from the `nonce_endpoint` and send a Credential Request that contains a `proof` or `proofs` parameter that includes a `c_nonce` value. It is the Credential Issuer policy whether or not a `c_nonce` value is required in the key proofs.
 
 If the Client received a `c_nonce`, the `c_nonce` value MUST be incorporated in the respective parameter in the `proof` or `proofs` object.
 
@@ -1098,9 +1145,9 @@ Cache-Control: no-store
 
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
-This endpoint is used to issue a Credential previously requested at the Credential Endpoint in cases where the Credential Issuer was not able to immediately issue this Credential. Support for this endpoint is OPTIONAL.
+This endpoint is used to issue one or more Credentials previously requested at the Credential Endpoint in cases where the Credential Issuer was not able to immediately issue this Credential. Support for this endpoint is OPTIONAL.
 
-The Wallet MUST present to the Deferred Endpoint an Access Token that is valid for the issuance of the Credential previously requested at the Credential Endpoint. 
+The Wallet MUST present to the Deferred Endpoint an Access Token that is valid for the issuance of the Credential(s) previously requested at the Credential Endpoint. 
 
 Communication with the Deferred Credential Endpoint MUST utilize TLS. 
 
@@ -1132,12 +1179,31 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Deferred Credential Response {#deferred-credential-response}
 
-The Deferred Credential Response uses the `credential` parameter as defined in (#credential-response).
+The Deferred Credential Response uses the `credentials` and `notification_id` parameters as defined in (#credential-response).
 
 Additional Deferred Credential Response parameters MAY be defined and used.
 The Wallet MUST ignore any unrecognized parameters.
 
 The Deferred Credential Response MUST be sent using the `application/json` media type.
+
+The following is a non-normative example of a Deferred Credential Response:
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "credentials": [
+    {
+      "credential": "LUpixVCWJk0eOt4CXQe1NXK....WZwmhmn9OQp6YxX0a2L"
+    },
+    {
+      "credential": "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
+    }
+  ],
+  "notification_id": "3fwe98js"
+}
+```
 
 ## Deferred Credential Error Response {#deferred-credential-error-response}
 
@@ -1162,7 +1228,7 @@ Cache-Control: no-store
 
 # Notification Endpoint {#notification-endpoint}
 
-This endpoint is used by the Wallet to notify the Credential Issuer of certain events for issued Credentials. These events enable the Credential Issuer to take subsequent actions after issuance. The Credential Issuer needs to return one or more `notification_id` parameters in the Credential Response for the Wallet to be able to use this endpoint. Support for this endpoint is OPTIONAL. The Issuer cannot assume that a notification will be sent for every issued Credential since the use of this Endpoint is not mandatory for the Wallet.
+This endpoint is used by the Wallet to notify the Credential Issuer of certain events for issued Credentials. These events enable the Credential Issuer to take subsequent actions after issuance. The Credential Issuer needs to return one `notification_id` parameter per Credential Response or Deferred Credential Response for the Wallet to be able to use this endpoint. Support for this endpoint is OPTIONAL. The Issuer cannot assume that a notification will be sent for every issued Credential since the use of this Endpoint is not mandatory for the Wallet.
 
 The Wallet MUST present to the Notification Endpoint a valid Access Token issued at the Token Endpoint as defined in (#token-endpoint). 
 
@@ -1174,10 +1240,10 @@ Communication with the Notification Endpoint MUST utilize TLS.
 
 ## Notification Request {#notification}
 
-The Wallet sends an HTTP POST request to the Notification Endpoint with the following parameters in the entity-body and using the `application/json` media type. If the Wallet supports the Notification Endpoint, the Wallet MAY send one or more Notification Requests per Credential issued.
+The Wallet sends an HTTP POST request to the Notification Endpoint with the following parameters in the entity-body and using the `application/json` media type. If the Wallet supports the Notification Endpoint, the Wallet MAY send one or more Notification Requests per `notification_id` value received.
+* `notification_id`: REQUIRED. String received in the Credential Response or Deferred Credential Response identifying an issuance flow that contained one or more Credentials with the same Credential Configuration and Credential Dataset.
+* `event`: REQUIRED. Type of the notification event. It MUST be a case sensitive string whose value is either `credential_accepted`, `credential_failure`, or `credential_deleted`. `credential_accepted` is to be used when the Credentials were successfully stored in the Wallet, with or without user action. `credential_deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `credential_failure` is to be used. Partial errors during batch credential issuance (e.g., one of the Credentials in the batch could not be stored) MUST be treated as the overall issuance flow failing.
 
-* `notification_id`: REQUIRED. String received in the Credential Response.
-* `event`: REQUIRED. Type of the notification event. It MUST be a case sensitive string whose value is either `credential_accepted`, `credential_failure`, or `credential_deleted`. `credential_accepted` is to be used when the Credential was successfully stored in the Wallet, with or without user action. `credential_deleted` is to be used when the unsuccessful Credential issuance was caused by a user action. In all other unsuccessful cases, `credential_failure` is to be used.
 * `event_description`: OPTIONAL. Human-readable ASCII [@!USASCII] text providing additional information, used to assist the Credential Issuer developer in understanding the event that occurred. Values for the `event_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
 Additional Notification Request parameters MAY be defined and used.
@@ -1303,6 +1369,7 @@ This specification defines the following Credential Issuer Metadata parameters:
 * `credential_issuer`: REQUIRED. The Credential Issuer's identifier, as defined in (#credential-issuer-identifier).
 * `authorization_servers`: OPTIONAL. Array of strings, where each string is an identifier of the OAuth 2.0 Authorization Server (as defined in [@!RFC8414]) the Credential Issuer relies on for authorization. If this parameter is omitted, the entity providing the Credential Issuer is also acting as the Authorization Server, i.e., the Credential Issuer's identifier is used to obtain the Authorization Server metadata. The actual OAuth 2.0 Authorization Server metadata is obtained from the `oauth-authorization-server` well-known location as defined in Section 3 of [@!RFC8414]. When there are multiple entries in the array, the Wallet may be able to determine which Authorization Server to use by querying the metadata; for example, by examining the `grant_types_supported` values, the Wallet can filter the server to use based on the grant type it plans to use. When the Wallet is using `authorization_server` parameter in the Credential Offer as a hint to determine which Authorization Server to use out of multiple, the Wallet MUST NOT proceed with the flow if the `authorization_server` Credential Offer parameter value does not match any of the entries in the `authorization_servers` array.
 * `credential_endpoint`: REQUIRED. URL of the Credential Issuer's Credential Endpoint, as defined in (#credential-request). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components.
+* `nonce_endpoint`: OPTIONAL. URL of the Credential Issuer's Nonce Endpoint, as defined in (#nonce-endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Nonce Endpoint.
 * `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint, as defined in (#deferred-credential-issuance). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
 * `notification_endpoint`: OPTIONAL. URL of the Credential Issuer's Notification Endpoint, as defined in (#notification-endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Notification Endpoint.
 * `credential_response_encryption`: OPTIONAL. Object containing information about whether the Credential Issuer supports encryption of the Credential Credential Response on top of TLS.
@@ -2275,20 +2342,6 @@ established by [@!RFC6749].
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-request) of this specification
 
-### c_nonce
-
-* Name: `c_nonce`
-* Parameter Usage Location: token response
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#token-response) of this specification
-
-### c_nonce_expires_in
-
-* Name: `c_nonce_expires_in`
-* Parameter Usage Location: token response
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#token-response) of this specification
-
 ### credential_identifiers
 
 * Name: `credential_identifiers`
@@ -2431,6 +2484,9 @@ The technology described in this specification was made available from contribut
 
    -15
 
+   * credential response always returns an array when not returning a transaction_id with the option for additional meta-data
+   * deferred credential response always returns an array (same as credential response)
+   * notification_id is now used for an issuance flow that can contain more than one credential
    * Fixed #375: Enabled non-breaking extensibility.
    * Fixed #239: Completed IANA Considerations section.
 
@@ -2449,6 +2505,8 @@ The technology described in this specification was made available from contribut
    * Define Credential Dataset as a term
    * Define Credential Configuration as a term
    * remove use of the `authorization_pending` and `slow_down` error codes
+   * removed `c_nonce` and `c_nonce_expires_in` from the token endpoint response
+   * added a Nonce Endpoint where a Client can acquire a fresh c_nonce value without the overhead of a full Credential Request
 
    -13
 
