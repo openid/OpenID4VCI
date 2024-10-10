@@ -866,6 +866,7 @@ This specification defines the following proof types:
 
 * `jwt`: A JWT [@!RFC7519] is used for proof of possession. When a `proof_type` parameter in a `proof` object is set to `jwt`, it MUST also contain a `jwt` parameter that includes a JWT as defined in (#jwt-proof-type). When a `proofs` object is using a `jwt` proof type, it MUST include a `jwt` parameter with its value being an array of JWTs, where each JWT is formed as defined in (#jwt-proof-type).
 * `ldp_vp`: A W3C Verifiable Presentation object signed using the Data Integrity Proof [@VC_Data_Integrity] as defined in [@VC_DATA_2.0] or [@VC_DATA] is used for proof of possession. When a `proof_type` parameter in a `proof` object is set to `ldp_vp`, it MUST also contain an `ldp_vp` parameter that includes a [W3C Verifiable Presentation](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0) defined in (#ldp-vp-proof-type). When a `proofs` object is using a `ldp_vp` proof type, it MUST include an `ldp_vp` parameter with its value being an array of [W3C Verifiable Presentations](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0), where each of these W3C Verifiable Presentation is formed as defined in (#ldp-vp-proof-type).
+* `attestation`:  A JWT [@!RFC7519] representing a key attestation without proof of possession is used. When a `proof_type` parameter in a `proof` object is set to `attestation`, it MUST also contain an `attestation` parameter that includes a JWT as defined in (#attestation-proof-type).
 
 Additional proof types MAY be defined and used.
 
@@ -878,7 +879,7 @@ The JWT MUST contain the following elements:
   * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
   * `kid`: OPTIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. It MUST NOT be present if `jwk` is present.
   * `jwk`: OPTIONAL. JOSE Header containing the key material the new Credential shall be bound to. It MUST NOT be present if `kid` is present.
-  * `x5c`: OPTIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT. This element MAY be used to convey a key attestation. In such a case, the actual key certificate will contain attributes related to the key properties.
+  * `key_attestation`: OPTIONAL. JOSE Header containing a key attestation as described in (#keyattestation).
   * `trust_chain`: OPTIONAL. JOSE Header containing an [@!OpenID.Federation] Trust Chain. This element MAY be used to convey key attestation, metadata, metadata policies, federation Trust Marks and any other information related to a specific federation, if available in the chain. When used for signature verification, the header parameter `kid` MUST be present.
 
 * in the JWT body,
@@ -930,8 +931,10 @@ Here is another example JWT not only proving possession of a private key but als
 
 ```json
 {
+  "typ": "openid4vci-proof+jwt",
   "alg": "ES256",
-  "x5c": [<key certificate + certificate chain for attestation>]
+  "kid": "0",
+  "key_attestation": <key attestation in JWT format>
 }.
 {
   "iss": "s6BhdRkqt3",
@@ -983,6 +986,21 @@ Below is a non-normative example of a `proof` parameter:
   }
 }
 
+```
+
+#### `attestation` Proof Type {#attestation-proof-type}
+
+A key attestation in JWT format as defined in (#keyattestation-jwt).
+
+When a key attestation is used as proof type, it MUST contain the `nonce` claim if a `c_nonce` was provided by the Credential Issuer and its value must be equal to the value of the server-provided `c_nonce`.
+
+Below is a non-normative example of a `proof` parameter (with line breaks within values for display purposes only):
+
+```json
+{
+  "proof_type": "attestation",
+  "attestation": "<key attestation in JWT format>"
+}
 ```
 
 ### Verifying Proof {#verifying-key-proof}
@@ -1392,6 +1410,10 @@ This specification defines the following Credential Issuer Metadata parameters:
   * `credential_signing_alg_values_supported`: OPTIONAL. Array of case sensitive strings that identify the algorithms that the Issuer uses to sign the issued Credential. Algorithm names used are determined by the Credential Format and are defined in (#format-profiles).
   * `proof_types_supported`: OPTIONAL. Object that describes specifics of the key proof(s) that the Credential Issuer supports. This object contains a list of name/value pairs, where each name is a unique identifier of the supported proof type(s). Valid values are defined in (#proof-types), other values MAY be used. This identifier is also used by the Wallet in the Credential Request as defined in (#credential-request). The value in the name/value pair is an object that contains metadata about the key proof and contains the following parameters defined by this specification:
     * `proof_signing_alg_values_supported`: REQUIRED. Array of case sensitive strings that identify the algorithms that the Issuer supports for this proof type. The Wallet uses one of them to sign the proof. Algorithm names used are determined by the key proof type and are defined in (#proof-types).
+    * `key_attestations_required`: OPTIONAL. Object that describes the requirement for key attestations as described in (#keyattestation), which the Credential Issuer expects the Wallet to send within the proof of the Credential Request. If the Credential Issuer does not expect a key attestation, this object is absent. If no `length` or `description` is given, this object may be empty, indicating that a key attestation without further constraints is required.
+      * `key_type`: OPTIONAL. Array defining values specified in (#keyattestation-keytypes) accepted by the Credential Issuer.
+      * `user_authentication`: OPTIONAL. Array defining values specified in (#keyattestation-keytypes) accepted by the Credential Issuer.
+      * `apr`: OPTIONAL. Array defining values specified in (#keyattestation-apr) accepted by the Credential Issuer.
   * `display`: OPTIONAL. Array of objects, where each object contains the display properties of the supported Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included.
       * `name`: REQUIRED. String value of a display name for the Credential.
       * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. Multiple `display` objects MAY be included for separate languages. There MUST be only one object for each language identifier.
@@ -2285,6 +2307,93 @@ The following is a non-normative example of a Credential Response containing a C
 
 <{{examples/credential_response_sd_jwt_vc.txt}}
 
+# Key Attestations {#keyattestation}
+
+A key attestation is an interoperable, verifiable statement that provides evidence of the authenticity and security properties of a key and its storage component. Keys can be stored in various key storage components, which differ in their ability to protect the private key against extraction and duplication, as well as in the methods used for End-User authentication to unlock key operations. These key storage components may be software-based or hardware-based, and can be located on the same device as the Wallet, on external security tokens, or on remote services that enable cryptographic key operations. Key attestations are signed by the Wallet Provider or the Wallet's key storage component itself.
+
+A Wallet MAY provide key attestations to inform the Credential Issuer about the properties of the provided cryptographic public keys, e.g. for proof types sent in the Credential Request. Credential Issuers may want to evaluate these key attestations to determine whether the keys meet their own security requirements, based on the trust framework in use, regulatory requirements, laws, or internal design decisions. An Issuer SHOULD communicate this requirement to evaluate key attestations through its metadata or using some sort of out-of-band mechanism.
+
+Since the key attestations may have large audience as many Credential Issuers that not necessarly uses the same trust framework or internal design decisions, it is required to use a common approach to facilitate interoperability. Therefore, key attestations SHOULD use a common format,allowing Issuers to develop consistent evaluation processes, reducing complexity and potential errors. Common formats makes easy for Issuers to demonstrate compliance with regulatory requirements across different jurisdictions, they also facilitate the development of shared best practices and security benchmarks.
+
+There are two flows how key attestations can be used within Credential issuance:
+- The Wallet uses the `jwt` proof type in the Credential Request to create a proof of possession of the key and adds the key attestation in the JOSE header as specified in (#jwt-proof-type).
+- The Wallet uses the `attestation` proof type in the Credential Request with the key attestation without a proof of possession of the key itself as specified in (#attestation-proof-type).
+
+The latter may avoid unnecessary user interaction during the Credential issuance, as the key itself is not performing a signature operation.
+## Key Attestation in JWT format {#keyattestation-jwt}
+
+The JWT is signed by the Wallet Provider or the Wallet's key storage component itself and contains the following elements:
+
+* in the JOSE header,
+  * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE.ALGS]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
+  * `typ`: REQUIRED. MUST be `keyattestation+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
+
+The key attestation may use `x5c`, `kid` or `trust_chain` (as defined in (#jwt-proof-type) ) to convey the public key and the associated trust mechanism to sign the key attestation.
+
+* in the JWT body,
+  * `iat`: REQUIRED (number). Integer for the time at which the key attestation was issued using the syntax defined in [@!RFC7519].
+  * `exp`: REQUIRED (number). Integer for the time at which the key attestation and the key(s) it is attesting expire, using the syntax defined in [@!RFC7519].
+  * `attested_keys` : REQUIRED. Array of attested keys from the same key storage component using the syntax of JWK as defined in [@!RFC7517].
+  * `key_type` : OPTIONAL. String that asserts the key storage component and its security mechanism of attested keys from the `attested_keys` parameter. This specification defines initial values in (#keyattestation-keytypes).
+  * `user_authentication` : OPTIONAL. String that asserts the security mechanism the key storage component uses to authenticate the End-User to authorize access to the private key from `keys`. This specification defines initial values in (#keyattestation-auth).
+  * `apr` : OPTIONAL. String that asserts the resistance to a specified attack potential. The value contains an URN that identifies the given attack potential.
+  * `nonce`: OPTIONAL. String that represents a nonce provided by the Issuer to proof that a key attestation was freshly generated.
+  * `status`: OPTIONAL. JSON Object representing the supported revocation check mechanisms, such as the one defined in [status list]
+
+The Credential Issuer MUST validate that the JWT used as a proof is actually signed by a key identified in the JOSE Header.
+
+This is an example of a Key Attestation:
+
+```json
+{
+  "typ": "keyattestation+jwt",
+  "alg": "ES256",
+  "kid": "1"
+}
+.
+{
+  "iss": "<identifier of the issuer of this key attestation>",
+  "iat": 1516247022,
+  "exp": 1541493724,
+  "key_type": "strong_box",
+  "user_authentication": "system_pin",
+  "apr" : "https://trust-list.eu/apr/high",
+  "attested_keys": [
+    {
+      "kty": "EC",
+      "crv": "P-256",
+      "x": "TCAER19Zvu3OHF4j4W4vfSVoHIP1ILilDls7vCeGemc",
+      "y": "ZxjiWWbZMQGHVWKVQ4hbSIirsVfuecCE6t4jT9F2HZQ"
+    }
+  ]
+}
+```
+
+## Key Types {#keyattestation-keytypes}
+
+This specification defines the following values for `key_type`:
+
+* `software`: It MUST be used when the Wallet uses software-based key management.
+* `tee`: It SHOULD be used when the Wallet uses the Trusted Execution Environment for key management.
+* `secure_enclave`: It SHOULD be used when the Wallet uses the Secure Enclave for key management.
+* `strong_box`: It SHOULD be used when the Wallet uses the Strongbox for key management.
+* `secure_element`: It SHOULD be used when the Wallet uses a Secure Element for key management.
+* `hsm`: It SHOULD be used when the Wallet uses Hardware Security Module (HSM).
+
+## User Authentication Types {#keyattestation-auth}
+
+This specification defines the following values for `user_authentication`:
+
+* `system_biometry`: It MUST be used when the key usage is authorized by the operating system using a biometric factor, such as the one provided by mobile devices.
+* `system_pin`: It MUST be used when the key usage is authorized by the mobile operating system using personal identification number (PIN).
+* `internal_biometry`: It MUST be used when the key usage is authorized by the Wallet using a biometric factor.
+* `internal_pin`: It MUST be used when the key usage is authorized by the Wallet using PIN.
+* `secure_element_pin` It MUST be used when the key usage is authorized by the secure element managing the key itself using PIN.
+
+## Attack Potential Resistance {#keyattestation-apr}
+
+This specification does not define any specific vaues for `apr`. Ecosystems may define their own values, any URN is a valid value. It is RECOMMENDED that the value is a URL that gives further information about the attack potential resistance and possible relations to level of assurances.
+
 # IANA Considerations
 
 ## Sub-Namespace Registration
@@ -2430,6 +2539,7 @@ The technology described in this specification was made available from contribut
 
    -14
    
+   * add key attestation as additional information in a proof of possesion and new proof type
    * removes CWT proof type
    * removes the Batch Credential Endpoint
    * clarify that authorization_details can be present in the Token Request for Pre-Authorized Code Flow when multiple Credential Configurations are present in the Credential Offer
