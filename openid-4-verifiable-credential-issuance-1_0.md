@@ -868,7 +868,7 @@ Here is another example JWT not only proving possession of a private key but als
 {
   "typ": "openid4vci-proof+jwt",
   "alg": "ES256",
-  "kid": 0,
+  "kid": "0",
   "key_attestation": [<key attestation in JWT format>]
 }.
 {
