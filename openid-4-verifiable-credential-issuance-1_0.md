@@ -2216,9 +2216,9 @@ The key attestation may use `x5c`, `kid` or `trust_chain` (as defined in (#jwt-p
   * `iat`: REQUIRED (number). Integer for the time at which the key attestation was issued using the syntax defined in [@!RFC7519].
   * `exp`: REQUIRED (number). Integer for the time at which the key attestation and the key(s) it is attesting expire, using the syntax defined in [@!RFC7519].
   * `attested_keys` : REQUIRED. Array of attested keys from the same key storage component using the syntax of JWK as defined in [@!RFC7517].
-  * `key_type` : OPTIONAL. String that asserts the key storage component and its security mechanism of attested keys from the `attested_keys` parameter. This specification defines initial values in (#keyattestation-keytypes).
-  * `user_authentication` : OPTIONAL. String that asserts the security mechanism the key storage component uses to authenticate the End-User to authorize access to the private key from `keys`. This specification defines initial values in (#keyattestation-auth).
-  * `apr` : OPTIONAL. String that asserts the resistance to a specified attack potential. The value contains an URN that identifies the given attack potential.
+  * `key_type` : OPTIONAL. Case sensitive string that asserts the key storage component and its security mechanism of attested keys from the `attested_keys` parameter. This specification defines initial values in (#keyattestation-keytypes).
+  * `user_authentication` : OPTIONAL. Array of case sensitive strings that asserts the security mechanisms the key storage component allows to authenticate the End-User to authorize access to the private key from `keys`. This specification defines initial values in (#keyattestation-auth).
+  * `apr` : OPTIONAL. Array of case sensitive strings that assert attested resistance to specified attack potentials for the given keys. The string values contain URNs that identify the given attack potentials.
   * `nonce`: OPTIONAL. String that represents a nonce provided by the Issuer to proof that a key attestation was freshly generated.
   * `status`: OPTIONAL. JSON Object representing the supported revocation check mechanisms, such as the one defined in [status list]
 
@@ -2238,8 +2238,8 @@ This is an example of a Key Attestation:
   "iat": 1516247022,
   "exp": 1541493724,
   "key_type": "strong_box",
-  "user_authentication": "system_pin",
-  "apr" : "https://trust-list.eu/apr/high",
+  "user_authentication": [ "system_pin" ],
+  "apr" : [ "https://trust-list.eu/apr/high" ],
   "attested_keys": [
     {
       "kty": "EC",
