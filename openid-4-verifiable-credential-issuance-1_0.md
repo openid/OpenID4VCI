@@ -2268,11 +2268,11 @@ This specification defines the following values for `key_type`:
 
 This specification defines the following values for `user_authentication`:
 
-* `system_biometry`: It MUST be used when the key usage is authorized by the operating system using a biometric factor, such as the one provided by mobile devices.
-* `system_pin`: It MUST be used when the key usage is authorized by the mobile operating system using personal identification number (PIN).
-* `internal_biometry`: It MUST be used when the key usage is authorized by the Wallet using a biometric factor.
-* `internal_pin`: It MUST be used when the key usage is authorized by the Wallet using PIN.
-* `secure_element_pin` It MUST be used when the key usage is authorized by the secure element managing the key itself using PIN.
+* `system_biometry`: It MUST be used when the key usage is authorized by the key storage component itself or the associated operating system using a biometric factor, such as the one provided by mobile devices.
+* `system_pin`: It MUST be used when the key usage is authorized by the key storage component itself or the associated operating system using personal identification number (PIN).
+* `remote_biometry`: It MUST be used when the key usage is authorized by a remote system using a biometric factor.
+* `remote_pin`: It MUST be used when the key usage is authorized by a remote system using a PIN.
+
 
 ## Attack Potential Resistance {#keyattestation-apr}
 
