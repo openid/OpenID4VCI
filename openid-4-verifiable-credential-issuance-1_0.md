@@ -927,7 +927,7 @@ Below is a non-normative example of a `proof` parameter:
 
 A key attestation in JWT format as defined in (#keyattestation-jwt).
 
-When a key attestation is used as proof type, it MUST contain the `nonce` claim if a `c_nonce` was provided by the Credential Issuer and its value must be equal to the value of the server-provided `c_nonce`.
+When a key attestation is used as proof type, it MUST contain the `c_nonce` value provided by the Credential in its `nonce` parameter..
 
 Below is a non-normative example of a `proof` parameter (with line breaks within values for display purposes only):
 
