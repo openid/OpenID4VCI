@@ -2256,11 +2256,12 @@ This is an example of a Key Attestation:
 This specification defines the following values for `key_type`:
 
 * `software`: It MUST be used when the Wallet uses software-based key management.
-* `tee`: It SHOULD be used when the Wallet uses the Trusted Execution Environment for key management.
-* `secure_enclave`: It SHOULD be used when the Wallet uses the Secure Enclave for key management.
-* `strong_box`: It SHOULD be used when the Wallet uses the Strongbox for key management.
-* `secure_element`: It SHOULD be used when the Wallet uses a Secure Element for key management.
-* `hsm`: It SHOULD be used when the Wallet uses Hardware Security Module (HSM).
+* `tee`: It MUST be used when the Wallet uses the Trusted Execution Environment for key management.
+* `secure_enclave`: It MUST be used when the Wallet uses the Secure Enclave for key management.
+* `strong_box`: It MUST be used when the Wallet uses the Strongbox for key management.
+* `secure_element`: It MUST be used when the Wallet uses a Secure Element for key management.
+* `hsm`: It MUST be used when the Wallet uses Hardware Security Module (HSM).
+* `remote_hsm`: It MUST be used when the Wallet uses Hardware Security Module (HSM) that is not directly connected to the Wallet.
 
 ## User Authentication Types {#keyattestation-auth}
 
