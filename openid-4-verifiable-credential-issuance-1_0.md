@@ -2260,8 +2260,8 @@ This specification defines the following values for `key_type`:
 * `secure_enclave`: It MUST be used when the Wallet uses the Secure Enclave for key management.
 * `strong_box`: It MUST be used when the Wallet uses the Strongbox for key management.
 * `secure_element`: It MUST be used when the Wallet uses a Secure Element for key management.
-* `hsm`: It MUST be used when the Wallet uses Hardware Security Module (HSM).
-* `remote_hsm`: It MUST be used when the Wallet uses Hardware Security Module (HSM) that is not directly connected to the Wallet.
+* `hsm`: It MUST be used when the Wallet uses Hardware Security Module (HSM) for key management.
+* `remote_hsm`: It MUST be used when the Wallet uses Hardware Security Module (HSM) that is not directly connected to the Wallet for key management.
 
 ## User Authentication Types {#keyattestation-auth}
 
