@@ -2238,7 +2238,7 @@ This is an example of a Key Attestation:
   "iat": 1516247022,
   "exp": 1541493724,
   "key_type": "strong_box",
-  "user_authentication": [ "system_pin" ],
+  "user_authentication": [ "system_pin", "system_biometry" ],
   "apr" : [ "https://trust-list.eu/apr/high" ],
   "attested_keys": [
     {
