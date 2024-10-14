@@ -2220,7 +2220,7 @@ The key attestation may use `x5c`, `kid` or `trust_chain` (as defined in (#jwt-p
   * `user_authentication` : OPTIONAL. Array of case sensitive strings that asserts the security mechanisms the key storage component allows to authenticate the End-User to authorize access to the private key from `keys`. This specification defines initial values in (#keyattestation-auth).
   * `apr` : OPTIONAL. Array of case sensitive strings that assert attested resistance to specified attack potentials for the given keys. The string values contain URNs that identify the given attack potentials.
   * `nonce`: OPTIONAL. String that represents a nonce provided by the Issuer to proof that a key attestation was freshly generated.
-  * `status`: OPTIONAL. JSON Object representing the supported revocation check mechanisms, such as the one defined in [@!I-D.draft-ietf-oauth-status-list]
+  * `status`: OPTIONAL. JSON Object representing the supported revocation check mechanisms, such as the one defined in [@!I-D.ietf-oauth-status-list]
 
 The Credential Issuer MUST validate that the JWT used as a proof is actually signed by a key identified in the JOSE Header.
 
