@@ -928,7 +928,7 @@ Below is a non-normative example of a `proof` parameter:
 
 A key attestation in JWT format as defined in (#keyattestation-jwt).
 
-When a key attestation is used as proof type, it MUST contain the `c_nonce` value provided by the Credential in its `nonce` parameter..
+When a key attestation is used as a proof type, it MUST contain the `c_nonce` value provided by the Credential in its `nonce` parameter.
 
 Below is a non-normative example of a `proof` parameter (with line breaks within values for display purposes only):
 
@@ -938,6 +938,8 @@ Below is a non-normative example of a `proof` parameter (with line breaks within
   "attestation": "<key attestation in JWT format>"
 }
 ```
+
+The Credential Issuer SHOULD return a Credential for each of the keys provided in the `attested_keys` claim of the `attestation`.
 
 ### Verifying Proof {#verifying-key-proof}
 
@@ -1299,7 +1301,7 @@ This specification defines the following Credential Issuer Metadata parameters:
   * `credential_signing_alg_values_supported`: OPTIONAL. Array of case sensitive strings that identify the algorithms that the Issuer uses to sign the issued Credential. Algorithm names used are determined by the Credential Format and are defined in (#format-profiles).
   * `proof_types_supported`: OPTIONAL. Object that describes specifics of the key proof(s) that the Credential Issuer supports. This object contains a list of name/value pairs, where each name is a unique identifier of the supported proof type(s). Valid values are defined in (#proof-types), other values MAY be used. This identifier is also used by the Wallet in the Credential Request as defined in (#credential-request). The value in the name/value pair is an object that contains metadata about the key proof and contains the following parameters defined by this specification:
     * `proof_signing_alg_values_supported`: REQUIRED. Array of case sensitive strings that identify the algorithms that the Issuer supports for this proof type. The Wallet uses one of them to sign the proof. Algorithm names used are determined by the key proof type and are defined in (#proof-types).
-    * `key_attestations_required`: OPTIONAL. Object that describes the requirement for key attestations as described in (#keyattestation), which the Credential Issuer expects the Wallet to send within the proof of the Credential Request. If the Credential Issuer does not expect a key attestation, this object is absent. If no `length` or `description` is given, this object may be empty, indicating that a key attestation without further constraints is required.
+    * `key_attestations_required`: OPTIONAL. Object that describes the requirement for key attestations as described in (#keyattestation), which the Credential Issuer expects the Wallet to send within the proof of the Credential Request. If the Credential Issuer does not expect a key attestation, this object is absent. If neither of the `key_type`, `user_authentication` and `apr` parameters are present, this object may be empty, indicating that a key attestation without further constraints is required.
       * `key_type`: OPTIONAL. Array defining values specified in (#keyattestation-keytypes) accepted by the Credential Issuer.
       * `user_authentication`: OPTIONAL. Array defining values specified in (#keyattestation-keytypes) accepted by the Credential Issuer.
       * `apr`: OPTIONAL. Array defining values specified in (#keyattestation-apr) accepted by the Credential Issuer.
@@ -2202,6 +2204,7 @@ There are two flows how key attestations can be used within Credential issuance:
 - The Wallet uses the `attestation` proof type in the Credential Request with the key attestation without a proof of possession of the key itself as specified in (#attestation-proof-type).
 
 The latter may avoid unnecessary user interaction during the Credential issuance, as the key itself is not performing a signature operation.
+
 ## Key Attestation in JWT format {#keyattestation-jwt}
 
 The JWT is signed by the Wallet Provider or the Wallet's key storage component itself and contains the following elements:
