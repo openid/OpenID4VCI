@@ -2072,6 +2072,10 @@ The following is a non-normative example of a Credential Response with Credentia
 
 <{{examples/credential_response_jwt_vc_json.txt}}
 
+The following is the dereferenced document for the Issuer HTTP URL identifier that matches the Credential in the above example:
+
+<{{examples/issuer_jwks.json}}
+
 ### VC Secured using Data Integrity, using JSON-LD, with a Proof Suite Requiring Linked Data Canonicalization
 
 #### Format Identifier
