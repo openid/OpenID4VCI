@@ -826,6 +826,8 @@ The JWT MUST contain the following elements:
 
 The Credential Issuer MUST validate that the JWT used as a proof is actually signed by a key identified in the JOSE Header.
 
+If an `attestation` is provided and successfully validated by the Credential Issuer, it SHOULD return a Credential for each of the keys provided in the `attested_keys` claim of the attestation.
+
 Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@IANA.JOSE.ALGS].
 
 Below is a non-normative example of a `proof` parameter (with line breaks within values for display purposes only):
