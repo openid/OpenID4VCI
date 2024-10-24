@@ -2271,6 +2271,8 @@ This specification defines the following values for `key_storage_type`:
 * `hsm`: It MUST be used when the Wallet uses Hardware Security Module (HSM) for key management.
 * `remote_hsm`: It MUST be used when the Wallet uses Hardware Security Module (HSM) that is not directly connected to the Wallet for key management.
 
+Specifications that extend this list MUST choose collision-resistant values.
+
 ## User Authentication Types {#keyattestation-auth}
 
 This specification defines the following values for `user_authentication`:
@@ -2279,7 +2281,7 @@ This specification defines the following values for `user_authentication`:
 * `system_pin`: It MUST be used when the key usage is authorized by the key storage component itself or the associated operating system using personal identification number (PIN).
 * `remote_biometry`: It MUST be used when the key usage is authorized by a remote system using a biometric factor.
 * `remote_pin`: It MUST be used when the key usage is authorized by a remote system using a PIN.
-
+Specifications that extend this list MUST choose collision-resistant values.
 
 ## Attack Potential Resistance {#keyattestation-apr}
 
