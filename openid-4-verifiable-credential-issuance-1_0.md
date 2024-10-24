@@ -1305,8 +1305,8 @@ This specification defines the following Credential Issuer Metadata parameters:
   * `credential_signing_alg_values_supported`: OPTIONAL. Array of case sensitive strings that identify the algorithms that the Issuer uses to sign the issued Credential. Algorithm names used are determined by the Credential Format and are defined in (#format-profiles).
   * `proof_types_supported`: OPTIONAL. Object that describes specifics of the key proof(s) that the Credential Issuer supports. This object contains a list of name/value pairs, where each name is a unique identifier of the supported proof type(s). Valid values are defined in (#proof-types), other values MAY be used. This identifier is also used by the Wallet in the Credential Request as defined in (#credential-request). The value in the name/value pair is an object that contains metadata about the key proof and contains the following parameters defined by this specification:
     * `proof_signing_alg_values_supported`: REQUIRED. Array of case sensitive strings that identify the algorithms that the Issuer supports for this proof type. The Wallet uses one of them to sign the proof. Algorithm names used are determined by the key proof type and are defined in (#proof-types).
-    * `key_attestations_required`: OPTIONAL. Object that describes the requirement for key attestations as described in (#keyattestation), which the Credential Issuer expects the Wallet to send within the proof of the Credential Request. If the Credential Issuer does not expect a key attestation, this object is absent. If neither of the `key_type`, `user_authentication` and `apr` parameters are present, this object may be empty, indicating that a key attestation without further constraints is required.
-      * `key_type`: OPTIONAL. Array defining values specified in (#keyattestation-keytypes) accepted by the Credential Issuer.
+    * `key_attestations_required`: OPTIONAL. Object that describes the requirement for key attestations as described in (#keyattestation), which the Credential Issuer expects the Wallet to send within the proof of the Credential Request. If the Credential Issuer does not expect a key attestation, this object is absent. If neither of the `key_storage_type`, `user_authentication` and `apr` parameters are present, this object may be empty, indicating that a key attestation without further constraints is required.
+      * `key_storage_type`: OPTIONAL. Array defining values specified in (#keyattestation-keytypes) accepted by the Credential Issuer.
       * `user_authentication`: OPTIONAL. Array defining values specified in (#keyattestation-keytypes) accepted by the Credential Issuer.
       * `apr`: OPTIONAL. Array defining values specified in (#keyattestation-apr) accepted by the Credential Issuer.
   * `display`: OPTIONAL. Array of objects, where each object contains the display properties of the supported Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included.
@@ -2223,7 +2223,7 @@ The key attestation may use `x5c`, `kid` or `trust_chain` (as defined in (#jwt-p
   * `iat`: REQUIRED (number). Integer for the time at which the key attestation was issued using the syntax defined in [@!RFC7519].
   * `exp`: REQUIRED (number). Integer for the time at which the key attestation and the key(s) it is attesting expire, using the syntax defined in [@!RFC7519].
   * `attested_keys` : REQUIRED. Array of attested keys from the same key storage component using the syntax of JWK as defined in [@!RFC7517].
-  * `key_type` : OPTIONAL. Case sensitive string that asserts the key storage component of the keys attested in the `attested_keys` parameter. This specification defines initial values in (#keyattestation-keytypes).
+  * `key_storage_type` : OPTIONAL. Case sensitive string that asserts the key storage component of the keys attested in the `attested_keys` parameter. This specification defines initial values in (#keyattestation-keytypes).
   * `user_authentication` : OPTIONAL. Array of case sensitive strings that assert the authentication methods allowed to access the private keys from the `attested_keys` parameter. This specification defines initial values in (#keyattestation-auth).
   * `apr` : OPTIONAL. Array of case sensitive strings that assert attested resistance to specified attack potentials for the given keys. The string values contain URNs that identify the given attack potentials.
   * `nonce`: OPTIONAL. String that represents a nonce provided by the Issuer to proof that a key attestation was freshly generated.
@@ -2244,7 +2244,7 @@ This is an example of a Key Attestation:
   "iss": "<identifier of the issuer of this key attestation>",
   "iat": 1516247022,
   "exp": 1541493724,
-  "key_type": "strong_box",
+  "key_storage_type": "strong_box",
   "user_authentication": [ "system_pin", "system_biometry" ],
   "apr" : [ "https://trust-list.eu/apr/high" ],
   "attested_keys": [
@@ -2260,7 +2260,7 @@ This is an example of a Key Attestation:
 
 ## Key Types {#keyattestation-keytypes}
 
-This specification defines the following values for `key_type`:
+This specification defines the following values for `key_storage_type`:
 
 * `software`: It MUST be used when the Wallet uses software-based key management.
 * `tee`: It MUST be used when the Wallet uses the Trusted Execution Environment for key management.
