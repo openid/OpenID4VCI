@@ -2338,7 +2338,7 @@ The latter may avoid unnecessary user interaction during the Credential issuance
 The JWT is signed by the Wallet Provider or the Wallet's key storage component itself and contains the following elements:
 
 * in the JOSE header,
-  * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE.ALGS]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
+  * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
   * `typ`: REQUIRED. MUST be `keyattestation+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
 
 The key attestation may use `x5c`, `kid` or `trust_chain` (as defined in (#jwt-proof-type) ) to convey the public key and the associated trust mechanism to sign the key attestation.
