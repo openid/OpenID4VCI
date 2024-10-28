@@ -684,7 +684,7 @@ Cache-Control: no-store
 
 {
   "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6Ikp..sHQ",
-  "token_type": "bearer",
+  "token_type": "Bearer",
   "expires_in": 86400,
   "authorization_details": [
     {
@@ -823,7 +823,7 @@ Below is a non-normative example of a Credential Request for a Credential in [@I
 POST /credential HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
-Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
   "format":"mso_mdoc",
@@ -843,7 +843,7 @@ Below is a non-normative example of a Credential Request for two Credential inst
 POST /credential HTTP/1.1
 Host: server.example.com
 Content-Type: application/json
-Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
   "credential_identifier": "CivilEngineeringDegree-2023",
@@ -874,7 +874,7 @@ Additional proof types MAY be defined and used.
 The JWT MUST contain the following elements:
 
 * in the JOSE header,
-  * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE.ALGS]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
+  * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
   * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
   * `kid`: OPTIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. It MUST NOT be present if `jwk` is present.
   * `jwk`: OPTIONAL. JOSE Header containing the key material the new Credential shall be bound to. It MUST NOT be present if `kid` is present.
@@ -889,7 +889,7 @@ The JWT MUST contain the following elements:
 
 The Credential Issuer MUST validate that the JWT used as a proof is actually signed by a key identified in the JOSE Header.
 
-Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@IANA.JOSE.ALGS].
+Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@IANA.JOSE].
 
 Below is a non-normative example of a `proof` parameter (with line breaks within values for display purposes only):
 
@@ -1139,7 +1139,7 @@ The following is a non-normative example of a Deferred Credential Request:
 POST /deferred_credential HTTP/1.1 
 Host: server.example.com
 Content-Type: application/json
-Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
+Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
   "transaction_id": "8xLOxBtZp8"
@@ -1390,7 +1390,7 @@ The following is a non-normative example of Credential Issuer metadata of a Cred
 
 Note: The Client MAY use other mechanisms to obtain information about the Verifiable Credentials that a Credential Issuer can issue.
 
-## OAuth 2.0 Authorization Server Metadata
+## OAuth 2.0 Authorization Server Metadata {#as-metadata}
 
 This specification also defines a new OAuth 2.0 Authorization Server metadata [@!RFC8414] parameter to publish whether the Authorization Server that the Credential Issuer relies on for authorization supports anonymous Token Requests with the Pre-Authorized Grant Type. It is defined as follows:
 
@@ -1749,25 +1749,25 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         </front>
 </reference>
 
-<reference anchor="OpenID.Core" target="http://openid.net/specs/openid-connect-core-1_0.html">
+<reference anchor="OpenID.Core" target="https://openid.net/specs/openid-connect-core-1_0.html">
   <front>
     <title>OpenID Connect Core 1.0 incorporating errata set 2</title>
-    <author initials="N." surname="Sakimura" fullname="Nat Sakimura">
-      <organization>NRI</organization>
+    <author fullname="Nat Sakimura" initials="N." surname="Sakimura">
+      <organization abbrev="NAT.Consulting (was at NRI)">NAT.Consulting</organization>
     </author>
-    <author initials="J." surname="Bradley" fullname="John Bradley">
-      <organization>Ping Identity</organization>
+    <author fullname="John Bradley" initials="J." surname="Bradley">
+      <organization abbrev="Yubico (was at Ping Identity)">Yubico</organization>
     </author>
-    <author initials="M." surname="Jones" fullname="Michael B. Jones">
-      <organization>Microsoft</organization>
+    <author fullname="Michael B. Jones" initials="M.B." surname="Jones">
+      <organization abbrev="Self-Issued Consulting (was at Microsoft)">Self-Issued Consulting</organization>
     </author>
-    <author initials="B." surname="de Medeiros" fullname="Breno de Medeiros">
-      <organization>Google</organization>
+    <author fullname="Breno de Medeiros" initials="B." surname="de Medeiros">
+      <organization abbrev="Google">Google</organization>
     </author>
-    <author initials="C." surname="Mortimore" fullname="Chuck Mortimore">
-      <organization>Salesforce</organization>
+    <author fullname="Chuck Mortimore" initials="C." surname="Mortimore">
+      <organization abbrev="Disney (was at Salesforce)">Disney</organization>
     </author>
-   <date day="15" month="December" year="2023"/>
+    <date day="15" month="December" year="2023"/>
   </front>
 </reference>
 
@@ -1831,18 +1831,9 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         </front>
 </reference>
 
-<reference anchor="IANA.JOSE.ALGS" target="https://www.iana.org/assignments/jose/jose.xhtml#web-signature-encryption-algorithms">
+<reference anchor="IANA.JOSE" target="https://www.iana.org/assignments/jose">
         <front>
-          <title>JSON Web Signature and Encryption Algorithms</title>
-          <author>
-            <organization>IANA</organization>
-          </author>
-        </front>
-</reference>
-
-<reference anchor="IANA.COSE.ALGS" target="https://www.iana.org/assignments/cose/cose.xhtml#algorithms">
-        <front>
-          <title>COSE Algorithms</title>
+          <title>JSON Object Signing and Encryption (JOSE)</title>
           <author>
             <organization>IANA</organization>
           </author>
@@ -1918,7 +1909,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
           <author fullname="Vladimir Dzhuvinov">
             <organization>Connect2id</organization>
           </author>
-          <date day="4" month="December" year="2023"/>
+          <date day="15" month="September" year="2024"/>
         </front>
 </reference>
 
@@ -1935,6 +1926,16 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
 <reference anchor="IANA.MediaTypes" target="https://www.iana.org/assignments/media-types">
   <front>
     <title>Media Types</title>
+    <author>
+      <organization>IANA</organization>
+    </author>
+    <date/>
+  </front>
+</reference>
+
+<reference anchor="IANA.URI.Schemes" target="https://www.iana.org/assignments/uri-schemes">
+  <front>
+    <title>Uniform Resource Identifier (URI) Schemes</title>
     <author>
       <organization>IANA</organization>
     </author>
@@ -1991,7 +1992,7 @@ When the `format` value is `jwt_vc_json`, the entire Credential Offer, Authoriza
 
 #### Credential Issuer Metadata {#server-metadata-jwt-vc-json}
 
-Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in [@IANA.JOSE.ALGS].
+Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in [@IANA.JOSE].
 
 The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
@@ -2040,6 +2041,10 @@ The value of the `credential` claim in the Credential Response MUST be a JWT. Cr
 The following is a non-normative example of a Credential Response with Credential Format `jwt_vc_json`:
 
 <{{examples/credential_response_jwt_vc_json.txt}}
+
+The following is the dereferenced document for the Issuer HTTP URL identifier that matches the Credential in the above example:
+
+<{{examples/issuer_jwks.json}}
 
 ### VC Secured using Data Integrity, using JSON-LD, with a Proof Suite Requiring Linked Data Canonicalization
 
@@ -2206,7 +2211,7 @@ The Credential Format Identifier is `vc+sd-jwt`.
 
 ### Credential Issuer Metadata {#server-metadata-sd-jwt-vc}
 
-Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in [@IANA.JOSE.ALGS].
+Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in [@IANA.JOSE].
 
 The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
@@ -2256,66 +2261,113 @@ The following is a non-normative example of a Credential Response containing a C
 
 # IANA Considerations
 
-## Sub-Namespace Registration
+## OAuth URI Registry
 
-This specification registers the following URN in the IANA "OAuth URI" registry [@!IANA.OAuth.Parameters] established by [@!RFC6755].
+This specification registers the following URN
+in the IANA "OAuth URI" registry [@IANA.OAuth.Parameters]
+established by [@!RFC6755].
 
-* URN: urn:ietf:params:oauth:grant-type:pre-authorized_code
+### urn:ietf:params:oauth:grant-type:pre-authorized_code
+
+* URN: `urn:ietf:params:oauth:grant-type:pre-authorized_code`
 * Common Name: Pre-Authorized Code
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#token-request) of this specification
+* Reference: (#credential-offer-parameters) of this specification
 
 ## OAuth Parameters Registry
 
-This specification registers the following parameter names in the IANA "OAuth Parameters" registry [@!IANA.OAuth.Parameters] established by [@!RFC6749].
+This specification registers the following OAuth parameters
+in the IANA "OAuth Parameters" registry [@IANA.OAuth.Parameters]
+established by [@!RFC6749].
 
-* Parameter Name: wallet_issuer
+### wallet_issuer
+
+* Name: `wallet_issuer`
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential-authz-request) of this specification
 
-* Parameter Name: user_hint
+### user_hint
+
+* Name: `user_hint`
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential-authz-request) of this specification
 
-* Parameter Name: issuer_state
+### issuer_state
+
+* Name: `issuer_state`
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#credential-authz-request) of this specification
 
-* Parameter Name: pre-authorized_code
+### pre-authorized_code
+
+* Name: `pre-authorized_code`
 * Parameter Usage Location: token request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-request) of this specification
 
-* Parameter Name: tx_code
+### tx_code
+
+* Name: `tx_code`
 * Parameter Usage Location: token request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-request) of this specification
+
+### credential_identifiers
+
+* Name: `credential_identifiers`
+* Parameter Usage Location: token response
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#token-response) of this specification
+
+## OAuth Authorization Server Metadata Registry
+
+This specification registers the following authorization server metadata parameter
+in the IANA "OAuth Authorization Server Metadata" registry [@IANA.OAuth.Parameters]
+established by [@!RFC8414].
+
+### pre-authorized_grant_anonymous_access_supported
+
+* Metadata Name: `pre-authorized_grant_anonymous_access_supported`
+* Metadata Description: Boolean indicating whether Credential Issuer accepts Token Request with Pre-Authorized Code but without `client_id`
+* Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+* Reference: (#as-metadata) of this specification
 
 ## OAuth Dynamic Client Registration Metadata Registry
 
-This specification registers the following client metadata name in the IANA "OAuth Dynamic Client Registration Metadata" registry [@!IANA.OAuth.Parameters] established by [@!RFC7591].
+This specification registers the following client metadata parameter
+in the IANA "OAuth Dynamic Client Registration Metadata" registry [@IANA.OAuth.Parameters]
+established by [@!RFC7591].
 
-* Client Metadata Name: credential_offer_endpoint
+### credential_offer_endpoint
+
+* Client Metadata Name: `credential_offer_endpoint`
 * Client Metadata Description: Credential Offer Endpoint
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#credential-offer-endpoint) of this specification
-
+* Reference: (#client-metadata) of this specification
 
 ## Well-Known URI Registry
 
-This specification registers the following well-known URI in the IANA "Well-Known URI" registry established by [@!RFC5785].
+This specification registers the following well-known URI
+in the IANA "Well-Known URI" registry [@IANA.OAuth.Parameters]
+established by [@!RFC5785].
 
-* URI suffix: openid-credential-issuer
+### .well-known/openid-credential-issuer
+
+* URI suffix: `openid-credential-issuer`
 * Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Specification document: (#credential-issuer-wellknown) of this document
+* Specification document: (#credential-issuer-wellknown) of this specification
 * Related information: (none)
 
 ## Media Types Registry
 
-This specification registers the following media types in the IANA "Media Types" registry [@!IANA.MediaTypes] in the manner described in [@!RFC6838].
+This specification registers the following media type [@RFC2046]
+in the IANA "Media Types" registry [@IANA.MediaTypes]
+in the manner described in [@RFC6838].
+
+### application/openid4vci-proof+jwt
 
 * Type name: `application`
 * Subtype name: `openid4vci-proof+jwt`
@@ -2337,6 +2389,19 @@ This specification registers the following media types in the IANA "Media Types"
 * Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Provisional registration? No
 
+## Uniform Resource Identifier (URI) Schemes Registry
+
+This specification registers the following URI scheme
+in the IANA "Uniform Resource Identifier (URI) Schemes" registry [@IANA.URI.Schemes].
+
+### openid-credential-offer
+
+* URI Scheme: openid-credential-offer
+* Description: Custom scheme used for credential offers
+* Status: Permanent
+* Well-Known URI Support: -
+* Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+* Reference: (#client-metadata-retrieval) of this specification
 
 # Use Cases
 
@@ -2395,8 +2460,9 @@ The technology described in this specification was made available from contribut
    * credential response always returns an array when not returning a transaction_id with the option for additional meta-data
    * deferred credential response always returns an array (same as credential response)
    * notification_id is now used for an issuance flow that can contain more than one credential
-   * Fixed #375: Enabled non-breaking extensibility.
-   * removes `c_nonce` and `c_nonce_expires_in` from the Credential Response
+   * Fixed #375: Enabled non-breaking extensibility
+   * removes `c_nonce` and `c_nonce_expires_in` from the Credential Error Response
+   * Fixed #239: Completed IANA Considerations section
 
    -14
    
