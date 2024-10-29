@@ -2344,7 +2344,7 @@ The key attestation may use `x5c`, `kid` or `trust_chain` (as defined in (#jwt-p
   * `exp`: REQUIRED (number). Integer for the time at which the key attestation and the key(s) it is attesting expire, using the syntax defined in [@!RFC7519].
   * `attested_keys` : REQUIRED. Array of attested keys from the same key storage component using the syntax of JWK as defined in [@!RFC7517].
   * `key_storage_type` : OPTIONAL. Case sensitive string that asserts the key storage component of the keys attested in the `attested_keys` parameter. This specification defines initial values in (#keyattestation-keytypes).
-  * `user_authentication` : OPTIONAL. Array of case sensitive strings that assert the authentication methods allowed to access the private keys from the `attested_keys` parameter. This specification defines initial values in (#keyattestation-auth).
+  * `user_authentication` : OPTIONAL. Array of case sensitive strings that assert the authentication methods allowed to access the private keys from the `attested_keys` parameter. The values provided within this array are interpreted as a logical OR. This specification defines initial values in (#keyattestation-auth).
   * `apr` : OPTIONAL. Array of case sensitive strings that assert attested resistance to specified attack potentials for the given keys. The string values contain URNs that identify the given attack potentials.
   * `nonce`: OPTIONAL. String that represents a nonce provided by the Issuer to prove that a key attestation was freshly generated.
   * `status`: OPTIONAL. JSON Object representing the supported revocation check mechanisms, such as the one defined in [@!I-D.ietf-oauth-status-list]
