@@ -2269,7 +2269,7 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential Format.
 
-* `vct`: REQUIRED when the `format` parameter is present in the Credential Request. It MUST NOT be used otherwise. It is a string as defined in (#server-metadata-sd-jwt-vc).
+* `vct`: REQUIRED when the `format` parameter is present in the Credential Request. It MUST NOT be used otherwise. It is a string as defined in (#server-metadata-sd-jwt-vc). This claim contains the type value of the Credential that the Wallet requests the Credential Issuer to issue.
 
 The following is a non-normative example of a Credential Request with Credential Format `vc+sd-jwt`.
 
