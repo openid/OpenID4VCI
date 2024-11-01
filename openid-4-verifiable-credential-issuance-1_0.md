@@ -2217,12 +2217,11 @@ The following is a non-normative example of an authorization details object with
 
 The following additional parameters are defined for Credential Requests and this Credential Format.  
 
-* `doctype`: REQUIRED when the `format` parameter is present in the Credential Request. It MUST NOT be used otherwise. It is a string as defined in (#server-metadata-mso-mdoc). The Credential issued by the Credential Issuer MUST contain at least the values listed in this claim.
-* `claims`: OPTIONAL. Object as defined in (#server-metadata-mso-mdoc).
+* `doctype`: REQUIRED when the `format` parameter is present in the Credential Request. It MUST NOT be used otherwise. It is a string as defined in (#server-metadata-mso-mdoc).
 
 The following is a non-normative example of a Credential Request with Credential Format `mso_mdoc`:
 
-<{{examples/credential_request_iso_mdl_with_claims.json}}
+<{{examples/credential_request_iso_mdl.json}}
 
 ### Credential Response
 
@@ -2276,7 +2275,6 @@ The following is a non-normative example of an authorization details object with
 The following additional parameters are defined for Credential Requests and this Credential Format.
 
 * `vct`: REQUIRED when the `format` parameter is present in the Credential Request. It MUST NOT be used otherwise. It is a string as defined in (#server-metadata-sd-jwt-vc). This claim contains the type value of the Credential that the Wallet requests the Credential Issuer to issue.
-* `claims`: OPTIONAL. An object as defined in (#server-metadata-sd-jwt-vc).
 
 The following is a non-normative example of a Credential Request with Credential Format `vc+sd-jwt`.
 
@@ -2488,6 +2486,7 @@ The technology described in this specification was made available from contribut
 
    -15
 
+   * remove `claims` parameter from ISO mdoc and SD-JWT VC Credential Request
    * credential response always returns an array when not returning a transaction_id with the option for additional meta-data
    * deferred credential response always returns an array (same as credential response)
    * notification_id is now used for an issuance flow that can contain more than one credential
