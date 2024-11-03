@@ -2468,6 +2468,8 @@ The technology described in this specification was made available from contribut
 
    -15
 
+   * add `credential_configuration_id` to Credential Request
+   * remove `format` and format-specific parameters from Credential Request
    * remove `claims` parameter from ISO mdoc and SD-JWT VC Credential Request
    * credential response always returns an array when not returning a transaction_id with the option for additional meta-data
    * deferred credential response always returns an array (same as credential response)
