@@ -893,7 +893,7 @@ The JWT MUST contain the following elements:
 
 The Credential Issuer MUST validate that the JWT used as a proof is actually signed by a key identified in the JOSE Header.
 
-If an `attestation` is provided and successfully validated by the Credential Issuer, it SHOULD return a Credential for each of the keys provided in the `attested_keys` claim of the attestation.
+If an `attestation` is provided, successfully validated by the Credential Issuer, and the JWT used as proof was signed by one of the attested keys, the Credential Issuer SHOULD return a Credential for each of the keys provided in the `attested_keys` claim of the attestation.
 
 Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@IANA.JOSE].
 
@@ -2319,7 +2319,7 @@ The following is a non-normative example of a Credential Response containing a C
 
 A key attestation defined by this specification is an interoperable, verifiable statement that provides evidence of authenticity and security properties of a key and its storage component to the Credential Issuer. Keys can be stored in various key storage components, which differ in their ability to protect the private key against extraction and duplication, as well as in the methods used for End-User authentication to unlock key operations. These key storage components may be software-based or hardware-based, and can be located on the same device as the Wallet, on external security tokens, or on remote services that enable cryptographic key operations. Key attestations are issued by the Wallet's key storage component itself or by the Wallet Provider. When the Wallet Provider creates the key attestation, it needs to verify the authenticity of the claims it is making about the keys (e.g., by using the platform-specific key attestations).
 
-A Wallet MAY provide key attestations to inform the Credential Issuer about the properties of the provided cryptographic public keys, e.g. for proof types sent in the Credential Request. Credential Issuers may want to evaluate these key attestations to determine whether the keys meet their own security requirements, based on the trust framework in use, regulatory requirements, laws, or internal design decisions. A Credential Issuer SHOULD communicate this requirement to evaluate key attestations through its metadata or using some sort of out-of-band mechanism.
+A Wallet MAY provide key attestations to inform the Credential Issuer about the properties of the provided cryptographic public keys, e.g. for proof types sent in the Credential Request. Credential Issuers may want to evaluate these key attestations to determine whether the keys meet their own security requirements, based on the trust framework in use, regulatory requirements, laws, or internal design decisions. A Credential Issuer MUST communicate this requirement to evaluate key attestations through its metadata or using some sort of out-of-band mechanism.
 
 Since key attestations may be used for different Credential Issuers from different trust frameworks and varying in their requirements, it is necessary to use a common approach to facilitate interoperability. Therefore, key attestations SHOULD use a common format, allowing Credential Issuers to develop consistent evaluation processes, reducing complexity and potential errors. Common formats make it easy for Credential Issuers to demonstrate compliance with regulatory requirements across different jurisdictions and facilitate the development of shared best practices and security benchmarks.
 
@@ -2341,7 +2341,7 @@ The key attestation may use `x5c`, `kid` or `trust_chain` (as defined in (#jwt-p
 
 * in the JWT body,
   * `iat`: REQUIRED (number). Integer for the time at which the key attestation was issued using the syntax defined in [@!RFC7519].
-  * `exp`: REQUIRED (number). Integer for the time at which the key attestation and the key(s) it is attesting expire, using the syntax defined in [@!RFC7519].
+  * `exp`: OPTIONAL (number). Integer for the time at which the key attestation and the key(s) it is attesting expire, using the syntax defined in [@!RFC7519]. MUST be present if the attestation is used with the JWT proof type.
   * `attested_keys` : REQUIRED. Array of attested keys from the same key storage component using the syntax of JWK as defined in [@!RFC7517].
   * `key_storage_type` : OPTIONAL. Case sensitive string that asserts the key storage component of the keys attested in the `attested_keys` parameter. This specification defines initial values in (#keyattestation-keytypes).
   * `user_authentication` : OPTIONAL. Array of case sensitive strings that assert the authentication methods allowed to access the private keys from the `attested_keys` parameter. The values provided within this array are interpreted as a logical OR. This specification defines initial values in (#keyattestation-auth).
@@ -2349,7 +2349,7 @@ The key attestation may use `x5c`, `kid` or `trust_chain` (as defined in (#jwt-p
   * `nonce`: OPTIONAL. String that represents a nonce provided by the Issuer to prove that a key attestation was freshly generated.
   * `status`: OPTIONAL. JSON Object representing the supported revocation check mechanisms, such as the one defined in [@!I-D.ietf-oauth-status-list]
 
-The Credential Issuer MUST validate that the JWT used as a proof is actually signed by a key identified in the JOSE Header.
+If used with the `jwt` proof type, the Credential Issuer MUST validate that the JWT used as a proof is signed by a key contained in the attestation in the JOSE Header.
 
 This is an example of a Key Attestation:
 
@@ -2357,7 +2357,7 @@ This is an example of a Key Attestation:
 {
   "typ": "keyattestation+jwt",
   "alg": "ES256",
-  "kid": "1"
+  "x5c": ["MIIDQjCCA..."]
 }
 .
 {
