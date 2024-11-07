@@ -2610,10 +2610,10 @@ The technology described in this specification was made available from contribut
    * notification_id is now used for an issuance flow that can contain more than one credential
    * Fixed #375: Enabled non-breaking extensibility.
    * Fixed #239: Completed IANA Considerations section.
+   * add key attestation as additional information in a proof of possesion and new proof type
 
    -14
    
-   * add key attestation as additional information in a proof of possesion and new proof type
    * removes CWT proof type
    * removes the Batch Credential Endpoint
    * clarify that authorization_details can be present in the Token Request for Pre-Authorized Code Flow when multiple Credential Configurations are present in the Credential Offer
