@@ -2343,9 +2343,9 @@ The key attestation may use `x5c`, `kid` or `trust_chain` (as defined in (#jwt-p
   * `iat`: REQUIRED (number). Integer for the time at which the key attestation was issued using the syntax defined in [@!RFC7519].
   * `exp`: OPTIONAL (number). Integer for the time at which the key attestation and the key(s) it is attesting expire, using the syntax defined in [@!RFC7519]. MUST be present if the attestation is used with the JWT proof type.
   * `attested_keys` : REQUIRED. Array of attested keys from the same key storage component using the syntax of JWK as defined in [@!RFC7517].
-  * `key_storage_type` : OPTIONAL. Case sensitive string that asserts the key storage component of the keys attested in the `attested_keys` parameter. This specification defines initial values in (#keyattestation-keytypes).
-  * `user_authentication` : OPTIONAL. Array of case sensitive strings that assert the authentication methods allowed to access the private keys from the `attested_keys` parameter. The values provided within this array are interpreted as a logical OR. This specification defines initial values in (#keyattestation-auth).
-  * `apr` : OPTIONAL. Array of case sensitive strings that assert attested resistance to specified attack potentials for the given keys. The string values contain URNs that identify the given attack potentials.
+  * `key_storage_type` : OPTIONAL. Case sensitive string that asserts the attack potential resistance of the key storage component and its keys attested in the `attested_keys` parameter. This specification defines initial values in (#keyattestation-apr).
+  * `user_authentication` : OPTIONAL. Array of case sensitive strings that assert the attack potential resistance of the user authentication methods allowed to access the private keys from the `attested_keys` parameter. This specification defines initial values in (#keyattestation-apr).
+  * `certification` : OPTIONAL. A String that contains a URL that links to the certification of the key storage component.
   * `nonce`: OPTIONAL. String that represents a nonce provided by the Issuer to prove that a key attestation was freshly generated.
   * `status`: OPTIONAL. JSON Object representing the supported revocation check mechanisms, such as the one defined in [@!I-D.ietf-oauth-status-list]
 
@@ -2364,9 +2364,8 @@ This is an example of a Key Attestation:
   "iss": "<identifier of the issuer of this key attestation>",
   "iat": 1516247022,
   "exp": 1541493724,
-  "key_storage_type": "strong_box",
-  "user_authentication": [ "system_pin", "system_biometry" ],
-  "apr" : [ "https://trust-list.eu/apr/high" ],
+  "key_storage_type": [ "iso_18045_moderate" ],
+  "user_authentication": [ "iso_18045_moderate" ],
   "attested_keys": [
     {
       "kty": "EC",
@@ -2378,34 +2377,18 @@ This is an example of a Key Attestation:
 }
 ```
 
-## Key Types {#keyattestation-keytypes}
-
-This specification defines the following values for `key_storage_type`:
-
-* `software`: It MUST be used when the Wallet uses software-based key management.
-* `tee`: It MUST be used when the Wallet uses the Trusted Execution Environment for key management.
-* `secure_enclave`: It MUST be used when the Wallet uses the Secure Enclave for key management.
-* `strong_box`: It MUST be used when the Wallet uses the Strongbox for key management.
-* `secure_element`: It MUST be used when the Wallet uses a Secure Element for key management.
-* `external`: It MUST be used when the Wallet uses a local external hardware token for key management.
-* `hsm`: It MUST be used when the Wallet uses Hardware Security Module (HSM) for key management.
-* `remote_hsm`: It MUST be used when the Wallet uses Hardware Security Module (HSM) that is not directly connected to the Wallet for key management.
-
-Specifications that extend this list MUST choose collision-resistant values.
-
-## User Authentication Types {#keyattestation-auth}
-
-This specification defines the following values for `user_authentication`:
-
-* `system_biometry`: It MUST be used when the key usage is authorized by the key storage component itself or the associated operating system using a biometric factor, such as the one provided by mobile devices.
-* `system_pin`: It MUST be used when the key usage is authorized by the key storage component itself or the associated operating system using personal identification number (PIN).
-* `remote_biometry`: It MUST be used when the key usage is authorized by a remote system using a biometric factor.
-* `remote_pin`: It MUST be used when the key usage is authorized by a remote system using a PIN.
-Specifications that extend this list MUST choose collision-resistant values.
-
 ## Attack Potential Resistance {#keyattestation-apr}
 
-This specification does not define any specific vaues for `apr`. Ecosystems may define their own values, any URN is a valid value. It is RECOMMENDED that the value is a URL that gives further information about the attack potential resistance and possible relations to level of assurances.
+This specification defines the following values for `key_storage` and `user_authentication`:
+
+* `iso_18045_high`: It MUST be used when key storage or user authentication is resistent to attack with attack potential "High", equivalent to VAN.5 according to ISO 18045.
+* `iso_18045_moderate`: It MUST be used when key storage or user authentication is resistent to attack with attack potential "Moderate", equivalent to VAN.4 according to ISO 18045.
+* `iso_18045_enhanced-basic`: It MUST be used when key storage or user authentication is resistent to attack with attack potential "Enhanced-Basic", equivalent to VAN.3 according to ISO 18045.
+* `iso_18045_basic`: It MUST be used when key storage or user authentication is resistent to attack with attack potential "Basic", equivalent to VAN.2 according to ISO 18045.
+
+Specifications that extend this list MUST choose collision-resistant values.
+
+Ecosystems may define their own values. If the value does not map to a well-known specification, it is RECOMMENDED that the value is a URL that gives further information about the attack potential resistance and possible relations to level of assurances.
 
 # IANA Considerations
 
