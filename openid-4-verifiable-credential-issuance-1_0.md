@@ -2327,7 +2327,7 @@ There are two ways to convey key attestations during Credential issuance:
 - The Wallet uses the `jwt` proof type in the Credential Request to create a proof of possession of the key and adds the key attestation in the JOSE header as specified in (#jwt-proof-type).
 - The Wallet uses the `attestation` proof type in the Credential Request with the key attestation without a proof of possession of the key itself as specified in (#attestation-proof-type).
 
-The latter may avoid unnecessary user interaction during the Credential issuance, as the key itself is not performing a signature operation.
+The latter may avoid unnecessary End-User interaction during the Credential issuance, as the key itself is not performing a signature operation.
 
 ## Key Attestation in JWT format {#keyattestation-jwt}
 
