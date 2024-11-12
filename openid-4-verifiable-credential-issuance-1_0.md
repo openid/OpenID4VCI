@@ -2527,6 +2527,7 @@ The technology described in this specification was made available from contribut
 
    -15
 
+   * add section on wallet attestations
    * credential response always returns an array when not returning a transaction_id with the option for additional meta-data
    * deferred credential response always returns an array (same as credential response)
    * notification_id is now used for an issuance flow that can contain more than one credential
