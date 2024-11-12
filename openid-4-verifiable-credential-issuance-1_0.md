@@ -2354,7 +2354,7 @@ This specification defines the following values for `key_storage` and `user_auth
 
 Specifications that extend this list MUST choose collision-resistant values.
 
-Ecosystems may define their own values. If the value does not map to a well-known specification, it is RECOMMENDED that the value is a URL that gives further information about the attack potential resistance and possible relations to level of assurances.
+When ISO 18045 is not used, ecosystems may define their own values. If the value does not map to a well-known specification, it is RECOMMENDED that the value is a URL that gives further information about the attack potential resistance and possible relations to level of assurances.
 
 # IANA Considerations
 
