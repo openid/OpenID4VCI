@@ -2263,8 +2263,8 @@ There are two ways to convey wallet attestations during Credential issuance usin
 
 The Wallet Attestation format follows Section 5.1 "Client Attestation JWT" of Attestation-Based Client Authentication. The client_id in the `sub` claim is expected to be the same for every Wallet instance of a Wallet Provider. The Wallet Attestation additionally includes the following JWT Claims:
 
-* `wallet_name`: REQUIRED. A String containing a human-readable name of the Wallet.
-* `wallet_link`: REQUIRED. A String containing a URL to get further information about the Wallet and the Wallet Provider.
+* `wallet_name`: REQUIRED. String containing a human-readable name of the Wallet.
+* `wallet_link`: REQUIRED. String containing a URL to get further information about the Wallet and the Wallet Provider.
 
 The following is a non-normative example of a Wallet Attestation:
 
