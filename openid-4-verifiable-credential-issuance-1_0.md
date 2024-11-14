@@ -2251,17 +2251,17 @@ The following is a non-normative example of a Credential Response containing a C
 
 # Wallet Attestations {#walletattestation}
 
-The Wallet Attestation defined by this specification is a verifiable statement that confirms the authenticity and security properties of a Wallet to the Authorization Server. Wallets can have different architectures, such as app-based with a backend service or web-based running entirely in a browser. Wallet attestations are architecture-independent and require a backend service from the Wallet Provider. When creating a Wallet attestation, the Wallet Provider MUST verify the Client's authenticity. App attestations provided by operating systems, like iOS's DeviceCheck or Android's Play Integrity, enable the Wallet Provider's backend to confirm communication with a legitimate instance. These mechanisms help validate the Wallet's internal integrity.
+The Wallet Attestation defined by this specification is a verifiable statement that confirms the authenticity and security properties of a Wallet to the Authorization Server. Wallets can have different architectures, such as app-based with a backend service or web-based running entirely in a browser. Wallet attestations are architecture-independent and require a backend service from the Wallet Provider. When creating a Wallet Attestation, the Wallet Provider MUST verify the Client's authenticity. Mobile application attestations provided by operating systems, like iOS's DeviceCheck or Android's Play Integrity, enable the Wallet Provider's backend to confirm communication with a legitimate instance. These mechanisms help validate the Wallet's internal integrity.
 
-A Wallet MAY provide wallet attestations to inform the Authorization Server about the authenticity of the client and its `client_id`. Authorization Server may want to evaluate these wallet attestations to determine whether they communciate to a Wallet that meets its security, compliance or governance requirements, based on the trust framework in use, regulatory requirements, laws, or internal design decisions. A Credential Issuer SHOULD communicate this requirement to evaluate wallet attestations through its metadata using `token_endpoint_auth_method` or using some sort of out-of-band mechanism.
+A Wallet MAY provide Wallet Attestations to inform the Authorization Server about the authenticity of the Client and its `client_id`. Authorization Server may want to evaluate these Wallet Attestations to determine whether they communicate to a Wallet that meets its security, compliance or governance requirements, based on the trust framework in use, regulatory requirements, laws, or internal design decisions. A Credential Issuer SHOULD communicate this requirement to evaluate Wallet Attestations through its metadata using `token_endpoint_auth_method` or using some sort of out-of-band mechanism.
 
-Since wallet attestations may be used for different Authorization Server from different trust frameworks and varying in their requirements, it is necessary to use a common approach to facilitate interoperability. Therefore, wallet attestations SHOULD use a common format, allowing Credential Issuers to develop consistent evaluation processes, reducing complexity and potential errors. Common formats make it easy for Credential Issuers to demonstrate compliance with regulatory requirements across different jurisdictions and facilitate the development of shared best practices and security benchmarks.
+Since Wallet Attestations may be used for different Authorization Server from different trust frameworks and varying in their requirements, it is necessary to use a common approach to facilitate interoperability. Therefore, Wallet Attestations SHOULD use a common format, allowing Credential Issuers to develop consistent evaluation processes, reducing complexity and potential errors. Common formats make it easy for Credential Issuers to demonstrate compliance with regulatory requirements across different jurisdictions and facilitate the development of shared best practices and security benchmarks.
 
-There are two ways to convey wallet attestations during Credential issuance using the header-based syntax of Attestation-Based Client Authentication:
+There are two ways to convey Wallet Attestations during Credential issuance using the header-based syntax of Attestation-Based Client Authentication:
 - The Wallet sends it in the Pushed Authorization Request
 - The Wallet sends it in the Token Request
 
-The Wallet Attestation format follows Section 5.1 "Client Attestation JWT" of Attestation-Based Client Authentication. The client_id in the `sub` claim is expected to be the same for every Wallet instance of a Wallet Provider. The Wallet Attestation additionally includes the following JWT Claims:
+The Wallet Attestation format follows Section 5.1 "Client Attestation JWT" of Attestation-Based Client Authentication. The Wallet Attestation additionally includes the following JWT Claims:
 
 * `wallet_name`: REQUIRED. String containing a human-readable name of the Wallet.
 * `wallet_link`: REQUIRED. String containing a URL to get further information about the Wallet and the Wallet Provider.
@@ -2494,7 +2494,7 @@ The technology described in this specification was made available from contribut
 
    -15
 
-   * add section on wallet attestations
+   * add section on Wallet Attestations
    * remove `claims` parameter from ISO mdoc and SD-JWT VC Credential Request
    * credential response always returns an array when not returning a transaction_id with the option for additional meta-data
    * deferred credential response always returns an array (same as credential response)
