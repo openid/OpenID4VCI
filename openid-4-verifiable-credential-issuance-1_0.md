@@ -637,7 +637,7 @@ grant_type=authorization_code
 &client_assertion=eyJhbGciOiJSU...
 ```
 
-### Request Credential using authorization_details Parameter
+### Request Credential Issuance using `authorization_details` Parameter
 
 Credential Issuers MAY support requesting authorization to issue a Credential using the `authorization_details` parameter. This is particularly useful, if the Credential Issuer offered multiple Credential Configurations in the Credential Offer of a Pre-Authorized Code Flow. 
 
@@ -665,7 +665,7 @@ The Authorization Server might decide to authorize issuance of multiple instance
 
 In addition to the response parameters defined in [@!RFC6749], the Authorization Server MAY return the following parameters:
 
-* `authorization_details`: REQUIRED when the `authorization_details` parameter is used to request issuance of a certain Credential Configuration as defined in (#authorization-details). The Authorization Server may also support this when issuance was requested using `scope`. It is an array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
+* `authorization_details`: REQUIRED when the `authorization_details` parameter is used to request issuance of a Credential of a certain Credential Configuration as defined in (#authorization-details). OPTIONAL when `scope` parameter was used to request issuance of a Credential of a certain Credential Configuration. It is an array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
   * `credential_identifiers`: REQUIRED. Array of strings, each uniquely identifying a Credential Dataset that can be issued using the Access Token returned in this response. Each of these Credential Datasets corresponds to the same Credential Configuration in the `credential_configurations_supported` parameter of the Credential Issuer metadata. The Wallet MUST use these identifiers together with an Access Token in subsequent Credential Requests.
 
 Additional Token Response parameters MAY be defined and used,
@@ -799,7 +799,7 @@ For cryptographic binding, the Client has the following options defined in (#cre
 A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
 * `credential_identifier`: REQUIRED when an Authorization Details of type `openid_credential` was returned from the Token Response. It MUST NOT be used otherwise. A string that identifies a Credential Dataset that is requested for issuance. When this parameter is used, the `credential_configuration_id` MUST NOT be present.
-* `credential_configuration_id`: REQUIRED if an Authorization Details of type `openid_credential` was not returned from the Token Response. It MUST NOT be used otherwise. A string that identifies one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The value of this parameter MUST match with one of those in the Credential Issuer metadata. When this parameter is used, the `credential_identifier` MUST NOT be present.
+* `credential_configuration_id`: REQUIRED if an `authorization_details` parameter of type `openid_credential` was not returned from the Token Response. It MUST NOT be used otherwise. String that uniquely identifies one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The corresponding object in the `credential_configurations_supported` map MUST contain one of the value(s) used in the `scope` parameter in the Authorization Request. When this parameter is used, the `credential_identifier` MUST NOT be present.
 * `proof`: OPTIONAL. Object providing a single proof of possession of the cryptographic key material to which the issued Credential instance will be bound to. `proof` parameter MUST NOT be present if `proofs` parameter is used.  The `proof` object MUST contain the following:
     * `proof_type`: REQUIRED. String specifying the key proof type. The value set for this parameter determines the additional parameters in the key proof object and their corresponding processing rules. The key proof types outlined in this specification are detailed in (#proof-types).
 * `proofs`: OPTIONAL. Object providing one or more proof of possessions of the cryptographic key material to which the issued Credential instances will be bound to. The `proofs` parameter MUST NOT be present if `proof` parameter is used. `proofs` object contains exactly one parameter named as the proof type in (#proof-types), the value set for this parameter is an array containing parameters as defined by the corresponding proof type.
