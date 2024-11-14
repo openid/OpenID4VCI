@@ -186,6 +186,26 @@ The issuance can have multiple characteristics that can be combined depending on
 
 The following subsections illustrate some of the authorization flows supported by this specification.
 
+### Identifying Credential(s) Being Issued throughout the Issuance Flow {#identifying_credential}
+
+Below is the summary of how Credential(s) that are being issued are identified throughout the issuance flow:
+
+- In the Credential Offer, the Credential Issuer identifies offered Credential(s)
+  using `credential_configuration_ids` parameter.
+- When the Wallet uses Authorization Details in the Authorization Request, the Wallet uses
+  `credential_configuration_id` parameter(s) or `format` and other Credential Format
+  specific parameter to identify requested Credential(s). In which case,
+  the Authorization Server MUST return `credential_identifiers` parameter in the Token Response,
+  and the Wallet uses those `credential_identifier` values in the Credential Request.
+- When the Wallet uses `scope` parameter in the Authorization Request, the `scope` value(s)
+  are used to identify requested Credential(s). In this case, Authorization Server has two two options.
+  If the Authorization Server supports returning `credential_identifiers` parameter
+  in the Token Response, it MAY do so, in which case the Wallet uses those `credential_identifier` values
+  in the Credential Request. If the Authorization Server does not support returning
+  `credential_identifiers` parameter in the Token Response, the Wallet uses `credential_configuration_id` parameter
+  in the Credential Request.
+
+
 ## Authorization Code Flow {#authorization-code-flow}
 
 The Authorization Code Flow uses the grant type `authorization_code` as defined in [@!RFC6749] to issue Access Tokens.
@@ -441,6 +461,8 @@ An Authorization Request is an OAuth 2.0 Authorization Request as defined in Sec
 
 There are two possible methods for requesting the issuance of a specific Credential type in an Authorization Request. The first method involves using the `authorization_details` request parameter, as defined in [@!RFC9396], containing one or more authorization details of type `openid_credential`, as specified in (#authorization-details). The second method utilizes scopes, as outlined in (#credential-request-using-type-specific-scope).
 
+See (#identifying_credential) for the summary of the options how requested Credential(s) are identified throughout the Issuance flow.
+
 ### Using Authorization Details Parameter {#authorization-details}
 
 Credential Issuers MAY support requesting authorization to issue a Credential using the `authorization_details` parameter.
@@ -666,7 +688,8 @@ The Authorization Server might decide to authorize issuance of multiple instance
 In addition to the response parameters defined in [@!RFC6749], the Authorization Server MAY return the following parameters:
 
 * `authorization_details`: REQUIRED when the `authorization_details` parameter is used to request issuance of a Credential of a certain Credential Configuration as defined in (#authorization-details). OPTIONAL when `scope` parameter was used to request issuance of a Credential of a certain Credential Configuration. It is an array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
-  * `credential_identifiers`: REQUIRED. Array of strings, each uniquely identifying a Credential Dataset that can be issued using the Access Token returned in this response. Each of these Credential Datasets corresponds to the same Credential Configuration in the `credential_configurations_supported` parameter of the Credential Issuer metadata. The Wallet MUST use these identifiers together with an Access Token in subsequent Credential Requests.
+  * `credential_identifiers`: REQUIRED. Array of strings, each uniquely identifying a Credential Dataset that can be issued using the Access Token returned in this response. Each of these Credential Datasets corresponds to the same Credential Configuration in the `credential_configurations_supported` parameter of the Credential Issuer metadata. The Wallet MUST use these identifiers together with an Access Token in subsequent Credential Requests. See (#identifying_credential) for the summary of the options how requested Credential(s) are identified throughout the Issuance flow.
+
 
 Additional Token Response parameters MAY be defined and used,
 as described in [@!RFC6749].
@@ -807,6 +830,8 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
     * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
     * `alg`: REQUIRED. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] for encrypting Credential Responses.
     * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
+
+See (#identifying_credential) for the summary of the options how requested Credential(s) are identified throughout the Issuance flow.
 
 The `proof_type` parameter is an extension point that enables the use of different types of proofs for different cryptographic schemes.
 
@@ -2438,7 +2463,7 @@ The technology described in this specification was made available from contribut
    -15
 
    * add an option to return credential_identifiers in the Token Response and use them in the Credential Request, when scopes are used in the Authorization Request.
-      * add an option to use `credential_configuration_id` in the Credential Request when scopes were used in the authorization request and no credential_identifiers returned in the token response
+   * add an option to use `credential_configuration_id` in the Credential Request when scopes were used in the authorization request and no credential_identifiers returned in the token response
    * remove `format` and format-specific parameters from Credential Request
    * remove `claims` parameter from ISO mdoc and SD-JWT VC Credential Request
    * credential response always returns an array when not returning a transaction_id with the option for additional meta-data
