@@ -195,11 +195,12 @@ Below is the summary of how Credential(s) that are being issued are identified t
 - When the Wallet uses Authorization Details in the Authorization Request, the Wallet uses
   `credential_configuration_id` parameter(s) or `format` and other Credential Format
   specific parameter to identify requested Credential(s). In which case,
-  the Authorization Server MUST return `credential_identifiers` parameter in the Token Response,
+  the Authorization Server MUST return `credential_identifiers` parameter
+  in the `authorization_details` parameter in theToken Response,
   and the Wallet uses those `credential_identifier` values in the Credential Request.
 - When the Wallet uses `scope` parameter in the Authorization Request, the `scope` value(s)
   are used to identify requested Credential(s). In this case, Authorization Server has two two options.
-  If the Authorization Server supports returning `credential_identifiers` parameter
+  If the Authorization Server supports returning top-level`credential_identifiers` parameter
   in the Token Response, it MAY do so, in which case the Wallet uses those `credential_identifier` values
   in the Credential Request. If the Authorization Server does not support returning
   `credential_identifiers` parameter in the Token Response, the Wallet uses `credential_configuration_id` parameter
@@ -687,9 +688,11 @@ The Authorization Server might decide to authorize issuance of multiple instance
 
 In addition to the response parameters defined in [@!RFC6749], the Authorization Server MAY return the following parameters:
 
-* `authorization_details`: REQUIRED when the `authorization_details` parameter is used to request issuance of a Credential of a certain Credential Configuration as defined in (#authorization-details). OPTIONAL when `scope` parameter was used to request issuance of a Credential of a certain Credential Configuration. It is an array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
-  * `credential_identifiers`: REQUIRED. Array of strings, each uniquely identifying a Credential Dataset that can be issued using the Access Token returned in this response. Each of these Credential Datasets corresponds to the same Credential Configuration in the `credential_configurations_supported` parameter of the Credential Issuer metadata. The Wallet MUST use these identifiers together with an Access Token in subsequent Credential Requests. See (#identifying_credential) for the summary of the options how requested Credential(s) are identified throughout the Issuance flow.
+* `authorization_details`: REQUIRED when the `authorization_details` parameter is used to request issuance of a Credential of a certain Credential Configuration as defined in (#authorization-details). It is an array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
+  * `credential_identifiers`: REQUIRED. Array of strings, each uniquely identifying a Credential Dataset that can be issued using the Access Token returned in this response. Each of these Credential Datasets corresponds to the same Credential Configuration in the `credential_configurations_supported` parameter of the Credential Issuer metadata. The Wallet MUST use these identifiers together with an Access Token in subsequent Credential Requests.
+* `credential_identifiers`: OPTIONAL when `scope` parameter was used to request issuance of a Credential of a certain Credential Configuration. Array of strings as defined for the `credential_identifiers` parameter in the `authorization_details` parameter.
 
+See (#identifying_credential) for the summary of the options how requested Credential(s) are identified throughout the Issuance flow.
 
 Additional Token Response parameters MAY be defined and used,
 as described in [@!RFC6749].
