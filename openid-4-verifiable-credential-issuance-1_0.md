@@ -2437,7 +2437,8 @@ The technology described in this specification was made available from contribut
 
    -15
 
-   * add `credential_configuration_id` to Credential Request
+   * add an option to return credential_identifiers in the Token Response and use them in the Credential Request, when scopes are used in the Authorization Request.
+      * add an option to use `credential_configuration_id` in the Credential Request when scopes were used in the authorization request and no credential_identifiers returned in the token response
    * remove `format` and format-specific parameters from Credential Request
    * remove `claims` parameter from ISO mdoc and SD-JWT VC Credential Request
    * credential response always returns an array when not returning a transaction_id with the option for additional meta-data
