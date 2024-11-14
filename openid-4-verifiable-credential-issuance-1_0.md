@@ -893,7 +893,7 @@ The JWT MUST contain the following elements:
 
 The Credential Issuer MUST validate that the JWT used as a proof is actually signed by a key identified in the JOSE Header.
 
-The Credential Issuer SHOULD return a Credential for each of the keys provided in the `attested_keys` claim of the attestation.
+The Credential Issuer SHOULD issue a Credential for each cryptographic public key specified in the `attested_keys` claim within the `key_attestation` parameter.
 
 Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@IANA.JOSE].
 
@@ -1008,7 +1008,7 @@ Below is a non-normative example of a `proof` parameter (with line breaks within
 }
 ```
 
-The Credential Issuer SHOULD return a Credential for each of the keys provided in the `attested_keys` claim of the `attestation`.
+The Credential Issuer SHOULD issue a Credential for each cryptographic public key specified in the `attested_keys` claim within the `key_attestation` parameter.
 
 ### Verifying Proof {#verifying-key-proof}
 
@@ -1386,7 +1386,7 @@ This specification defines the following Credential Issuer Metadata parameters:
   * `credential_signing_alg_values_supported`: OPTIONAL. Array of case sensitive strings that identify the algorithms that the Issuer uses to sign the issued Credential. Algorithm names used are determined by the Credential Format and are defined in (#format-profiles).
   * `proof_types_supported`: OPTIONAL. Object that describes specifics of the key proof(s) that the Credential Issuer supports. This object contains a list of name/value pairs, where each name is a unique identifier of the supported proof type(s). Valid values are defined in (#proof-types), other values MAY be used. This identifier is also used by the Wallet in the Credential Request as defined in (#credential-request). The value in the name/value pair is an object that contains metadata about the key proof and contains the following parameters defined by this specification:
     * `proof_signing_alg_values_supported`: REQUIRED. Array of case sensitive strings that identify the algorithms that the Issuer supports for this proof type. The Wallet uses one of them to sign the proof. Algorithm names used are determined by the key proof type and are defined in (#proof-types).
-    * `key_attestations_required`: OPTIONAL. Object that describes the requirement for key attestations as described in (#keyattestation), which the Credential Issuer expects the Wallet to send within the proof of the Credential Request. If the Credential Issuer does not expect a key attestation, this object is absent. If neither of the `key_storage_type` and `user_authentication` parameters are present, this object may be empty, indicating that a key attestation without further constraints is required.
+    * `key_attestations_required`: OPTIONAL. Object that describes the requirement for key attestations as described in (#keyattestation), which the Credential Issuer expects the Wallet to send within the proof of the Credential Request. If the Credential Issuer does not require a key attestation, this parameter MUST NOT be present in the metadata. If both `key_storage_type` and `user_authentication` parameters are absent, the `key_attestations_required` parameter may be empty, indicating a key attestation is needed without additional constraints.
       * `key_storage_type`: OPTIONAL. Array defining values specified in (#keyattestation-apr) accepted by the Credential Issuer.
       * `user_authentication`: OPTIONAL. Array defining values specified in (#keyattestation-apr) accepted by the Credential Issuer.
   * `display`: OPTIONAL. Array of objects, where each object contains the display properties of the supported Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included.
@@ -1439,7 +1439,7 @@ Credential Issuers often want to know what Wallet they are issuing Credentials t
 
 The following mechanisms in concert can be utilized to fulfill those objectives:
 
-**Key attestation** is a mechanism where the key storage component or Wallet Provider asserts the keys and their security policy. The Wallet MAY provide this data in the Credential Request to allow the Credential Issuer to validate the key management policy. This requires the Credential Issuer to rely on the trust anchor of the key attestation and the respective key management policy. While some existing platforms have key attestation formats, this specification introduces a common key attestation format that may be used by Credential Issuers for improved interoperability, see [](#keyattestation).
+**Key attestation** is a mechanism where the key storage component or Wallet Provider asserts the cryptographic public keys and their security policy. The Wallet MAY provide this data in the Credential Request to allow the Credential Issuer to validate the cryptographic key management policy. This requires the Credential Issuer to rely on the trust anchor of the key attestation and the respective key management policy. While some existing platforms have key attestation formats, this specification introduces a common key attestation format that may be used by Credential Issuers for improved interoperability, see [](#keyattestation).
 
 **App Attestation**: Key attestation, however, does not establish trust in the application storing the Credential and producing presentation of that Credential. App attestation, as provided by mobile operating systems, e.g., iOS's DeviceCheck or Android's SafetyNet, allows a server system to ensure it is communicating to a legitimate instance of its genuine app. Those mechanisms can be utilized to validate the internal integrity of the Wallet (as a whole).
 
@@ -2285,7 +2285,7 @@ The following is a non-normative example of a Credential Response containing a C
 
 A key attestation, as defined by this specification, is a verifiable statement that demonstrates the authenticity and security properties of a key and its storage component to the Credential Issuer. Keys can be stored in various key storage components, which vary in their ability to protect the private key from extraction and duplication, as well as in the methods used for User authentication to enable key operations. These key storage components can be software-based or hardware-based and may reside on the same device as the Wallet, on external security tokens, or on remote services that facilitate cryptographic key operations. Key attestations are issued either by the Wallet's key storage component itself or by the Wallet Provider. When the Wallet Provider creates the key attestation, it MUST verify the authenticity of its claims about the keys, possibly using platform-specific key attestations.
 
-A Wallet MAY provide key attestations to inform the Credential Issuer about the properties of the cryptographic public keys, such as those used in proof types sent in the Credential Request. Credential Issuers SHOULD evaluate these key attestations to ensure the keys meet their security requirements, based on the trust framework, regulatory requirements, laws, or internal policies. A Credential Issuer MUST communicate the need to evaluate key attestations through its metadata or via an out-of-band mechanism.
+A Wallet MAY provide key attestations to inform the Credential Issuer about the properties of the cryptographic public keys, such as those used in proof types sent in the Credential Request. Credential Issuers SHOULD evaluate these key attestations to ensure the cryptographic keys meet their security requirements, based on the trust framework, regulatory requirements, laws, or internal policies. A Credential Issuer MUST communicate the need to evaluate key attestations through its metadata or via an out-of-band mechanism.
 
 Key attestations are used by various Credential Issuers with different trust frameworks and requirements, so a common approach is needed for interoperability. Therefore, key attestations SHOULD follow a common format. This helps Credential Issuers create consistent evaluation processes, reducing complexity and errors. Common formats also simplify compliance with regulatory requirements across jurisdictions and support the creation of shared best practices and security standards.
 
@@ -2293,7 +2293,7 @@ There are two ways to convey key attestations during Credential issuance:
 - The Wallet uses the `jwt` proof type in the Credential Request to create a proof of possession of the key and adds the key attestation in the JOSE header as specified in (#jwt-proof-type).
 - The Wallet uses the `attestation` proof type in the Credential Request with the key attestation without a proof of possession of the key itself as specified in (#attestation-proof-type).
 
-The latter may avoid unnecessary End-User interaction during the Credential issuance, as the key itself is not performing a signature operation.
+Depending on the Wallet's implementation, the `attestation` may avoid unnecessary End-User interaction during Credential issuance, as the key itself does not necessarily need to perform signature operations.
 
 ## Key Attestation in JWT format {#keyattestation-jwt}
 
