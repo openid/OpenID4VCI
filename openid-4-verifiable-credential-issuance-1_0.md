@@ -186,19 +186,19 @@ The issuance can have multiple characteristics that can be combined depending on
 
 The following subsections illustrate some of the authorization flows supported by this specification.
 
-### Identifying Credential(s) Being Issued throughout the Issuance Flow {#identifying_credential}
+### Identifying Credentials Being Issued Throughout the Issuance Flow {#identifying_credential}
 
 Below is the summary of how Credential(s) that are being issued are identified throughout the issuance flow:
 
-- In the Credential Offer, the Credential Issuer identifies offered Credential(s)
-  using `credential_configuration_ids` parameter.
+- In the Credential Offer, the Credential Issuer identifies offered Credential Configurations
+  using the `credential_configuration_ids` parameter.
 - When the Wallet uses Authorization Details in the Authorization Request, the Wallet uses
-  `credential_configuration_id` parameter(s) or `format` and other Credential Format
-  specific parameter to identify requested Credential(s). In which case,
+  either `credential_configuration_id` parameters or `format` and other Credential Format
+  specific parameters to identify the requested Credentials. In this case,
   the Authorization Server MUST return `credential_identifiers` parameter in the Token Response,
   and the Wallet uses those `credential_identifier` values in the Credential Request.
 - When the Wallet uses `scope` parameter in the Authorization Request, the `scope` value(s)
-  are used to identify requested Credential(s). In this case, Authorization Server has two two options.
+  are used to identify requested Credential(s). In this case, the Authorization Server has two options.
   If the Authorization Server supports returning `credential_identifiers` parameter
   in the Token Response, it MAY do so, in which case the Wallet uses those `credential_identifier` values
   in the Credential Request. If the Authorization Server does not support returning
@@ -822,7 +822,7 @@ For cryptographic binding, the Client has the following options defined in (#cre
 A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
 
 * `credential_identifier`: REQUIRED when an Authorization Details of type `openid_credential` was returned from the Token Response. It MUST NOT be used otherwise. A string that identifies a Credential Dataset that is requested for issuance. When this parameter is used, the `credential_configuration_id` MUST NOT be present.
-* `credential_configuration_id`: REQUIRED if an `authorization_details` parameter of type `openid_credential` was not returned from the Token Response. It MUST NOT be used otherwise. String that uniquely identifies one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The corresponding object in the `credential_configurations_supported` map MUST contain one of the value(s) used in the `scope` parameter in the Authorization Request. When this parameter is used, the `credential_identifier` MUST NOT be present.
+* `credential_configuration_id`: REQUIRED if a `credential_identifiers` parameter was not returned from the Token Response as part of the `authorization_details` parameter. It MUST NOT be used otherwise. String that uniquely identifies one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The corresponding object in the `credential_configurations_supported` map MUST contain one of the value(s) used in the `scope` parameter in the Authorization Request. When this parameter is used, the `credential_identifier` MUST NOT be present.
 * `proof`: OPTIONAL. Object providing a single proof of possession of the cryptographic key material to which the issued Credential instance will be bound to. `proof` parameter MUST NOT be present if `proofs` parameter is used.  The `proof` object MUST contain the following:
     * `proof_type`: REQUIRED. String specifying the key proof type. The value set for this parameter determines the additional parameters in the key proof object and their corresponding processing rules. The key proof types outlined in this specification are detailed in (#proof-types).
 * `proofs`: OPTIONAL. Object providing one or more proof of possessions of the cryptographic key material to which the issued Credential instances will be bound to. The `proofs` parameter MUST NOT be present if `proof` parameter is used. `proofs` object contains exactly one parameter named as the proof type in (#proof-types), the value set for this parameter is an array containing parameters as defined by the corresponding proof type.
