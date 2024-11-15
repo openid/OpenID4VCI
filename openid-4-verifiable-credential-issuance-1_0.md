@@ -2206,7 +2206,7 @@ This section defines a Credential Format Profile for Credentials complying with 
 
 ### Format Identifier
 
-The Credential Format Identifier is `vc+sd-jwt`.
+The Credential Format Identifier is `dc+sd-jwt`.
 
 ### Credential Issuer Metadata {#server-metadata-sd-jwt-vc}
 
@@ -2224,7 +2224,7 @@ The following additional Credential Issuer metadata parameters are defined for t
         * `locale`: OPTIONAL. String value that identifies language of this object represented as language tag values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
 * `order`: OPTIONAL. An array of the claim name values that lists them in the order they should be displayed by the Wallet.
 
-The following is a non-normative example of an object comprising the `credential_configurations_supported` parameter for Credential Format `vc+sd-jwt`.
+The following is a non-normative example of an object comprising the `credential_configurations_supported` parameter for Credential Format `dc+sd-jwt`.
 
 <{{examples/credential_metadata_sd_jwt_vc.json}}
 
@@ -2235,7 +2235,7 @@ The following additional claims are defined for authorization details of type `o
 * `vct`: REQUIRED. String as defined in (#server-metadata-sd-jwt-vc). This claim contains the type values the Wallet requests authorization for at the Credential Issuer. It MUST only be present if the `format` claim is present. It MUST not be present otherwise.
 * `claims`: OPTIONAL. Object as defined in (#server-metadata-sd-jwt-vc) excluding the `display` and `value_type` parameters. `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
 
-The following is a non-normative example of an authorization details object with Credential Format `vc+sd-jwt`.
+The following is a non-normative example of an authorization details object with Credential Format `dc+sd-jwt`.
 
 <{{examples/authorization_details_sd_jwt_vc.json}}
 
@@ -2245,7 +2245,7 @@ The following additional parameters are defined for Credential Requests and this
 
 * `vct`: REQUIRED when the `format` parameter is present in the Credential Request. It MUST NOT be used otherwise. It is a string as defined in (#server-metadata-sd-jwt-vc). This claim contains the type value of the Credential that the Wallet requests the Credential Issuer to issue.
 
-The following is a non-normative example of a Credential Request with Credential Format `vc+sd-jwt`.
+The following is a non-normative example of a Credential Request with Credential Format `dc+sd-jwt`.
 
 <{{examples/credential_request_sd_jwt_vc.json}}
 
@@ -2253,7 +2253,7 @@ The following is a non-normative example of a Credential Request with Credential
 
 The value of the `credential` claim in the Credential Response MUST be a string that is an SD-JWT VC. Credentials of this format are already suitable for transfer and, therefore, they need not and MUST NOT be re-encoded.
 
-The following is a non-normative example of a Credential Response containing a Credential of format `vc+sd-jwt`.
+The following is a non-normative example of a Credential Response containing a Credential of format `dc+sd-jwt`.
 
 <{{examples/credential_response_sd_jwt_vc.txt}}
 
@@ -2462,6 +2462,7 @@ The technology described in this specification was made available from contribut
    * Fixed #375: Enabled non-breaking extensibility
    * removes `c_nonce` and `c_nonce_expires_in` from the Credential Error Response
    * Fixed #239: Completed IANA Considerations section
+   * change media type `vc+sd-jwt` to `dc+sd-jwt` to align with draft 06 of [@!I-D.ietf-oauth-sd-jwt-vc]
 
    -14
    
