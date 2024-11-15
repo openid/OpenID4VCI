@@ -194,11 +194,11 @@ Below is the summary of how Credential(s) that are being issued are identified t
   using the `credential_configuration_ids` parameter.
 - When the Wallet uses Authorization Details in the Authorization Request, the Wallet uses
   either `credential_configuration_id` parameters or `format` and other Credential Format
-  specific parameters to identify the requested Credentials. In this case,
+  specific parameters to identify the requested Credential Configurations. In this case,
   the Authorization Server MUST return `credential_identifiers` parameter in the Token Response,
   and the Wallet uses those `credential_identifier` values in the Credential Request.
 - When the Wallet uses `scope` parameter in the Authorization Request, the `scope` value(s)
-  are used to identify requested Credential(s). In this case, the Authorization Server has two options.
+  are used to identify requested Credential Configurations. In this case, the Authorization Server has two options.
   If the Authorization Server supports returning `credential_identifiers` parameter
   in the Token Response, it MAY do so, in which case the Wallet uses those `credential_identifier` values
   in the Credential Request. If the Authorization Server does not support returning
