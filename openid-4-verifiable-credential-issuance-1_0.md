@@ -2571,7 +2571,7 @@ The technology described in this specification was made available from contribut
    * removes `c_nonce` and `c_nonce_expires_in` from the Credential Error Response
    * Fixed #239: Completed IANA Considerations section
    * add key attestation as additional information in a proof of possesion and new proof type
-   * change media type `vc+sd-jwt` to `dc+sd-jwt` to align with draft 06 of [@!I-D.ietf-oauth-sd-jwt-vc]
+   * change credential format identifier `vc+sd-jwt` to `dc+sd-jwt` to align with the media type in draft -06 of [@I-D.ietf-oauth-sd-jwt-vc] and update `typ` accordingly in examples 
 
    -14
    
