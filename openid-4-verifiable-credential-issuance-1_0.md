@@ -775,9 +775,10 @@ Content-Length: 0
 The Credential Issuer provides a nonce value in the HTTP response with a 2xx status code and the following parameters included as top-level members in the message body of the HTTP response using the application/json media type:
 
 * `c_nonce`: REQUIRED. String containing a nonce to be used when creating a proof of possession of the key proof (see (#credential-request)).
-* `c_nonce_expires_in`: OPTIONAL. Number denoting the lifetime in seconds of the `c_nonce`. This value serves only as a hint to the Client, indicating how long the Credential Issuer is likely to accept the `c_nonce` as valid.
 
 Due to the temporal and contextually sensitive nature of the `c_nonce` value, the Credential Issuer MUST make the response uncacheable by adding a `Cache-Control` header field including the value `no-store`.
+
+A wallet SHOULD assume that the returned `c_nonce` value remains valid and continue using it in credential requests (see [#credential-request]) until the credential endpoint returns an `invalid_nonce` error response.
 
 Below is a non-normative example of a Nonce Response:
 
@@ -787,8 +788,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "c_nonce": "wKI4LT17ac15ES9bw8ac4",
-  "c_nonce_expires_in": 120
+  "c_nonce": "wKI4LT17ac15ES9bw8ac4"
 }
 ```
 
@@ -2572,6 +2572,7 @@ The technology described in this specification was made available from contribut
    * Fixed #239: Completed IANA Considerations section
    * add key attestation as additional information in a proof of possesion and new proof type
    * change credential format identifier `vc+sd-jwt` to `dc+sd-jwt` to align with the media type in draft -06 of [@I-D.ietf-oauth-sd-jwt-vc] and update `typ` accordingly in examples 
+   * removes `c_nonce_expires_in` from Nonce Endpoint
 
    -14
    
