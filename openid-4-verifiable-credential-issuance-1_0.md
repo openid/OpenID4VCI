@@ -2272,19 +2272,54 @@ The following is a non-normative example of a Credential Response containing a C
 
 <{{examples/credential_response_sd_jwt_vc.txt}}
 
-# Claims Description {#claims-description}
+# Claims Description 
 
-A claims description object is an object used to describe how a certain claim in
-the Credential should be displayed to the End-User. It is used in the `claims`
-or `credentialSubject` parameters in the Credential Issuer metadata defined in
-(#format-profiles).
+Claims description objects are used in two places in this specification, in the
+Credential Issuer metadata and in the Authorization Details. The following
+sections define the structure and semantics of claims description objects.
+
+## Claims Description for Authorization Details {#claims-description-authorization-details}
+
+A claims description object as used in authorization details is an object that defines the
+requirements for the claims that the Wallet requests to be included in the
+Credential.
 
 For a claims description object, the following keys defined by this
-specification MAY be used to describe the claim or claims (other keys MAY also
+specification can be used to describe the claim or claims (other keys MAY also
 be used):
 
-  * `path`: REQUIRED. Array. Claim path query as defined in (#claims-path-query)
+  * `path`: REQUIRED. Array. Claim path pointer as defined in (#claims_path_pointer)
     to identify the claim(s) in the Credential.
+  * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the
+    Wallet will only accept a Credential that includes this claim. If set to
+    `false`, the claim is not required to be included in the Credential. If the
+    `mandatory` parameter is omitted, the default value is `false`.
+
+The rules defined in (##claims-description-processing) apply.
+
+## Claims Description for Issuer Metadata {#claims-description-issuer-metadata}
+
+A claims description object as used in the Credential Issuer metadata is an
+object used to describe how a certain claim in the Credential should be
+displayed to the End-User. It is used in the `claims` or `credentialSubject`
+parameters in the Credential Issuer metadata defined in (#format-profiles). The
+following keys can be used to describe the claim or claims:
+
+  * `path`: REQUIRED if the Credential Format uses a JSON-based claims
+    structure; MUST NOT be present otherwise. The value MUST be a non-empty
+    array representing a claims path pointer that specifies the path to a claim
+    within the Verifiable Credential, as defined in (#claims_path_pointer).
+
+  * `namespace`: REQUIRED if the Credential Format is based on the mdoc format
+    defined in ISO 18013-5; MUST NOT be present otherwise. The value MUST be a
+    string that specifies the namespace of the data element within the mdoc,
+    e.g., `org.iso.18013.5.1`.
+
+  * `claim_name`: REQUIRED if the Credential Format is based on mdoc format
+    defined in ISO 18013-5; MUST NOT be present otherwise. The value MUST be a
+    string that specifies the data element identifier of the data element within
+    the provided namespace in the mdoc, e.g., `first_name`.
+
   * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the
     Credential Issuer will always include this claim in the issued Credential.
     If set to `false`, the claim is not included in the issued Credential if the
@@ -2305,6 +2340,10 @@ be used):
        represented as language tag values defined in BCP47 [@!RFC5646]. There
        MUST be only one object for each language identifier.
 
+The rules defined in (##claims-description-processing) apply.
+
+## Processing Rules for Claims Description Objects {#claims-description-processing}
+
 The order of claims description objects in the `claims` or `credentialSubject`
 array is used by the Wallet to determine the order in which the claims are
 displayed to the End-User, unless another mechanism is defined by the profile.
@@ -2323,21 +2362,54 @@ MUST be aborted. This is in particular the case if
    object indicating that the same claim is an object (implied by using a string
    in the `path`).
 
-# Claims Path Query {#claims-path-query}
 
-The metadata specifications above make use of claims path queries to select a
-particular claim in the credential or a set of such claims. This appendix
-defines the syntax and semantics of claims path queries.
+# Claims Path Pointer {#claims_path_pointer}
 
-A claims path query MUST be a non-empty array of strings, `null` values, or
-non-negative integers. 
+A claims path pointer is a pointer into the JSON structure of the Verifiable
+Credential, identifying one or more claims. A claims path pointer MUST be a
+non-empty array of strings and non-negative integers. A string value 
+indicates that the respective key is to be selected, a null value
+indicates that all elements of the currently selected array(s) are to be selected;
+and a non-negative integer indicates that the respective index in an array is to be selected. The path
+is formed as follows:
 
-A string indicates that the respective key is to be selected, a `null` value
-indicates that all elements of the currently selected array(s) are to be
-selected, and a non-negative integer indicates that the respective index in an
-array is to be selected.
+Start with an empty array and repeat the following until the full path is formed. 
 
-## Example
+  - To address a particular claim within an object, append the key (claim name)
+    to the array.
+  - To address an element within an array, append the index to the array (as a
+    non-negative, 0-based integer).
+  - To address all elements within an array, append a null value to the array.
+
+Verifiers MUST NOT point to the same claim more than once in a single query.
+Wallets SHOULD ignore such duplicate claim queries.
+
+### Processing
+
+In detail, the array is processed by the Wallet from left to right as follows:
+
+ 1. Select the root element of the Credential, i.e., the top-level JSON object.
+ 2. Process the query of the claims path pointer array from left to right:
+    1. If the component is a string, select the element in the respective
+       key in the currently selected element(s). If any of the currently
+       selected element(s) is not an object, abort processing and return an
+       error. If the key does not exist in any element currently selected,
+       remove that element from the selection.
+    2. If the component is null, select all elements of the currently
+       selected array(s). If any of the currently selected element(s) is not an
+       array, abort processing and return an error.
+    3. If the component is a non-negative integer, select the element at
+       the respective index in the currently selected array(s). If any of the
+       currently selected element(s) is not an array, abort processing and
+       return an error. If the index does not exist in a selected array, remove
+       that array from the selection.
+  3. If the set of elements currently selected is empty, abort processing and
+     return an error.
+
+The result of the processing is the set of elements which is requested for
+presentation.
+
+### Claims Path Pointer Example {#claims_path_pointer_example}
 
 The following shows a non-normative, simplified example of a Credential:
 
@@ -2346,7 +2418,7 @@ The following shows a non-normative, simplified example of a Credential:
   "name": "Arthur Dent",
   "address": {
     "street_address": "42 Market Street",
-    "city": "Milliways",
+    "locality": "Milliways",
     "postal_code": "12345"
   },
   "degrees": [
@@ -2363,39 +2435,17 @@ The following shows a non-normative, simplified example of a Credential:
 }
 ```
 
-The following shows examples of claims path queries and the respective selected
+The following shows examples of claims path pointers and the respective selected
 claims:
 
 - `["name"]`: The claim `name` with the value `Arthur Dent` is selected.
-- `["address"]`: The claim `address` with its sub-claims as the value is selected.
-- `["address", "street_address"]`: The claim `street_address` with the value `42 Market Street` is selected.
-- `["degrees", null, "type"]`: All `type` claims in the `degrees` array are selected.
+- `["address"]`: The claim `address` with its sub-claims as the value is
+  selected.
+- `["address", "street_address"]`: The claim `street_address` with the value `42
+  Market Street` is selected.
+- `["degrees", null, "type"]`: All `type` claims in the `degrees` array are
+  selected.
 - `["nationalities", 1]`: The second nationality is selected.
-
-## Processing
-
-In detail, the array is processed from left to right as follows:
-
- 1. Select the root element of the credential, i.e., the top-level JSON object.
- 2. Process the query components from left to right:
-    1. If the query component is a string, select the element in the respective
-       key in the currently selected element(s). If any of the currently
-       selected element(s) is not an object, abort processing and return an
-       error. If the key does not exist in any element currently selected,
-       remove that element from the selection.
-    2. If the query component is `null`, select all elements of the currently
-       selected array(s). If any of the currently selected element(s) is not an
-       array, abort processing and return an error.
-    3. If the query component is a non-negative integer, select the element at
-       the respective index in the currently selected array(s). If any of the
-       currently selected element(s) is not an array, abort processing and
-       return an error. If the index does not exist in a selected array, remove
-       that array from the selection.
-  3. If the set of elements currently selected is empty, abort processing and
-     return an error.
-
-The result of the processing is the set of elements to which the respective
-claim metadata applies.
 
 # Key Attestations {#keyattestation}
 
@@ -2675,11 +2725,8 @@ The technology described in this specification was made available from contribut
    * removes `c_nonce` and `c_nonce_expires_in` from the Credential Error Response
    * Fixed #239: Completed IANA Considerations section
    * add key attestation as additional information in a proof of possesion and new proof type
-<<<<<<< HEAD
    * Change the syntax of credential metadata to use claims path queries
-=======
    * change credential format identifier `vc+sd-jwt` to `dc+sd-jwt` to align with the media type in draft -06 of [@I-D.ietf-oauth-sd-jwt-vc] and update `typ` accordingly in examples 
->>>>>>> main
 
    -14
    
