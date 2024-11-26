@@ -2089,7 +2089,7 @@ The following additional Credential Issuer metadata parameters are defined for t
 
 * `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of the following parameters defined by this specification:
   * `type`: REQUIRED. Array designating the types a certain Credential type supports, according to [@VC_DATA], Section 4.3.
-  * `credentialSubject`: OPTIONAL. An array of claims description objects as defined in (#claims-description).
+  * `credentialSubject`: OPTIONAL. An array of claims description objects as defined in (#claims-description-issuer-metadata).
 
 The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential Format `jwt_vc_json`:
 
@@ -2101,7 +2101,7 @@ The following additional claims are defined for authorization details of type `o
 
 * `credential_definition`: OPTIONAL. Object containing a detailed description of the Credential consisting of the following parameter:
   * `type`: OPTIONAL. Array as defined in (#server-metadata-jwt-vc-json). This claim contains the type values the Wallet requests authorization for at the Credential Issuer. It MUST be present if the claim `format` is present in the root of the authorization details object. It MUST not be present otherwise. 
-  * `credentialSubject`: OPTIONAL. An array of claims description objects as defined in (#claims-description), excluding the `display` and `value_type` parameters. The `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
+  * `credentialSubject`: OPTIONAL. An array of claims description objects as defined in (#claims-description-authorization-details).
 
 The following is a non-normative example of an authorization details object with Credential Format `jwt_vc_json`:
 
@@ -2140,7 +2140,7 @@ The following additional Credential Issuer metadata parameters are defined for t
 * `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of the following parameters defined by this specification:
   * `@context`: REQUIRED. Array as defined in [@VC_DATA], Section 4.1.
   * `type`: REQUIRED. Array designating the types a certain credential type supports, according to [@VC_DATA], Section 4.3.
-  * `credentialSubject`: OPTIONAL. An array of claims description objects as defined in (#claims-description).
+  * `credentialSubject`: OPTIONAL. An array of claims description objects as defined in (#claims-description-issuer-metadata).
 
 
 The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential Format `ldp_vc`:
@@ -2154,7 +2154,7 @@ The following additional claims are defined for authorization details of type `o
 * `credential_definition`: OPTIONAL. Object containing the detailed description of the Credential. It consists of the following parameters defined by this specification:
     * `@context`: OPTIONAL. Array as defined in (#server-metadata-ldp-vc). It MUST only be present if the `format` claim is present in the root of the authorization details object. It MUST not be present otherwise. 
     * `type`: OPTIONAL. Array as defined in (#server-metadata-ldp-vc).  This claim contains the type values the Wallet requests authorization for at the Credential Issuer. MUST only be present if the `@context` claim is present. 
-    * `credentialSubject`: OPTIONAL. An array of claims description objects as defined in (#claims-description), excluding the `display` and `value_type` parameters. The `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
+    * `credentialSubject`: OPTIONAL. An array of claims description objects as defined in (#claims-description-authorization-details).
 
 The following is a non-normative example of an authorization details object with Credential Format `ldp_vc`:
 
@@ -2205,8 +2205,7 @@ Cryptographic algorithm names used in the `credential_signing_alg_values_support
 The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
 * `doctype`: REQUIRED. String identifying the Credential type, as defined in [@!ISO.18013-5].
-* `claims`: OPTIONAL. Object containing a list of name/value pairs, where the name is a `namespace` as defined in [@!ISO.18013-5] (or any profile of it), and the value is an array of claims description objects as defined in (#claims-description). The namespace applies to the claims described in the array of claims description objects.
-* `order`: OPTIONAL. Array of namespaced claim name values that lists them in the order they should be displayed by the Wallet. The values MUST be two strings separated by a tilde ('~') character, where the first string is a namespace value and a second is a claim name value. For example, `org.iso.18013.5.1~given_name".
+* `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-issuer-metadata).
 
 The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential Format `mso_mdoc`:
 
@@ -2247,7 +2246,7 @@ The following additional Credential Issuer metadata parameters are defined for t
 
 
 * `vct`: REQUIRED. String designating the type of a Credential, as defined in [@!I-D.ietf-oauth-sd-jwt-vc].
-* `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description).
+* `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-issuer-metadata).
 
 The following is a non-normative example of an object comprising the `credential_configurations_supported` parameter for Credential Format `dc+sd-jwt`.
 
@@ -2258,7 +2257,7 @@ The following is a non-normative example of an object comprising the `credential
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.
 
 * `vct`: REQUIRED. String as defined in (#server-metadata-sd-jwt-vc). This claim contains the type values the Wallet requests authorization for at the Credential Issuer. It MUST only be present if the `format` claim is present. It MUST not be present otherwise.
-* `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description), excluding the `display` and `value_type` parameters. The `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
+* `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-authorization-details).
 
 The following is a non-normative example of an authorization details object with Credential Format `dc+sd-jwt`.
 
@@ -2308,18 +2307,15 @@ following keys can be used to describe the claim or claims:
   * `path`: REQUIRED if the Credential Format uses a JSON-based claims
     structure; MUST NOT be present otherwise. The value MUST be a non-empty
     array representing a claims path pointer that specifies the path to a claim
-    within the Verifiable Credential, as defined in (#claims_path_pointer).
-
+    within the credential, as defined in (#claims_path_pointer).
   * `namespace`: REQUIRED if the Credential Format is based on the mdoc format
     defined in ISO 18013-5; MUST NOT be present otherwise. The value MUST be a
     string that specifies the namespace of the data element within the mdoc,
     e.g., `org.iso.18013.5.1`.
-
   * `claim_name`: REQUIRED if the Credential Format is based on mdoc format
     defined in ISO 18013-5; MUST NOT be present otherwise. The value MUST be a
     string that specifies the data element identifier of the data element within
     the provided namespace in the mdoc, e.g., `first_name`.
-
   * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the
     Credential Issuer will always include this claim in the issued Credential.
     If set to `false`, the claim is not included in the issued Credential if the

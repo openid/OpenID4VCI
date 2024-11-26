@@ -2,15 +2,23 @@
   {
     "type": "openid_credential",
     "credential_configuration_id": "org.iso.18013.5.1.mDL",
-    "claims": {
-      "org.iso.18013.5.1": [
-        {"path": ["given_name"]},
-        {"path": ["family_name"]},
-        {"path": ["birth_date"]}
-      ],
-      "org.iso.18013.5.1.aamva": [
-        {"path": ["organ_donor"]}
-      ]
-    }
+    "claims": [
+      {
+        "namespace": "org.iso.18013.5.1",
+        "claim_name": ["given_name"]
+      },
+      {
+        "namespace": "org.iso.18013.5.1",
+        "claim_name": ["family_name"]
+      },
+      {
+        "namespace": "org.iso.18013.5.1",
+        "claim_name": ["birth_date"]
+      },
+      {
+        "namespace": "org.iso.18013.5.1.aamva",
+        "claim_name": ["organ_donor"]
+      }
+    ]
   }
 ]
