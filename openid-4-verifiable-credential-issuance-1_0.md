@@ -2350,7 +2350,7 @@ MUST be aborted. This is in particular the case if
  - the same claim is addressed by two or more claims description objects in the
    `claims` or `credentialSubject` array, or
  - there is a claims description object with a `path` that addresses a set of
-   claims in an array (using `null`, as defined in (#claims-path-query)) and
+   claims in an array (using `null`, as defined in (#claims_path_pointer)) and
    another object that uses a non-negative integer to address a specific claim
    in the same array, or
  - there is a claims description object indicating that a certain claim is an array
@@ -2380,7 +2380,7 @@ Start with an empty array and repeat the following until the full path is formed
 Verifiers MUST NOT point to the same claim more than once in a single query.
 Wallets SHOULD ignore such duplicate claim queries.
 
-### Processing
+## Processing
 
 In detail, the array is processed by the Wallet from left to right as follows:
 
@@ -2405,7 +2405,7 @@ In detail, the array is processed by the Wallet from left to right as follows:
 The result of the processing is the set of elements which is requested for
 presentation.
 
-### Claims Path Pointer Example {#claims_path_pointer_example}
+## Claims Path Pointer Example {#claims_path_pointer_example}
 
 The following shows a non-normative, simplified example of a Credential:
 
