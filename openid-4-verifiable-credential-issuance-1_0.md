@@ -2071,8 +2071,6 @@ Note: VCs secured using Data Integrity MAY NOT necessarily use JSON-LD and MAY N
 
 Distinct Credential Format Identifiers, extension parameters/claims, and processing rules are defined for each of the above-mentioned Credential Formats.
 
-It is on purpose that the Credential Offer does not contain `credentialSubject` property, while Authorization Details and Credential Request do. This is because this property is meant to be used by the Wallet to specify which claims it is requesting to be issued out of all the claims the Credential Issuer is capable of issuing for this particular Credential (data minimization), while Credential Offer is a mere "invitation" from the Credential Issuer to the Wallet to start the issuance flow.
-
 ### VC Signed as a JWT, Not Using JSON-LD {#jwt-vc-json}
 
 #### Format Identifier
@@ -2087,9 +2085,9 @@ Cryptographic algorithm names used in the `credential_signing_alg_values_support
 
 The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
-* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of the following parameters defined by this specification:
+* `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-issuer-metadata).
+* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of the following parameter:
   * `type`: REQUIRED. Array designating the types a certain Credential type supports, according to [@VC_DATA], Section 4.3.
-  * `credentialSubject`: OPTIONAL. An array of claims description objects as defined in (#claims-description-issuer-metadata).
 
 The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential Format `jwt_vc_json`:
 
@@ -2099,9 +2097,9 @@ The following is a non-normative example of an object containing the `credential
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.
 
+* `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-authorization-details).
 * `credential_definition`: OPTIONAL. Object containing a detailed description of the Credential consisting of the following parameter:
-  * `type`: OPTIONAL. Array as defined in (#server-metadata-jwt-vc-json). This claim contains the type values the Wallet requests authorization for at the Credential Issuer. It MUST be present if the claim `format` is present in the root of the authorization details object. It MUST not be present otherwise. 
-  * `credentialSubject`: OPTIONAL. An array of claims description objects as defined in (#claims-description-authorization-details).
+  * `type`: OPTIONAL. Array as defined in (#server-metadata-jwt-vc-json). This claim contains the type values the Wallet requests authorization for at the Credential Issuer. It MUST be present if the claim `format` is present in the root of the authorization details object. It MUST not be present otherwise.
 
 The following is a non-normative example of an authorization details object with Credential Format `jwt_vc_json`:
 
@@ -2137,11 +2135,10 @@ Cryptographic algorithm names used in the `credential_signing_alg_values_support
 
 The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters):
 
-* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of the following parameters defined by this specification:
+* `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-issuer-metadata).
+* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of the following parameters:
   * `@context`: REQUIRED. Array as defined in [@VC_DATA], Section 4.1.
   * `type`: REQUIRED. Array designating the types a certain credential type supports, according to [@VC_DATA], Section 4.3.
-  * `credentialSubject`: OPTIONAL. An array of claims description objects as defined in (#claims-description-issuer-metadata).
-
 
 The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential Format `ldp_vc`:
 
@@ -2151,10 +2148,10 @@ The following is a non-normative example of an object containing the `credential
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.  
 
-* `credential_definition`: OPTIONAL. Object containing the detailed description of the Credential. It consists of the following parameters defined by this specification:
+* `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-authorization-details).
+* `credential_definition`: OPTIONAL. Object containing the detailed description of the Credential. It consists of the following parameters:
     * `@context`: OPTIONAL. Array as defined in (#server-metadata-ldp-vc). It MUST only be present if the `format` claim is present in the root of the authorization details object. It MUST not be present otherwise. 
     * `type`: OPTIONAL. Array as defined in (#server-metadata-ldp-vc).  This claim contains the type values the Wallet requests authorization for at the Credential Issuer. MUST only be present if the `@context` claim is present. 
-    * `credentialSubject`: OPTIONAL. An array of claims description objects as defined in (#claims-description-authorization-details).
 
 The following is a non-normative example of an authorization details object with Credential Format `ldp_vc`:
 
@@ -2216,7 +2213,7 @@ The following is a non-normative example of an object containing the `credential
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.
 
 * `doctype`: OPTIONAL. String as defined in (#server-metadata-mso-mdoc). This claim contains the type value the Wallet requests authorization for at the Credential Issuer. It MUST only be present if the `format` claim is present. It MUST not be present otherwise. 
-* `claims`: OPTIONAL. Object as defined in (#server-metadata-mso-mdoc), excluding the `display` and `value_type` parameters. The `mandatory` parameter here is used by the Wallet to indicate to the Issuer that it only accepts Credential(s) issued with those claim(s).
+* `claims`: OPTIONAL. Object as defined in (#claims-description-authorization-details).
 
 The following is a non-normative example of an authorization details object with Credential Format `mso_mdoc`:
 
@@ -2300,8 +2297,8 @@ The rules defined in (##claims-description-processing) apply.
 
 A claims description object as used in the Credential Issuer metadata is an
 object used to describe how a certain claim in the Credential should be
-displayed to the End-User. It is used in the `claims` or `credentialSubject`
-parameters in the Credential Issuer metadata defined in (#format-profiles). The
+displayed to the End-User. It is used in the `claims`
+parameter in the Credential Issuer metadata defined in (#format-profiles). The
 following keys can be used to describe the claim or claims:
 
   * `path`: REQUIRED if the Credential Format uses a JSON-based claims
@@ -2340,7 +2337,7 @@ The rules defined in (##claims-description-processing) apply.
 
 ## Processing Rules for Claims Description Objects {#claims-description-processing}
 
-The order of claims description objects in the `claims` or `credentialSubject`
+The order of claims description objects in the `claims`
 array is used by the Wallet to determine the order in which the claims are
 displayed to the End-User, unless another mechanism is defined by the profile.
 
@@ -2348,7 +2345,7 @@ When a repeated or contradictory claim description is provided, the processing
 MUST be aborted. This is in particular the case if 
 
  - the same claim is addressed by two or more claims description objects in the
-   `claims` or `credentialSubject` array, or
+   `claims` array, or
  - there is a claims description object with a `path` that addresses a set of
    claims in an array (using `null`, as defined in (#claims_path_pointer)) and
    another object that uses a non-negative integer to address a specific claim
