@@ -2302,15 +2302,15 @@ parameter in the Credential Issuer metadata defined in (#format-profiles). The
 following keys can be used to describe the claim or claims:
 
   * `path`: REQUIRED if the Credential Format uses a JSON-based claims
-    structure; MUST NOT be present otherwise. The value MUST be a non-empty
+    structure; SHOULD NOT be present otherwise. The value MUST be a non-empty
     array representing a claims path pointer that specifies the path to a claim
     within the credential, as defined in (#claims_path_pointer).
   * `namespace`: REQUIRED if the Credential Format is based on the mdoc format
-    defined in ISO 18013-5; MUST NOT be present otherwise. The value MUST be a
+    defined in ISO 18013-5; SHOULD NOT be present otherwise. The value MUST be a
     string that specifies the namespace of the data element within the mdoc,
     e.g., `org.iso.18013.5.1`.
   * `claim_name`: REQUIRED if the Credential Format is based on mdoc format
-    defined in ISO 18013-5; MUST NOT be present otherwise. The value MUST be a
+    defined in ISO 18013-5; SHOULD NOT be present otherwise. The value MUST be a
     string that specifies the data element identifier of the data element within
     the provided namespace in the mdoc, e.g., `first_name`.
   * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the
