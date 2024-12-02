@@ -5,19 +5,19 @@
     "claims": [
       {
         "namespace": "org.iso.18013.5.1",
-        "claim_name": ["given_name"]
+        "claim_name": "given_name"
       },
       {
         "namespace": "org.iso.18013.5.1",
-        "claim_name": ["family_name"]
+        "claim_name": "family_name"
       },
       {
         "namespace": "org.iso.18013.5.1",
-        "claim_name": ["birth_date"]
+        "claim_name": "birth_date"
       },
       {
         "namespace": "org.iso.18013.5.1.aamva",
-        "claim_name": ["organ_donor"]
+        "claim_name": "organ_donor"
       }
     ]
   }
