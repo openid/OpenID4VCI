@@ -2267,6 +2267,7 @@ The Wallet Attestation format follows Section 5.1 "Client Attestation JWT" of At
 
 * `wallet_name`: REQUIRED. String containing a human-readable name of the Wallet.
 * `wallet_link`: REQUIRED. String containing a URL to get further information about the Wallet and the Wallet Provider.
+* `status`: OPTIONAL. Object compliant to IETF Status List draft.
 
 The following is a non-normative example of a Wallet Attestation:
 
