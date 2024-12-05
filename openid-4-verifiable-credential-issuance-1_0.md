@@ -2249,7 +2249,7 @@ The following is a non-normative example of a Credential Response containing a C
 
 <{{examples/credential_response_sd_jwt_vc.txt}}
 
-# Wallet Attestations {#walletattestation}
+# Wallet Attestations in JWT format {#walletattestation}
 
 The Wallet Attestation defined by this specification is a verifiable statement that confirms the authenticity and security properties of a Wallet to the Authorization Server. Wallets can have different architectures, such as app-based with a backend service or web-based running entirely in a browser. Wallet attestations are architecture-independent.
 
@@ -2257,17 +2257,17 @@ Some Wallet architectures require a backend service from the Wallet Provider tha
 
 A Wallet MAY provide Wallet Attestations to inform the Authorization Server about the authenticity of the Client and its `client_id`. Authorization Server may want to evaluate these Wallet Attestations to determine whether they communicate to a Wallet that meets its security, compliance or governance requirements, based on the trust framework in use, regulatory requirements, laws, or internal design decisions. A Credential Issuer SHOULD communicate this requirement to evaluate Wallet Attestations through its metadata using `token_endpoint_auth_method` or using some sort of out-of-band mechanism.
 
-Since Wallet Attestations may be used for different Authorization Server from different trust frameworks and varying in their requirements, it is necessary to use a common approach to facilitate interoperability. Therefore, Wallet Attestations SHOULD use a common format, allowing Credential Issuers to develop consistent evaluation processes, reducing complexity and potential errors. Common formats make it easy for Credential Issuers to demonstrate compliance with regulatory requirements across different jurisdictions and facilitate the development of shared best practices and security benchmarks.
+Since Wallet Attestations may be used for different Authorization Server from different trust frameworks and varying in their requirements, it is necessary to use a common approach to facilitate interoperability. Therefore, this section proposes a common format, allowing Credential Issuers to develop consistent evaluation processes, reducing complexity and potential errors. Common formats make it easy for Credential Issuers to demonstrate compliance with regulatory requirements across different jurisdictions and facilitate the development of shared best practices and security benchmarks.
 
-There are two ways to convey Wallet Attestations during Credential issuance using the header-based syntax of Attestation-Based Client Authentication:
+There are two ways to convey Wallet Attestations during Credential issuance using the header-based syntax of [@!I-D.ietf-oauth-attestation-based-client-auth]:
 - The Wallet sends it in the Pushed Authorization Request
 - The Wallet sends it in the Token Request
 
-The Wallet Attestation format follows Section 5.1 "Client Attestation JWT" of Attestation-Based Client Authentication. The Wallet Attestation additionally includes the following JWT Claims:
+The Wallet Attestation format follows Section 5.1 "Client Attestation JWT" of [@!I-D.ietf-oauth-attestation-based-client-auth]. The Wallet Attestation additionally includes the following JWT Claims:
 
 * `wallet_name`: REQUIRED. String containing a human-readable name of the Wallet.
 * `wallet_link`: REQUIRED. String containing a URL to get further information about the Wallet and the Wallet Provider.
-* `status`: OPTIONAL. Object compliant to IETF Status List draft.
+* `status`: OPTIONAL. Status mechanism for the Wallet Attestation as defined in [@!I-D.ietf-oauth-token-status-list]
 
 The following is a non-normative example of a Wallet Attestation:
 
