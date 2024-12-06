@@ -2257,7 +2257,6 @@ The Wallet Attestation defined in this section is a client authentication method
 
 In a typical architecture of a native Wallet App, the Wallet Provider's backend will use attestations provided by the mobile operating system, like iOS's DeviceCheck or Android's Play Integrity, to validate the app's integrity and authenticity before issuing the Wallet Attestation.
 
-
 There are two requests where Wallets may need to authenticate during Credential issuance:
 - The Wallet sends it in the Pushed Authorization Request
 - The Wallet sends it in the Token Request
