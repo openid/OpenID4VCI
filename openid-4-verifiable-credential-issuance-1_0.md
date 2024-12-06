@@ -2281,8 +2281,8 @@ The following is a non-normative example of a Wallet Attestation:
   "sub": "https://client.example.com",
   "wallet_name": "Wallet Solution X by Wonderland State Department",
   "wallet_link": "https://example.com/wallet/detail_info.html",
-  "nbf":1300815780,
-  "exp":1300819380,
+  "nbf": 1300815780,
+  "exp": 1300819380,
   "cnf": {
     "jwk": {
       "kty": "EC",
