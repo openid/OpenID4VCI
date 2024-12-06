@@ -2251,7 +2251,7 @@ The following is a non-normative example of a Credential Response containing a C
 
 # Wallet Attestations in JWT format {#walletattestation}
 
-The Wallet Attestation defined by this specification is a verifiable statement that confirms the authenticity and security properties of a Wallet to the Authorization Server. Wallets can have different architectures, such as app-based with a backend service or web-based running entirely in a browser. Wallet attestations are architecture-independent.
+The Wallet Attestation defined in this section is a verifiable statement in JWT format that is used to authenticate the Wallet with the Authorization Server of the Credential Issuer. The Wallet Attestation MUST be signed by an issuer that the Authorization Server of the Credential Issuer trusts for this purpose. 
 
 Some Wallet architectures require a backend service from the Wallet Provider that verifies the Client's authenticity before providing Wallet Attestations. Mobile application attestations provided by operating systems, like iOS's DeviceCheck or Android's Play Integrity, enable the Wallet Provider's backend to confirm communication with a legitimate instance. These mechanisms help validate the Wallet's internal integrity.
 
