@@ -1415,7 +1415,7 @@ The following mechanisms in concert can be utilized to fulfill those objectives:
 
 **Client Authentication** allows a Wallet to authenticate with the Authorization Server of the Credential Issuer. The Authorization Server may want to authenticate Wallets to determine whether they communicate to a Wallet that meets its security, compliance or governance requirements, based on the trust framework in use, regulatory requirements, laws, or internal design decisions. Any token endpoint authentication method as registered in the [OAuth Token Endpoint Authentication Methods IANA Registry](https://www.iana.org/assignments/oauth-parameters/oauth-parameters.xhtml#token-endpoint-auth-method) may be used with the Pushed Authorization or Token Request. An Authorization Server SHOULD communicate its client authentication requirement through its `token_endpoint_auth_method` metadata parameter. 
 
-**Wallet attestation** is a client authentication mechanism where the Wallet Provider asserts the client's authenticity and genuinity utlizing the mechanisms of Attestation-Based Client Authentication as defined in [@!I-D.ietf-oauth-attestation-based-client-auth], for details see (reference)
+**Wallet attestation** is a client authentication mechanism where the Wallet Provider asserts the client's authenticity and genuinity utlizing the mechanisms of Attestation-Based Client Authentication as defined in [@!I-D.ietf-oauth-attestation-based-client-auth], for details see (#walletattestation).
 
 ## Credential Offer {#credential-offer-security}
 
