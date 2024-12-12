@@ -2301,18 +2301,9 @@ displayed to the End-User. It is used in the `claims`
 parameter in the Credential Issuer metadata defined in (#format-profiles). The
 following keys can be used to describe the claim or claims:
 
-  * `path`: REQUIRED if the Credential Format uses a JSON-based claims
-    structure; SHOULD NOT be present otherwise. The value MUST be a non-empty
-    array representing a claims path pointer that specifies the path to a claim
-    within the credential, as defined in (#claims_path_pointer).
-  * `namespace`: REQUIRED if the Credential Format is based on the mdoc format
-    defined in ISO 18013-5; SHOULD NOT be present otherwise. The value MUST be a
-    string that specifies the namespace of the data element within the mdoc,
-    e.g., `org.iso.18013.5.1`.
-  * `claim_name`: REQUIRED if the Credential Format is based on mdoc format
-    defined in ISO 18013-5; SHOULD NOT be present otherwise. The value MUST be a
-    string that specifies the data element identifier of the data element within
-    the provided namespace in the mdoc, e.g., `first_name`.
+  * `path`: REQUIRED. The value MUST be a non-empty array representing a claims 
+    path pointer that specifies the path to a claim within the credential, as
+    defined in (#claims_path_pointer).
   * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the
     Credential Issuer will always include this claim in the issued Credential.
     If set to `false`, the claim is not included in the issued Credential if the
@@ -2358,10 +2349,16 @@ MUST be aborted. This is in particular the case if
 
 # Claims Path Pointer {#claims_path_pointer}
 
-A claims path pointer is a pointer into the JSON structure of the Verifiable
-Credential, identifying one or more claims. A claims path pointer MUST be a
-non-empty array of strings and non-negative integers. A string value 
-indicates that the respective key is to be selected, a null value
+A claims path pointer is a pointer into the Verifiable Credential, identifying one or more claims.
+A claims path pointer MUST be a non-empty array of strings, nulls and non-negative integers.
+A claims path pointer can be processed, which means it is applied to a credential. The results of
+processing are the referenced claims.
+
+## Semnatics for JSON-based credentials
+
+This section defines the semantics of a claims path pointer when applied to a JSON-based credential.
+
+A string value indicates that the respective key is to be selected, a null value
 indicates that all elements of the currently selected array(s) are to be selected;
 and a non-negative integer indicates that the respective index in an array is to be selected. The path
 is formed as follows:
@@ -2374,12 +2371,9 @@ Start with an empty array and repeat the following until the full path is formed
     non-negative, 0-based integer).
   - To address all elements within an array, append a null value to the array.
 
-Verifiers MUST NOT point to the same claim more than once in a single query.
-Wallets SHOULD ignore such duplicate claim queries.
+### Processing
 
-## Processing
-
-In detail, the array is processed by the Wallet from left to right as follows:
+In detail, the array is processed from left to right as follows:
 
  1. Select the root element of the Credential, i.e., the top-level JSON object.
  2. Process the query of the claims path pointer array from left to right:
@@ -2399,8 +2393,29 @@ In detail, the array is processed by the Wallet from left to right as follows:
   3. If the set of elements currently selected is empty, abort processing and
      return an error.
 
-The result of the processing is the set of elements which is requested for
-presentation.
+The result of the processing is the set of selected JSON elements.
+
+## Semantics for ISO mdoc-based credentials
+
+This section defines the semantics of a claims path pointer when applied to a
+credential in ISO mdoc format.
+
+A claims path pointer into an mdoc contains two elements of type string. The
+first element refers to a namespace and the second element refers to a data
+element identifier.
+
+### Processing
+
+In detail, the array is processed as follows:
+
+1. If the claims path pointer does not contain exactly two components or 
+   one of the components is not a string abort processing and return an error.
+2. Select the namespace referenced by the first component. If the namespace does
+   not exist in the mdoc abort processing and return an error.
+3. Select the data element referenced by the second component. If the data element does not exist
+   in the credential abort processing and return an error.
+
+The result of the processing is the selected data element value as CBOR data item.
 
 ## Claims Path Pointer Example {#claims_path_pointer_example}
 
@@ -2719,7 +2734,8 @@ The technology described in this specification was made available from contribut
    * Fixed #239: Completed IANA Considerations section
    * add key attestation as additional information in a proof of possesion and new proof type
    * Change the syntax of credential metadata to use claims path queries
-   * change credential format identifier `vc+sd-jwt` to `dc+sd-jwt` to align with the media type in draft -06 of [@I-D.ietf-oauth-sd-jwt-vc] and update `typ` accordingly in examples 
+   * change credential format identifier `vc+sd-jwt` to `dc+sd-jwt` to align with the media type in draft -06 of [@I-D.ietf-oauth-sd-jwt-vc] and update `typ` accordingly in examples
+   * use claims path pointer for mdoc based credentials
 
    -14
    
