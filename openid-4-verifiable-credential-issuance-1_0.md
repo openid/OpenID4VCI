@@ -2357,7 +2357,7 @@ Start with an empty array and repeat the following until the full path is formed
     non-negative, 0-based integer).
   - To address all elements within an array, append a null value to the array.
 
-Verifiers MUST NOT point to the same claim more than once in a single query.
+Credential Issuers MUST NOT point to the same claim more than once in a single query.
 Wallets SHOULD ignore such duplicate claim queries.
 
 ## Processing
