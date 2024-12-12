@@ -2308,12 +2308,6 @@ following keys can be used to describe the claim or claims:
     wallet did not request the inclusion of the claim, and/or if the Credential
     Issuer chose to not include the claim. If the `mandatory` parameter is
     omitted, the default value is `false`.
-  * `value_type`: OPTIONAL. String value determining the type of value of the
-    claim. Valid values defined by this specification are `string`, `number`,
-    and image media types such as `image/jpeg` as defined in IANA media type
-    registry for images
-    (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
-    Other values MAY also be used.
   * `display`: OPTIONAL. Array of objects, where each object contains display
     properties of a certain claim in the Credential for a certain language.
     Below is a non-exhaustive list of valid parameters that MAY be included:
