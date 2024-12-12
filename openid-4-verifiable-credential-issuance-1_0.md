@@ -2299,30 +2299,15 @@ displayed to the End-User. It is used in the `claims`
 parameter in the Credential Issuer metadata defined in (#format-profiles). The
 following keys can be used to describe the claim or claims:
 
-  * `path`: REQUIRED if the Credential Format uses a JSON-based claims
-    structure; SHOULD NOT be present otherwise. The value MUST be a non-empty
+  * `path`: REQUIRED. The value MUST be a non-empty
     array representing a claims path pointer that specifies the path to a claim
     within the credential, as defined in (#claims_path_pointer).
-  * `namespace`: REQUIRED if the Credential Format is based on the mdoc format
-    defined in ISO 18013-5; SHOULD NOT be present otherwise. The value MUST be a
-    string that specifies the namespace of the data element within the mdoc,
-    e.g., `org.iso.18013.5.1`.
-  * `claim_name`: REQUIRED if the Credential Format is based on mdoc format
-    defined in ISO 18013-5; SHOULD NOT be present otherwise. The value MUST be a
-    string that specifies the data element identifier of the data element within
-    the provided namespace in the mdoc, e.g., `first_name`.
   * `mandatory`: OPTIONAL. Boolean which, when set to `true`, indicates that the
     Credential Issuer will always include this claim in the issued Credential.
     If set to `false`, the claim is not included in the issued Credential if the
     wallet did not request the inclusion of the claim, and/or if the Credential
     Issuer chose to not include the claim. If the `mandatory` parameter is
     omitted, the default value is `false`.
-  * `value_type`: OPTIONAL. String value determining the type of value of the
-    claim. Valid values defined by this specification are `string`, `number`, `boolean`, `array`, `object`,
-    and image media types such as `image/jpeg` as defined in IANA media type
-    registry for images
-    (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
-    Other values MAY also be used.
   * `display`: OPTIONAL. Array of objects, where each object contains display
     properties of a certain claim in the Credential for a certain language.
     Below is a non-exhaustive list of valid parameters that MAY be included:
