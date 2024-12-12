@@ -2318,7 +2318,7 @@ following keys can be used to describe the claim or claims:
     Issuer chose to not include the claim. If the `mandatory` parameter is
     omitted, the default value is `false`.
   * `value_type`: OPTIONAL. String value determining the type of value of the
-    claim. Valid values defined by this specification are `string`, `number`,
+    claim. Valid values defined by this specification are `string`, `number`, `boolean`, `array`, `object`,
     and image media types such as `image/jpeg` as defined in IANA media type
     registry for images
     (https://www.iana.org/assignments/media-types/media-types.xhtml#image).
