@@ -2354,7 +2354,7 @@ A claims path pointer MUST be a non-empty array of strings, nulls and non-negati
 A claims path pointer can be processed, which means it is applied to a credential. The results of
 processing are the referenced claims.
 
-## Semnatics for JSON-based credentials
+## Semantics for JSON-based credentials
 
 This section defines the semantics of a claims path pointer when applied to a JSON-based credential.
 
@@ -2419,7 +2419,7 @@ The result of the processing is the selected data element value as CBOR data ite
 
 ## Claims Path Pointer Example {#claims_path_pointer_example}
 
-The following shows a non-normative, simplified example of a Credential:
+The following shows a non-normative, simplified example of a JSON-based Credential:
 
 ```json
 {
