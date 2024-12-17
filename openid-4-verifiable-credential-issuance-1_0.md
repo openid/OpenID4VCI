@@ -2367,7 +2367,8 @@ Start with an empty array and repeat the following until the full path is formed
 
 In detail, the array is processed from left to right as follows:
 
- 1. Select the root element of the Credential, i.e., the top-level JSON object.
+ 1. Select the root element of the Credential, i.e., the top-level object of the
+    JSON structure representing the claims in the Credential.
  2. Process the query of the claims path pointer array from left to right:
     1. If the component is a string, select the element in the respective
        key in the currently selected element(s). If any of the currently
