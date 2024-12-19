@@ -66,10 +66,10 @@ Credential Dataset:
 :  A set of one or more claims about a subject, provided by a Credential Issuer.
 
 Credential (or Verifiable Credential):
-:  An instance of a Credential Configuration with a particular Credential Dataset, that is signed by an Issuer and can be cryptographically verified. An Issuer may provide multiple Credentials as separate instances of the same Credential Configuration and Credential Dataset but with different cryptographic values. In this specification, the term "Verifiable Credential" is also referred to as "Credential". It's important to note that the use of the term "Credential" here differs from its usage in [@!OpenID.Core] and [@!RFC6749]. In this context, "Credential" specifically does not encompass other meanings such as passwords used for login credentials..
+:  An instance of a Credential Configuration with a particular Credential Dataset, that is signed by an Issuer and can be cryptographically verified. An Issuer may provide multiple Credentials as separate instances of the same Credential Configuration and Credential Dataset but with different cryptographic values. In this specification, the term "Verifiable Credential" is also referred to as "Credential". It's important to note that the use of the term "Credential" here differs from its usage in [@!OpenID.Core] and [@!RFC6749]. In this context, "Credential" specifically does not encompass other meanings such as passwords used for login credentials.
 
 Credential Format:
-:  Data Model used to create and represent Credential information. This format defines how various pieces of data within a Verifiable Credential are organized and encoded, ensuring that the Verifiable Credential can be consistently understood, processed, and verified by different systems. The exact parameters required to use a Credential Format in the context of this specification are defined in the Credential Format Profile. Definitions of Credential Formats is out of scope for this specification. Examples for Credential Formats are IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], ISO mDL [@ISO.18013-5], and W3C VCDM [@VC_DATA].```
+:  Data Model used to create and represent Credential information. This format defines how various pieces of data within a Verifiable Credential are organized and encoded, ensuring that the Verifiable Credential can be consistently understood, processed, and verified by different systems. The exact parameters required to use a Credential Format in the context of this specification are defined in the Credential Format Profile. Definitions of Credential Formats is out of scope for this specification. Examples for Credential Formats are IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], ISO mDL [@ISO.18013-5], and W3C VCDM [@VC_DATA].
 
 Credential Format Profile:
 :  Set of parameters specific to individual Credential Formats. This specification provides Credential Format Profiles for IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], ISO mDL [@ISO.18013-5], and W3C VCDM [@VC_DATA], which can be found in section (#format-profiles). Additionally, other specifications or deployments can define their own Credential Format Profiles by utilizing the extension points defined in this specification.
@@ -258,7 +258,7 @@ Please note that the diagram does not illustrate all the optional features defin
     |                |      Credential Response     |                        |
     |                |      with Credential(s) OR   |                        |
     |                |      Transaction ID          |                        |
-    |                |<-----------------------------------------------------|
+    |                |<------------------------------------------------------|
 ~~~
 !---
 Figure: Issuance using Authorization Code Flow 
@@ -1363,6 +1363,7 @@ The following is a non-normative example of a Notification Error Response when a
 HTTP/1.1 400 Bad Request
 Content-Type: application/json
 Cache-Control: no-store
+
 {
   "error": "invalid_notification_id"
 }
@@ -1429,10 +1430,10 @@ This specification defines the following Credential Issuer Metadata parameters:
 * `nonce_endpoint`: OPTIONAL. URL of the Credential Issuer's Nonce Endpoint, as defined in (#nonce-endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Nonce Endpoint.
 * `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint, as defined in (#deferred-credential-issuance). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
 * `notification_endpoint`: OPTIONAL. URL of the Credential Issuer's Notification Endpoint, as defined in (#notification-endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Notification Endpoint.
-* `credential_response_encryption`: OPTIONAL. Object containing information about whether the Credential Issuer supports encryption of the Credential Credential Response on top of TLS.
+* `credential_response_encryption`: OPTIONAL. Object containing information about whether the Credential Issuer supports encryption of the Credential Response on top of TLS.
   * `alg_values_supported`: REQUIRED. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`alg` values) [@!RFC7518] supported by the Credential Endpoint to encode the Credential Response in a JWT [@!RFC7519].
   * `enc_values_supported`: REQUIRED. Array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential Endpoint to encode the Credential Response in a JWT [@!RFC7519].
-  * `encryption_required`: REQUIRED. Boolean value specifying whether the Credential Issuer requires the additional encryption on top of TLS for the Credential Response. If the value is `true`, the Credential Issuer requires encryption for every Credential Response and therefore the Wallet MUST provide encryption keys in the Credential Request. If the value is `false`, the Wallet MAY chose whether it provides encryption keys or not.
+  * `encryption_required`: REQUIRED. Boolean value specifying whether the Credential Issuer requires the additional encryption on top of TLS for the Credential Response. If the value is `true`, the Credential Issuer requires encryption for every Credential Response and therefore the Wallet MUST provide encryption keys in the Credential Request. If the value is `false`, the Wallet MAY choose whether it provides encryption keys or not.
 * `batch_credential_issuance`: OPTIONAL. Object containing information about the Credential Issuer's supports for batch issuance of Credentials on the Credential Endpoint. The presence of this parameter means that the issuer supports the `proofs` parameter in the Credential Request so can issue more than one Verifiable Credential for the same Credential Dataset in a single request/response.
   * `batch_size`: REQUIRED. Integer value specifying the maximum array size for the `proofs` parameter in a Credential Request.
 * `signed_metadata`: OPTIONAL. String that is a signed JWT. This JWT contains Credential Issuer metadata parameters as claims. The signed metadata MUST be secured using JSON Web Signature (JWS) [@!RFC7515] and MUST contain an `iat` (Issued At) claim, an `iss` (Issuer) claim denoting the party attesting to the claims in the signed metadata, and `sub` (Subject) claim matching the Credential Issuer identifier. If the Wallet supports signed metadata, metadata values conveyed in the signed JWT MUST take precedence over the corresponding values conveyed using plain JSON elements. If the Credential Issuer wants to enforce use of signed metadata, it omits the respective metadata parameters from the unsigned part of the Credential Issuer metadata. A `signed_metadata` metadata value MUST NOT appear as a claim in the JWT. The Wallet MUST establish trust in the signer of the metadata, and obtain the keys to validate the signature before processing the metadata. The concrete mechanism how to do that is out of scope of this specification and MAY be defined in the profiles of this specification.
@@ -2502,10 +2503,10 @@ This is an example of a Key Attestation:
 
 This specification defines the following values for `key_storage` and `user_authentication`:
 
-* `iso_18045_high`: It MUST be used when key storage or user authentication is resistent to attack with attack potential "High", equivalent to VAN.5 according to ISO 18045.
-* `iso_18045_moderate`: It MUST be used when key storage or user authentication is resistent to attack with attack potential "Moderate", equivalent to VAN.4 according to ISO 18045.
-* `iso_18045_enhanced-basic`: It MUST be used when key storage or user authentication is resistent to attack with attack potential "Enhanced-Basic", equivalent to VAN.3 according to ISO 18045.
-* `iso_18045_basic`: It MUST be used when key storage or user authentication is resistent to attack with attack potential "Basic", equivalent to VAN.2 according to ISO 18045.
+* `iso_18045_high`: It MUST be used when key storage or user authentication is resistant to attack with attack potential "High", equivalent to VAN.5 according to ISO 18045.
+* `iso_18045_moderate`: It MUST be used when key storage or user authentication is resistant to attack with attack potential "Moderate", equivalent to VAN.4 according to ISO 18045.
+* `iso_18045_enhanced-basic`: It MUST be used when key storage or user authentication is resistant to attack with attack potential "Enhanced-Basic", equivalent to VAN.3 according to ISO 18045.
+* `iso_18045_basic`: It MUST be used when key storage or user authentication is resistant to attack with attack potential "Basic", equivalent to VAN.2 according to ISO 18045.
 
 Specifications that extend this list MUST choose collision-resistant values.
 
@@ -2766,11 +2767,10 @@ The technology described in this specification was made available from contribut
    * Fixed #375: Enabled non-breaking extensibility
    * removes `c_nonce` and `c_nonce_expires_in` from the Credential Error Response
    * Fixed #239: Completed IANA Considerations section
-   * add key attestation as additional information in a proof of possesion and new proof type
+   * add key attestation as additional information in a proof of possession and new proof type
    * Change the syntax of credential metadata to use claims path queries
    * change credential format identifier `vc+sd-jwt` to `dc+sd-jwt` to align with the media type in draft -06 of [@I-D.ietf-oauth-sd-jwt-vc] and update `typ` accordingly in examples
    * use claims path pointer for mdoc based credentials
-   * change credential format identifier `vc+sd-jwt` to `dc+sd-jwt` to align with the media type in draft -06 of [@I-D.ietf-oauth-sd-jwt-vc] and update `typ` accordingly in examples 
    * removes `c_nonce_expires_in` from Nonce Endpoint
 
    -14
@@ -2781,7 +2781,7 @@ The technology described in this specification was made available from contribut
    * make `credential_identifiers` mandatory for `authorization_details` flow
    * changes proof type descriptions to accommodate for the batch issuance changes
    * fix indentation of examples
-   * changes proof type descriptions to accomodate for the batch issuance changes
+   * changes proof type descriptions to accommodate for the batch issuance changes
    * changed Credential Endpoint to enable requesting multiple instances of a particular Credential Configuration and Dataset with different cryptographic material
    * clarify optionality of scope and `authorization_details` for Authorization Request
    * Define Credential Format as a term
@@ -2830,7 +2830,7 @@ The technology described in this specification was made available from contribut
    * renamed proof to key proof and added key proof replay security considerations
    * aligned deferred authorization with RFC 8628 and CIBA
    * changed Deferred Endpoint to require same access tokens as (batch) Credential endpoint(s)
-   * renamed acceptance_token to transaction_id and changed it to a request parameter, and clarified that HTTP status 202 should be returnedin case of deferred issuance
+   * renamed acceptance_token to transaction_id and changed it to a request parameter, and clarified that HTTP status 202 should be returned in case of deferred issuance
    * added Deferred Endpoint error response section 
    * added Deferred Endpoint metadata
    * added CWT proof type
