@@ -2778,7 +2778,7 @@ The technology described in this specification was made available from contribut
 
    -16
 
-   *
+   * add missing keyattestation+jwt part in IANA Considerations
 
    -15
 
