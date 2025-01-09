@@ -2558,7 +2558,7 @@ The following is a non-normative example of a Wallet Attestation:
 
 To use the Wallet Attestation towards the Authorization Server, the Wallet MUST generate a proof of possession according to Section 5.2 "Client Attestation PoP JWT" of Attestation-Based Client Authentication.
 
-The `sub` claim of the Wallet Attestation JWT is picked by the Wallet Provider and represents the `client_id` of the Wallet. This value should be shared by all Wallet Instances for privacy reasons.
+The `sub` claim of the Wallet Attestation JWT is picked by the Wallet Provider and represents the `client_id` of the Wallet. This value should be shared by all Wallet Instances from that Wallet Provider for privacy reasons.
 
 # IANA Considerations
 
