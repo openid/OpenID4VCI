@@ -2532,7 +2532,7 @@ The following is a non-normative example of a Wallet Attestation:
 
 ```
 {
-  "typ": "oauth-client-attestation+jwt"
+  "typ": "oauth-client-attestation+jwt",
   "alg": "ES256",
   "kid": "11"
 }
