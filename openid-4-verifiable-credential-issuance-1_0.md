@@ -2758,7 +2758,7 @@ The technology described in this specification was made available from contribut
 
    -16
 
-   *
+   * clarify client_id of wallet with wallet attestation
 
    -15
 
