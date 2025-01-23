@@ -2284,7 +2284,7 @@ be used):
     `false`, the claim is not required to be included in the Credential. If the
     `mandatory` parameter is omitted, the default value is `false`.
 
-The rules defined in (##claims-description-processing) apply.
+The rules defined in (#claims-description-processing) apply.
 
 ## Claims Description for Issuer Metadata {#claims-description-issuer-metadata}
 
@@ -2311,7 +2311,7 @@ following keys can be used to describe the claim or claims:
        represented as language tag values defined in BCP47 [@!RFC5646]. There
        MUST be only one object for each language identifier.
 
-The rules defined in (##claims-description-processing) apply.
+The rules defined in (#claims-description-processing) apply.
 
 ## Processing Rules for Claims Description Objects {#claims-description-processing}
 
