@@ -1664,6 +1664,13 @@ for example, by including clear-text session information as a `state` parameter 
 it in a `redirect_uri` parameter. A third party may observe such information through browser
 history, etc. and correlate the user's activity using it.
 
+### Wallet Attestation Subject {#walletattestation-sub}
+
+The Wallet Attestation as defined in (#wallet attestation) SHOULD NOT introduce a unique identifier specific to a single client.
+The subject claim for the Wallet Attestation SHOULD be a value that is shared by all Wallet instances using this type of
+wallet implementation. The value should be understood as an identifier of the Wallet type, rather than the specific Wallet
+instance itself.
+
 ## Identifying the Credential Issuer
 
 Information in the credential identifying a particular Credential Issuer, such as a Credential Issuer Identifier,
@@ -2558,7 +2565,7 @@ The following is a non-normative example of a Wallet Attestation:
 
 To use the Wallet Attestation towards the Authorization Server, the Wallet MUST generate a proof of possession according to Section 5.2 "Client Attestation PoP JWT" of Attestation-Based Client Authentication.
 
-The `sub` claim of the Wallet Attestation JWT is picked by the Wallet Provider and represents the `client_id` of the Wallet. For privacy reasons, this value is the same across Wallet Instances of that Wallet Provider.
+The `sub` claim of the Wallet Attestation JWT is picked by the Wallet Provider and represents the `client_id` of the Wallet. For privacy reasons, this value is the same across Wallet instances of that Wallet Provider, see (#walletattestation-sub) for more details.
 
 # IANA Considerations
 
@@ -2758,7 +2765,7 @@ The technology described in this specification was made available from contribut
 
    -16
 
-   * clarify client_id of wallet with wallet attestation
+   * add privacy considerations for the client_id used with wallet attestations
 
    -15
 
