@@ -2688,6 +2688,28 @@ in the manner described in [@RFC6838].
 * Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Provisional registration? No
 
+### application/wallet-attestation+jwt
+
+  * Type name: application
+  * Subtype name: wallet-attestation+jwt
+  * Required parameters: n/a
+  * Optional parameters: n/a
+  * Encoding considerations: binary; A JWT-based Wallet Attestation object is a JWT; JWT values are encoded as a series of base64url-encoded values (some of which may be the empty string) separated by period ('.') characters.
+  * Security considerations: See (#wallet-attestation-schema) of [[ this specification ]]
+  * Interoperability considerations: n/a
+  * Published specification: [[ this specification ]]
+  * Applications that use this media type: Applications using [[ this specification ]] for issuing and validating Wallet Instance Attestations.
+  * Fragment identifier considerations: n/a
+  * Additional information:
+    * File extension(s): n/a
+    * Macintosh file type code(s): n/a
+  * Person & email address to contact for further information: Torsten Lodderstedt, torsten@lodderstedt.net
+  * Intended usage: COMMON
+  * Restrictions on usage: none
+  * Author: Torsten Lodderstedt
+  * Change controller: IETF
+  * Provisional registration? No
+
 ## Uniform Resource Identifier (URI) Schemes Registry
 
 This specification registers the following URI scheme
