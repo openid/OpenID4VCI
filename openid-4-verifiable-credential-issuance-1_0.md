@@ -2757,6 +2757,7 @@ The technology described in this specification was made available from contribut
    -16
 
    *
+   * Change Cryptographic Holder Binding to Cryptographic Key Binding
 
    -15
 
