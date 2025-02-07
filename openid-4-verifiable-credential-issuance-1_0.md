@@ -2205,7 +2205,7 @@ The following additional Credential Issuer metadata parameters are defined for t
 
 * `doctype`: REQUIRED. String identifying the Credential type, as defined in [@!ISO.18013-5].
 * `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-issuer-metadata).
-* `credential_signing_crv_values_supported`: OPTIONAL. Array of cryptographic curve identifiers that the Issuer uses with one of the algorithms listed in `credential_signing_alg_values_supported` to sign the issued Credential. Curve identifier types and values used are numeric values and SHOULD be one of those in COSE eliptic curve values defined in [@IANA.COSE]. Note that `credential_signing_crv_values_supported` MAY be used if one of the algorithms in `credential_signing_alg_values_supported` supports multiple curves.
+* `credential_signing_crv_values_supported`: OPTIONAL. Array of cryptographic curve identifiers that the Issuer uses with one of the algorithms listed in `credential_signing_alg_values_supported` to sign the issued Credential. Curve identifier types and values used are numeric values and SHOULD be one of those COSE eliptic curve values defined in [@IANA.COSE]. Note that `credential_signing_crv_values_supported` MAY be used if one of the algorithms in `credential_signing_alg_values_supported` supports multiple curves.
 
 
 The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential Format `mso_mdoc`:
