@@ -960,7 +960,7 @@ The Credential Issuer MUST validate that the JWT used as a proof is actually sig
 
 The Credential Issuer SHOULD issue a Credential for each cryptographic public key specified in the `attested_keys` claim within the `key_attestation` parameter.
 
-Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type are case sensitive strings and SHOULD be one of those defined in [@IANA.JOSE].
+Cryptographic algorithm identifiers used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type are case sensitive strings and SHOULD be one of those defined in [@IANA.JOSE].
 
 Below is a non-normative example of a `proof` parameter (with line breaks within values for display purposes only):
 
@@ -1025,7 +1025,7 @@ When a W3C Verifiable Presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] si
 
 The Credential Issuer MUST validate that the W3C Verifiable Presentation used as a proof is actually signed with a key in the possession of the Holder.
 
-Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD be one of those defined in [@LD_Suite_Registry].
+Cryptographic algorithm identifiers used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type are case sensitive strings and SHOULD be one of those signature suite identifiers defined in [@LD_Suite_Registry].
 
 Below is a non-normative example of a `proof` parameter:
 
