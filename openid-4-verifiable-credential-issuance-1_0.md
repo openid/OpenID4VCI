@@ -2767,7 +2767,7 @@ The technology described in this specification was made available from contribut
 
    -16
 
-   * made type and values for credential_signing_alg_values_supported format specific
+   * make type and values for credential_signing_alg_values_supported format specific
    * change algorithm identifiers for credential_signing_alg_values_supported to COSE algorithm values for mdocs
    * add credential_signing_crv_values_supported to mdoc format
 
