@@ -2457,7 +2457,7 @@ The JWT is signed by the Wallet Provider or the Wallet's key storage component i
 
 * in the JOSE header,
   * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
-  * `typ`: REQUIRED. MUST be `keyattestation+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
+  * `typ`: REQUIRED. MUST be `key-attestation+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
 
 The key attestation may use `x5c`, `kid` or `trust_chain` (as defined in (#jwt-proof-type) ) to convey the public key and the associated trust mechanism to sign the key attestation.
 
@@ -2477,7 +2477,7 @@ This is an example of a Key Attestation:
 
 ```json
 {
-  "typ": "keyattestation+jwt",
+  "typ": "key-attestation+jwt",
   "alg": "ES256",
   "x5c": ["MIIDQjCCA..."]
 }
@@ -2688,10 +2688,10 @@ in the manner described in [@RFC6838].
 * Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Provisional registration? No
 
-### application/keyattestation+jwt
+### application/key-attestation+jwt
 
 * Type name: `application`
-* Subtype name: `keyattestation+jwt`
+* Subtype name: `key-attestation+jwt`
 * Required parameters: n/a
 * Optional parameters: n/a
 * Encoding considerations: Uses JWS Compact Serialization, as specified in [@!RFC7515].
@@ -2778,7 +2778,8 @@ The technology described in this specification was made available from contribut
 
    -16
 
-   * add missing keyattestation+jwt part in IANA Considerations
+   * add missing request for media type registration of key-attestation+jwt in IANA Considerations
+   * rename keyattestation+jwt to key-attestation+jwt
 
    -15
 
