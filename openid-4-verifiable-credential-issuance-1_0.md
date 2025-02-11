@@ -630,7 +630,7 @@ The following are the extension parameters to the Token Request used in the Pre-
 * `pre-authorized_code`: The code representing the authorization to obtain Credentials of a certain type. This parameter MUST be present if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 * `tx_code`: OPTIONAL. String value containing a Transaction Code value itself. This value MUST be present if a `tx_code` object was present in the Credential Offer (including if the object was empty). This parameter MUST only be used if the `grant_type` is `urn:ietf:params:oauth:grant-type:pre-authorized_code`.
 
-Requirements around how the Wallet identifies and, if applicable, authenticates itself with the Authorization Server in the Token Request depends on the Client type defined in Section 2.1 of [@!RFC6749] and the Client authentication method indicated in the `token_endpoint_auth_method` Client metadata. The requirements specified in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
+Requirements around how the Wallet identifies and, if applicable, authenticates itself with the Authorization Server in the Token Request depends on the Client type defined in Section 2.1 of [@!RFC6749] and the Client authentication method indicated in the `token_endpoint_auth_method` Client metadata (as defined in [@!RFC7591]). The requirements specified in Sections 4.1.3 and 3.2.1 of [@!RFC6749] MUST be followed.
 
 For the Pre-Authorized Code Grant Type, authentication of the Client is OPTIONAL, as described in Section 3.2.1 of OAuth 2.0 [@!RFC6749], and, consequently, the `client_id` parameter is only needed when a form of Client Authentication that relies on this parameter is used.
 
@@ -2464,7 +2464,7 @@ The JWT is signed by the Wallet Provider or the Wallet's key storage component i
 
 * in the JOSE header,
   * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
-  * `typ`: REQUIRED. MUST be `keyattestation+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
+  * `typ`: REQUIRED. MUST be `key-attestation+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
 
 The key attestation may use `x5c`, `kid` or `trust_chain` (as defined in (#jwt-proof-type) ) to convey the public key and the associated trust mechanism to sign the key attestation.
 
@@ -2484,7 +2484,7 @@ This is an example of a Key Attestation:
 
 ```json
 {
-  "typ": "keyattestation+jwt",
+  "typ": "key-attestation+jwt",
   "alg": "ES256",
   "x5c": ["MIIDQjCCA..."]
 }
@@ -2697,6 +2697,28 @@ in the manner described in [@RFC6838].
 * Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Provisional registration? No
 
+### application/key-attestation+jwt
+
+* Type name: `application`
+* Subtype name: `key-attestation+jwt`
+* Required parameters: n/a
+* Optional parameters: n/a
+* Encoding considerations: Uses JWS Compact Serialization, as specified in [@!RFC7515].
+* Security considerations: See the Security Considerations in [@!RFC7519].
+* Interoperability considerations: n/a
+* Published specification: (#keyattestation-jwt) of this specification
+* Applications that use this media type: Applications that use the key attestation format defined in this specification
+* Additional information:
+  - Magic number(s): n/a
+  - File extension(s): n/a
+  - Macintosh file type code(s): n/a
+* Person & email address to contact for further information: Torsten Lodderstedt, torsten@lodderstedt.net
+* Intended usage: COMMON
+* Restrictions on usage: none
+* Author: Torsten Lodderstedt, torsten@lodderstedt.net
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Provisional registration? No
+
 ## Uniform Resource Identifier (URI) Schemes Registry
 
 This specification registers the following URI scheme
@@ -2766,6 +2788,8 @@ The technology described in this specification was made available from contribut
    -16
 
    * add privacy considerations for the client_id used with wallet attestations
+   * add missing request for media type registration of key-attestation+jwt in IANA Considerations
+   * rename keyattestation+jwt to key-attestation+jwt
 
    -15
 
