@@ -2287,7 +2287,7 @@ be used):
     `false`, the claim is not required to be included in the Credential. If the
     `mandatory` parameter is omitted, the default value is `false`.
 
-The rules defined in (##claims-description-processing) apply.
+The rules defined in (#claims-description-processing) apply.
 
 ## Claims Description for Issuer Metadata {#claims-description-issuer-metadata}
 
@@ -2314,7 +2314,7 @@ following keys can be used to describe the claim or claims:
        represented as language tag values defined in BCP47 [@!RFC5646]. There
        MUST be only one object for each language identifier.
 
-The rules defined in (##claims-description-processing) apply.
+The rules defined in (#claims-description-processing) apply.
 
 ## Processing Rules for Claims Description Objects {#claims-description-processing}
 
@@ -2796,13 +2796,14 @@ The technology described in this specification was made available from contribut
    * deferred credential response always returns an array (same as credential response)
    * notification_id is now used for an issuance flow that can contain more than one credential
    * Fixed #375: Enabled non-breaking extensibility
-   * removes `c_nonce` and `c_nonce_expires_in` from the Credential Error Response
+   * removes `c_nonce` and `c_nonce_expires_in` from the Credential Response
    * Fixed #239: Completed IANA Considerations section
    * add key attestation as additional information in a proof of possession and new proof type
    * Change the syntax of credential metadata to use claims path queries
    * change credential format identifier `vc+sd-jwt` to `dc+sd-jwt` to align with the media type in draft -06 of [@I-D.ietf-oauth-sd-jwt-vc] and update `typ` accordingly in examples
    * use claims path pointer for mdoc based credentials
-   * removes `c_nonce_expires_in` from Nonce Endpoint
+   * removed `c_nonce` and `c_nonce_expires_in` from the token endpoint response
+   * added a Nonce Endpoint where a Client can acquire a fresh c_nonce value without the overhead of a full Credential Request
 
    -14
    
@@ -2819,8 +2820,6 @@ The technology described in this specification was made available from contribut
    * Define Credential Dataset as a term
    * Define Credential Configuration as a term
    * remove use of the `authorization_pending` and `slow_down` error codes
-   * removed `c_nonce` and `c_nonce_expires_in` from the token endpoint response
-   * added a Nonce Endpoint where a Client can acquire a fresh c_nonce value without the overhead of a full Credential Request
 
    -13
 
