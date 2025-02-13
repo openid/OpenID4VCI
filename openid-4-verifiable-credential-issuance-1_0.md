@@ -2775,7 +2775,6 @@ The technology described in this specification was made available from contribut
    * Change the syntax of credential metadata to use claims path queries
    * change credential format identifier `vc+sd-jwt` to `dc+sd-jwt` to align with the media type in draft -06 of [@I-D.ietf-oauth-sd-jwt-vc] and update `typ` accordingly in examples
    * use claims path pointer for mdoc based credentials
-   * removed `c_nonce_expires_in` from Nonce Endpoint
    * removed `c_nonce` and `c_nonce_expires_in` from the token endpoint response
    * added a Nonce Endpoint where a Client can acquire a fresh c_nonce value without the overhead of a full Credential Request
 
