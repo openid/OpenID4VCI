@@ -1667,6 +1667,13 @@ for example, by including clear-text session information as a `state` parameter 
 it in a `redirect_uri` parameter. A third party may observe such information through browser
 history, etc. and correlate the user's activity using it.
 
+### Wallet Attestation Subject {#walletattestation-sub}
+
+The Wallet Attestation as defined in (#walletattestation) SHOULD NOT introduce a unique identifier specific to a single client.
+The subject claim for the Wallet Attestation SHOULD be a value that is shared by all Wallet instances using this type of
+wallet implementation. The value should be understood as an identifier of the Wallet type, rather than the specific Wallet
+instance itself.
+
 ## Identifying the Credential Issuer
 
 Information in the credential identifying a particular Credential Issuer, such as a Credential Issuer Identifier,
@@ -2287,7 +2294,7 @@ be used):
     `false`, the claim is not required to be included in the Credential. If the
     `mandatory` parameter is omitted, the default value is `false`.
 
-The rules defined in (##claims-description-processing) apply.
+The rules defined in (#claims-description-processing) apply.
 
 ## Claims Description for Issuer Metadata {#claims-description-issuer-metadata}
 
@@ -2314,7 +2321,7 @@ following keys can be used to describe the claim or claims:
        represented as language tag values defined in BCP47 [@!RFC5646]. There
        MUST be only one object for each language identifier.
 
-The rules defined in (##claims-description-processing) apply.
+The rules defined in (#claims-description-processing) apply.
 
 ## Processing Rules for Claims Description Objects {#claims-description-processing}
 
@@ -2535,7 +2542,7 @@ The following is a non-normative example of a Wallet Attestation:
 
 ```
 {
-  "typ": "oauth-client-attestation+jwt"
+  "typ": "oauth-client-attestation+jwt",
   "alg": "ES256",
   "kid": "11"
 }
@@ -2560,6 +2567,8 @@ The following is a non-normative example of a Wallet Attestation:
 ```
 
 To use the Wallet Attestation towards the Authorization Server, the Wallet MUST generate a proof of possession according to Section 5.2 "Client Attestation PoP JWT" of Attestation-Based Client Authentication.
+
+The `sub` claim of the Wallet Attestation JWT is picked by the Wallet Provider and represents the `client_id` of the Wallet instance. For privacy reasons, this value is the same across Wallet instances of that Wallet Provider, see (#walletattestation-sub) for more details.
 
 # IANA Considerations
 
@@ -2782,6 +2791,7 @@ The technology described in this specification was made available from contribut
    -16
   
    * Change Cryptographic Holder Binding to Cryptographic Key Binding
+   * add privacy considerations for the client_id used with wallet attestations
    * deprecate the proof paramter in the credential request
    * add missing request for media type registration of key-attestation+jwt in IANA Considerations
    * rename keyattestation+jwt to key-attestation+jwt
@@ -2797,13 +2807,14 @@ The technology described in this specification was made available from contribut
    * deferred credential response always returns an array (same as credential response)
    * notification_id is now used for an issuance flow that can contain more than one credential
    * Fixed #375: Enabled non-breaking extensibility
-   * removes `c_nonce` and `c_nonce_expires_in` from the Credential Error Response
+   * removes `c_nonce` and `c_nonce_expires_in` from the Credential Response
    * Fixed #239: Completed IANA Considerations section
    * add key attestation as additional information in a proof of possession and new proof type
    * Change the syntax of credential metadata to use claims path queries
    * change credential format identifier `vc+sd-jwt` to `dc+sd-jwt` to align with the media type in draft -06 of [@I-D.ietf-oauth-sd-jwt-vc] and update `typ` accordingly in examples
    * use claims path pointer for mdoc based credentials
-   * removes `c_nonce_expires_in` from Nonce Endpoint
+   * removed `c_nonce` and `c_nonce_expires_in` from the token endpoint response
+   * added a Nonce Endpoint where a Client can acquire a fresh c_nonce value without the overhead of a full Credential Request
 
    -14
    
@@ -2820,8 +2831,6 @@ The technology described in this specification was made available from contribut
    * Define Credential Dataset as a term
    * Define Credential Configuration as a term
    * remove use of the `authorization_pending` and `slow_down` error codes
-   * removed `c_nonce` and `c_nonce_expires_in` from the token endpoint response
-   * added a Nonce Endpoint where a Client can acquire a fresh c_nonce value without the overhead of a full Credential Request
 
    -13
 
