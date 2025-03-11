@@ -1104,6 +1104,8 @@ If the Client requested an encrypted response by including the `credential_respo
 
 If the Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
 
+When the Wallet receives a new batch of Credentials containing a specific Credential Dataset, the Wallet SHOULD delete any Credentials containing the same Credential Dataset it might have received previously.
+
 The following parameters are used in the JSON-encoded Credential Response body:
 
 * `credentials`: OPTIONAL. Contains an array of one or more issued Credentials. It MUST NOT be used if the `transaction_id` parameter is present. The elements of the array MUST be objects. This specification defines the following parameters to be used inside this object:
