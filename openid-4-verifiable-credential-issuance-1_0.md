@@ -2224,7 +2224,7 @@ The following is a non-normative example of an authorization details object with
 
 ### Credential Response
 
-The value of the `credential` claim in the Credential Response MUST be a string that is the base64url-encoded representation of the CBOR-encoded `IssuerSigned` structure, as defined in [@!ISO.18013-5]. This structure SHOULD contain all `Namespaces` and `IssuerSignedItems` that are included in the `AuthorizedNamespaces` of the `MobileSecurityObject`.
+The value of the `credential` claim in the Credential Response MUST be a string that is the base64url-encoded representation of the CBOR-encoded `IssuerSigned` structure, as defined in [@!ISO.18013-5].
 
 The following is a non-normative example of a Credential Response containing a Credential of format `mso_mdoc`.
 
