@@ -2052,6 +2052,83 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
   </front>
 </reference>
 
+<reference anchor="W3C.Digital_Credentials_API" target="https://wicg.github.io/digital-credentials/">
+        <front>
+          <title>Digital Credentials API</title>
+		  <author fullname="Marcos Caceres">
+            <organization>Apple Inc.</organization>
+          </author>
+          <author fullname="Tim Cappalli">
+            <organization>Okta</organization>
+          </author>
+          <author fullname="Sam Goto">
+            <organization>Google</organization>
+          </author>
+        </front>
+</reference>
+
+# OpenID4VCI over the Digital Credentials API {#dc_api}
+
+This section defines how to use OpenID4VCI with the Digital Credentials API.
+
+The name "Digital Credentials API" (DC API) encompasses the W3C Digital Credentials API [@!W3C.Digital_Credentials_API]
+as well as its native App Platform equivalents in operating systems (such as [Credential Manager on Android](https://developer.android.com/jetpack/androidx/releases/credentials)).
+The DC API allows web sites and native apps acting as Issuers to initiate the issuance of verifiable credentials.
+The API itself is agnostic to the Credential issuance protocol and can be used with different protocols.
+The Web Platform, working in conjunction with other layers, such as the app platform/operating system, and based on the permission of the End-User, will send the credential offer along with the Origin of the Issuer to the End-User's chosen Wallet.
+
+## Protocol
+
+To use OpenID4VCI with the Digital Credentials API (DC API), the exchange protocol value has the following format: `openid4vci-v<version>`.
+
+The value `1` MUST be used for the `<version>` field to indicate the request and response are compatible with this version of the specification.
+
+The following exchange protocol values are defined by this specification:
+
+* `openid4vci-v1`
+
+## Credential Offer {#dc_api_credential_offer}
+
+The Issuer sends the Credential Offer object to the Digital Credentials API. All of the Credential Offer parameters MAY be used. The Credential Offer object has been extended to include the following parameters:
+
+
+* `credential_issuer_metadata`: REQUIRED. The Issuer's Credential Issuer Metadata object as defined in (#credential-issuer-parameters).
+* `authorization_server_metadata`: OPTIONAL. The Authorization Server metadata object as defined by Section 2 of [@!RFC8414]. When provided the `authorization_server` parameter must not be present.
+
+The following is a non-normative example of OpenID4VCI Credential Offer over the DC API.
+
+
+```js
+navigator.credentials.create({
+  digital: {
+    requests: [
+      {
+        protocol: "openid4vci-v1",
+        data: {
+          credential_issuer: "...",
+          credential_configuration_ids: [...],
+          grants: {...}
+          credential_issuer_metadata: {...},
+          authorization_server_metadata: {...}
+        }
+      }
+    ]
+  }
+})
+```
+
+## Response {#dc_api_response}
+
+The Wallet must validate the Credential Offer and return an object with the following parameter:
+
+* `status`: REQUIRED. A string containing one of the status codes defined in this section.
+
+The following status codes are supported:
+
+`offer_accepted`:
+- The Wallet accepted the Credential Offer and will attempt to obtain the credential. It does not indicate the credential was successfully issued.
+
+
 # Credential Format Profiles {#format-profiles}
 
 This specification defines several extension points to accommodate the differences across Credential Formats. Sets of Credential Format-specific parameters or claims referred to as Credential Format Profiles are identified by the Credential Format Identifier and used at these extension points.
