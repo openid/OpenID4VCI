@@ -1094,29 +1094,21 @@ These checks may be performed in any order.
 
 ## Credential Response {#credential-response}
 
-Credential Response can contain one or more Credentials depending on the Credential Request.
+Credential Response can be immediate or deferred and can contain one or more Credentials with the same Credential Configuration and Credential Dataset depending on the Credential Request:
 
-Credential Response can be immediate or deferred and can contain one or more Credentials with the same Credential Configuration and Credential Dataset depending on the Credential Request. The Credential Issuer MAY be able to immediately issue requested Credentials and send them to the Client. In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would send a `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready.
+* If the Credential Issuer is able to immediately issue requested Credentials, it MUST respond with the HTTP status code 200 (see Section 15.3.3 of [@!RFC9110]).
+* In other cases, the Credential Issuer may not be able to immediately issue a requested Credential (e.g. a manual review process is involved or the data is not ready yet) and would respond with a `transaction_id` parameter, that the Client may use later at the Deferred Credential endpoint. In this case, Credential Issuer MUST respond with the HTTP status code 202 (see Section 15.3.3 of [@!RFC9110]).
 
-The HTTP status code MUST be 202 (see Section 15.3.3 of [@!RFC9110]).
-
-If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Credential Response as a JWT using the  parameters from the `credential_response_encryption` object. If the Credential Response is encrypted, the media type of the response MUST be set to `application/jwt`. If encryption was requested in the Credential Request and the Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
-
-If the Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
+If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Credential Response as a JWT using the  parameters from the `credential_response_encryption` object. If the Credential Response is encrypted, the media type of the response MUST be set to `application/jwt`. If encryption was requested in the Credential Request and the Credential Response is not encrypted, the Client SHOULD reject the Credential Response. If the Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
 
 The following parameters are used in the JSON-encoded Credential Response body:
 
 * `credentials`: OPTIONAL. Contains an array of one or more issued Credentials. It MUST NOT be used if the `transaction_id` parameter is present. The elements of the array MUST be objects. This specification defines the following parameters to be used inside this object:
-   * `credential`: REQUIRED. Contains one issued Credential. It MAY be a string or an object, depending on the Credential Format. See Appendix A for the Credential Format-specific encoding requirements.
+   * `credential`: REQUIRED. Contains one issued Credential. The encoding of the Credential depends on the Credential Format and MAY be a string or an object. Credential Formats expressed as binary data MUST be base64url-encoded and returned as a string. More details are defined in the Credential Format Profiles in (#format-profiles).
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This parameter is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used if the `credentials` parameter is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `notification_id`: OPTIONAL. String identifying one or more Credentials issued in one Credential Response. It MUST be included in the Notification Request as defined in (#notification). It MUST not be used if the `credentials` parameter is not present.
 
-The encoding of the Credential returned in the `credential` parameter depends on the Credential Format. Credential Formats expressed as binary data MUST be base64url-encoded and returned as a string.
-
-More details such as Credential Format Identifiers are defined in the Credential Format Profiles in (#format-profiles). 
-
-Additional Credential Response parameters MAY be defined and used.
-The Wallet MUST ignore any unrecognized parameters.
+Additional Credential Response parameters MAY be defined and used. The Wallet MUST ignore any unrecognized parameters.
 
 Below is a non-normative example of a Credential Response in an immediate issuance flow for a Credential in JWT VC format (JSON encoded):
 
@@ -2791,6 +2783,7 @@ The technology described in this specification was made available from contribut
 
    -16
   
+   * rework the Credential Response text, fix immediate issuance to have HTTP 200 status code
    * Change Cryptographic Holder Binding to Cryptographic Key Binding
    * add privacy considerations for the client_id used with wallet attestations
    * deprecate the proof paramter in the credential request
