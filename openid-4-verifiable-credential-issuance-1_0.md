@@ -2790,6 +2790,7 @@ The technology described in this specification was made available from contribut
 
    -16
   
+   * move proof type section to the Annex for readability, add some introduction and fix text in Section 8.1
    * Change Cryptographic Holder Binding to Cryptographic Key Binding
    * add privacy considerations for the client_id used with wallet attestations
    * deprecate the proof paramter in the credential request
