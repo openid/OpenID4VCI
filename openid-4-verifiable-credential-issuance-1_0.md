@@ -1109,6 +1109,7 @@ The following parameters are used in the JSON-encoded Credential Response body:
 * `credentials`: OPTIONAL. Contains an array of one or more issued Credentials. It MUST NOT be used if the `transaction_id` parameter is present. The elements of the array MUST be objects. This specification defines the following parameters to be used inside this object:
    * `credential`: REQUIRED. Contains one issued Credential. It MAY be a string or an object, depending on the Credential Format. See Appendix A for the Credential Format-specific encoding requirements.
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This parameter is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used if the `credentials` parameter is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
+* `interval`: OPTIONAL. Contains a number that represents the minimum amount of time in seconds that the Wallet needs to wait before providing a new request to the Deferred Credential Endpoint. It MUST not be used if the `credentials` parameter is present. If not present, the Wallet MUST use `86400` as the default value.
 * `notification_id`: OPTIONAL. String identifying one or more Credentials issued in one Credential Response. It MUST be included in the Notification Request as defined in (#notification). It MUST not be used if the `credentials` parameter is not present.
 
 The encoding of the Credential returned in the `credential` parameter depends on the Credential Format. Credential Formats expressed as binary data MUST be base64url-encoded and returned as a string.
@@ -1161,7 +1162,8 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "transaction_id": "8xLOxBtZp8"
+  "transaction_id": "8xLOxBtZp8",
+  "interval" : 3600
 }
 ```
 
@@ -1239,7 +1241,12 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Deferred Credential Response {#deferred-credential-response}
 
-The Deferred Credential Response uses the `credentials` and `notification_id` parameters as defined in (#credential-response).
+Deferred Credential Response may either contain the requested Credentials or further defer the issuance:
+
+* If the Credential Issuer is able to issue the requested Credentials, the Deferred Credential Response MUST use the `credentials` parameter as defined in (#credential-response) and MUST respond with the HTTP status code 200 (see Section 15.3.3 of [@!RFC9110]).
+* If the Credential Issuer still requires more time, the Deferred Credential Response MAY use the `interval` parameter as defined in (#credential-response) and MUST respond with the HTTP status code 202 (see Section 15.3.3 of [@!RFC9110]).
+
+The Deferred Credential Response MAY use the `notification_id` parameter as defined in (#credential-response).
 
 Additional Deferred Credential Response parameters MAY be defined and used.
 The Wallet MUST ignore any unrecognized parameters.
@@ -1269,9 +1276,8 @@ Content-Type: application/json
 
 When the Deferred Credential Request is invalid or the Credential is not available yet, the Credential Issuer constructs the error response as defined in (#credential-error-response).
 
-The following additional error codes are specified in addition to those already defined in (#credential-request-errors):
+The following additional error code is specified in addition to those already defined in (#credential-request-errors):
 
-* `issuance_pending`: The Credential issuance is still pending. The error response SHOULD also contain the `interval` member, determining the minimum amount of time in seconds that the Wallet needs to wait before providing a new request to the Deferred Credential Endpoint.  If `interval` member is not present, the Wallet MUST use `5` as the default value.
 * `invalid_transaction_id`: The Deferred Credential Request contains an invalid `transaction_id`. This error occurs when the `transaction_id` was not issued by the respective Credential Issuer or it was already used to obtain a Credential.
 
 This is a non-normative example of a Deferred Credential Error Response:
@@ -2791,6 +2797,8 @@ The technology described in this specification was made available from contribut
 
    -16
   
+   * Move issuance pending from Deferred Credential Error Response to Deferred Credential Response
+   * Move the interval parameter from Deferred Credential Error Response to Credential Response
    * Change Cryptographic Holder Binding to Cryptographic Key Binding
    * add privacy considerations for the client_id used with wallet attestations
    * deprecate the proof paramter in the credential request
