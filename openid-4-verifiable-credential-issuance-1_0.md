@@ -1274,7 +1274,7 @@ Content-Type: application/json
 
 ## Deferred Credential Error Response {#deferred-credential-error-response}
 
-When the Deferred Credential Request is invalid or the Credential is not available yet, the Credential Issuer constructs the error response as defined in (#credential-error-response).
+When the Deferred Credential Request is invalid, the Credential Issuer constructs the error response as defined in (#credential-error-response).
 
 The following additional error code is specified in addition to those already defined in (#credential-request-errors):
 
