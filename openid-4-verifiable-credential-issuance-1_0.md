@@ -2200,7 +2200,13 @@ The Credential Format Identifier is `mso_mdoc`. This refers to the Mobile Securi
 
 ### Credential Issuer Metadata {#server-metadata-mso-mdoc}
 
-Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in [@!ISO.18013-5].
+Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter correspond to the algorithm identifiers used to secure the COSE IssuerAuth structure, as defined in [@!ISO.18013-5]. The values SHOULD be chosen from the following:
+
+* The value exactly matches the `alg` value in the IssuerAuth COSE header.
+* The value is a fully specified algorithm, as defined in [I-D.ietf-jose-fully-specified-algorithms], and the combination of the `alg` value and the signing key's curve in the `IssuerAuth` COSE structure matches the combination specified by the fully specified algorithm.
+
+Example:
+If the `IssuerAuth` structure contains an `alg` header value of `-7` (ECDSA with SHA-256, per [IANA.COSE]) and is signed using a P-256 key, it matches both `-7` and `-9` in `credential_signing_alg_values_supported`. The latter (`-9`) corresponds to ECDSA with P-256 and SHA-256, as defined in [I-D.ietf-jose-fully-specified-algorithms].
 
 The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
