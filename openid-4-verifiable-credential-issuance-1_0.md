@@ -1094,7 +1094,7 @@ These checks may be performed in any order.
 
 ## Credential Response {#credential-response}
 
-Credential Response can be immediate or deferred and can contain one or more Credentials with the same Credential Configuration and Credential Dataset depending on the Credential Request:
+The Credential Response can either be returned immediately or in a deferred manner. The response can contain one or more Credentials with the same Credential Configuration and Credential Dataset depending on the Credential Request:
 
 * If the Credential Issuer is able to immediately issue requested Credentials, it MUST respond with the HTTP status code 200 (see Section 15.3.3 of [@!RFC9110]).
 * If the Credential Issuer is not able to immediately issue the requested credentials (e.g. due to a manual review process being required or the data used to issue the credential is not ready yet), the Credential Issuer MUST return a response with a `transaction_id` parameter, that the Client may use later at the Deferred Credential endpoint. In this case, the Credential Issuer MUST also use the HTTP status code 202 for the response (see Section 15.3.3 of [@!RFC9110]).
