@@ -1923,6 +1923,36 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         </front>
 </reference>
 
+<reference anchor="ISO.23220-2" target="https://www.iso.org/standard/86782.html">
+        <front>
+          <title>ISO/IEC TS 23220-2 Personal identification — Building blocks for identity management via mobile devices, Part 2: Data objects and encoding rules for generic eID systems</title>
+          <author>
+            <organization> ISO/IEC JTC 1/SC 17 Cards and security devices for personal identification</organization>
+          </author>
+          <date year="2024"/>
+        </front>
+</reference>
+
+<reference anchor="ISO.23220-3" target="https://www.iso.org/standard/86782.html">
+        <front>
+          <title>ISO/IEC CD TS 23220-3 Personal identification — Building blocks for identity management via mobile devices, Part 3: Protocols and services for issuing phase</title>
+          <author>
+            <organization> ISO/IEC JTC 1/SC 17 Cards and security devices for personal identification</organization>
+          </author>
+          <date year="2025"/>
+        </front>
+</reference>
+
+<reference anchor="ISO.23220-4" target="https://www.iso.org/standard/86782.html">
+        <front>
+          <title>ISO/IEC CD TS 23220-4 Personal identification — Building blocks for identity management via mobile devices, Part 4: Protocols and services for operational phase</title>
+          <author>
+            <organization> ISO/IEC JTC 1/SC 17 Cards and security devices for personal identification</organization>
+          </author>
+          <date year="2024"/>
+        </front>
+</reference>
+
 <reference anchor="IANA.JOSE" target="https://www.iana.org/assignments/jose">
         <front>
           <title>JSON Object Signing and Encryption (JOSE)</title>
@@ -2190,9 +2220,11 @@ The definitions in (#authorization-ldp-vc) apply for Credentials of this type as
 
 The definitions in (#credential-response-jwt-vc-json) apply for Credentials of this type as well.
 
-## ISO mDL
+## Mobile Documents or mdocs (ISO/IEC 18013 and ISO/IEC 23220 series) {#mdocs}
 
-This section defines a Credential Format Profile for Credentials complying with [@!ISO.18013-5].
+This section defines a Credential Format Profile for Credentials complying with the mobile document (mdoc) format defined in [@!ISO.18013-5] and the ISO/IEC 23220 series.
+
+ISO/IEC 18013-5:2021 [@ISO.18013-5] defines a mobile driving license (mDL) Credential in the mobile document (mdoc) format. Although ISO/IEC 18013-5:2021 [@ISO.18013-5] is specific to mobile driving licenses (mDLs), the Credential format can be utilized with any type of Credential (or mdoc document types). The ISO/IEC 23220 series has extracted components from ISO/IEC 18013-5:2021 [@ISO.18013-5] that are common across document types to facilitate the profiling of the specification for other document types. The core data structures are shared between ISO/IEC 18013-5:2021 [@ISO.18013-5] and technical specifications of the ISO/IEC 23220 series such as: ISO/IEC 23220-2 [@ISO.23220-2], ISO/IEC 23220-3 [@ISO.23220-3] and ISO/IEC 23220-4 [@ISO.23220-4] which are encoded in CBOR and secured using `COSE_Sign1`. Specifically, ISO/IEC 23220-3 [@ISO.23220-3] defines data structures of building blocks for the issuance of mdocs.
 
 ### Format Identifier
 
