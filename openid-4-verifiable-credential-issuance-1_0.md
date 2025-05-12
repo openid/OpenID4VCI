@@ -2814,7 +2814,8 @@ The technology described in this specification was made available from contribut
    * add missing request for media type registration of key-attestation+jwt in IANA Considerations
    * rename keyattestation+jwt to key-attestation+jwt
    * make type and values for credential_signing_alg_values_supported format specific
-   * change algorithm identifiers for credential_signing_alg_values_supported to COSE algorithm values for mdocs   
+   * make type and values for proof_signing_alg_values_supported proof type specific
+   * change algorithm identifiers for credential_signing_alg_values_supported to COSE algorithm values for mdocs
 
    -15
 
