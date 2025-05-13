@@ -84,7 +84,7 @@ Presentation:
 : Data that is presented to a specific Verifier, derived from one or more Verifiable Credentials that can be from the same or different Credential Issuers. It can be of any Credential Format.
 
 Credential Issuer (or Issuer):
-:  An entity that issues Verifiable Credentials. In the context of this specification, the Credential Issuer acts as an OAuth 2.0 Authorization Server and/or a Resource Server (see [@!RFC6749]).
+:  An entity that issues Verifiable Credentials. In the context of this specification, the Credential Issuer acts as an OAuth 2.0 Resource Server (see [@!RFC6749]). The Credential Issuer might also act as an Authorization Server.
 
 Holder:
 :  An entity that receives Verifiable Credentials and has control over them to present them to the Verifiers as Presentations.
