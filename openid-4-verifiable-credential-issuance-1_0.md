@@ -933,6 +933,8 @@ There are two ways to convey key attestations (as defined in (#keyattestation)) 
 - The Wallet uses the `jwt` proof type in the Credential Request to create a proof of possession of the key and adds the key attestation in the JOSE header.
 - The Wallet uses the `attestation` proof type in the Credential Request with the key attestation without a proof of possession of the key itself.
 
+In both cases, the `nonce` value in the key attestation is set to the `c_nonce` value provided by the Issuer.
+
 Depending on the Wallet's implementation, the `attestation` may avoid unnecessary End-User interaction during Credential issuance, as the key itself does not necessarily need to perform signature operations.
 
 Additional proof types MAY be defined and used.
@@ -2796,6 +2798,7 @@ The technology described in this specification was made available from contribut
    * deprecate the proof paramter in the credential request
    * add missing request for media type registration of key-attestation+jwt in IANA Considerations
    * rename keyattestation+jwt to key-attestation+jwt
+   * set key attestation nonce to c_nonce value for proof types with key attestations
 
    -15
 
