@@ -1606,6 +1606,17 @@ Credential Refresh can be initiated by the Wallet independently from the Credent
 
 It is up to the Credential Issuer whether to update both the signature and the claim values, or only the signature.
 
+## Pre-Final Specifications
+
+Implementers should be aware that this specification uses several specifications that are not yet final specifications. Those specifications are:
+
+* OpenID Federation 1.0 draft -42 [@!OpenID.Federation]
+* SIOPv2 draft -13 [@!SIOPv2]
+* SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -08 [@!I-D.ietf-oauth-sd-jwt-vc]
+
+
+While breaking changes to the specifications referenced in this specification are not expected, should they occur, OpenID4VCI implementations should continue to use the specifically referenced versions above in preference to the final versions, unless updated by a profile or new version of this specification.
+
 # Privacy Considerations
 
 When [@!RFC9396] is used, the Privacy Considerations of that specification also apply.
@@ -1773,21 +1784,27 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
     <author fullname="Ivan Herman">
       <organization>W3C</organization>
     </author>
-    <author fullname="Michael B. Jones">
-      <organization>Invited Expert</organization>
-    </author>
     <author fullname="Gabe Cohen">
       <organization>Block</organization>
     </author>
-   <date day="27" month="December" year="2023"/>
+    <author fullname="Michael B. Jones">
+      <organization>Invited Expert</organization>
+    </author>
+   <date day="15" month="May" year="2025"/>
   </front>
 </reference>
 
-<reference anchor="VC_Data_Integrity" target="https://w3c.github.io/vc-data-integrity/">
+<reference anchor="VC_Data_Integrity" target="https://www.w3.org/TR/vc-data-integrity">
   <front>
     <title>Verifiable Credential Data Integrity 1.0</title>
     <author fullname="Manu Sporny">
       <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Ted Thibodeau Jr">
+      <organization>OpenLink Software</organization>
+    </author>
+    <author fullname="Ivan Herman">
+      <organization>W3C</organization>
     </author>
     <author fullname="Dave Longley">
       <organization>Digital Bazaar</organization>
@@ -1795,13 +1812,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
     <author fullname="Greg Bernstein">
       <organization>Invited Expert</organization>
     </author>
-    <author fullname="Dmitri Zagidulin">
-      <organization>Invited Expert</organization>
-    </author>
-    <author fullname="Sebastian Crane">
-      <organization>Invited Expert</organization>
-    </author>
-   <date day="14" month="November" year="2023"/>
+   <date day="15" month="May" year="2025"/>
   </front>
 </reference>
 
@@ -1947,21 +1958,8 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         <author initials="T." surname="Looker" fullname="Tobias Looker">
           <organization>Mattr</organization>
         </author>
-       <date day="29" month="November" year="2022"/>
+       <date day="24" month="April" year="2025"/>
       </front>
-</reference>
-
-<reference anchor="DID_Specification_Registries" target="https://www.w3.org/TR/did-spec-registries/">
-        <front>
-          <title>DID Specification Registries</title>
-      <author fullname="Orie Steele">
-            <organization>Transmute</organization>
-          </author>
-          <author fullname="Manu Sporny">
-            <organization>Digital Bazaar</organization>
-          </author>
-         <date day="11" month="September" year="2023"/>
-        </front>
 </reference>
 
 <reference anchor="LD_Suite_Registry" target="https://w3c-ccg.github.io/ld-cryptosuite-registry/">
@@ -2001,7 +1999,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
           <author fullname="Vladimir Dzhuvinov">
             <organization>Connect2id</organization>
           </author>
-          <date day="15" month="September" year="2024"/>
+          <date day="5" month="March" year="2025"/>
         </front>
 </reference>
 
