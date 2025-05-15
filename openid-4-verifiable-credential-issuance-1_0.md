@@ -764,12 +764,15 @@ The Credential Issuer provides a nonce value in the HTTP response with a 2xx sta
 
 Due to the temporal and contextually sensitive nature of the `c_nonce` value, the Credential Issuer MUST make the response uncacheable by adding a `Cache-Control` header field including the value `no-store`.
 
+ The Credential Issuer MAY provide a DPoP nonce as an HTTP header as defined in Section 8.2 of [@!RFC9449]). In this case, the Wallet uses the new nonce value in the DPoP proof when presenting an access token at the Credential Endpoint.
+
 Below is a non-normative example of a Nonce Response:
 
 ```
 HTTP/1.1 200 OK
 Content-Type: application/json
 Cache-Control: no-store
+DPoP-Nonce: eyJ7S_zG.eyJH0-Z.HX4w-7v
 
 {
   "c_nonce": "wKI4LT17ac15ES9bw8ac4"
@@ -2747,6 +2750,7 @@ The technology described in this specification was made available from contribut
 
    -16
   
+   * Adds an option to return DPoP Nonce from the Nonce Endpoint
    * Change Cryptographic Holder Binding to Cryptographic Key Binding
    * add privacy considerations for the client_id used with wallet attestations
    * deprecate the proof paramter in the credential request
