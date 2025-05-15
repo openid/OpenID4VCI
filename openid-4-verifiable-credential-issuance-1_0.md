@@ -139,7 +139,7 @@ Existing OAuth 2.0 mechanisms are extended as following:
 * A new Grant Type "Pre-Authorized Code" is defined to facilitate flows where the preparation of the Credential issuance is conducted before the actual OAuth flow starts (see (#pre-authz-code-flow)).
 * A new authorization details [@!RFC9396] type `openid_credential` is defined to convey the details about the Credentials (including Credential Dataset, Credential Formats, and Credential types) the Wallet wants to obtain (see (#authorization-details)).
 * Client metadata is used to convey the Wallet's metadata. The new Client metadata parameter `credential_offer_endpoint` is added to allow a Wallet (acting as OAuth 2.0 client) to publish its Credential Offer Endpoint (see (#client-metadata)).
-* Authorization Endpoint: The additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated Credential Offer (see (#credential-authz-request)). Additional parameters `wallet_issuer` and `user_hint` are added to enable the Credential Issuer to request Verifiable Presentations from the calling Wallet during Authorization Request processing.
+* Authorization Endpoint: The additional parameter `issuer_state` is added to convey state in the context of processing an issuer-initiated Credential Offer (see (#credential-authz-request)).
 
 ## Core Concepts
 
@@ -549,10 +549,8 @@ If a scope value related to Credential issuance and the `authorization_details` 
 
 ### Additional Request Parameters {#additional-request-parameters}
 
-This specification defines the following request parameters that can be supplied in an Authorization Request:
+This specification defines the following request parameter that can be supplied in an Authorization Request:
 
-* `wallet_issuer`: OPTIONAL. String containing the Wallet's identifier. The Credential Issuer can use the discovery process defined in [@!SIOPv2] to determine the Wallet's capabilities and endpoints, using the `wallet_issuer` value as the Issuer Identifier referred to in [@!SIOPv2]. This is RECOMMENDED in Dynamic Credential Requests.
-* `user_hint`: OPTIONAL. String containing an opaque End-User hint that the Wallet MAY use in subsequent callbacks to optimize the End-User's experience. This is RECOMMENDED in Dynamic Credential Requests.
 * `issuer_state`: OPTIONAL. String value identifying a certain processing context at the Credential Issuer. A value for this parameter is typically passed in a Credential Offer from the Credential Issuer to the Wallet (see (#credential-offer)). This request parameter is used to pass the `issuer_state` value back to the Credential Issuer.
 
 Note: When processing the Authorization Request, the Credential Issuer MUST take into account that the `issuer_state` is not guaranteed to originate from this Credential Issuer in all circumstances. It could have been injected by an attacker.
@@ -579,18 +577,6 @@ response_type=code
 &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 &authorization_details=...
 ```
-
-### Dynamic Credential Request
-
-This step is OPTIONAL. After receiving an Authorization Request from the Client, the Credential Issuer MAY use this step to obtain additional Credentials from the End-User required to proceed with the authorization of the Credential issuance. The Credential Issuer MAY obtain a Credential and utilize it to identify the End-User before issuing an additional Credential. For such a use case, see (#use-case-5).
-
-It is RECOMMENDED that the Credential Issuer use [@OpenID4VP] to dynamically request presentation of additional Credentials. From a protocol perspective, the Credential Issuer then acts as a verifier and sends a presentation request to the Wallet. The Client SHOULD obtain these Credentials prior to starting a transaction with this Credential Issuer.
-
-To enable dynamic callbacks of the Credential Issuer to the End-User's Wallet, the Wallet MAY provide the additional parameters `wallet_issuer` and `user_hint` defined in (#additional-request-parameters).
-
-For non-normative examples of the request and response, see Sections 5 and 6 in [@OpenID4VP].
-
-Note to the editors: We need to sort out the Credential Issuer's `client_id` with the Wallet and potentially add an example with `wallet_issuer` and `user_hint`.
 
 ## Successful Authorization Response {#authorization-response}
 
@@ -1815,22 +1801,6 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         </front>
 </reference>
 
-<reference anchor="SIOPv2" target="https://openid.net/specs/openid-connect-self-issued-v2-1_0.html">
-  <front>
-    <title>Self-Issued OpenID Provider V2</title>
-    <author fullname="Kristina Yasuda">
-      <organization>German Federal Agency for Disruptive Innovation (SPRIND)</organization>
-    </author>
-    <author fullname="Michael B. Jones">
-      <organization>Self-Issued Consulting</organization>
-    </author>
-    <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
-      <organization>German Federal Agency for Disruptive Innovation (SPRIND)</organization>
-    </author>
-   <date day="28" month="November" year="2023"/>
-  </front>
-</reference>
-
 <reference anchor="BCP195" target="https://www.rfc-editor.org/info/bcp195">
         <front>
           <title>BCP195</title>
@@ -2588,23 +2558,9 @@ established by [@!RFC6755].
 
 ## OAuth Parameters Registry
 
-This specification registers the following OAuth parameters
+This specification registers the following OAuth parameter
 in the IANA "OAuth Parameters" registry [@IANA.OAuth.Parameters]
 established by [@!RFC6749].
-
-### wallet_issuer
-
-* Name: `wallet_issuer`
-* Parameter Usage Location: authorization request
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#credential-authz-request) of this specification
-
-### user_hint
-
-* Name: `user_hint`
-* Parameter Usage Location: authorization request
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#credential-authz-request) of this specification
 
 ### issuer_state
 
@@ -2796,6 +2752,7 @@ The technology described in this specification was made available from contribut
    * deprecate the proof paramter in the credential request
    * add missing request for media type registration of key-attestation+jwt in IANA Considerations
    * rename keyattestation+jwt to key-attestation+jwt
+   * Remove the Dynamic Credential Request section and associated content
 
    -15
 
