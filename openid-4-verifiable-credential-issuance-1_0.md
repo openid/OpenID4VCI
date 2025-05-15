@@ -2793,7 +2793,7 @@ The technology described in this specification was made available from contribut
 
    -16
   
-   * Add DPoP Nonce to Nonce Endpoint
+   * Adds an option to return DPoP Nonce from the Nonce Endpoint
    * Change Cryptographic Holder Binding to Cryptographic Key Binding
    * add privacy considerations for the client_id used with wallet attestations
    * deprecate the proof paramter in the credential request
