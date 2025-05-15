@@ -1456,17 +1456,19 @@ This specification defines the following Credential Issuer Metadata parameters:
     * `key_attestations_required`: OPTIONAL. Object that describes the requirement for key attestations as described in (#keyattestation), which the Credential Issuer expects the Wallet to send within the proof(s) of the Credential Request. If the Credential Issuer does not require a key attestation, this parameter MUST NOT be present in the metadata. If both `key_storage` and `user_authentication` parameters are absent, the `key_attestations_required` parameter may be empty, indicating a key attestation is needed without additional constraints.
       * `key_storage`: OPTIONAL. Array defining values specified in (#keyattestation-apr) accepted by the Credential Issuer.
       * `user_authentication`: OPTIONAL. Array defining values specified in (#keyattestation-apr) accepted by the Credential Issuer.
-  * `display`: OPTIONAL. Array of objects, where each object contains the display properties of the supported Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included.
-    * `name`: REQUIRED. String value of a display name for the Credential.
-    * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. Multiple `display` objects MAY be included for separate languages. There MUST be only one object for each language identifier.
-    * `logo`: OPTIONAL. Object with information about the logo of the Credential. The following non-exhaustive set of parameters MAY be included:
-      * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the logo of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
-      * `alt_text`: OPTIONAL. String value of the alternative text for the logo image.
-    * `description`: OPTIONAL. String value of a description of the Credential.
-    * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
-    * `background_image`: OPTIONAL. Object with information about the background image of the Credential. At least the following parameter MUST be included:
-      * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the background image of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
-    * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
+  * `credential_metadata`: OPTIONAL. Object that contains infromation relevant for the usage and display of issued Credentials. The information in this object can be overwritten by Credential Format-specific mechanisms to convey Credential metadata. The expected behaviour is that format-specific mechanisms are always preferred over over the information provided in this object, which should always be the default fall-back option. Below is a non-exhaustive list of parameters that MAY be included:
+    * `display`: OPTIONAL. Array of objects, where each object contains the display properties of the supported Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included.
+      * `name`: REQUIRED. String value of a display name for the Credential.
+      * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. Multiple `display` objects MAY be included for separate languages. There MUST be only one object for each language identifier.
+      * `logo`: OPTIONAL. Object with information about the logo of the Credential. The following non-exhaustive set of parameters MAY be included:
+        * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the logo of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
+        * `alt_text`: OPTIONAL. String value of the alternative text for the logo image.
+      * `description`: OPTIONAL. String value of a description of the Credential.
+      * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
+      * `background_image`: OPTIONAL. Object with information about the background image of the Credential. At least the following parameter MUST be included:
+        * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the background image of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
+      * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
+    * `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-issuer-metadata).
 
 An Authorization Server that only supports the Pre-Authorized Code grant type MAY omit the `response_types_supported` parameter in its metadata despite [@!RFC8414] mandating it.
 
@@ -2088,7 +2090,6 @@ Cryptographic algorithm names used in the `credential_signing_alg_values_support
 
 The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
-* `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-issuer-metadata).
 * `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of the following parameter:
   * `type`: REQUIRED. Array designating the types a certain Credential type supports, according to [@VC_DATA], Section 4.3.
 
@@ -2138,7 +2139,6 @@ Cryptographic algorithm names used in the `credential_signing_alg_values_support
 
 The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters):
 
-* `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-issuer-metadata).
 * `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of the following parameters:
   * `@context`: REQUIRED. Array as defined in [@VC_DATA], Section 4.1.
   * `type`: REQUIRED. Array designating the types a certain credential type supports, according to [@VC_DATA], Section 4.3.
@@ -2205,7 +2205,6 @@ Cryptographic algorithm names used in the `credential_signing_alg_values_support
 The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
 * `doctype`: REQUIRED. String identifying the Credential type, as defined in [@!ISO.18013-5].
-* `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-issuer-metadata).
 
 The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential Format `mso_mdoc`:
 
@@ -2246,7 +2245,6 @@ The following additional Credential Issuer metadata parameters are defined for t
 
 
 * `vct`: REQUIRED. String designating the type of a Credential, as defined in [@!I-D.ietf-oauth-sd-jwt-vc].
-* `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-issuer-metadata).
 
 The following is a non-normative example of an object comprising the `credential_configurations_supported` parameter for Credential Format `dc+sd-jwt`.
 
@@ -2791,6 +2789,7 @@ The technology described in this specification was made available from contribut
 
    -16
   
+   * move `claims` and `display` into `credential_metadata` and allow for credential-format specific mechanisms to override it
    * Change Cryptographic Holder Binding to Cryptographic Key Binding
    * add privacy considerations for the client_id used with wallet attestations
    * deprecate the proof paramter in the credential request
