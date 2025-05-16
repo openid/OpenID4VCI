@@ -2288,6 +2288,121 @@ claims:
   selected.
 - `["nationalities", 1]`: The second nationality is selected.
 
+# Key Attestations {#keyattestation}
+
+A key attestation, as defined by this specification, is a verifiable statement that demonstrates the authenticity and security properties of a key and its storage component to the Credential Issuer. Keys can be stored in various key storage components, which vary in their ability to protect the private key from extraction and duplication, as well as in the methods used for User authentication to enable key operations. These key storage components can be software-based or hardware-based and may reside on the same device as the Wallet, on external security tokens, or on remote services that facilitate cryptographic key operations. Key attestations are issued either by the Wallet's key storage component itself or by the Wallet Provider. When the Wallet Provider creates the key attestation, it MUST verify the authenticity of its claims about the keys, possibly using platform-specific key attestations.
+
+A Wallet MAY provide key attestations to inform the Credential Issuer about the properties of the cryptographic public keys, such as those used in proof types sent in the Credential Request. Credential Issuers SHOULD evaluate these key attestations to ensure the cryptographic keys meet their security requirements, based on the trust framework, regulatory requirements, laws, or internal policies. A Credential Issuer MUST communicate the need to evaluate key attestations through its metadata or via an out-of-band mechanism.
+
+Key attestations are used by various Credential Issuers with different trust frameworks and requirements, so a common approach is needed for interoperability. Therefore, key attestations SHOULD follow a common format. This helps Credential Issuers create consistent evaluation processes, reducing complexity and errors. Common formats also simplify compliance with regulatory requirements across jurisdictions and support the creation of shared best practices and security standards.
+
+## Key Attestation in JWT format {#keyattestation-jwt}
+
+The JWT is signed by the Wallet Provider or the Wallet's key storage component itself and contains the following elements:
+
+* in the JOSE header,
+  * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
+  * `typ`: REQUIRED. MUST be `keyattestation+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
+
+The key attestation may use `x5c`, `kid` or `trust_chain` (as defined in (#jwt-proof-type) ) to convey the public key and the associated trust mechanism to sign the key attestation.
+
+* in the JWT body,
+  * `iat`: REQUIRED (number). Integer for the time at which the key attestation was issued using the syntax defined in [@!RFC7519].
+  * `exp`: OPTIONAL (number). Integer for the time at which the key attestation and the key(s) it is attesting expire, using the syntax defined in [@!RFC7519]. MUST be present if the attestation is used with the `jwt` proof type.
+  * `attested_keys` : REQUIRED. Array of attested keys from the same key storage component using the syntax of JWK as defined in [@!RFC7517].
+  * `key_storage` : OPTIONAL. Array of case sensitive strings that assert the attack potential resistance of the key storage component and its keys attested in the `attested_keys` parameter. This specification defines initial values in (#keyattestation-apr).
+  * `user_authentication` : OPTIONAL. Array of case sensitive strings that assert the attack potential resistance of the user authentication methods allowed to access the private keys from the `attested_keys` parameter. This specification defines initial values in (#keyattestation-apr).
+  * `certification` : OPTIONAL. A String that contains a URL that links to the certification of the key storage component.
+  * `nonce`: OPTIONAL. String that represents a nonce provided by the Issuer to prove that a key attestation was freshly generated.
+  * `status`: OPTIONAL. JSON Object representing the supported revocation check mechanisms, such as the one defined in [@!I-D.ietf-oauth-status-list]
+
+If used with the `jwt` proof type, the Credential Issuer MUST validate that the JWT used as a proof is signed by a key contained in the attestation in the JOSE Header.
+
+This is an example of a Key Attestation:
+
+```json
+{
+  "typ": "keyattestation+jwt",
+  "alg": "ES256",
+  "x5c": ["MIIDQjCCA..."]
+}
+.
+{
+  "iss": "<identifier of the issuer of this key attestation>",
+  "iat": 1516247022,
+  "exp": 1541493724,
+  "key_storage": [ "iso_18045_moderate" ],
+  "user_authentication": [ "iso_18045_moderate" ],
+  "attested_keys": [
+    {
+      "kty": "EC",
+      "crv": "P-256",
+      "x": "TCAER19Zvu3OHF4j4W4vfSVoHIP1ILilDls7vCeGemc",
+      "y": "ZxjiWWbZMQGHVWKVQ4hbSIirsVfuecCE6t4jT9F2HZQ"
+    }
+  ]
+}
+```
+
+## Attack Potential Resistance {#keyattestation-apr}
+
+This specification defines the following values for `key_storage` and `user_authentication`:
+
+* `iso_18045_high`: It MUST be used when key storage or user authentication is resistant to attack with attack potential "High", equivalent to VAN.5 according to ISO 18045.
+* `iso_18045_moderate`: It MUST be used when key storage or user authentication is resistant to attack with attack potential "Moderate", equivalent to VAN.4 according to ISO 18045.
+* `iso_18045_enhanced-basic`: It MUST be used when key storage or user authentication is resistant to attack with attack potential "Enhanced-Basic", equivalent to VAN.3 according to ISO 18045.
+* `iso_18045_basic`: It MUST be used when key storage or user authentication is resistant to attack with attack potential "Basic", equivalent to VAN.2 according to ISO 18045.
+
+Specifications that extend this list MUST choose collision-resistant values.
+
+When ISO 18045 is not used, ecosystems may define their own values. If the value does not map to a well-known specification, it is RECOMMENDED that the value is a URL that gives further information about the attack potential resistance and possible relations to level of assurances.
+
+# Wallet Attestations in JWT format {#walletattestation}
+
+The Wallet Attestation defined in this section is a client authentication method especially designed for native App Wallets. Instead of using platform-specific key, app, and/or device attestations directly, it uses a key-bound, platform agnostic common format based on JWTs. This allows Authorization Servers to authenticate Wallets across different platforms in a unified fashion and exposes only a minimum dataset. Also, it allows the Wallet app to directly interact with the Credential Issuer without involving the Wallet Provider's backend. The Wallet Attestation MUST be signed by an issuer that the Authorization Server of the Credential Issuer trusts for this purpose. 
+
+In a typical architecture of a native Wallet App, the Wallet Provider's backend will use attestations provided by the mobile operating system, like iOS's DeviceCheck or Android's Play Integrity, to validate the app's integrity and authenticity before issuing the Wallet Attestation.
+
+There are two requests where Wallets may need to authenticate during Credential issuance:
+- The Wallet sends it in the Pushed Authorization Request
+- The Wallet sends it in the Token Request
+
+The Wallet Attestation format follows Section 5.1 "Client Attestation JWT" of [@!I-D.ietf-oauth-attestation-based-client-auth]. The Wallet Attestation additionally includes the following JWT Claims:
+
+* `wallet_name`: OPTIONAL. String containing a human-readable name of the Wallet.
+* `wallet_link`: OPTIONAL. String containing a URL to get further information about the Wallet and the Wallet Provider.
+* `status`: OPTIONAL. Status mechanism for the Wallet Attestation as defined in [@!I-D.ietf-oauth-status-list]
+
+The following is a non-normative example of a Wallet Attestation:
+
+```
+{
+  "typ": "oauth-client-attestation+jwt"
+  "alg": "ES256",
+  "kid": "11"
+}
+.
+{
+  "iss": "https://client.example.com",
+  "sub": "https://client.example.com",
+  "wallet_name": "Wallet Solution X by Wonderland State Department",
+  "wallet_link": "https://example.com/wallet/detail_info.html",
+  "nbf": 1300815780,
+  "exp": 1300819380,
+  "cnf": {
+    "jwk": {
+      "kty": "EC",
+      "use": "sig",
+      "crv": "P-256",
+      "x": "18wHLeIgW9wVN6VD1Txgpqy2LszYkMf6J8njVAibvhM",
+      "y": "-V4dS4UaLMgP_4fY4j8ir7cl1TXlFdAgcx55o7TkcSA"
+    }
+  }
+}
+```
+
+To use the Wallet Attestation towards the Authorization Server, the Wallet MUST generate a proof of possession according to Section 5.2 "Client Attestation PoP JWT" of Attestation-Based Client Authentication.
+
 # Proof Types {#proof-types}
 
 This specification defines the following proof types:
@@ -2442,121 +2557,6 @@ Below is a non-normative example of a `proof` parameter (with line breaks within
 ```
 
 The Credential Issuer SHOULD issue a Credential for each cryptographic public key specified in the `attested_keys` claim within the `key_attestation` parameter.
-
-# Key Attestations {#keyattestation}
-
-A key attestation, as defined by this specification, is a verifiable statement that demonstrates the authenticity and security properties of a key and its storage component to the Credential Issuer. Keys can be stored in various key storage components, which vary in their ability to protect the private key from extraction and duplication, as well as in the methods used for User authentication to enable key operations. These key storage components can be software-based or hardware-based and may reside on the same device as the Wallet, on external security tokens, or on remote services that facilitate cryptographic key operations. Key attestations are issued either by the Wallet's key storage component itself or by the Wallet Provider. When the Wallet Provider creates the key attestation, it MUST verify the authenticity of its claims about the keys, possibly using platform-specific key attestations.
-
-A Wallet MAY provide key attestations to inform the Credential Issuer about the properties of the cryptographic public keys, such as those used in proof types sent in the Credential Request. Credential Issuers SHOULD evaluate these key attestations to ensure the cryptographic keys meet their security requirements, based on the trust framework, regulatory requirements, laws, or internal policies. A Credential Issuer MUST communicate the need to evaluate key attestations through its metadata or via an out-of-band mechanism.
-
-Key attestations are used by various Credential Issuers with different trust frameworks and requirements, so a common approach is needed for interoperability. Therefore, key attestations SHOULD follow a common format. This helps Credential Issuers create consistent evaluation processes, reducing complexity and errors. Common formats also simplify compliance with regulatory requirements across jurisdictions and support the creation of shared best practices and security standards.
-
-## Key Attestation in JWT format {#keyattestation-jwt}
-
-The JWT is signed by the Wallet Provider or the Wallet's key storage component itself and contains the following elements:
-
-* in the JOSE header,
-  * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
-  * `typ`: REQUIRED. MUST be `keyattestation+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
-
-The key attestation may use `x5c`, `kid` or `trust_chain` (as defined in (#jwt-proof-type) ) to convey the public key and the associated trust mechanism to sign the key attestation.
-
-* in the JWT body,
-  * `iat`: REQUIRED (number). Integer for the time at which the key attestation was issued using the syntax defined in [@!RFC7519].
-  * `exp`: OPTIONAL (number). Integer for the time at which the key attestation and the key(s) it is attesting expire, using the syntax defined in [@!RFC7519]. MUST be present if the attestation is used with the `jwt` proof type.
-  * `attested_keys` : REQUIRED. Array of attested keys from the same key storage component using the syntax of JWK as defined in [@!RFC7517].
-  * `key_storage` : OPTIONAL. Array of case sensitive strings that assert the attack potential resistance of the key storage component and its keys attested in the `attested_keys` parameter. This specification defines initial values in (#keyattestation-apr).
-  * `user_authentication` : OPTIONAL. Array of case sensitive strings that assert the attack potential resistance of the user authentication methods allowed to access the private keys from the `attested_keys` parameter. This specification defines initial values in (#keyattestation-apr).
-  * `certification` : OPTIONAL. A String that contains a URL that links to the certification of the key storage component.
-  * `nonce`: OPTIONAL. String that represents a nonce provided by the Issuer to prove that a key attestation was freshly generated.
-  * `status`: OPTIONAL. JSON Object representing the supported revocation check mechanisms, such as the one defined in [@!I-D.ietf-oauth-status-list]
-
-If used with the `jwt` proof type, the Credential Issuer MUST validate that the JWT used as a proof is signed by a key contained in the attestation in the JOSE Header.
-
-This is an example of a Key Attestation:
-
-```json
-{
-  "typ": "keyattestation+jwt",
-  "alg": "ES256",
-  "x5c": ["MIIDQjCCA..."]
-}
-.
-{
-  "iss": "<identifier of the issuer of this key attestation>",
-  "iat": 1516247022,
-  "exp": 1541493724,
-  "key_storage": [ "iso_18045_moderate" ],
-  "user_authentication": [ "iso_18045_moderate" ],
-  "attested_keys": [
-    {
-      "kty": "EC",
-      "crv": "P-256",
-      "x": "TCAER19Zvu3OHF4j4W4vfSVoHIP1ILilDls7vCeGemc",
-      "y": "ZxjiWWbZMQGHVWKVQ4hbSIirsVfuecCE6t4jT9F2HZQ"
-    }
-  ]
-}
-```
-
-## Attack Potential Resistance {#keyattestation-apr}
-
-This specification defines the following values for `key_storage` and `user_authentication`:
-
-* `iso_18045_high`: It MUST be used when key storage or user authentication is resistant to attack with attack potential "High", equivalent to VAN.5 according to ISO 18045.
-* `iso_18045_moderate`: It MUST be used when key storage or user authentication is resistant to attack with attack potential "Moderate", equivalent to VAN.4 according to ISO 18045.
-* `iso_18045_enhanced-basic`: It MUST be used when key storage or user authentication is resistant to attack with attack potential "Enhanced-Basic", equivalent to VAN.3 according to ISO 18045.
-* `iso_18045_basic`: It MUST be used when key storage or user authentication is resistant to attack with attack potential "Basic", equivalent to VAN.2 according to ISO 18045.
-
-Specifications that extend this list MUST choose collision-resistant values.
-
-When ISO 18045 is not used, ecosystems may define their own values. If the value does not map to a well-known specification, it is RECOMMENDED that the value is a URL that gives further information about the attack potential resistance and possible relations to level of assurances.
-
-# Wallet Attestations in JWT format {#walletattestation}
-
-The Wallet Attestation defined in this section is a client authentication method especially designed for native App Wallets. Instead of using platform-specific key, app, and/or device attestations directly, it uses a key-bound, platform agnostic common format based on JWTs. This allows Authorization Servers to authenticate Wallets across different platforms in a unified fashion and exposes only a minimum dataset. Also, it allows the Wallet app to directly interact with the Credential Issuer without involving the Wallet Provider's backend. The Wallet Attestation MUST be signed by an issuer that the Authorization Server of the Credential Issuer trusts for this purpose. 
-
-In a typical architecture of a native Wallet App, the Wallet Provider's backend will use attestations provided by the mobile operating system, like iOS's DeviceCheck or Android's Play Integrity, to validate the app's integrity and authenticity before issuing the Wallet Attestation.
-
-There are two requests where Wallets may need to authenticate during Credential issuance:
-- The Wallet sends it in the Pushed Authorization Request
-- The Wallet sends it in the Token Request
-
-The Wallet Attestation format follows Section 5.1 "Client Attestation JWT" of [@!I-D.ietf-oauth-attestation-based-client-auth]. The Wallet Attestation additionally includes the following JWT Claims:
-
-* `wallet_name`: OPTIONAL. String containing a human-readable name of the Wallet.
-* `wallet_link`: OPTIONAL. String containing a URL to get further information about the Wallet and the Wallet Provider.
-* `status`: OPTIONAL. Status mechanism for the Wallet Attestation as defined in [@!I-D.ietf-oauth-status-list]
-
-The following is a non-normative example of a Wallet Attestation:
-
-```
-{
-  "typ": "oauth-client-attestation+jwt"
-  "alg": "ES256",
-  "kid": "11"
-}
-.
-{
-  "iss": "https://client.example.com",
-  "sub": "https://client.example.com",
-  "wallet_name": "Wallet Solution X by Wonderland State Department",
-  "wallet_link": "https://example.com/wallet/detail_info.html",
-  "nbf": 1300815780,
-  "exp": 1300819380,
-  "cnf": {
-    "jwk": {
-      "kty": "EC",
-      "use": "sig",
-      "crv": "P-256",
-      "x": "18wHLeIgW9wVN6VD1Txgpqy2LszYkMf6J8njVAibvhM",
-      "y": "-V4dS4UaLMgP_4fY4j8ir7cl1TXlFdAgcx55o7TkcSA"
-    }
-  }
-}
-```
-
-To use the Wallet Attestation towards the Authorization Server, the Wallet MUST generate a proof of possession according to Section 5.2 "Client Attestation PoP JWT" of Attestation-Based Client Authentication.
 
 # IANA Considerations
 
