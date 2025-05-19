@@ -559,15 +559,15 @@ Additional Authorization Request parameters MAY be defined and used,
 as described in [@!RFC6749].
 The Authorization Server MUST ignore any unrecognized parameters.
 
-### Pushed Authorization Request
+### Pushed Authorization Request {#pushed-authorization-request}
 
 Use of Pushed Authorization Requests is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues caused by large requests sizes.
 
 Below is a non-normative example of a Pushed Authorization Request:
 
 ```
-POST /op/par HTTP/1.1
-Host: as.example.com
+POST /par HTTP/1.1
+Host: server.example.com
 Content-Type: application/x-www-form-urlencoded
 
 response_type=code
@@ -576,6 +576,28 @@ response_type=code
 &code_challenge_method=S256
 &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 &authorization_details=...
+```
+
+If the request is successful, the  Authorization Server MUST respond with a 201 Created status code and the Location header field containing the URL of the Authorization Request URI.
+
+```
+HTTP/1.1 201 Created
+Content-Type: application/json
+Cache-Control: no-cache, no-store
+
+{
+"request_uri":
+  "urn:ietf:params:oauth:request_uri:6esc_11ACC5bwc014ltc14eY22c",
+  "expires_in": 60
+}
+```
+
+The Wallet can then use the `request_uri` value in the Authorization Request to the Authorization Server.
+
+```
+GET /authorize?client_id=s6BhdRkqt3
+  &request_uri=urn:ietf:params:oauth:request_uri:6esc_11ACC5bwc014ltc14eY22c
+Host: server.example.com
 ```
 
 ## Successful Authorization Response {#authorization-response}
@@ -602,6 +624,69 @@ Location: https://client.example.net/cb?
   error=invalid_request
   &error_description=Unsupported%20response_type%20value
 ```
+
+# Authorization Challenge Endpoint
+
+An Authorization Server MAY publish parameter `authorization_challenge_endpoint` in its Authorization Server Metadata. In this case, the Wallet SHOULD use this endpoint to obtain authorization. This enables use cases where an Issuer requests Presentation of a Credential before issuing its Credential.
+
+## Authorization Challenge Request
+
+The request to the Authorization Challenge Endpoint follows the same rules as the Pushed Authorization Request (see (#pushed-authorization-request)).
+
+## Authorization Challenge Response
+
+The response from the Authorization Challenge Endpoint can take one of the following forms:
+
+### Error - Request Presentation 
+
+The Authorization Server MAY request a Credential Presentation by responding with the `error` code `insufficient_authorization`. In this case, it MUST include a `presentation` parameter containing an Authorization Request as defined in Section 5 of [@!OpenID4VP], encoded in JSON.
+
+```
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "error": "insufficient_authorization",
+  "auth_session": "123456789",
+  "presentation": {
+    "client_id": "x509_san_dns:rp.example.com",
+    "request_uri": "https://rp.example.com/oidc/request/1234"
+  }
+}
+```
+
+If the error code is `insufficient_authorization` and a `presentation` parameter is present, the Wallet MUST process the Authorization Request contained in the `presentation` parameter as defined in [@!OpenID4VP] to perform a Credential Presentation to the Authorization Server. It is then expected to repeat the Authorization Challenge Request.
+
+The Authorization Server MAY use the `auth_session` parameter in the Authorization Challenge Response. The auth session allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. The Wallet MUST include the `auth_session` in follow-up requests to the Authorization Challenge Endpoint if it receives one along with the error response.
+
+#todo: Determine whether we needs presentation_during_issuance_session
+
+### Error - Show Website
+
+#todo: Determine whether we need this. May need to include privacy considerations.
+
+### Other Errors
+
+The Authorization Server MAY respond with other errors as defined in [@!RFC9126].
+
+### Authorization Code Response
+
+Once the Authorization Server has successfully processed the Authorization Challenge Request, it MUST respond with a 200 OK response containing the `authorization_code` parameter.
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "authorization_code": "uY29tL2F1dGhlbnRpY"
+}
+```
+
+The Wallet MUST use this authorization code in the subsequent Token Request to the Token Endpoint.
+
+#todo: Determine if we want to make the extension point explicit or not.
 
 # Token Endpoint {#token-endpoint}
 
