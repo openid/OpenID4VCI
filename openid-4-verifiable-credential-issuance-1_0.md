@@ -2102,7 +2102,7 @@ The following additional claims are defined for authorization details of type `o
 
 * `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-authorization-details).
 * `credential_definition`: REQUIRED. Object containing a detailed description of the Credential consisting of the following parameter:
-  * `type`: REQUIRED. Array as defined in (#server-metadata-jwt-vc-json). This claim contains the type values the Wallet requests authorization for at the Credential Issuer. It MUST be present if the claim `format` is present in the root of the authorization details object. It MUST not be present otherwise.
+  * `type`: REQUIRED if the `format` claim is present with a value of `jwt_vc_json`. It MUST NOT be present otherwise. Array as defined in (#server-metadata-jwt-vc-json). This claim contains the type values the Wallet requests authorization for at the Credential Issuer.
 
 The following is a non-normative example of an authorization details object with Credential Format `jwt_vc_json`:
 
@@ -2153,8 +2153,8 @@ The following additional claims are defined for authorization details of type `o
 
 * `claims`: OPTIONAL. An array of claims description objects as defined in (#claims-description-authorization-details).
 * `credential_definition`: REQUIRED. Object containing the detailed description of the Credential. It consists of the following parameters:
-    * `@context`: REQUIRED. Array as defined in (#server-metadata-ldp-vc). It MUST only be present if the `format` claim is present in the root of the authorization details object. It MUST not be present otherwise. 
-    * `type`: REQUIRED. Array as defined in (#server-metadata-ldp-vc).  This claim contains the type values the Wallet requests authorization for at the Credential Issuer. MUST only be present if the `@context` claim is present. 
+    * `@context`: REQUIRED if the `format` claim is present with a value of `ldp_vc`. It MUST NOT be present otherwise. Array as defined in (#server-metadata-ldp-vc). 
+    * `type`: REQUIRED if the `format` claim is present with a value of `ldp_vc`. It MUST NOT be present otherwise. Array as defined in (#server-metadata-ldp-vc).  This claim contains the type values the Wallet requests authorization for at the Credential Issuer.
 
 The following is a non-normative example of an authorization details object with Credential Format `ldp_vc`:
 
@@ -2215,7 +2215,7 @@ The following is a non-normative example of an object containing the `credential
 
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.
 
-* `doctype`: REQUIRED. String as defined in (#server-metadata-mso-mdoc). This claim contains the type value the Wallet requests authorization for at the Credential Issuer. It MUST only be present if the `format` claim is present. It MUST not be present otherwise. 
+* `doctype`: REQUIRED if the `format` claim is present with a value of `mso_mdoc`. It MUST NOT be present otherwise. String as defined in (#server-metadata-mso-mdoc) that contains the type value the Wallet requests authorization for at the Credential Issuer.
 * `claims`: OPTIONAL. Object as defined in (#claims-description-authorization-details).
 
 The following is a non-normative example of an authorization details object with Credential Format `mso_mdoc`:
