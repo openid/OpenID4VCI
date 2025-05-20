@@ -2391,8 +2391,8 @@ In detail, the array is processed as follows:
 1. Select the namespace referenced by the first component. If the namespace does not exist in the mdoc, abort processing and return an error.
 2. Process each subsequent component as follows:
    1. If the currently selected element(s) are arrays, and the component is a non-negative integer, select the element at the given index in each array. If the index is out of bounds in a selected array, remove that array from the selection.
-   2. If the currently selected element(s) are maps, and the component is a string or integer, select the element(s) associated with the key. If a selected element is not a map, abort processing. If the key does not exist in a selected map, remove that map from the selection.
-   3. If the component is null, select all elements in each currently selected array. If any selected element is not an array, abort processing.
+   2. If the currently selected element(s) are maps, and the component is a string or integer, select the element(s) associated with the key. If a selected element is not a map, abort processing and return an error. If the key does not exist in a selected map, remove that map from the selection.
+   3. If the component is null, select all elements in each currently selected array. If any selected element is not an array, abort processing and return an error.
 3. If the set of elements currently selected is empty, abort processing and return an error.
 
 The result of the processing is the set of selected elements contained within the selected namespace.
