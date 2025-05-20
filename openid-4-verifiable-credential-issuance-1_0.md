@@ -2380,7 +2380,7 @@ Whether a non-negative integer is interpreted as a map key or an array index dep
 The path is formed as follows:
 
 * To address a particular namespace, append the namespace identifier (as a string) as the first element of the path.
-* To address a claim (i.e., data element) within a namespace, or a claim within nested data structure, append the corresponding key (string or integer).
+* To address a claim (i.e., data element) within a namespace, or a claim within a data structure (i.e., map), append the corresponding key (string or integer).
 * To address an element within an array, append the index (as a non-negative, 0-based integer).
 * To address all elements of an array, append a null value.
 
