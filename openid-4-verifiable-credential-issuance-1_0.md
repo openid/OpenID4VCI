@@ -2371,22 +2371,31 @@ The result of the processing is the set of selected JSON elements.
 This section defines the semantics of a claims path pointer when applied to a
 credential in ISO mdoc format.
 
-A claims path pointer into an mdoc contains two elements of type string. The
-first element refers to a namespace and the second element refers to a data
-element identifier.
+* A string or integer value indicates that the respective key is to be selected from a map.
+* A null value indicates that all elements of the currently selected array(s) are to be selected.
+* A non-negative integer may also indicate a specific index within an array.
+
+Whether a non-negative integer is interpreted as a map key or an array index depends on the type of the currently selected data structure.
+
+The path is formed as follows:
+
+* To address a particular namespace, append the namespace identifier (as a string) as the first element of the path.
+* To address a claim (i.e., data element) within a namespace, or a claim within nested data structure, append the corresponding key (string or integer).
+* To address an element within an array, append the index (as a non-negative, 0-based integer).
+* To address all elements of an array, append a null value.
 
 ### Processing
 
 In detail, the array is processed as follows:
 
-1. If the claims path pointer does not contain exactly two components or 
-   one of the components is not a string abort processing and return an error.
-2. Select the namespace referenced by the first component. If the namespace does
-   not exist in the mdoc abort processing and return an error.
-3. Select the data element referenced by the second component. If the data element does not exist
-   in the credential abort processing and return an error.
+1. Select the namespace referenced by the first component. If the namespace does not exist in the mdoc, abort processing and return an error.
+2. Process each subsequent component as follows:
+   1. If the currently selected element(s) are arrays, and the component is a non-negative integer, select the element at the given index in each array. If the index is out of bounds in a selected array, remove that array from the selection.
+   2. If the currently selected element(s) are maps, and the component is a string or integer, select the element(s) associated with the key. If a selected element is not a map, abort processing. If the key does not exist in a selected map, remove that map from the selection.
+   3. If the component is null, select all elements in each currently selected array. If any selected element is not an array, abort processing.
+3. If the set of elements currently selected is empty, abort processing and return an error.
 
-The result of the processing is the selected data element value as CBOR data item.
+The result of the processing is the set of selected elements contained within the selected namespace.
 
 ## Claims Path Pointer Example {#claims_path_pointer_example}
 
