@@ -1600,7 +1600,6 @@ It is up to the Credential Issuer whether to update both the signature and the c
 Implementers should be aware that this specification uses several specifications that are not yet final specifications. Those specifications are:
 
 * OpenID Federation 1.0 draft -42 [@!OpenID.Federation]
-* SIOPv2 draft -13 [@!SIOPv2]
 * SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -08 [@!I-D.ietf-oauth-sd-jwt-vc]
 
 
