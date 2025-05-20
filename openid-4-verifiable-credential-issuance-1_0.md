@@ -2828,7 +2828,8 @@ The technology described in this specification was made available from contribut
    * deprecate the proof paramter in the credential request
    * add missing request for media type registration of key-attestation+jwt in IANA Considerations
    * rename keyattestation+jwt to key-attestation+jwt
-   * editorial improvements regarding ISO mDL
+   * use mdoc as a term, instead of mDL
+   * clarify mdoc as a credential format can be used with non-mDL use-cases
 
    -15
 
