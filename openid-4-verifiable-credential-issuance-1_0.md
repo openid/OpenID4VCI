@@ -2371,18 +2371,16 @@ The result of the processing is the set of selected JSON elements.
 This section defines the semantics of a claims path pointer when applied to a
 credential in ISO mdoc format.
 
-* A string or integer value indicates that the respective key is to be selected from a map.
-* A null value indicates that all elements of the currently selected array(s) are to be selected.
-* A non-negative integer may also indicate a specific index within an array.
+The following rules MUST be followed:
+
+* A claims path pointer into an ISO mdoc always contains at least two elements. The first two 
+elements are of type string. The first element refers to a namespace and the second element refers to a data element identifier.
+* The remaining elements can be used to provide a path into the value of the data element according to the following rules:
+  * To address a claim within a data structure (i.e., map), append the corresponding key (string or integer).
+  * To address an element within an array, append the index (as a non-negative, 0-based integer).
+  * To address all elements of an array, append a null value.
 
 Whether a non-negative integer is interpreted as a map key or an array index depends on the type of the currently selected data structure.
-
-The path is formed as follows:
-
-* To address a particular namespace, append the namespace identifier (as a string) as the first element of the path.
-* To address a claim (i.e., data element) within a namespace, or a claim within a data structure (i.e., map), append the corresponding key (string or integer).
-* To address an element within an array, append the index (as a non-negative, 0-based integer).
-* To address all elements of an array, append a null value.
 
 ### Processing
 
