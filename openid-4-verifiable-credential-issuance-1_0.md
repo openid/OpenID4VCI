@@ -1055,6 +1055,8 @@ A key attestation in JWT format as defined in (#keyattestation-jwt).
 
 When a key attestation is used as a proof type, it MUST contain the `c_nonce` value provided by the Credential Issuer in its `nonce` parameter.
 
+Cryptographic algorithm identifiers used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type are case sensitive strings and SHOULD be one of those defined in [@IANA.JOSE].
+
 Below is a non-normative example of a `proofs` parameter (with line breaks within values for display purposes only):
 
 ```json
