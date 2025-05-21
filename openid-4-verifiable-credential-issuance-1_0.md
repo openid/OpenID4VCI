@@ -2760,6 +2760,7 @@ The technology described in this specification was made available from contribut
    * add missing request for media type registration of key-attestation+jwt in IANA Considerations
    * rename keyattestation+jwt to key-attestation+jwt
    * Remove the Dynamic Credential Request section and associated content
+   * define `proof_signing_alg_values_supported` for attestation proof type
 
    -15
 
