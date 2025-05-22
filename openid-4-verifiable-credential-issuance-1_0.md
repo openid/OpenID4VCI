@@ -470,20 +470,15 @@ Credential Issuers MAY support requesting authorization to issue a Credential us
 The request parameter `authorization_details` defined in Section 2 of [@!RFC9396] MUST be used to convey the details about the Credentials the Wallet wants to obtain. This specification introduces a new authorization details type `openid_credential` and defines the following parameters to be used with this authorization details type:
 
 * `type`: REQUIRED. String that determines the authorization details type. It MUST be set to `openid_credential` for the purpose of this specification.
-* `credential_configuration_id`: REQUIRED when `format` parameter is not present. String specifying a unique identifier of the Credential being described in the `credential_configurations_supported` map in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). The referenced object in the `credential_configurations_supported` map conveys the details, such as the format, for issuance of the requested Credential. This specification defines Credential Format specific Issuer Metadata in (#format-profiles). It MUST NOT be present if `format` parameter is present.
-* `format`: REQUIRED when `credential_configuration_id` parameter is not present. String identifying the format of the Credential the Wallet needs. This Credential Format Identifier determines further claims in the authorization details object needed to identify the Credential type in the requested format. This specification defines Credential Format Profiles in (#format-profiles). It MUST NOT be present if `credential_configuration_id` parameter is present.
+* `credential_configuration_id`: REQUIRED. String specifying a unique identifier of the Credential being described in the `credential_configurations_supported` map in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). The referenced object in the `credential_configurations_supported` map conveys the details, such as the format, for issuance of the requested Credential. This specification defines Credential Format specific Issuer Metadata in (#format-profiles).
+* `claims`: OPTIONAL. A non-empty array of claims description objects as defined in (#claims-description-authorization-details).
 
-Additional `authorization_details` data fields MAY be defined and used
-when the `type` value is `openid_credential`.
+Additional `authorization_details` data fields MAY be defined and used when the `type` value is `openid_credential`.
 Note that this effectively defines an authorization details type that is never considered invalid due to unknown fields.
 
 The following is a non-normative example of an `authorization_details` object with a `credential_configuration_id`:
 
 <{{examples/authorization_details.json}}
-
-The following is a non-normative example of an `authorization_details` object requesting a Credential in the IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format:
-
-<{{examples/authorization_details_sd_jwt_vc.json}}
 
 If the Credential Issuer metadata contains an `authorization_servers` parameter, the authorization detail's `locations` common data field MUST be set to the Credential Issuer Identifier value. A non-normative example for a deployment where an Authorization Server protects multiple Credential Issuers would look like this:
 
@@ -2071,12 +2066,6 @@ The following is a non-normative example of an object containing the `credential
 
 #### Authorization Details {#authorization-jwt-vc-json}
 
-The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.
-
-* `claims`: OPTIONAL. A non-empty array of claims description objects as defined in (#claims-description-authorization-details).
-* `credential_definition`: OPTIONAL. Object containing a detailed description of the Credential consisting of the following parameter:
-  * `type`: OPTIONAL. Array as defined in (#server-metadata-jwt-vc-json). This claim contains the type values the Wallet requests authorization for at the Credential Issuer. It MUST be present if the claim `format` is present in the root of the authorization details object. It MUST not be present otherwise.
-
 The following is a non-normative example of an authorization details object with Credential Format `jwt_vc_json`:
 
 <{{examples/authorization_details_jwt_vc_json.json}}
@@ -2121,13 +2110,6 @@ The following is a non-normative example of an object containing the `credential
 <{{examples/credential_metadata_ldp_vc.json}}
 
 #### Authorization Details {#authorization-ldp-vc}
-
-The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.  
-
-* `claims`: OPTIONAL. A non-empty array of claims description objects as defined in (#claims-description-authorization-details).
-* `credential_definition`: OPTIONAL. Object containing the detailed description of the Credential. It consists of the following parameters:
-    * `@context`: OPTIONAL. Array as defined in (#server-metadata-ldp-vc). It MUST only be present if the `format` claim is present in the root of the authorization details object. It MUST not be present otherwise. 
-    * `type`: OPTIONAL. Array as defined in (#server-metadata-ldp-vc).  This claim contains the type values the Wallet requests authorization for at the Credential Issuer. MUST only be present if the `@context` claim is present. 
 
 The following is a non-normative example of an authorization details object with Credential Format `ldp_vc`:
 
@@ -2186,11 +2168,6 @@ The following is a non-normative example of an object containing the `credential
 
 ### Authorization Details
 
-The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.
-
-* `doctype`: OPTIONAL. String as defined in (#server-metadata-mso-mdoc). This claim contains the type value the Wallet requests authorization for at the Credential Issuer. It MUST only be present if the `format` claim is present. It MUST not be present otherwise. 
-* `claims`: OPTIONAL. Object as defined in (#claims-description-authorization-details).
-
 The following is a non-normative example of an authorization details object with Credential Format `mso_mdoc`:
 
 <{{examples/authorization_details_mso_doc.json}}
@@ -2226,11 +2203,6 @@ The following is a non-normative example of an object comprising the `credential
 <{{examples/credential_metadata_sd_jwt_vc.json}}
 
 ### Authorization Details {#authorization-sd-jwt-vc}
-
-The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.
-
-* `vct`: REQUIRED. String as defined in (#server-metadata-sd-jwt-vc). This claim contains the type values the Wallet requests authorization for at the Credential Issuer. It MUST only be present if the `format` claim is present. It MUST not be present otherwise.
-* `claims`: OPTIONAL. A non-empty array of claims description objects as defined in (#claims-description-authorization-details).
 
 The following is a non-normative example of an authorization details object with Credential Format `dc+sd-jwt`.
 
@@ -2750,6 +2722,7 @@ The technology described in this specification was made available from contribut
 
    -16
   
+   * Remove the option to use `format` from `authorization_details` in the Authorization Request
    * Adds an option to return DPoP Nonce from the Nonce Endpoint
    * Change Cryptographic Holder Binding to Cryptographic Key Binding
    * add privacy considerations for the client_id used with wallet attestations
