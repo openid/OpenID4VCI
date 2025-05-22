@@ -1923,16 +1923,6 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         </front>
 </reference>
 
-<reference anchor="ISO.23220-1" target="https://www.iso.org/standard/74910.html">
-        <front>
-          <title>ISO/IEC TS 23220-1 Personal identification — Building blocks for identity management via mobile devices — Part 1: Generic system architectures of mobile eID systems</title>
-          <author>
-            <organization> ISO/IEC JTC 1/SC 17 Cards and security devices for personal identification</organization>
-          </author>
-          <date year="2023"/>
-        </front>
-</reference>
-
 <reference anchor="IANA.JOSE" target="https://www.iana.org/assignments/jose">
         <front>
           <title>JSON Object Signing and Encryption (JOSE)</title>
