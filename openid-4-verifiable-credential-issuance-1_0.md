@@ -2204,7 +2204,7 @@ The definitions in (#credential-response-jwt-vc-json) apply for Credentials of t
 
 This section defines a Credential Format Profile for credentials that conform to the mobile document (mdoc) format specified in ISO/IEC 18013-5 [@ISO.18013-5] and the ISO/IEC 23220 series [@ISO.23220-1].
 
-ISO/IEC 18013-5:2021 [@ISO.18013-5] defines the mdoc format in the context of mobile driving licences (mDLs). While the specification is focused on mDLs, the mdoc format itself is general-purpose and can be used for other types of Credentials. It is also referenced in the ISO/IEC 23220 series [@ISO.23220-1] and in other specifications that define additional mdoc-based document types.
+ISO/IEC 18013-5:2021 [@ISO.18013-5] defines the mdoc format in the context of mobile driving licences (mDLs). While the specification is focused on mDLs, the mdoc format itself is general-purpose and can be used for other types of Credentials.
 
 ### Format Identifier
 
