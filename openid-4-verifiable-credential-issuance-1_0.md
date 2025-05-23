@@ -1233,7 +1233,7 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 Deferred Credential Response may either contain the requested Credentials or further defer the issuance:
 
 * If the Credential Issuer is able to issue the requested Credentials, the Deferred Credential Response MUST use the `credentials` parameter as defined in (#credential-response) and MUST respond with the HTTP status code 200 (see Section 15.3.3 of [@!RFC9110]).
-* If the Credential Issuer still requires more time, the Deferred Credential Response MAY use the `interval` parameter as defined in (#credential-response) and MUST respond with the HTTP status code 202 (see Section 15.3.3 of [@!RFC9110]).
+* If the Credential Issuer still requires more time, the Deferred Credential Response MUST use the `interval` parameter as defined in (#credential-response) and MUST respond with the HTTP status code 202 (see Section 15.3.3 of [@!RFC9110]).
 
 The Deferred Credential Response MAY use the `notification_id` parameter as defined in (#credential-response).
 
@@ -1242,7 +1242,7 @@ The Wallet MUST ignore any unrecognized parameters.
 
 The Deferred Credential Response MUST be sent using the `application/json` media type.
 
-The following is a non-normative example of a Deferred Credential Response:
+The following is a non-normative example of a Deferred Credential Response containing Credentials:
 
 ```
 HTTP/1.1 200 OK
@@ -1258,6 +1258,17 @@ Content-Type: application/json
     }
   ],
   "notification_id": "3fwe98js"
+}
+```
+
+The following is a non-normative example of a Deferred Credential Response, where the Credential Issuer still requires more time:
+
+```
+HTTP/1.1 202 OK
+Content-Type: application/json
+
+{
+  "interval": 86400
 }
 ```
 
