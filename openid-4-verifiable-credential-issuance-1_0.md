@@ -2190,9 +2190,9 @@ The definitions in (#authorization-ldp-vc) apply for Credentials of this type as
 
 The definitions in (#credential-response-jwt-vc-json) apply for Credentials of this type as well.
 
-## Mobile Documents or mdocs (ISO/IEC 18013 and ISO/IEC 23220 series) {#mdocs}
+## Mobile Documents or mdocs (ISO/IEC 18013) {#mdocs}
 
-This section defines a Credential Format Profile for credentials that conform to the mobile document (mdoc) format specified in ISO/IEC 18013-5 [@ISO.18013-5] and the ISO/IEC 23220 series [@ISO.23220-1].
+This section defines a Credential Format Profile for credentials that conform to the mobile document (mdoc) format specified in ISO/IEC 18013-5 [@ISO.18013-5].
 
 ISO/IEC 18013-5:2021 [@ISO.18013-5] defines the mdoc format in the context of mobile driving licences (mDLs). While the specification is focused on mDLs, the mdoc format itself is general-purpose and can be used for other types of Credentials.
 
