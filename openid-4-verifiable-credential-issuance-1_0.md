@@ -1207,14 +1207,21 @@ Communication with the Deferred Credential Endpoint MUST utilize TLS.
 
 The Deferred Credential Request is an HTTP POST request. It MUST be sent using the `application/json` media type.
 
-The following parameter is used in the Deferred Credential Request:
+The following parameters are used in the Deferred Credential Request:
 
 * `transaction_id`: REQUIRED. String identifying a Deferred Issuance transaction.
+* `credential_response_encryption`: OPTIONAL. as defined in (#credential-request).
 
 The Credential Issuer MUST invalidate the `transaction_id` after the Credential for which it was meant has been obtained by the Wallet.
 
 Additional Deferred Credential Request parameters MAY be defined and used.
 The Credential Issuer MUST ignore any unrecognized parameters.
+
+The Credential Issuer indicates support for encrypted requests by including the `credential_request_encryption` parameter in the Credential Issuer Metadata. The Client MAY encrypt the request when `encryption_required` is `false` and MUST do so when `encryption_required` is `true`. 
+
+When performing Deferred Credential Request encryption, the Client MUST encode the information in the Deferred Credential Request in a JWT as specified by [#encrypted-messages], using the parameters in from `credential_request_encryption` object. 
+
+If the Deferred Credential Request is not encrypted, the media type of the request MUST be set to `application/json`.
 
 The following is a non-normative example of a Deferred Credential Request:
 
@@ -1229,6 +1236,8 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 }
 ```
 
+The Credential Issuer indicates support for encrypted responses by including the `credential_response_encryption` parameter in the Credential Issuer Metadata. The Client MAY request encrypted responses by providing its encryption parameters in the Deferred Credential Request when `encryption_required` is `false` and MUST do so when `encryption_required` is `true`. 
+
 ## Deferred Credential Response {#deferred-credential-response}
 
 The Deferred Credential Response uses the `credentials` and `notification_id` parameters as defined in (#credential-response).
@@ -1236,7 +1245,9 @@ The Deferred Credential Response uses the `credentials` and `notification_id` pa
 Additional Deferred Credential Response parameters MAY be defined and used.
 The Wallet MUST ignore any unrecognized parameters.
 
-The Deferred Credential Response MUST be sent using the `application/json` media type.
+If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Deferred Credential Response as specified by [#encrypted-messages], using the parameters from the `credential_response_encryption` object. 
+
+If the Deferred Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
 
 The following is a non-normative example of a Deferred Credential Response:
 
