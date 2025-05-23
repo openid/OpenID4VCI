@@ -1230,7 +1230,7 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 ## Deferred Credential Response {#deferred-credential-response}
 
-Deferred Credential Response may either contain the requested Credentials or further defer the issuance:
+A Deferred Credential Response may either contain the requested Credentials or further defer the issuance:
 
 * If the Credential Issuer is able to issue the requested Credentials, the Deferred Credential Response MUST use the `credentials` parameter as defined in (#credential-response) and MUST respond with the HTTP status code 200 (see Section 15.3.3 of [@!RFC9110]).
 * If the Credential Issuer still requires more time, the Deferred Credential Response MUST use the `interval` parameter as defined in (#credential-response) and MUST respond with the HTTP status code 202 (see Section 15.3.3 of [@!RFC9110]).
