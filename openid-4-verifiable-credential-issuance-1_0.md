@@ -2274,7 +2274,7 @@ The rules defined in (#claims-description-processing) apply.
 ## Claims Description for Issuer Metadata {#claims-description-issuer-metadata}
 
 A claims description object as used in the Credential Issuer metadata is an
-object used to describe how a certain claim in the Credential should be
+object used to describe how a certain claim in the Credential is
 displayed to the End-User. It is used in the `claims`
 parameter in the Credential Issuer metadata defined in (#format-profiles). The
 following keys can be used to describe the claim or claims:
