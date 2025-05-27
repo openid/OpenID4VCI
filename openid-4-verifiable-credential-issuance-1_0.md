@@ -1601,7 +1601,7 @@ Credential Refresh can be initiated by the Wallet independently from the Credent
 
 It is up to the Credential Issuer whether to update both the signature and the claim values, or only the signature.
 
-## Wallets encompassing an additional cloud component (#wallet-cloud-component)
+## Wallets encompassing an additional cloud component {#wallet-cloud-component}
 
 TODO
 
