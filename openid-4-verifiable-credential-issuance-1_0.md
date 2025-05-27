@@ -2320,7 +2320,7 @@ MUST be aborted. This is in particular the case if
 # Claims Path Pointer {#claims_path_pointer}
 
 A claims path pointer is a pointer into the Verifiable Credential, identifying one or more claims.
-A claims path pointer MUST be a non-empty array of strings, nulls and non-negative integers.
+A claims path pointer MUST be a non-empty array of strings, nulls and integers.
 A claims path pointer can be processed, which means it is applied to a credential. The results of
 processing are the referenced claims.
 
@@ -2330,7 +2330,8 @@ This section defines the semantics of a claims path pointer when applied to a JS
 
 A string value indicates that the respective key is to be selected, a null value
 indicates that all elements of the currently selected array(s) are to be selected;
-and a non-negative integer indicates that the respective index in an array is to be selected. The path
+and a non-negative integer indicates that the respective index in an array is to be selected.
+Negative integer values are not used for JSON-based credentials. The path
 is formed as follows:
 
 Start with an empty array and repeat the following until the full path is formed. 
@@ -2348,15 +2349,16 @@ In detail, the array is processed from left to right as follows:
  1. Select the root element of the Credential, i.e., the top-level object of the
     JSON structure representing the claims in the Credential.
  2. Process the query of the claims path pointer array from left to right:
-    1. If the component is a string, select the element in the respective
+    1. If the path component is a string, select the element in the respective
        key in the currently selected element(s). If any of the currently
        selected element(s) is not an object, abort processing and return an
        error. If the key does not exist in any element currently selected,
        remove that element from the selection.
-    2. If the component is null, select all elements of the currently
+    2. If the path component is null, select all elements of the currently
        selected array(s). If any of the currently selected element(s) is not an
        array, abort processing and return an error.
-    3. If the component is a non-negative integer, select the element at
+    3. If the path component is a negative integer, abort processing and return an error.
+    4. If the path component is a non-negative integer, select the element at
        the respective index in the currently selected array(s). If any of the
        currently selected element(s) is not an array, abort processing and
        return an error. If the index does not exist in a selected array, remove
@@ -2371,29 +2373,31 @@ The result of the processing is the set of selected JSON elements.
 This section defines the semantics of a claims path pointer when applied to a
 credential in ISO mdoc format.
 
-The following rules MUST be followed:
-
-* A claims path pointer into an ISO mdoc always contains at least two elements. The first two 
-elements are of type string. The first element refers to a namespace and the second element refers to a data element identifier.
-* The remaining elements can be used to provide a path into the value of the data element according to the following rules:
+A claims path pointer into an ISO mdoc always contains at least two path components of type string.
+Start with an array of two elements where the first element represents
+the namespace and the second element represents the data element identifier in that namespace
+and repeat the following until the full path is formed.
   * To address a claim within a data structure (i.e., map), append the corresponding key (string or integer).
   * To address an element within an array, append the index (as a non-negative, 0-based integer).
   * To address all elements of an array, append a null value.
 
-Whether a non-negative integer is interpreted as a map key or an array index depends on the type of the currently selected data structure.
+Whether a non-negative integer is interpreted as a map key or an array index depends on the type of the
+currently selected element.
 
 ### Processing
 
-In detail, the array is processed as follows:
+In detail, the array is processed from left to right as follows:
 
-1. Select the namespace referenced by the first component. If the namespace does not exist in the mdoc, abort processing and return an error.
-2. Process each subsequent component as follows:
-   1. If the currently selected element(s) are arrays, and the component is a non-negative integer, select the element at the given index in each array. If the index is out of bounds in a selected array, remove that array from the selection.
-   2. If the currently selected element(s) are maps, and the component is a string or integer, select the element(s) associated with the key. If a selected element is not a map, abort processing and return an error. If the key does not exist in a selected map, remove that map from the selection.
-   3. If the component is null, select all elements in each currently selected array. If any selected element is not an array, abort processing and return an error.
-3. If the set of elements currently selected is empty, abort processing and return an error.
+1. If the path contains fewer than two path components, abort processing and return an error.
+2. Select the namespace referenced by the first path component. If the namespace does not exist in the mdoc, abort processing and return an error.
+3. Select the data element with the data element identifier that matches the second path component. If the data element does not exist in the mdoc, abort processing and return an error.
+4. Process each subsequent path component as follows:
+   1. If the currently selected element(s) are arrays, and the path component is a non-negative integer, select the element at the given index in each array. If the index is out of bounds in a selected array, remove that array from the selection.
+   2. If the currently selected element(s) are maps, and the path component is a string or integer, select the element(s) associated with the key. If a selected element is not a map, abort processing and return an error. If the key does not exist in a selected map, remove that map from the selection.
+   3. If the path component is null, select all elements in each currently selected array. If any selected element is not an array, abort processing and return an error.
+5. If the set of elements currently selected is empty, abort processing and return an error.
 
-The result of the processing is the set of selected elements contained within the selected namespace.
+The result of the processing is the set of selected elements contained within the selected data element value, or the value itself.
 
 ## Claims Path Pointer Example {#claims_path_pointer_example}
 
