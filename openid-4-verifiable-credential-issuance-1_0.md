@@ -917,10 +917,12 @@ This specification defines the following proof types:
 * `ldp_vp`: A W3C Verifiable Presentation object signed using the Data Integrity Proof [@VC_Data_Integrity] as defined in [@VC_DATA_2.0] or [@VC_DATA] is used for proof of possession. When a `proofs` object is using a `ldp_vp` proof type, it MUST include an `ldp_vp` parameter with its value being a non-empty array of [W3C Verifiable Presentations](https://www.w3.org/TR/vc-data-model-2.0/#presentations-0), where each of these W3C Verifiable Presentation is formed as defined in (#ldp-vp-proof-type).
 * `attestation`:  A JWT [@!RFC7519] representing a key attestation without using a proof of possession of the cryptographic key material that is being attested. When a `proofs` object is using an `attestation` proof type, the object MUST include an `attestation` parameter with its value being an array that contains exactly one JWT that is formed as defined in (#keyattestation-jwt).
 
+If the Wallet is requesting an encrypted Credential Response via the `credential_response_encryption` parameter in the Credential Request, it can choose to optionally also include the encryption key (i.e. the `jwk` in `credential_response_encryption`) in the different proof types. This additionally signs over the encryption key and ensures its integrity especially for scenarios where a Wallet solution might encompass a cloud component that is involved in some of the flows (see (#wallet-cloud-component) for more details). If the JWK is present in any of the proof types, the Issuer MUST verify that it matches the value contained in the `credential_response_encryption` parameter.
+
 There are two ways to convey key attestations (as defined in (#keyattestation)) of the cryptographic key material during Credential issuance:
 
-- The Wallet uses the `jwt` proof type in the Credential Request to create a proof of possession of the key and adds the key attestation in the JOSE header.
-- The Wallet uses the `attestation` proof type in the Credential Request with the key attestation without a proof of possession of the key itself.
+* The Wallet uses the `jwt` proof type in the Credential Request to create a proof of possession of the key and adds the key attestation in the JOSE header.
+* The Wallet uses the `attestation` proof type in the Credential Request with the key attestation without a proof of possession of the key itself.
 
 Depending on the Wallet's implementation, the `attestation` may avoid unnecessary End-User interaction during Credential issuance, as the key itself does not necessarily need to perform signature operations.
 
@@ -944,6 +946,7 @@ The JWT MUST contain the following elements:
   * `aud`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
   * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the key proof was issued using the syntax defined in [@!RFC7519].
   * `nonce`: OPTIONAL (string). The value type of this claim MUST be a string, where the value is a server-provided `c_nonce`. It MUST be present when the Wallet received a server-provided `c_nonce`.
+  * `encryption_key`: OPTIONAL (object). The value of this claim contains the encryption public key of the Wallet in JWK form. The JWK MUST match the `jwk` object inside the `credential_response_encryption` parameter of a Credential Request.
 
 The Credential Issuer MUST validate that the JWT used as a proof is actually signed by a key identified in the JOSE Header.
 
@@ -1054,6 +1057,8 @@ Below is a non-normative example of a `proofs` parameter:
 A key attestation in JWT format as defined in (#keyattestation-jwt).
 
 When a key attestation is used as a proof type, it MUST contain the `c_nonce` value provided by the Credential Issuer in its `nonce` parameter.
+
+A key attestation MAY also contain the additional `encryption_key` claim. If present, the value of this claim contains the encryption public key of the Wallet in JWK form. The JWK MUST match the `jwk` object inside the `credential_response_encryption` parameter of a Credential Request.
 
 Below is a non-normative example of a `proofs` parameter (with line breaks within values for display purposes only):
 
@@ -1594,6 +1599,10 @@ Second, the Credential Issuer can reissue the Credential by starting the issuanc
 Credential Refresh can be initiated by the Wallet independently from the Credential Issuer, or the Credential Issuer can send a signal to the Wallet asking it to request Credential refresh. How the Credential Issuer sends such a signal is out of scope of this specification.
 
 It is up to the Credential Issuer whether to update both the signature and the claim values, or only the signature.
+
+## Wallets encompassing an additional cloud component (#wallet-cloud-component)
+
+TODO
 
 # Privacy Considerations
 
@@ -2752,6 +2761,7 @@ The technology described in this specification was made available from contribut
 
    -16
   
+   * Add an option to include the Wallet response encryption public key in proof types
    * Adds an option to return DPoP Nonce from the Nonce Endpoint
    * Change Cryptographic Holder Binding to Cryptographic Key Binding
    * add privacy considerations for the client_id used with wallet attestations
