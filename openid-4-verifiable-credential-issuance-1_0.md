@@ -2391,7 +2391,7 @@ In detail, the array is processed from left to right as follows:
 1. If the path contains fewer than two path components, abort processing and return an error.
 2. Select the namespace referenced by the first path component. If the namespace does not exist in the mdoc, abort processing and return an error.
 3. Select the data element with the data element identifier that matches the second path component. If the data element does not exist in the mdoc, abort processing and return an error.
-4. Process each subsequent path component as follows:
+4. Process each subsequent path components as follows:
    1. If the currently selected element(s) are arrays, and the path component is a non-negative integer, select the element at the given index in each array. If the index is out of bounds in a selected array, remove that array from the selection.
    2. If the currently selected element(s) are maps, and the path component is a string or integer, select the element(s) associated with the key. If a selected element is not a map, abort processing and return an error. If the key does not exist in a selected map, remove that map from the selection.
    3. If the path component is null, select all elements in each currently selected array. If any selected element is not an array, abort processing and return an error.
