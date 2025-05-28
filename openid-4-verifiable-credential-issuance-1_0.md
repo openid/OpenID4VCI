@@ -919,10 +919,10 @@ This specification defines the following proof types:
 
 There are two ways to convey key attestations (as defined in (#keyattestation)) of the cryptographic key material during Credential issuance:
 
-- The Wallet uses the `jwt` proof type in the Credential Request to create a proof of possession of the key and adds the key attestation in the JOSE header.
-- The Wallet uses the `attestation` proof type in the Credential Request with the key attestation without a proof of possession of the key itself.
+- The Wallet uses the `jwt` proof type in the Credential Request to create a proof of possession for one of the attested keys and adds the key attestation in the JOSE header.
+- The Wallet uses the `attestation` proof type in the Credential Request to provide a key attestation without a proof of possession of any of the keys.
 
-Depending on the Wallet's implementation, the `attestation` may avoid unnecessary End-User interaction during Credential issuance, as the key itself does not necessarily need to perform signature operations.
+Depending on the Wallet's implementation, the `attestation` may avoid unnecessary End-User interaction during Credential issuance, as the key to which the credential will be bound does not necessarily need to perform signature operations.
 
 Additional proof types MAY be defined and used.
 
