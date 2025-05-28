@@ -1601,7 +1601,7 @@ Implementers should be aware that this specification uses several specifications
 
 * OpenID Federation 1.0 draft -42 [@!OpenID.Federation]
 * SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -08 [@!I-D.ietf-oauth-sd-jwt-vc]
- * Attestation-Based Client Authentication draft -05 [@!I-D.ietf-oauth-attestation-based-client-auth]
+* Attestation-Based Client Authentication draft -05 [@!I-D.ietf-oauth-attestation-based-client-auth]
 
 While breaking changes to the specifications referenced in this specification are not expected, should they occur, OpenID4VCI implementations should continue to use the specifically referenced versions above in preference to the final versions, unless updated by a profile or new version of this specification.
 
