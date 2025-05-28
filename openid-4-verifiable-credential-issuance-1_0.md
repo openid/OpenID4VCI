@@ -1775,7 +1775,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
     <author fullname="Gabe Cohen">
       <organization>Block</organization>
     </author>
-   <date day="27" month="December" year="2023"/>
+   <date day="15" month="May" year="2025"/>
   </front>
 </reference>
 
@@ -1797,7 +1797,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
     <author fullname="Sebastian Crane">
       <organization>Invited Expert</organization>
     </author>
-   <date day="14" month="November" year="2023"/>
+   <date day="15" month="May" year="2025"/>
   </front>
 </reference>
 
@@ -1941,22 +1941,6 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
             <organization>Digital Bazaar</organization>
           </author>
          <date day="11" month="September" year="2023"/>
-        </front>
-</reference>
-
-<reference anchor="LD_Suite_Registry" target="https://w3c-ccg.github.io/ld-cryptosuite-registry/">
-        <front>
-          <title>Linked Data Cryptographic Suite Registry</title>
-          <author fullname="Manu Sporny">
-            <organization>Digital Bazaar</organization>
-          </author>
-          <author fullname="Drummond Reed">
-            <organization>Evernym</organization>
-          </author>
-          <author fullname="Orie Steele">
-            <organization>Transmute</organization>
-          </author>
-         <date day="29" month="December" year="2020"/>
         </front>
 </reference>
 
