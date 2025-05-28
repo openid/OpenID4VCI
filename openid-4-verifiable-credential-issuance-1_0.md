@@ -1393,7 +1393,7 @@ The Credential Issuer's configuration can be retrieved using the Credential Issu
 
 Credential Issuers publishing metadata MUST make a JSON document available at the path formed inserting the string `/.well-known/openid-credential-issuer` into the Credential Issuer Identifier between the host component and the path component, if any.
 
-For example, the metadata for the Credential Issuer Identifier `https://credential-issuer.example.com/tenant` would be retrieved from `https://credential-issuer.example.com/.well-known/openid-credential-issuer/tenant`.
+For example, the metadata for the Credential Issuer Identifier `https://issuer.example.com/tenant` would be retrieved from `https://issuer.example.com/.well-known/openid-credential-issuer/tenant`. The metadata for the Credential Issuer Identifier `https://tenant.issuer.example.com` would be retrieved from `https://tenant.issuer.example.com/.well-known/openid-credential-issuer`.
 
 Communication with the Credential Issuer Metadata Endpoint MUST utilize TLS.
 
