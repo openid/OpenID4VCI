@@ -1391,7 +1391,9 @@ A Credential Issuer is identified by a case sensitive URL using the `https` sche
 
 The Credential Issuer's configuration can be retrieved using the Credential Issuer Identifier.
 
-Credential Issuers publishing metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer Identifier. If the Credential Issuer value contains a path component, any terminating `/` MUST be removed before appending `/.well-known/openid-credential-issuer`.
+Credential Issuers publishing metadata MUST make a JSON document available at the path formed inserting the string `/.well-known/openid-credential-issuer` into the Credential Issuer Identifier between the host component and the path component, if any.
+
+For example, the metadata for the Credential Issuer Identifier `https://credential-issuer.example.com/tenant` would be retrieved from `https://credential-issuer.example.com/.well-known/openid-credential-issuer/tenant`.
 
 Communication with the Credential Issuer Metadata Endpoint MUST utilize TLS.
 
@@ -2001,6 +2003,16 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
 <reference anchor="IANA.URI.Schemes" target="https://www.iana.org/assignments/uri-schemes">
   <front>
     <title>Uniform Resource Identifier (URI) Schemes</title>
+    <author>
+      <organization>IANA</organization>
+    </author>
+    <date/>
+  </front>
+</reference>
+
+<reference anchor="IANA.Well-Known.URIs" target="https://www.iana.org/assignments/well-known-uris">
+  <front>
+    <title>Well-Known URIs</title>
     <author>
       <organization>IANA</organization>
     </author>
@@ -2624,8 +2636,8 @@ established by [@!RFC7591].
 ## Well-Known URI Registry
 
 This specification registers the following well-known URI
-in the IANA "Well-Known URI" registry [@IANA.OAuth.Parameters]
-established by [@!RFC5785].
+in the IANA "Well-Known URI" registry [@IANA.Well-Known.URIs]
+established by [@!RFC8615].
 
 ### .well-known/openid-credential-issuer
 
@@ -2756,6 +2768,7 @@ The technology described in this specification was made available from contribut
    * Change Cryptographic Holder Binding to Cryptographic Key Binding
    * add privacy considerations for the client_id used with wallet attestations
    * deprecate the proof parameter in the credential request
+   * URL to retrieve Credential Issuer Metadata now requires `.well-known/openid-credential-issuer` to be added at start of path to align with IETF requirements
    * explicitly state that various arrays in metadata/requests need to be non-empty
    * add missing request for media type registration of key-attestation+jwt in IANA Considerations
    * rename keyattestation+jwt to key-attestation+jwt
