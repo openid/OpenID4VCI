@@ -877,7 +877,7 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 {
   "credential_identifier": "CivilEngineeringDegree-2023",
   "proofs": {
-    "di": [
+    "di_vp": [
       {
         "@context": [
           "https://www.w3.org/ns/credentials/v2",
