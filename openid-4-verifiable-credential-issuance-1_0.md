@@ -2114,9 +2114,7 @@ Note: Data Integrity used to be called Linked Data Proofs, hence the "ldp" in th
 
 #### Credential Issuer Metadata {#server-metadata-ldp-vc}
 
-Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in, or referenced by, [@LD_Suite_Registry].
-
-Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD 
+Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in [@LD_Suite_Registry].
 
 The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters):
 
