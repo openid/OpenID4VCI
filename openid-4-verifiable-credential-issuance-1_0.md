@@ -2753,6 +2753,8 @@ The technology described in this specification was made available from contribut
    * use mdoc as a term, instead of mDL
    * clarify mdoc as a credential format can be used with non-mDL use-cases
    * Remove the Dynamic Credential Request section and associated content
+   * rename ldp_vp to di
+   * require proof_signing_alg_values_supported to match key proof algorithms
 
    -15
 
