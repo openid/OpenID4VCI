@@ -1944,6 +1944,22 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         </front>
 </reference>
 
+<reference anchor="LD_Suite_Registry" target="https://w3c-ccg.github.io/ld-cryptosuite-registry/">
+        <front>
+          <title>Linked Data Cryptographic Suite Registry</title>
+          <author fullname="Manu Sporny">
+            <organization>Digital Bazaar</organization>
+          </author>
+          <author fullname="Drummond Reed">
+            <organization>Evernym</organization>
+          </author>
+          <author fullname="Orie Steele">
+            <organization>Transmute</organization>
+          </author>
+         <date day="29" month="December" year="2020"/>
+        </front>
+</reference>
+
 <reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-federation-1_0.html">
         <front>
           <title>OpenID Federation 1.0</title>
@@ -2098,7 +2114,9 @@ Note: Data Integrity used to be called Linked Data Proofs, hence the "ldp" in th
 
 #### Credential Issuer Metadata {#server-metadata-ldp-vc}
 
-Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in, or referenced by, [@VC_Data_Integrity].
+Cryptographic algorithm names used in the `credential_signing_alg_values_supported` parameter SHOULD be one of those defined in, or referenced by, [@LD_Suite_Registry].
+
+Cryptographic algorithm names used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type SHOULD 
 
 The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters):
 
