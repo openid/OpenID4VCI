@@ -44,7 +44,7 @@ This specification defines an API for the issuance of Verifiable Credentials.
 
 # Introduction
 
-This specification defines an OAuth-protected API for the issuance of Verifiable Credentials. Credentials can be of any format, including, but not limited to, IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], ISO mDL [@ISO.18013-5], and W3C VCDM [@VC_DATA].
+This specification defines an OAuth-protected API for the issuance of Verifiable Credentials. Credentials can be of any format, including, but not limited to, IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], ISO mdoc [@ISO.18013-5], and W3C VCDM [@VC_DATA].
 
 Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. A Verifiable Credential follows a pre-defined schema (the Credential type) and MAY be bound to a certain holder, e.g., through Cryptographic Key Binding. Verifiable Credentials can be securely presented for the End-User to the RP, without involvement of the Credential Issuer.
 
@@ -69,10 +69,10 @@ Credential (or Verifiable Credential):
 :  An instance of a Credential Configuration with a particular Credential Dataset, that is signed by an Issuer and can be cryptographically verified. An Issuer may provide multiple Credentials as separate instances of the same Credential Configuration and Credential Dataset but with different cryptographic values. In this specification, the term "Verifiable Credential" is also referred to as "Credential". It's important to note that the use of the term "Credential" here differs from its usage in [@!OpenID.Core] and [@!RFC6749]. In this context, "Credential" specifically does not encompass other meanings such as passwords used for login credentials.
 
 Credential Format:
-:  Data Model used to create and represent Credential information. This format defines how various pieces of data within a Verifiable Credential are organized and encoded, ensuring that the Verifiable Credential can be consistently understood, processed, and verified by different systems. The exact parameters required to use a Credential Format in the context of this specification are defined in the Credential Format Profile. Definitions of Credential Formats is out of scope for this specification. Examples for Credential Formats are IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], ISO mDL [@ISO.18013-5], and W3C VCDM [@VC_DATA].
+:  Data Model used to create and represent Credential information. This format defines how various pieces of data within a Verifiable Credential are organized and encoded, ensuring that the Verifiable Credential can be consistently understood, processed, and verified by different systems. The exact parameters required to use a Credential Format in the context of this specification are defined in the Credential Format Profile. Definitions of Credential Formats is out of scope for this specification. Examples for Credential Formats are IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], ISO mdoc [@ISO.18013-5], and W3C VCDM [@VC_DATA].
 
 Credential Format Profile:
-:  Set of parameters specific to individual Credential Formats. This specification provides Credential Format Profiles for IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], ISO mDL [@ISO.18013-5], and W3C VCDM [@VC_DATA], which can be found in section (#format-profiles). Additionally, other specifications or deployments can define their own Credential Format Profiles by utilizing the extension points defined in this specification.
+:  Set of parameters specific to individual Credential Formats. This specification provides Credential Format Profiles for IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], ISO mdoc [@ISO.18013-5], and W3C VCDM [@VC_DATA], which can be found in section (#format-profiles). Additionally, other specifications or deployments can define their own Credential Format Profiles by utilizing the extension points defined in this specification.
 
 Credential Format Identifier:
 :  An identifier to denote a specific Credential Format in the context of this specification. This identifier implies the use of parameters specific to the respective Credential Format Profile.
@@ -155,7 +155,7 @@ An End-User typically authorizes the issuance of Credentials with a specific Cre
 This specification is Credential Format agnostic and allows implementers to leverage specific capabilities of Credential Formats of their choice.
 To this end, extension points to add Credential Format specific parameters in the Credential Issuer metadata, Credential Offer, Authorization Request, and Credential Request are defined.
 
-Credential Format Profiles for IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], ISO mDL [@ISO.18013-5], and W3C VCDM [@VC_DATA] are specified in (#format-profiles).
+Credential Format Profiles for IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], ISO mdoc [@ISO.18013-5], and W3C VCDM [@VC_DATA] are specified in (#format-profiles).
 Other specifications or deployments can define their own Credential Format Profiles using the above-mentioned extension points.
 
 ### Multiple Credential Issuance
@@ -933,9 +933,9 @@ The JWT MUST contain the following elements:
 * in the JOSE header,
   * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
   * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
-  * `kid`: OPTIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. It MUST NOT be present if `jwk` is present.
-  * `jwk`: OPTIONAL. JOSE Header containing the key material the new Credential shall be bound to. It MUST NOT be present if `kid` is present.
-  * `x5c`: OPTIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT.
+  * `kid`: OPTIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. It MUST NOT be present if `jwk` or `x5c` is present.
+  * `jwk`: OPTIONAL. JOSE Header containing the key material the new Credential shall be bound to. It MUST NOT be present if `kid` or `x5c` is present.
+  * `x5c`: OPTIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT. It MUST NOT be present if `kid` or `jwk` is present.
   * `key_attestation`: OPTIONAL. JOSE Header containing a key attestation as described in (#keyattestation).
   * `trust_chain`: OPTIONAL. JOSE Header containing an [@!OpenID.Federation] Trust Chain. This element MAY be used to convey key attestation, metadata, metadata policies, federation Trust Marks and any other information related to a specific federation, if available in the chain. When used for signature verification, the header parameter `kid` MUST be present.
 
@@ -1083,29 +1083,23 @@ These checks may be performed in any order.
 
 ## Credential Response {#credential-response}
 
-Credential Response can contain one or more Credentials depending on the Credential Request.
+The Credential Response can either be returned immediately or in a deferred manner. The response can contain one or more Credentials with the same Credential Configuration and Credential Dataset depending on the Credential Request:
 
-Credential Response can be immediate or deferred and can contain one or more Credentials with the same Credential Configuration and Credential Dataset depending on the Credential Request. The Credential Issuer MAY be able to immediately issue requested Credentials and send them to the Client. In other cases, the Credential Issuer MAY NOT be able to immediately issue a requested Credential and would send a `transaction_id` parameter to the Client to be used later to receive a Credential when it is ready.
+* If the Credential Issuer is able to immediately issue the requested Credentials, it MUST respond with the HTTP status code 200 (see Section 15.3.3 of [@!RFC9110]).
+* If the Credential Issuer is not able to immediately issue the requested credentials (e.g. due to a manual review process being required or the data used to issue the credential is not ready yet), the Credential Issuer MUST return a response with a `transaction_id` parameter. In this case, the Credential Issuer MUST also use the HTTP status code 202 for the response. The `transaction_id` MAY be used by the Client at a later time at the Deferred Credential endpoint.
 
-The HTTP status code MUST be 202 (see Section 15.3.3 of [@!RFC9110]).
-
-If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Credential Response as a JWT using the  parameters from the `credential_response_encryption` object. If the Credential Response is encrypted, the media type of the response MUST be set to `application/jwt`. If encryption was requested in the Credential Request and the Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
+If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the JSON-encoded Credential Response body as a JWT using the parameters from the `credential_response_encryption` object. If the Credential Response is encrypted, the media type of the response MUST be set to `application/jwt`. If encryption was requested in the Credential Request and the Credential Response is not encrypted, the Client SHOULD reject the Credential Response.
 
 If the Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
 
 The following parameters are used in the JSON-encoded Credential Response body:
 
 * `credentials`: OPTIONAL. Contains an array of one or more issued Credentials. It MUST NOT be used if the `transaction_id` parameter is present. The elements of the array MUST be objects. This specification defines the following parameters to be used inside this object:
-   * `credential`: REQUIRED. Contains one issued Credential. It MAY be a string or an object, depending on the Credential Format. See Appendix A for the Credential Format-specific encoding requirements.
+   * `credential`: REQUIRED. Contains one issued Credential. The encoding of the Credential depends on the Credential Format and MAY be a string or an object. Credential Formats expressed as binary data MUST be base64url-encoded and returned as a string. More details are defined in the Credential Format Profiles in (#format-profiles).
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This parameter is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used if the `credentials` parameter is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `notification_id`: OPTIONAL. String identifying one or more Credentials issued in one Credential Response. It MUST be included in the Notification Request as defined in (#notification). It MUST not be used if the `credentials` parameter is not present.
 
-The encoding of the Credential returned in the `credential` parameter depends on the Credential Format. Credential Formats expressed as binary data MUST be base64url-encoded and returned as a string.
-
-More details such as Credential Format Identifiers are defined in the Credential Format Profiles in (#format-profiles). 
-
-Additional Credential Response parameters MAY be defined and used.
-The Wallet MUST ignore any unrecognized parameters.
+Additional Credential Response parameters MAY be defined and used. The Wallet MUST ignore any unrecognized parameters.
 
 Below is a non-normative example of a Credential Response in an immediate issuance flow for a Credential in JWT VC format (JSON encoded):
 
@@ -2163,9 +2157,11 @@ The definitions in (#authorization-ldp-vc) apply for Credentials of this type as
 
 The definitions in (#credential-response-jwt-vc-json) apply for Credentials of this type as well.
 
-## ISO mDL
+## Mobile Documents or mdocs (ISO/IEC 18013) {#mdocs}
 
-This section defines a Credential Format Profile for Credentials complying with [@!ISO.18013-5].
+This section defines a Credential Format Profile for credentials that conform to the mobile document (mdoc) format specified in ISO/IEC 18013-5 [@ISO.18013-5].
+
+ISO/IEC 18013-5:2021 [@ISO.18013-5] defines the mdoc format in the context of mobile driving licences (mDLs). While the specification is focused on mDLs, the mdoc format itself is general-purpose and can be used for other types of Credentials.
 
 ### Format Identifier
 
@@ -2270,7 +2266,7 @@ The rules defined in (#claims-description-processing) apply.
 ## Claims Description for Issuer Metadata {#claims-description-issuer-metadata}
 
 A claims description object as used in the Credential Issuer metadata is an
-object used to describe how a certain claim in the Credential should be
+object used to describe how a certain claim in the Credential is
 displayed to the End-User. It is used in the `claims`
 parameter in the Credential Issuer metadata defined in (#format-profiles). The
 following keys can be used to describe the claim or claims:
@@ -2749,6 +2745,7 @@ The technology described in this specification was made available from contribut
    -16
   
    * move `claims` and `display` into `credential_metadata` and allow for credential-format specific mechanisms to override it
+   * rework the Credential Response text, fix immediate issuance to have HTTP 200 status code
    * Adds an option to return DPoP Nonce from the Nonce Endpoint
    * Change Cryptographic Holder Binding to Cryptographic Key Binding
    * add privacy considerations for the client_id used with wallet attestations
@@ -2756,6 +2753,8 @@ The technology described in this specification was made available from contribut
    * explicitly state that various arrays in metadata/requests need to be non-empty
    * add missing request for media type registration of key-attestation+jwt in IANA Considerations
    * rename keyattestation+jwt to key-attestation+jwt
+   * use mdoc as a term, instead of mDL
+   * clarify mdoc as a credential format can be used with non-mDL use-cases
    * Remove the Dynamic Credential Request section and associated content
 
    -15
