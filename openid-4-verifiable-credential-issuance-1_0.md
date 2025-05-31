@@ -2204,7 +2204,7 @@ The following is a non-normative example of an object containing the `credential
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.
 
 * `doctype`: OPTIONAL. String as defined in (#server-metadata-mso-mdoc). This claim contains the type value the Wallet requests authorization for at the Credential Issuer. It MUST only be present if the `format` claim is present. It MUST not be present otherwise. 
-* `claims`: OPTIONAL. Object as defined in (#claims-description-authorization-details).
+* `claims`: OPTIONAL. A non-empty array of claims description objects (#claims-description-authorization-details).
 
 The following is a non-normative example of an authorization details object with Credential Format `mso_mdoc`:
 
