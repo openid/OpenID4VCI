@@ -451,7 +451,7 @@ The Wallet does not create a response. UX control stays with the Wallet after co
 
 # Authorization Endpoint {#authorization-endpoint}
 
-The Authorization Endpoint is used in the same manner as defined in [@!RFC6749], taking into account the recommendations given in [@!RFC9700].
+The Authorization Endpoint is used in the same manner as defined in [@!RFC6749]. Implementers SHOULD follow the best current practices for OAuth 2.0 Security given in [@!BCP240].
 
 When the grant type `authorization_code` is used, it is RECOMMENDED to use PKCE [@!RFC7636] and Pushed Authorization Requests [@RFC9126]. PKCE prevents authorization code interception attacks. Pushed Authorization Requests ensure the integrity and authenticity of the authorization request.
 
@@ -605,7 +605,7 @@ Location: https://client.example.net/cb?
 
 # Token Endpoint {#token-endpoint}
 
-The Token Endpoint issues an Access Token and, optionally, a Refresh Token in exchange for the Authorization Code that Client obtained in a successful Authorization Response. It is used in the same manner as defined in [@!RFC6749] and follows the recommendations given in [@!RFC9700].
+The Token Endpoint issues an Access Token and, optionally, a Refresh Token in exchange for the Authorization Code that Client obtained in a successful Authorization Response. It is used in the same manner as defined in [@!RFC6749]. Implementers SHOULD follow the best current practices for OAuth 2.0 Security given in [@!BCP240].
 
 ## Token Request {#token-request}
 
@@ -1499,6 +1499,15 @@ The Wallet MUST ignore any unrecognized parameters.
 
 # Security Considerations {#security-considerations}
 
+## Best Current Practice for OAuth 2.0 Security {#securitybcp}
+
+Implementers of this specification SHOULD follow the Best Current Practice for OAuth 2.0 Security given in [@BCP240]. It is RECOMMENDED that implementers do this by following the [@!FAPI2_Security_Profile] where it is applicable.
+
+The parts of [@!FAPI2_Security_Profile] that may not be applicable when using this specification are:
+
+1. Client authentication: The private_key_jwt and MTLS client authentication methods may not be practical to implement in a secure way for native app Wallets. The use of Wallet Attestations as defined in (#walletattestation) is RECOMMENDED instead.
+1. Sender-constrained access tokens: MTLS sender constrained access token may not be practical to implement in a secure way for native app Wallets. The use of DPoP is RECOMMENDED.
+
 ## Trust between Wallet and Issuer
 
 Credential Issuers often want to know what Wallet they are issuing Credentials to and how private keys are managed for the following reasons:
@@ -1559,7 +1568,7 @@ Whenever TLS is used, a TLS server certificate check MUST be performed, per [@!R
 
 Access Tokens represent End-User authorization and consent to issue certain Credential(s). Long-lived Access Tokens giving access to Credentials MUST not be issued unless sender-constrained. Access Tokens with lifetimes longer than 5 minutes are, in general, considered long lived.
 
-To sender-constrain Access Tokens, see the recommendations in Section 4.10.1 in [@!RFC9700]. If Bearer Access Tokens are stored by the Wallet, they MUST be stored in a secure manner, for example, encrypted using a key stored in a protected key store.
+To sender-constrain Access Tokens, see the recommendations in (#securitybcp). If Bearer Access Tokens are stored by the Wallet, they MUST be stored in a secure manner, for example, encrypted using a key stored in a protected key store.
 
 # Implementation Considerations
 
@@ -1827,6 +1836,16 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         </front>
 </reference>
 
+<reference anchor="BCP240" target="https://www.rfc-editor.org/info/bcp240">
+        <front>
+          <title>BCP240</title>
+          <author>
+            <organization>IETF</organization>
+          </author>
+          <date month="November" year="2022"/>
+        </front>
+</reference>
+
 <reference anchor="OpenID.Core" target="https://openid.net/specs/openid-connect-core-1_0.html">
   <front>
     <title>OpenID Connect Core 1.0 incorporating errata set 2</title>
@@ -1846,6 +1865,22 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
       <organization abbrev="Disney (was at Salesforce)">Disney</organization>
     </author>
     <date day="15" month="December" year="2023"/>
+  </front>
+</reference>
+
+<reference anchor="FAPI2_Security_Profile" target="https://openid.net/specs/fapi-security-profile-2_0.html">
+  <front>
+    <title>FAPI 2.0 Security Profile</title>
+    <author initials="D." surname="Fett" fullname="Daniel Fett">
+      <organization>Authlete</organization>
+    </author>
+    <author initials="D." surname="Tonge" fullname="Dave Tonge">
+      <organization>Moneyhub Financial Technology Ltd.</organization>
+    </author>
+    <author initials="J." surname="Heenan" fullname="Joseph Heenan">
+      <organization>Authlete</organization>
+    </author>
+   <date day="22" month="Feb" year="2025"/>
   </front>
 </reference>
 
