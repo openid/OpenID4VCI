@@ -1290,7 +1290,7 @@ Cache-Control: no-store
 }
 ```
 
-## Encypted Messages {#encrypted-messages}
+## Encrypted Messages {#encrypted-messages}
 Encryption of Request and Response Messages is performed as follows:
 
 The contents of the message MUST be encoded as a JWT as described in [@!RFC7519]. The media type MUST be set to `application/jwt`.
