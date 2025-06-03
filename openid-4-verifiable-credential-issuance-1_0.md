@@ -936,7 +936,7 @@ The JWT MUST contain the following elements:
   * `kid`: OPTIONAL. JOSE Header containing the key ID. If the Credential is to be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential is to be bound to. It MUST NOT be present if `jwk` or `x5c` is present.
   * `jwk`: OPTIONAL. JOSE Header containing the key material the new Credential is to be bound to. It MUST NOT be present if `kid` or `x5c` is present.
   * `x5c`: OPTIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT. It MUST NOT be present if `kid` or `jwk` is present.
-  * `key_attestation`: OPTIONAL. JOSE Header containing a key attestation as described in (#keyattestation).
+  * `key_attestation`: OPTIONAL. JOSE Header containing a key attestation as described in (#keyattestation). If the Credential Issuer provided a `c_nonce`, the `nonce` claim in the key attestation MUST be set to a server-provided `c_nonce`.
   * `trust_chain`: OPTIONAL. JOSE Header containing an [@!OpenID.Federation] Trust Chain. This element MAY be used to convey key attestation, metadata, metadata policies, federation Trust Marks and any other information related to a specific federation, if available in the chain. When used for signature verification, the header parameter `kid` MUST be present.
 
 * in the JWT body,
@@ -2788,6 +2788,7 @@ The technology described in this specification was made available from contribut
    * explicitly state that various arrays in metadata/requests need to be non-empty
    * add missing request for media type registration of key-attestation+jwt in IANA Considerations
    * rename keyattestation+jwt to key-attestation+jwt
+   * set key attestation nonce to c_nonce value for proof types with key attestations
    * use mdoc as a term, instead of mDL
    * clarify mdoc as a credential format can be used with non-mDL use-cases
    * Remove the Dynamic Credential Request section and associated content
