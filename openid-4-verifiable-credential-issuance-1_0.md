@@ -933,8 +933,6 @@ There are two ways to convey key attestations (as defined in (#keyattestation)) 
 - The Wallet uses the `jwt` proof type in the Credential Request to create a proof of possession of the key and adds the key attestation in the JOSE header.
 - The Wallet uses the `attestation` proof type in the Credential Request with the key attestation without a proof of possession of the key itself.
 
-In both cases, the `nonce` value in the key attestation is set to the `c_nonce` value provided by the Issuer.
-
 Depending on the Wallet's implementation, the `attestation` may avoid unnecessary End-User interaction during Credential issuance, as the key itself does not necessarily need to perform signature operations.
 
 Additional proof types MAY be defined and used.
@@ -949,7 +947,7 @@ The JWT MUST contain the following elements:
   * `kid`: OPTIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. It MUST NOT be present if `jwk` is present.
   * `jwk`: OPTIONAL. JOSE Header containing the key material the new Credential shall be bound to. It MUST NOT be present if `kid` is present.
   * `x5c`: OPTIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT.
-  * `key_attestation`: OPTIONAL. JOSE Header containing a key attestation as described in (#keyattestation).
+  * `key_attestation`: OPTIONAL. JOSE Header containing a key attestation as described in (#keyattestation). If the Credential Issuer provided a `c_nonce`, the `nonce` claim in the key attestation MUST be set to a server-provided `c_nonce`.
   * `trust_chain`: OPTIONAL. JOSE Header containing an [@!OpenID.Federation] Trust Chain. This element MAY be used to convey key attestation, metadata, metadata policies, federation Trust Marks and any other information related to a specific federation, if available in the chain. When used for signature verification, the header parameter `kid` MUST be present.
 
 * in the JWT body,
