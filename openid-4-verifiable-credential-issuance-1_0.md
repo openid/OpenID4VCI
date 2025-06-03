@@ -1218,7 +1218,7 @@ The Credential Issuer MUST invalidate the `transaction_id` after the Credential 
 Additional Deferred Credential Request parameters MAY be defined and used.
 The Credential Issuer MUST ignore any unrecognized parameters.
 
-The Credential Issuer indicates support for encrypted requests by including the `credential_request_encryption` parameter in the Credential Issuer Metadata. The Client MAY encrypt the request when `encryption_required` is `false` and MUST do so when `encryption_required` is `true`. Note that this object will be used for encrypting the response, regardless of what was sent in the initial Credential Request and so if it is not included encryption will no tbe performed.
+The Credential Issuer indicates support for encrypted requests by including the `credential_request_encryption` parameter in the Credential Issuer Metadata. The Client MAY encrypt the request when `encryption_required` is `false` and MUST do so when `encryption_required` is `true`.
 
 When performing Deferred Credential Request encryption, the Client MUST encode the information in the Deferred Credential Request in a JWT as specified by [#encrypted-messages], using the parameters in from `credential_request_encryption` object. 
 
