@@ -578,7 +578,7 @@ response_type=code
 &authorization_details=...
 ```
 
-If the request is successful, the  Authorization Server MUST respond with a 201 Created status code and the Location header field containing the URL of the Authorization Request URI.
+Below is a non-normative example of a response to a successful request:
 
 ```
 HTTP/1.1 201 Created
@@ -592,7 +592,7 @@ Cache-Control: no-cache, no-store
 }
 ```
 
-The Wallet can then use the `request_uri` value in the Authorization Request to the Authorization Server.
+Below is a non-normative example of the GET request that might subsequently be sent by the Browser:
 
 ```
 GET /authorize?client_id=s6BhdRkqt3
@@ -627,11 +627,11 @@ Location: https://client.example.net/cb?
 
 # Authorization Challenge Endpoint
 
-An Authorization Server MAY publish parameter `authorization_challenge_endpoint` in its Authorization Server Metadata. In this case, the Wallet SHOULD use this endpoint to obtain authorization. This enables use cases where an Issuer requests Presentation of a Credential before issuing its Credential.
+An Authorization Server MAY publish the `authorization_challenge_endpoint` parameter in its Authorization Server Metadata. In this case, the Wallet SHOULD use this endpoint to obtain authorization. This enables use cases where an Issuer requests Presentation of a Credential before issuing its Credential.
 
 ## Authorization Challenge Request
 
-The request to the Authorization Challenge Endpoint follows the same rules as the Pushed Authorization Request (see (#pushed-authorization-request)).
+The request to the Authorization Challenge Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126.html, Section 2.1].
 
 ## Authorization Challenge Response
 
