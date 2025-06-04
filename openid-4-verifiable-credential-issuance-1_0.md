@@ -1433,7 +1433,7 @@ The signed metadata MUST be secured using a JSON Web Signature (JWS) [@!RFC7515]
   * `iat`: REQUIRED. Integer for the time at which the Credential Issuer Metadata was issued using the syntax defined in [@!RFC7519].
   * `exp`: OPTIONAL. Integer for the time at which the Credential Issuer Metadata is expiring, using the syntax defined in [@!RFC7519].
 
-The Wallet SHOULD establish trust in the signer of the metadata, and obtain the keys to validate the signature before processing the metadata, e.g. using JOSE headers like `x5c`, `kid` or `trust_chain` to convey the public key. The concrete mechanism how to do that is out of scope of this specification. 
+The Wallet SHOULD establish trust in the signer of the metadata, and obtain the keys to validate the signature before processing the metadata, e.g. using JOSE header parameters like `x5c`, `kid` or `trust_chain` to convey the public key. The concrete mechanisms how to do that are out of scope of this specification. 
 
 ### Credential Issuer Metadata Parameters {#credential-issuer-parameters}
 
