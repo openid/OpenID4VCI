@@ -1421,7 +1421,7 @@ Accept-Language: fr-ch, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5
 
 ### Signed Metadata
 
-The signed metadata MUST be secured using JSON Web Signature (JWS) [@!RFC7515] and MUST contain the following elements:
+The signed metadata MUST be secured using a JSON Web Signature (JWS) [@!RFC7515] and contain the following elements:
 
 * in the JOSE header,
   * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
