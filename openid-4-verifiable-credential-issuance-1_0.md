@@ -806,15 +806,15 @@ For Cryptographic Key Binding, the Client has the following options defined in (
 
 ## Credential Request {#credential-request}
 
-A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request using the `application/json` media type.
+A Client makes a Credential Request to the Credential Endpoint by sending an HTTP POST request using the `application/json` or `application/credential-request+jwt` media types. See (#credential-request-signed) for details about the payload using `application/credential-request+jwt`. In the case of `application/json`, the request contains the following parameters in the entity-body:
 
 * `credential_identifier`: REQUIRED when an Authorization Details of type `openid_credential` was returned from the Token Response. It MUST NOT be used otherwise. A string that identifies a Credential Dataset that is requested for issuance. When this parameter is used, the `credential_configuration_id` MUST NOT be present.
 * `credential_configuration_id`: REQUIRED if a `credential_identifiers` parameter was not returned from the Token Response as part of the `authorization_details` parameter. It MUST NOT be used otherwise. String that uniquely identifies one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The corresponding object in the `credential_configurations_supported` map MUST contain one of the value(s) used in the `scope` parameter in the Authorization Request. When this parameter is used, the `credential_identifier` MUST NOT be present.
 * `proofs`: OPTIONAL. Object providing one or more proof of possessions of the cryptographic key material to which the issued Credential instances will be bound to. The `proofs` parameter contains exactly one parameter named as the proof type in (#proof-types), the value set for this parameter is a non-empty array containing parameters as defined by the corresponding proof type.
 * `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If this request element is not present, the corresponding credential response returned is not encrypted.
-    * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
-    * `alg`: REQUIRED. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] for encrypting Credential Responses.
-    * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
+  * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
+  * `alg`: REQUIRED. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] for encrypting Credential Responses.
+  * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
 
 See (#identifying_credential) for the summary of the options how requested Credential(s) are identified throughout the Issuance flow.
 
@@ -908,6 +908,45 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 The Client MAY request encrypted responses by providing its encryption parameters in the Credential Request.
 
 The Credential Issuer indicates support for encrypted responses by including the `credential_response_encryption` parameter in the Credential Issuer Metadata.
+
+### Credential Request JWT {#credential-request-signed}
+
+To protect the integrity of the Credential Request and especially the optionally included encryption information, the request can be transmitted in a signed form as a JWT. In this case, the HTTP POST request uses the `application/credential-request+jwt` media type.
+
+The JWT is signed by the Wallet and contains the following elements:
+
+* in the JOSE header,
+  * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
+  * `typ`: REQUIRED. MUST be `credential-request+jwt`, which explicitly types the Credential Request JWT as recommended in Section 3.11 of [@!RFC8725].
+  * `kid`: OPTIONAL. MUST be `dpop`, or `wallet-attestation`. Identifies the key the Wallet used to sign the Credential Request. If the `kid` is `dpop`, the Credential Request JWT is signed with the DPoP key of the refresh or access token. If the `kid` is `wallet-attestation`, the key that is used to sign the proof of possession for the Wallet Attestation as described in (#walletattestation) is used to sign the Credential Request JWT. If not present, the key used to sign the Credential Request JWT defaults to the DPoP key.
+
+* in the JWT body,
+  * `iat`: REQUIRED (number). Integer for the time at which the key attestation was issued using the syntax defined in [@!RFC7519].
+  * `credential_request`: An Object containing the Credential Request parameters:
+    * `credential_identifier`: REQUIRED when an Authorization Details of type `openid_credential` was returned from the Token Response. It MUST NOT be used otherwise. A string that identifies a Credential Dataset that is requested for issuance. When this parameter is used, the `credential_configuration_id` MUST NOT be present.
+    * `credential_configuration_id`: REQUIRED if a `credential_identifiers` parameter was not returned from the Token Response as part of the `authorization_details` parameter. It MUST NOT be used otherwise. String that uniquely identifies one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The corresponding object in the `credential_configurations_supported` map MUST contain one of the value(s) used in the `scope` parameter in the Authorization Request. When this parameter is used, the `credential_identifier` MUST NOT be present.
+    * `proofs`: OPTIONAL. Object providing one or more proof of possessions of the cryptographic key material to which the issued Credential instances will be bound to. The `proofs` parameter contains exactly one parameter named as the proof type in (#proof-types), the value set for this parameter is a non-empty array containing parameters as defined by the corresponding proof type.
+    * `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If this request element is not present, the corresponding credential response returned is not encrypted.
+      * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
+      * `alg`: REQUIRED. JWE [@!RFC7516] `alg` algorithm [@!RFC7518] for encrypting Credential Responses.
+      * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
+
+Below is a non-normative example of a Credential Request JWT for a Credential in [@ISO.18013-5] format using the Credential configuration identifier and a key proof type `jwt` (with line breaks within values for display purposes only):
+
+```
+POST /credential HTTP/1.1
+Host: server.example.com
+Content-Type: application/credential-request+jwt
+Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+eyJhbGciOiJFUzI1NiIsInR5cCI6ImNyZWRlbnRpYWwtcmVxdWVzdCtqd3QifQ.eyJpY
+XQiOjE3MDE5NjA0NDQsImNyZWRlbnRpYWxfcmVxdWVzdCI6eyJjcmVkZW50aWFsX2Nvb
+mZpZ3VyYXRpb25faWQiOiJvcmcuaXNvLjE4MDEzLjUuMS5tREwiLCJwcm9vZnMiOnsia
+nd0IjpbImV5SnJhV1FpT2lKa2FXUTZaWGhoYlhCc1pUcGxZbVpsWWpGbU56RXlaV0pqT
+m1ZeFl6STNObVV4TW1Wak1qRXZhMlY1Y3k4eElpd2lZV3huSWpvaVJWTXlOVFlpTENKM
+GVYQWlPaUpLVjFRaWZRIl19fX0.IyQQ45CdfH5dG3uKaNQ9sNGOuCOWxg8QGveh4KaKl
+AUGHqjvIsAGu9ATca4O9ufazyyawaZoPblpLF0N9Zs-ng
+```
 
 ### Proof Types {#proof-types}
 
@@ -2775,6 +2814,7 @@ The technology described in this specification was made available from contribut
 
    -16
   
+   * Add an option to send a signed Credential Request
    * add implementation consideration about pre-final specs
    * Move issuance pending from Deferred Credential Error Response to Deferred Credential Response
    * Move the interval parameter from Deferred Credential Error Response to Credential Response
