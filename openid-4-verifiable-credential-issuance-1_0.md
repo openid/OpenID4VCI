@@ -195,13 +195,13 @@ Below is the summary of how Credential(s) that are being issued are identified t
 - When the Wallet uses Authorization Details in the Authorization Request, the Wallet uses
   either `credential_configuration_id` parameters or `format` and other Credential Format
   specific parameters to identify the requested Credential Configurations. In this case,
-  the Authorization Server MUST return `credential_identifiers` parameter in the Token Response,
+  the Authorization Server MUST return an `authorization_details` parameter containing the `credential_identifiers` parameter in the Token Response,
   and the Wallet uses those `credential_identifier` values in the Credential Request.
 - When the Wallet uses `scope` parameter in the Authorization Request, the `scope` value(s)
   are used to identify requested Credential Configurations. In this case, the Authorization Server has two options.
   If the Authorization Server supports returning `credential_identifiers` parameter
   in the Token Response, it MAY do so, in which case the Wallet uses those `credential_identifier` values
-  in the Credential Request. If the Authorization Server does not support returning
+  in the Credential Request. If the Authorization Server does not support returning an `authorization_details` parameter containing the
   `credential_identifiers` parameter in the Token Response, the Wallet uses `credential_configuration_id` parameter
   in the Credential Request.
 
@@ -2610,13 +2610,6 @@ established by [@!RFC6749].
 * Parameter Usage Location: token request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-request) of this specification
-
-### credential_identifiers
-
-* Name: `credential_identifiers`
-* Parameter Usage Location: token response
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#token-response) of this specification
 
 ## OAuth Authorization Server Metadata Registry
 
