@@ -195,13 +195,13 @@ Below is the summary of how Credential(s) that are being issued are identified t
 - When the Wallet uses Authorization Details in the Authorization Request, the Wallet uses
   either `credential_configuration_id` parameters or `format` and other Credential Format
   specific parameters to identify the requested Credential Configurations. In this case,
-  the Authorization Server MUST return `credential_identifiers` parameter in the Token Response,
+  the Authorization Server MUST return an `authorization_details` parameter containing the `credential_identifiers` parameter in the Token Response,
   and the Wallet uses those `credential_identifier` values in the Credential Request.
 - When the Wallet uses `scope` parameter in the Authorization Request, the `scope` value(s)
   are used to identify requested Credential Configurations. In this case, the Authorization Server has two options.
   If the Authorization Server supports returning `credential_identifiers` parameter
   in the Token Response, it MAY do so, in which case the Wallet uses those `credential_identifier` values
-  in the Credential Request. If the Authorization Server does not support returning
+  in the Credential Request. If the Authorization Server does not support returning an `authorization_details` parameter containing the
   `credential_identifiers` parameter in the Token Response, the Wallet uses `credential_configuration_id` parameter
   in the Credential Request.
 
@@ -933,10 +933,10 @@ The JWT MUST contain the following elements:
 * in the JOSE header,
   * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
   * `typ`: REQUIRED. MUST be `openid4vci-proof+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
-  * `kid`: OPTIONAL. JOSE Header containing the key ID. If the Credential shall be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential shall be bound to. It MUST NOT be present if `jwk` or `x5c` is present.
-  * `jwk`: OPTIONAL. JOSE Header containing the key material the new Credential shall be bound to. It MUST NOT be present if `kid` or `x5c` is present.
+  * `kid`: OPTIONAL. JOSE Header containing the key ID. If the Credential is to be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential is to be bound to. It MUST NOT be present if `jwk` or `x5c` is present.
+  * `jwk`: OPTIONAL. JOSE Header containing the key material the new Credential is to be bound to. It MUST NOT be present if `kid` or `x5c` is present.
   * `x5c`: OPTIONAL. JOSE Header containing a certificate or certificate chain corresponding to the key used to sign the JWT. It MUST NOT be present if `kid` or `jwk` is present.
-  * `key_attestation`: OPTIONAL. JOSE Header containing a key attestation as described in (#keyattestation).
+  * `key_attestation`: OPTIONAL. JOSE Header containing a key attestation as described in (#keyattestation). If the Credential Issuer provided a `c_nonce`, the `nonce` claim in the key attestation MUST be set to a server-provided `c_nonce`.
   * `trust_chain`: OPTIONAL. JOSE Header containing an [@!OpenID.Federation] Trust Chain. This element MAY be used to convey key attestation, metadata, metadata policies, federation Trust Marks and any other information related to a specific federation, if available in the chain. When used for signature verification, the header parameter `kid` MUST be present.
 
 * in the JWT body,
@@ -1404,7 +1404,9 @@ A Credential Issuer is identified by a case sensitive URL using the `https` sche
 
 The Credential Issuer's configuration can be retrieved using the Credential Issuer Identifier.
 
-Credential Issuers publishing metadata MUST make a JSON document available at the path formed by concatenating the string `/.well-known/openid-credential-issuer` to the Credential Issuer Identifier. If the Credential Issuer value contains a path component, any terminating `/` MUST be removed before appending `/.well-known/openid-credential-issuer`.
+Credential Issuers publishing metadata MUST make a JSON document available at the path formed inserting the string `/.well-known/openid-credential-issuer` into the Credential Issuer Identifier between the host component and the path component, if any.
+
+For example, the metadata for the Credential Issuer Identifier `https://issuer.example.com/tenant` would be retrieved from `https://issuer.example.com/.well-known/openid-credential-issuer/tenant`. The metadata for the Credential Issuer Identifier `https://tenant.issuer.example.com` would be retrieved from `https://tenant.issuer.example.com/.well-known/openid-credential-issuer`.
 
 Communication with the Credential Issuer Metadata Endpoint MUST utilize TLS.
 
@@ -1610,6 +1612,17 @@ Credential Refresh can be initiated by the Wallet independently from the Credent
 
 It is up to the Credential Issuer whether to update both the signature and the claim values, or only the signature.
 
+## Pre-Final Specifications
+
+Implementers should be aware that this specification uses several specifications that are not yet final specifications. Those specifications are:
+
+* OpenID Federation 1.0 draft -42 [@!OpenID.Federation]
+* SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -08 [@!I-D.ietf-oauth-sd-jwt-vc]
+* Attestation-Based Client Authentication draft -05 [@!I-D.ietf-oauth-attestation-based-client-auth]
+* Token Status List draft -11 [@!I-D.ietf-oauth-status-list]
+
+While breaking changes to the specifications referenced in this specification are not expected, should they occur, OpenID4VCI implementations should continue to use the specifically referenced versions above in preference to the final versions, unless updated by a profile or new version of this specification.
+
 # Privacy Considerations
 
 When [@!RFC9396] is used, the Privacy Considerations of that specification also apply.
@@ -1777,21 +1790,27 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
     <author fullname="Ivan Herman">
       <organization>W3C</organization>
     </author>
-    <author fullname="Michael B. Jones">
-      <organization>Invited Expert</organization>
-    </author>
     <author fullname="Gabe Cohen">
       <organization>Block</organization>
     </author>
-   <date day="27" month="December" year="2023"/>
+    <author fullname="Michael B. Jones">
+      <organization>Invited Expert</organization>
+    </author>
+   <date day="15" month="May" year="2025"/>
   </front>
 </reference>
 
-<reference anchor="VC_Data_Integrity" target="https://w3c.github.io/vc-data-integrity/">
+<reference anchor="VC_Data_Integrity" target="https://www.w3.org/TR/vc-data-integrity">
   <front>
     <title>Verifiable Credential Data Integrity 1.0</title>
     <author fullname="Manu Sporny">
       <organization>Digital Bazaar</organization>
+    </author>
+    <author fullname="Ted Thibodeau Jr">
+      <organization>OpenLink Software</organization>
+    </author>
+    <author fullname="Ivan Herman">
+      <organization>W3C</organization>
     </author>
     <author fullname="Dave Longley">
       <organization>Digital Bazaar</organization>
@@ -1799,13 +1818,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
     <author fullname="Greg Bernstein">
       <organization>Invited Expert</organization>
     </author>
-    <author fullname="Dmitri Zagidulin">
-      <organization>Invited Expert</organization>
-    </author>
-    <author fullname="Sebastian Crane">
-      <organization>Invited Expert</organization>
-    </author>
-   <date day="14" month="November" year="2023"/>
+   <date day="15" month="May" year="2025"/>
   </front>
 </reference>
 
@@ -1935,21 +1948,8 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         <author initials="T." surname="Looker" fullname="Tobias Looker">
           <organization>Mattr</organization>
         </author>
-       <date day="29" month="November" year="2022"/>
+       <date day="24" month="April" year="2025"/>
       </front>
-</reference>
-
-<reference anchor="DID_Specification_Registries" target="https://www.w3.org/TR/did-spec-registries/">
-        <front>
-          <title>DID Specification Registries</title>
-      <author fullname="Orie Steele">
-            <organization>Transmute</organization>
-          </author>
-          <author fullname="Manu Sporny">
-            <organization>Digital Bazaar</organization>
-          </author>
-         <date day="11" month="September" year="2023"/>
-        </front>
 </reference>
 
 <reference anchor="LD_Suite_Registry" target="https://w3c-ccg.github.io/ld-cryptosuite-registry/">
@@ -1989,7 +1989,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
           <author fullname="Vladimir Dzhuvinov">
             <organization>Connect2id</organization>
           </author>
-          <date day="15" month="September" year="2024"/>
+          <date day="5" month="March" year="2025"/>
         </front>
 </reference>
 
@@ -2016,6 +2016,16 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
 <reference anchor="IANA.URI.Schemes" target="https://www.iana.org/assignments/uri-schemes">
   <front>
     <title>Uniform Resource Identifier (URI) Schemes</title>
+    <author>
+      <organization>IANA</organization>
+    </author>
+    <date/>
+  </front>
+</reference>
+
+<reference anchor="IANA.Well-Known.URIs" target="https://www.iana.org/assignments/well-known-uris">
+  <front>
+    <title>Well-Known URIs</title>
     <author>
       <organization>IANA</organization>
     </author>
@@ -2203,7 +2213,7 @@ The following is a non-normative example of an object containing the `credential
 The following additional claims are defined for authorization details of type `openid_credential` and this Credential Format.
 
 * `doctype`: OPTIONAL. String as defined in (#server-metadata-mso-mdoc). This claim contains the type value the Wallet requests authorization for at the Credential Issuer. It MUST only be present if the `format` claim is present. It MUST not be present otherwise. 
-* `claims`: OPTIONAL. Object as defined in (#claims-description-authorization-details).
+* `claims`: OPTIONAL. A non-empty array of claims description objects as defined in (#claims-description-authorization-details).
 
 The following is a non-normative example of an authorization details object with Credential Format `mso_mdoc`:
 
@@ -2599,13 +2609,6 @@ established by [@!RFC6749].
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-request) of this specification
 
-### credential_identifiers
-
-* Name: `credential_identifiers`
-* Parameter Usage Location: token response
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#token-response) of this specification
-
 ## OAuth Authorization Server Metadata Registry
 
 This specification registers the following authorization server metadata parameter
@@ -2635,8 +2638,8 @@ established by [@!RFC7591].
 ## Well-Known URI Registry
 
 This specification registers the following well-known URI
-in the IANA "Well-Known URI" registry [@IANA.OAuth.Parameters]
-established by [@!RFC5785].
+in the IANA "Well-Known URI" registry [@IANA.Well-Known.URIs]
+established by [@!RFC8615].
 
 ### .well-known/openid-credential-issuer
 
@@ -2764,6 +2767,7 @@ The technology described in this specification was made available from contribut
    -16
   
    * move `claims` and `display` into `credential_metadata` and allow for credential-format specific mechanisms to override it
+   * add implementation consideration about pre-final specs
    * Move issuance pending from Deferred Credential Error Response to Deferred Credential Response
    * Move the interval parameter from Deferred Credential Error Response to Credential Response
    * rework the Credential Response text, fix immediate issuance to have HTTP 200 status code
@@ -2771,9 +2775,11 @@ The technology described in this specification was made available from contribut
    * Change Cryptographic Holder Binding to Cryptographic Key Binding
    * add privacy considerations for the client_id used with wallet attestations
    * deprecate the proof parameter in the credential request
+   * URL to retrieve Credential Issuer Metadata now requires `.well-known/openid-credential-issuer` to be added at start of path to align with IETF requirements
    * explicitly state that various arrays in metadata/requests need to be non-empty
    * add missing request for media type registration of key-attestation+jwt in IANA Considerations
    * rename keyattestation+jwt to key-attestation+jwt
+   * set key attestation nonce to c_nonce value for proof types with key attestations
    * use mdoc as a term, instead of mDL
    * clarify mdoc as a credential format can be used with non-mDL use-cases
    * Remove the Dynamic Credential Request section and associated content
