@@ -1613,7 +1613,7 @@ It is up to the Credential Issuer whether to update both the signature and the c
 
 Implementers should be aware that this specification uses several specifications that are not yet final specifications. Those specifications are:
 
-* OpenID Federation 1.0 draft -42 [@!OpenID.Federation]
+* OpenID Federation 1.0 draft -43 [@!OpenID.Federation]
 * SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -08 [@!I-D.ietf-oauth-sd-jwt-vc]
 * Attestation-Based Client Authentication draft -05 [@!I-D.ietf-oauth-attestation-based-client-auth]
 * Token Status List draft -11 [@!I-D.ietf-oauth-status-list]
@@ -1965,10 +1965,10 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         </front>
 </reference>
 
-<reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-federation-1_0.html">
+<reference anchor="OpenID.Federation" target="https://openid.net/specs/openid-federation-1_0-43.html">
         <front>
           <title>OpenID Federation 1.0</title>
-		  <author fullname="R. Hedberg, Ed.">
+	  <author fullname="R. Hedberg, Ed.">
             <organization>independent</organization>
           </author>
           <author fullname="Michael B. Jones">
@@ -1986,7 +1986,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
           <author fullname="Vladimir Dzhuvinov">
             <organization>Connect2id</organization>
           </author>
-          <date day="5" month="March" year="2025"/>
+          <date day="2" month="June" year="2025"/>
         </front>
 </reference>
 
