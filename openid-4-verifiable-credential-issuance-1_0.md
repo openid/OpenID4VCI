@@ -1093,7 +1093,7 @@ Credential Response can be immediate or deferred and can contain one or more Cre
 
 The HTTP status code MUST be 202 (see Section 15.3.3 of [@!RFC9110]).
 
-If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Credential Response as specified by [#encrypted-messages], using the parameters from the `credential_response_encryption` object. 
+If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Credential Response as specified by (#encrypted-messages), using the parameters from the `credential_response_encryption` object. 
 
 If the Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
 
