@@ -1921,7 +1921,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         </front>
 </reference>
 
-<reference anchor="ISO.18045" target="">
+<reference anchor="ISO.18045" target="https://www.iso.org/standard/72889.html">
         <front>
           <title>ISO/IEC 18045:2022 Information security, cybersecurity and privacy protection — Evaluation criteria for IT security — Methodology for IT security evaluation</title>
           <author>
