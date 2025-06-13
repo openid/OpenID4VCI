@@ -1180,7 +1180,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "error": "unsupported_credential_configuration"
+  "error": "unknown_credential_configuration"
 }
 ```
 
