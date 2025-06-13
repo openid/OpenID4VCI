@@ -1162,8 +1162,8 @@ If the Wallet is requesting the issuance of a Credential that is not supported b
 
 * `error`: REQUIRED. The `error` parameter SHOULD be a single ASCII [@!USASCII] error code from the following:
   * `invalid_credential_request`: The Credential Request is missing a required parameter, includes an unsupported parameter or parameter value, repeats the same parameter, or is otherwise malformed.
-  * `unsupported_credential_type`: Requested Credential type is not supported.
-  * `unsupported_credential_format`: Requested Credential Format is not supported.
+  * `unknown_credential_configuration`: Requested Credential Configuration is unknown.
+  * `unknown_credential_identifier`: Requested Credential identifier is unkown.
   * `invalid_proof`: The `proofs` parameter in the Credential Request is invalid: (1) if the field is missing, or (2) one of the provided key proofs is invalid, or (3) if at least one of the key proofs does not contain a `c_nonce` value (refer to (#nonce-response)).
   * `invalid_nonce`: The `proofs` parameter in the Credential Request uses an invalid nonce: at least one of the key proofs contains an invalid `c_nonce` value. The wallet should retrieve a new `c_nonce` value (refer to (#nonce-endpoint)).
   * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
@@ -1180,7 +1180,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "error": "unsupported_credential_format"
+  "error": "unsupported_credential_configuration"
 }
 ```
 
