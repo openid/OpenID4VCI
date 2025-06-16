@@ -2214,6 +2214,10 @@ Cryptographic algorithm identifiers used in the `credential_signing_alg_values_s
 * The value exactly matches the `alg` value in the `IssuerAuth` COSE header;
 * Or, the value is a fully specified algorithm, as defined in [@!I-D.ietf-jose-fully-specified-algorithms], and the combination of the `alg` value and the signing key's curve in the `IssuerAuth` COSE structure matches the combination specified by the fully specified algorithm.
 
+Consequently, depending on the approach taken by the Issuer as described above, the `alg` value in the `IssuerAuth` COSE header MAY NOT directly correspond to the identifier listed in the `credential_signing_alg_values_supported` metadata parameter. This metadata paramter in is primarily informational for the Wallet.
+
+Note that these `alg` values are informational to the wallet and depending on the approach the issuers chose, the `alg` value in the `IssueAuth` COSE header MAY NOT correspond to the identifier in the `credential_signing_alg_values_supported` metadta parameter.
+
 Example:
 If the `IssuerAuth` structure contains an `alg` header value of `-7` (ECDSA with SHA-256, per [@!IANA.COSE]) and is signed using a P-256 key, it matches both `-7` and `-9` in `credential_signing_alg_values_supported`. The latter (`-9`) corresponds to ECDSA with P-256 and SHA-256, as defined in [@!I-D.ietf-jose-fully-specified-algorithms].
 
