@@ -2131,7 +2131,7 @@ When the `format` value is `jwt_vc_json`, the entire Credential Offer, Authoriza
 
 #### Credential Issuer Metadata {#server-metadata-jwt-vc-json}
 
-Cryptographic algorithm identifiers used in the `credential_signing_alg_values_supported` parameter are case sensitive strings and SHOULD be one of those JWS algorithm names defined in [@IANA.JOSE].
+Cryptographic algorithm identifiers used in the `credential_signing_alg_values_supported` parameter are case sensitive strings and SHOULD be one of those JWS Algorithm Names defined in [@IANA.JOSE].
 
 The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
 
