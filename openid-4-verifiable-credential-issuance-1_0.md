@@ -1217,7 +1217,7 @@ The Credential Issuer MUST ignore any unrecognized parameters.
 
 The Credential Issuer indicates support for encrypted requests by including the `credential_request_encryption` parameter in the Credential Issuer Metadata. The Client MAY encrypt the request when `encryption_required` is `false` and MUST do so when `encryption_required` is `true`.
 
-When performing Deferred Credential Request encryption, the Client MUST encode the information in the Deferred Credential Request in a JWT as specified by [#encrypted-messages], using the parameters in from `credential_request_encryption` object. 
+When performing Deferred Credential Request encryption, the Client MUST encode the information in the Deferred Credential Request in a JWT as specified by (#encrypted-messages), using the parameters from the `credential_request_encryption` object in the Credential Issuer Metadata. 
 
 If the Deferred Credential Request is not encrypted, the media type of the request MUST be set to `application/json`.
 
