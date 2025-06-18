@@ -634,60 +634,72 @@ The following Figure illustrates a flow using the Authorization Challenge Endpoi
 
 !---
 ~~~ ascii-art
- +-----------+            +----------------------+     +-------------------+
- |   Wallet  |            | Authorization Server |     | Credential Issuer |
- +-----------+            +----------------------+     +-------------------+
-       |                              |                        |
-       |                              |                        |
-       |----------------------------->|  (1) Authorization     |
-       |                              |      Challenge         |
-       |                              |      Request           |
-       |                              |                        |
-       |                              |                        |
-       |<-----------------------------|  (2) Error: Request    |
-       |                              |      Presentation      |
-       |                              |                        |
-       |<---------------------------->|  (3) OpenID4VP         |
-       |                              |      Credential        |
-       |                              |      Presentation      |
-       |                              |                        |    
-       |----------------------------->|  (4) Authorization     |
-       |                              |      Challenge         |
-       |                              |      Request           |
-       |                              |      (repeated)        |
-       |                              |                        |    
-       |<-----------------------------|  (5) Authorization     |
-       |                              |      Challenge         |
-       |                              |      Response (code)   |
-       |                              |                        |
-       |----------------------------->|  (6) Token Request     |
-       |                              |      (code)            |
-       |                              |                        |
-       |<-----------------------------|  (7) Token Response    |
-       |                              |      (Access Token)    |
-       |                              |                        |
-       |                              |                        |
-       |  (8) Credential Request      |                        |
-       |      (Access Token, proof(s))|                        |
-       |------------------------------------------------------>|
-       |                              |                        |
-       |  (9) Credential Response     |                        |
-       |      with Credential(s) OR   |                        |
-       |      Transaction ID          |                        |
-       |<------------------------------------------------------|
+ +-----------+            +----------------------+     +-------------------+    +--------------------+
+ |   Wallet  |            | Authorization Server |     | Credential Issuer |    | OpenID4VP Verifier |
+ +-----------+            +----------------------+     +-------------------+    +--------------------+
+       |                              |                        |                           |
+       |                              |                        |                           |
+       |----------------------------->|  (1) Authorization     |                           |
+       |                              |      Challenge         |                           |
+       |                              |      Request           |                           |
+       |                              |                        |                           |
+       |                              |                        |                           |
+       |<-----------------------------|  (2) Error: Request    |                           |
+       |                              |      Presentation      |                           |
+       |                              |      (presentation     |                           |
+       |                              |      request,          |                           |
+       |                              |      auth_session)     |                           |
+       |                              |                        |                           |
+       |---------------------------------------------------------------------------------->|  (3) OpenID4VP direct_post to Response URI
+       |                              |                        |                           |
+       |<----------------------------------------------------------------------------------|  (4) (redirect_uri)
+       |                              |                        |                           |    
+       |----------------------------->|  (4) Authorization     |                           |
+       |                              |      Challenge         |                           |
+       |                              |      Request           |                           |
+       |                              |      (auth_session,    |                           |
+       |                              |      redirect_uri)     |                           |
+       |                              |                        |                           |    
+       |<-----------------------------|  (5) Authorization     |                           |
+       |                              |      Challenge         |                           |
+       |                              |      Response (code)   |                           |
+       |                              |                        |                           |
+       |----------------------------->|  (6) Token Request     |                           |
+       |                              |      (code)            |                           |
+       |                              |                        |                           |
+       |<-----------------------------|  (7) Token Response    |                           |
+       |                              |      (Access Token)    |                           |
+       |                              |                        |                           |
+       |                              |                        |                           |
+       |  (8) Credential Request      |                        |                           |
+       |      (Access Token, proof(s))|                        |                           |
+       |------------------------------------------------------>|                           |
+       |                              |                        |                           |
+       |  (9) Credential Response     |                        |                           |
+       |      with Credential(s) OR   |                        |                           |
+       |      Transaction ID          |                        |                           |
+       |<------------------------------------------------------|                           |
 ~~~
 !---
-Figure: Issuance using Authorization Challenge Endpoint 
+Figure: Issuance using Authorization Challenge Endpoint
 
-## Authorization Challenge Request
 
-The request to the Authorization Challenge Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126.html, Section 2.1].
+
+## Authorization Challenge Request {#authorization-challenge-request}
+
+The request to the Authorization Challenge Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126.html, Section 2.1], with the following additions:
+
+ - In case a wallet attestation is required by the Issuer, it has to be included in this request.
+ - In case the Wallet has received an `auth_session` parameter previously, it has to be included in this request (see (#error-request-presentation)).
+ - In case the Wallet has completed a Presentation, it has to include the received redirect URI in the parameter `openid4vp_redirect_uri` (see (#error-request-presentation)) during the next call to the Authorization Challenge Endpoint.
 
 ## Authorization Challenge Response
 
-The response from the Authorization Challenge Endpoint can take one of the following forms:
+Upon receiving an Authorization Challenge Request, the Issuer determines whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance. 
 
-### Error - Request Presentation 
+Depending on this assessment, the response from the Authorization Challenge Endpoint can take one of the following forms:
+
+### Error - Request Presentation {#error-request-presentation}
 
 The Authorization Server MAY request a Credential Presentation by responding with an error response, indicated by an HTTP 400 (Bad Request) status code. The content type of the error response MUST be `application/json` and the JSON document in the body MUST indicate the `error` code `insufficient_authorization` as shown in the following example. In this case, the response MUST include an `openid4vp_presentation` parameter containing an Authorization Request as defined in Section 5 of [@!OpenID4VP], encoded in JSON.
 
@@ -706,9 +718,21 @@ Cache-Control: no-store
 }
 ```
 
-If the error code is `insufficient_authorization` and an `openid4vp_presentation` parameter is present, the Wallet MUST process the Authorization Request contained in the `openid4vp_presentation` parameter as defined in [@!OpenID4VP] to perform a Credential Presentation to the Authorization Server. It is then expected to repeat the Authorization Challenge Request.
-
 The Authorization Server MAY use the `auth_session` parameter in the Authorization Challenge Response. The auth session allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. The Wallet MUST include the `auth_session` in follow-up requests to the Authorization Challenge Endpoint if it receives one along with the error response.
+
+If the error code is `insufficient_authorization` and an `openid4vp_presentation` parameter is present, the Wallet MUST process the Authorization Request contained in the `openid4vp_presentation` parameter as defined in [@!OpenID4VP] to perform a Credential Presentation to the Authorization Server.
+
+For the requested Presentation, the Issuer is acting as a Verifier to the Wallet. The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is out of scope of this specification.
+
+In the Authorization Request contained in the `openid4vp_presentation` parameter, the `response_type` MUST be `vp_token` (defined in Section 8 of [@!OpenID4VP]).
+
+The `response_mode` of the request MUST be `direct_post` (defined in Section 8.2 of [@!OpenID4VP]).
+Following the definition of this response mode, the Wallet sends an HTTP POST request to the endpoint indicated by the `response_uri` parameter in the Authorization Request to either complete the presentation (sending the VP Token) or to indicate an error.
+In either case, the Verifier responds by sending a JSON object containing a `redirect_uri` parameter.
+
+In a regular presentation flow, the Wallet would be expected to follow this redirect.
+In the case described here, the Wallet MUST NOT follow the redirect URI and MUST instead repeat the request to the Authorization Challenge Endpoint and in this request include the received redirect URI in the `openid4vp_redirect_uri` parameter.
+The Issuer MUST verify that the redirect URI is correct, i.e., matches the one sent in response to the request to the `response_uri`. Since the redirect URI MUST include a fresh, cryptographically random value, this check helps to present Session Fixation attacks as described in Section 14.2 of [@!OpenID4VP].
 
 ### Error - Show Website
 
