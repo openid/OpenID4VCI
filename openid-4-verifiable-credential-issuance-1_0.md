@@ -2451,7 +2451,7 @@ Depending on the Wallet's implementation, the `attestation` may avoid unnecessar
 
 Additional proof types MAY be defined and used.
 
-#### `jwt` Proof Type {#jwt-proof-type}
+## `jwt` Proof Type {#jwt-proof-type}
 
 The JWT MUST contain the following elements:
 
@@ -2530,7 +2530,7 @@ Here is another example JWT not only proving possession of a private key but als
 }
 ```
 
-#### `di_vp` Proof Type {#di-vp-proof-type}
+## `di_vp` Proof Type {#di-vp-proof-type}
 
 When a W3C Verifiable Presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] secured using Data Integrity [@VC_Data_Integrity] is used as key proof, it MUST contain at least the following properties, in addition to any other properties required by [@VC_DATA_2.0] or [@VC_DATA]:
 
@@ -2578,7 +2578,7 @@ Below is a non-normative example of a `proofs` parameter:
 
 ```
 
-#### `attestation` Proof Type {#attestation-proof-type}
+## `attestation` Proof Type {#attestation-proof-type}
 
 A key attestation in JWT format as defined in (#keyattestation-jwt).
 
@@ -2600,7 +2600,7 @@ The Credential Issuer SHOULD issue a Credential for each cryptographic public ke
 
 If Credential Issuer metadata is provided, the value of the `alg` JWT header of the key attestation MUST match one of the entries in the `proof_signing_alg_values_supported` metadata parameter.
 
-### Verifying Proof {#verifying-key-proof}
+## Verifying Proof {#verifying-key-proof}
 
 To validate a key proof, the Credential Issuer MUST ensure that:
 
