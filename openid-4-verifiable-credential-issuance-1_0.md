@@ -639,7 +639,7 @@ The response from the Authorization Challenge Endpoint can take one of the follo
 
 ### Error - Request Presentation 
 
-The Authorization Server MAY request a Credential Presentation by responding with the `error` code `insufficient_authorization`. In this case, it MUST include a `presentation` parameter containing an Authorization Request as defined in Section 5 of [@!OpenID4VP], encoded in JSON.
+The Authorization Server MAY request a Credential Presentation by responding with the `error` code `insufficient_authorization`. In this case, it MUST include an `openid4vp_presentation` parameter containing an Authorization Request as defined in Section 5 of [@!OpenID4VP], encoded in JSON.
 
 ```
 HTTP/1.1 400 Bad Request
@@ -649,22 +649,22 @@ Cache-Control: no-store
 {
   "error": "insufficient_authorization",
   "auth_session": "123456789",
-  "presentation": {
+  "openid4vp_presentation": {
     "client_id": "x509_san_dns:rp.example.com",
     "request_uri": "https://rp.example.com/oidc/request/1234"
   }
 }
 ```
 
-If the error code is `insufficient_authorization` and a `presentation` parameter is present, the Wallet MUST process the Authorization Request contained in the `presentation` parameter as defined in [@!OpenID4VP] to perform a Credential Presentation to the Authorization Server. It is then expected to repeat the Authorization Challenge Request.
+If the error code is `insufficient_authorization` and an `openid4vp_presentation` parameter is present, the Wallet MUST process the Authorization Request contained in the `openid4vp_presentation` parameter as defined in [@!OpenID4VP] to perform a Credential Presentation to the Authorization Server. It is then expected to repeat the Authorization Challenge Request.
 
 The Authorization Server MAY use the `auth_session` parameter in the Authorization Challenge Response. The auth session allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. The Wallet MUST include the `auth_session` in follow-up requests to the Authorization Challenge Endpoint if it receives one along with the error response.
 
-#todo: Determine whether we needs presentation_during_issuance_session
-
 ### Error - Show Website
 
-#todo: Determine whether we need this. May need to include privacy considerations.
+If the error code is `redirect_to_web`, the Authorization Server wants to fall back to a regular interaction with the user.
+
+The Authorization Server MAY include `request_uri` and `expires_in` in as defined in [@!RFC9126] in the error response. In this case, the Wallet MUST use the `request_uri` value to build an Authorization Request as defined in Section 4 of [@!RFC9126]. Otherwise, the Wallet MUST initiate a new OAuth Authorization Code flow to obtain authorization.
 
 ### Other Errors
 
