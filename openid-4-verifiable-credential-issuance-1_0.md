@@ -793,7 +793,7 @@ The issued Credential SHOULD be cryptographically bound to the identifier of the
 
 Note: Claims in the Credential are about the subject of the Credential, which is often the End-User who possesses it.
 
-For Cryptographic Key Binding, the Client has different options to provide Cryptographic Key Binding material for a requested Credential within a proof of a certain proof type. A proof type may provide the cryptographic public key(s) either with corresponding proof(s) of possession or with key attestations. Proof types are defined in (#proof-types).
+For Cryptographic Key Binding, the Client has different options to provide Cryptographic Key Binding material for a requested Credential within a proof of a certain proof type. A proof type may provide the cryptographic public key(s) either with corresponding proof(s) of possession of the private key(s) or with key attestation(s). Proof types are defined in (#proof-types).
 
 ## Credential Request {#credential-request}
 
