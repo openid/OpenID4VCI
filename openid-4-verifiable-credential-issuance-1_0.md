@@ -664,11 +664,11 @@ The Authorization Server MAY use the `auth_session` parameter in the Authorizati
 
 If the error code is `redirect_to_web`, the Authorization Server wants to fall back to a regular interaction with the user.
 
-The Authorization Server MAY include `request_uri` and `expires_in` in as defined in [@!RFC9126] in the error response. In this case, the Wallet MUST use the `request_uri` value to build an Authorization Request as defined in Section 4 of [@!RFC9126]. Otherwise, the Wallet MUST initiate a new OAuth Authorization Code flow to obtain authorization.
+The Authorization Server MAY include `request_uri` and `expires_in` as defined in [@!RFC9126] in the error response. In this case, the Wallet MUST use the `request_uri` value to build an Authorization Request as defined in Section 4 of [@!RFC9126]. Otherwise, the Wallet MUST initiate a new OAuth Authorization Code flow to obtain authorization.
 
 ### Other Errors
 
-The Authorization Server MAY respond with other errors as defined in [@!RFC9126] or as defined in extensions of this specifications.
+The Authorization Server MAY respond with other errors as defined in [@!RFC9126]. Custom error codes MAY be defined by extensions of this specification to enable other types of interactions, for example, scanning of an NFC card.
 
 ### Authorization Code Response
 
