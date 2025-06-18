@@ -639,7 +639,7 @@ The response from the Authorization Challenge Endpoint can take one of the follo
 
 ### Error - Request Presentation 
 
-The Authorization Server MAY request a Credential Presentation by responding with the `error` code `insufficient_authorization`. In this case, it MUST include an `openid4vp_presentation` parameter containing an Authorization Request as defined in Section 5 of [@!OpenID4VP], encoded in JSON.
+The Authorization Server MAY request a Credential Presentation by responding with an error response, indicated by an HTTP 400 (Bad Request) status code. The content type of the error response MUST be `application/json` and the JSON document in the body MUST indicate the `error` code `insufficient_authorization` as shown in the following example. In this case, the response MUST include an `openid4vp_presentation` parameter containing an Authorization Request as defined in Section 5 of [@!OpenID4VP], encoded in JSON.
 
 ```
 HTTP/1.1 400 Bad Request
@@ -668,11 +668,11 @@ The Authorization Server MAY include `request_uri` and `expires_in` in as define
 
 ### Other Errors
 
-The Authorization Server MAY respond with other errors as defined in [@!RFC9126].
+The Authorization Server MAY respond with other errors as defined in [@!RFC9126] or as defined in extensions of this specifications.
 
 ### Authorization Code Response
 
-Once the Authorization Server has successfully processed the Authorization Challenge Request, it MUST respond with a 200 OK response containing the `authorization_code` parameter.
+Once the Authorization Server has successfully processed the Authorization Challenge Request, it MUST respond with a 200 OK response using the `application/json` media type containing the `authorization_code` parameter.
 
 ```
 HTTP/1.1 200 OK
