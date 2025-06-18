@@ -629,6 +629,56 @@ Location: https://client.example.net/cb?
 
 An Authorization Server MAY publish the `authorization_challenge_endpoint` parameter in its Authorization Server Metadata. In this case, the Wallet SHOULD use this endpoint to obtain authorization. This enables use cases where an Issuer requests Presentation of a Credential before issuing its Credential.
 
+The following Figure illustrates a flow using the Authorization Challenge Endpoint, where the Authorization Server requests presentation of a Credential from the Wallet before the issuance of another Credential to the Wallet.
+
+
+!---
+~~~ ascii-art
+ +-----------+            +----------------------+     +-------------------+
+ |   Wallet  |            | Authorization Server |     | Credential Issuer |
+ +-----------+            +----------------------+     +-------------------+
+       |                              |                        |
+       |                              |                        |
+       |----------------------------->|  (1) Authorization     |
+       |                              |      Challenge         |
+       |                              |      Request           |
+       |                              |                        |
+       |                              |                        |
+       |<-----------------------------|  (2) Error: Request    |
+       |                              |      Presentation      |
+       |                              |                        |
+       |<---------------------------->|  (3) OpenID4VP         |
+       |                              |      Credential        |
+       |                              |      Presentation      |
+       |                              |                        |    
+       |----------------------------->|  (4) Authorization     |
+       |                              |      Challenge         |
+       |                              |      Request           |
+       |                              |      (repeated)        |
+       |                              |                        |    
+       |<-----------------------------|  (5) Authorization     |
+       |                              |      Challenge         |
+       |                              |      Response (code)   |
+       |                              |                        |
+       |----------------------------->|  (6) Token Request     |
+       |                              |      (code)            |
+       |                              |                        |
+       |<-----------------------------|  (7) Token Response    |
+       |                              |      (Access Token)    |
+       |                              |                        |
+       |                              |                        |
+       |  (8) Credential Request      |                        |
+       |      (Access Token, proof(s))|                        |
+       |------------------------------------------------------>|
+       |                              |                        |
+       |  (9) Credential Response     |                        |
+       |      with Credential(s) OR   |                        |
+       |      Transaction ID          |                        |
+       |<------------------------------------------------------|
+~~~
+!---
+Figure: Issuance using Authorization Challenge Endpoint 
+
 ## Authorization Challenge Request
 
 The request to the Authorization Challenge Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126.html, Section 2.1].
@@ -685,8 +735,6 @@ Cache-Control: no-store
 ```
 
 The Wallet MUST use this authorization code in the subsequent Token Request to the Token Endpoint.
-
-#todo: Determine if we want to make the extension point explicit or not.
 
 # Token Endpoint {#token-endpoint}
 
