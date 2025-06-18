@@ -1410,7 +1410,7 @@ For example, the metadata for the Credential Issuer Identifier `https://issuer.e
 
 Communication with the Credential Issuer Metadata Endpoint MUST utilize TLS.
 
-To fetch the Credential Issuer Metadata, the Wallet MUST send an HTTP request using the GET method and the path formed following the steps above. The Wallet is RECOMMENDED to send an `Accept` Header in the HTTP GET request to indicate whether it supports signed metadata.
+To fetch the Credential Issuer Metadata, the Wallet MUST send an HTTP request using the GET method and the path formed following the steps above. The Wallet is RECOMMENDED to send an `Accept` Header in the HTTP GET request to indicate the Content Type(s) it supports, and by doing so, signaling whether it supports signed metadata.
 
 The Credential Issuer MUST respond with HTTP Status Code 200 and return the Credential Issuer Metadata containing the [parameters defined in this specification](#credential-issuer-parameters) as either:
 
