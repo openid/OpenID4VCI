@@ -687,11 +687,12 @@ Figure: Issuance using Authorization Challenge Endpoint
 
 ## Authorization Challenge Request {#authorization-challenge-request}
 
-The request to the Authorization Challenge Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126.html, Section 2.1], with the following additions:
+The request to the Authorization Challenge Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126, Section 2.1], with the following additions:
 
- - In case a wallet attestation is required by the Issuer, it has to be included in this request.
  - In case the Wallet has received an `auth_session` parameter previously, it has to be included in this request (see (#error-request-presentation)).
  - In case the Wallet has completed a Presentation, it has to include the received redirect URI in the parameter `openid4vp_redirect_uri` (see (#error-request-presentation)) during the next call to the Authorization Challenge Endpoint.
+
+Note: In case a wallet attestation is required by the Issuer, it has to be included in this request.
 
 ## Authorization Challenge Response
 
@@ -714,6 +715,25 @@ Cache-Control: no-store
   "openid4vp_presentation": {
     "client_id": "x509_san_dns:rp.example.com",
     "request_uri": "https://rp.example.com/oidc/request/1234"
+    "response_type": "vp_token",
+    "response_mode": "direct_post",
+    "response_uri": "https//client.example.org/cb",
+    "dcql_query": {
+      "credentials": [
+        {
+          "id": "some_identity_credential",
+          "format": "dc+sd-jwt",
+          "meta": {
+            "vct_values": [ "https://credentials.example.com/identity_credential" ]
+          },
+          "claims": [
+              {"path": ["last_name"]},
+              {"path": ["first_name"]}
+          ]
+        }
+      ]
+    },
+    "nonce": "n-0S6_WzA2Mj"
   }
 }
 ```
