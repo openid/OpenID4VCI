@@ -2831,6 +2831,7 @@ The technology described in this specification was made available from contribut
    * Align claims path query for ISO mdocs with JSON-based credentials
    * define `proof_signing_alg_values_supported` for attestation proof type
    * Add Credential Request encryption and Zip support
+   * Request encryption is now required when response encryption is used
 
    -15
 
