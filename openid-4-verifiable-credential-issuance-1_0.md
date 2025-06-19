@@ -654,30 +654,30 @@ The following Figure illustrates a flow using the Authorization Challenge Endpoi
        |                              |                        |                           |
        |<----------------------------------------------------------------------------------|  (4) (redirect_uri)
        |                              |                        |                           |    
-       |----------------------------->|  (4) Authorization     |                           |
+       |----------------------------->|  (5) Authorization     |                           |
        |                              |      Challenge         |                           |
        |                              |      Request           |                           |
        |                              |      (auth_session,    |                           |
        |                              |      redirect_uri)     |                           |
        |                              |                        |                           |    
-       |<-----------------------------|  (5) Authorization     |                           |
+       |<-----------------------------|  (6) Authorization     |                           |
        |                              |      Challenge         |                           |
        |                              |      Response (code)   |                           |
        |                              |                        |                           |
-       |----------------------------->|  (6) Token Request     |                           |
+       |----------------------------->|  (7) Token Request     |                           |
        |                              |      (code)            |                           |
        |                              |                        |                           |
-       |<-----------------------------|  (7) Token Response    |                           |
+       |<-----------------------------|  (8) Token Response    |                           |
        |                              |      (Access Token)    |                           |
        |                              |                        |                           |
        |                              |                        |                           |
-       |  (8) Credential Request      |                        |                           |
+       |  (9) Credential Request      |                        |                           |
        |      (Access Token, proof(s))|                        |                           |
        |------------------------------------------------------>|                           |
        |                              |                        |                           |
-       |  (9) Credential Response     |                        |                           |
-       |      with Credential(s) OR   |                        |                           |
-       |      Transaction ID          |                        |                           |
+       |  (10) Credential Response    |                        |                           |
+       |       with Credential(s) OR  |                        |                           |
+       |       Transaction ID         |                        |                           |
        |<------------------------------------------------------|                           |
 ~~~
 !---
