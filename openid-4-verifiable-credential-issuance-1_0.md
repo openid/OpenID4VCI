@@ -1093,7 +1093,7 @@ The Credential Response can either be returned immediately or in a deferred mann
 * If the Credential Issuer is able to immediately issue the requested Credentials, it MUST respond with the HTTP status code 200 (see Section 15.3.3 of [@!RFC9110]).
 * If the Credential Issuer is not able to immediately issue the requested credentials (e.g. due to a manual review process being required or the data used to issue the credential is not ready yet), the Credential Issuer MUST return a response with a `transaction_id` parameter. In this case, the Credential Issuer MUST also use the HTTP status code 202 for the response. The `transaction_id` MAY be used by the Client at a later time at the Deferred Credential endpoint.
 
-If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Credential Response as specified by (#encrypted-messages), using the parameters from the `credential_response_encryption` object. Note that this is be done regardless of the content. 
+If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Credential Response as specified by (#encrypted-messages), using the parameters from the `credential_response_encryption` object. Note that this is done regardless of the content. 
 
 If the Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
 
