@@ -726,7 +726,7 @@ For the requested Presentation, the Issuer is acting as a Verifier to the Wallet
 
 In the Authorization Request contained in the `openid4vp_presentation` parameter, the `response_type` MUST be `vp_token` (defined in Section 8 of [@!OpenID4VP]).
 
-The `response_mode` of the request MUST be `direct_post` (defined in Section 8.2 of [@!OpenID4VP]).
+The `response_mode` of the request MUST be `direct_post` (defined in Section 8.2 of [@!OpenID4VP]) or `direct_post.jwt` (defined in Section 8.3.1 of [@!OpenID4VP]).
 Following the definition of this response mode, the Wallet sends an HTTP POST request to the endpoint indicated by the `response_uri` parameter in the Authorization Request to either complete the presentation (sending the VP Token) or to indicate an error.
 In either case, the Verifier responds by sending a JSON object containing a `redirect_uri` parameter.
 
