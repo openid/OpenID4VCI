@@ -805,7 +805,7 @@ For Cryptographic Key Binding, the Client has the following options defined in (
 
 ## Credential Request {#credential-request}
 
-A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request.
+A Client makes a Credential Request to the Credential Endpoint by sending the following parameters in the entity-body of an HTTP POST request. The Credential Request MAY be encrypted (on top of TLS) using the `credential_request_encryption` parameter in (#credential-issuer-metadata) as specified in (#encrypted-messages).
 
 * `credential_identifier`: REQUIRED when an Authorization Details of type `openid_credential` was returned from the Token Response. It MUST NOT be used otherwise. A string that identifies a Credential Dataset that is requested for issuance. When this parameter is used, the `credential_configuration_id` MUST NOT be present.
 * `credential_configuration_id`: REQUIRED if a `credential_identifiers` parameter was not returned from the Token Response as part of the `authorization_details` parameter. It MUST NOT be used otherwise. String that uniquely identifies one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The corresponding object in the `credential_configurations_supported` map MUST contain one of the value(s) used in the `scope` parameter in the Authorization Request. When this parameter is used, the `credential_identifier` MUST NOT be present.
@@ -1205,7 +1205,7 @@ Communication with the Deferred Credential Endpoint MUST utilize TLS.
 
 ## Deferred Credential Request {#deferred-credential-request}
 
-The Deferred Credential Request is an HTTP POST request. It MUST be sent using the `application/json` media type.
+The Deferred Credential Request is an HTTP POST request. The Deferred Credential Request MAY be encrypted (on top of TLS) using the `credential_request_encryption` parameter in (#credential-issuer-metadata) as specified in (#encrypted-messages).
 
 The following parameters are used in the Deferred Credential Request:
 
