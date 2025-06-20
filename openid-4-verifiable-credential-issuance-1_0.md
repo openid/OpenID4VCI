@@ -1439,7 +1439,14 @@ For example, the metadata for the Credential Issuer Identifier `https://issuer.e
 
 Communication with the Credential Issuer Metadata Endpoint MUST utilize TLS.
 
-To fetch the Credential Issuer Metadata, the requester MUST send an HTTP request using the GET method and the path formed following the steps above. The Credential Issuer MUST return a JSON document compliant with this specification using the `application/json` media type and the HTTP Status Code 200.
+To fetch the Credential Issuer Metadata, the Wallet MUST send an HTTP request using the GET method and the path formed following the steps above. The Wallet is RECOMMENDED to send an `Accept` Header in the HTTP GET request to indicate the Content Type(s) it supports, and by doing so, signaling whether it supports signed metadata.
+
+The Credential Issuer MUST respond with HTTP Status Code 200 and return the Credential Issuer Metadata containing the [parameters defined in this specification](#credential-issuer-parameters) as either:
+
+* an unsigned JSON document using the media type `application/json`
+* a signed JSON Web Token (JWT) containing the Credential Issuer Metadata in its payload using the media type `application/jwt`
+
+The Credential Issuer is RECOMMENDED to respond with a `Content-Type` matching to the Wallet's requested `Accept` Header. However, the Credential Issuer MAY ignore the `Accept` Header. In any way, it MUST indicate the type of the returned Credential Issuer Metadata using the HTTP `Content-Type`.
 
 The Wallet is RECOMMENDED to send an `Accept-Language` Header in the HTTP GET request to indicate the language(s) preferred for display. It is up to the Credential Issuer whether to:
 
@@ -1455,6 +1462,22 @@ GET /.well-known/openid-credential-issuer HTTP/1.1
 Host: server.example.com
 Accept-Language: fr-ch, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5
 ```
+
+### Signed Metadata
+
+The signed metadata MUST be secured using a JSON Web Signature (JWS) [@!RFC7515] and contain the following elements:
+
+* in the JOSE header,
+  * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
+  * `typ`: REQUIRED. MUST be `openidvci-issuer-metadata+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
+
+* in the JWT body,
+  * `iss`: OPTIONAL. String denoting the party attesting to the claims in the signed metadata
+  * `sub`: REQUIRED. String matching the Credential Issuer identifier
+  * `iat`: REQUIRED. Integer for the time at which the Credential Issuer Metadata was issued using the syntax defined in [@!RFC7519].
+  * `exp`: OPTIONAL. Integer for the time at which the Credential Issuer Metadata is expiring, using the syntax defined in [@!RFC7519].
+
+The Wallet SHOULD establish trust in the signer of the metadata, and obtain the keys to validate the signature before processing the metadata, e.g. using JOSE header parameters like `x5c`, `kid` or `trust_chain` to convey the public key. The concrete mechanisms how to do that are out of scope of this specification. 
 
 ### Credential Issuer Metadata Parameters {#credential-issuer-parameters}
 
@@ -1478,7 +1501,6 @@ This specification defines the following Credential Issuer Metadata parameters:
   * `encryption_required`: REQUIRED. Boolean value specifying whether the Credential Issuer requires the additional encryption on top of TLS for the Credential Response. If the value is `true`, the Credential Issuer requires encryption for every Credential Response and therefore the Wallet MUST provide encryption keys in the Credential Request. If the value is `false`, the Wallet MAY choose whether it provides encryption keys or not.
 * `batch_credential_issuance`: OPTIONAL. Object containing information about the Credential Issuer's support for issuance of multiple Credentials in a batch in the Credential Endpoint. The presence of this parameter means that the issuer supports more than one key proof in the `proofs` parameter in the Credential Request so can issue more than one Verifiable Credential for the same Credential Dataset in a single request/response.
   * `batch_size`: REQUIRED. Integer value specifying the maximum array size for the `proofs` parameter in a Credential Request. It MUST be 2 or greater.
-* `signed_metadata`: OPTIONAL. String that is a signed JWT. This JWT contains Credential Issuer metadata parameters as claims. The signed metadata MUST be secured using JSON Web Signature (JWS) [@!RFC7515] and MUST contain an `iat` (Issued At) claim, an `iss` (Issuer) claim denoting the party attesting to the claims in the signed metadata, and `sub` (Subject) claim matching the Credential Issuer identifier. If the Wallet supports signed metadata, metadata values conveyed in the signed JWT MUST take precedence over the corresponding values conveyed using plain JSON elements. If the Credential Issuer wants to enforce use of signed metadata, it omits the respective metadata parameters from the unsigned part of the Credential Issuer metadata. A `signed_metadata` metadata value MUST NOT appear as a claim in the JWT. The Wallet MUST establish trust in the signer of the metadata, and obtain the keys to validate the signature before processing the metadata. The concrete mechanism how to do that is out of scope of this specification and MAY be defined in the profiles of this specification.
 * `display`: OPTIONAL. A non-empty array of objects, where each object contains display properties of a Credential Issuer for a certain language. Below is a non-exhaustive list of valid parameters that MAY be included:
   * `name`: OPTIONAL. String value of a display name for the Credential Issuer.
   * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. There MUST be only one object for each language identifier.
@@ -2849,6 +2871,8 @@ The technology described in this specification was made available from contribut
 
    -16
   
+   * Add option to have signed Credential Issuer metadata
+   * Remove `signed_metadata` from Credential Issuer metadata
    * move `claims` and `display` into `credential_metadata` and allow for credential-format specific mechanisms to override it
    * Remove the option to use `format` from `authorization_details` in the Authorization Request
    * add implementation consideration about pre-final specs
