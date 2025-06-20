@@ -1440,7 +1440,7 @@ The signed metadata MUST be secured using a JSON Web Signature (JWS) [@!RFC7515]
 
 * in the JOSE header,
   * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
-  * `typ`: REQUIRED. MUST be `key-attestation+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
+  * `typ`: REQUIRED. MUST be `openidvci-issuer-metadata+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
 
 * in the JWT body,
   * `iss`: OPTIONAL. String denoting the party attesting to the claims in the signed metadata
