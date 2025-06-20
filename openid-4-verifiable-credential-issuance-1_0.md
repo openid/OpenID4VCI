@@ -711,7 +711,7 @@ The Authorization Server MAY request an additional user interaction by sending a
 
 Additional keys are defined based on the type of interaction, as shown next.
 
-#### Require Presentation (#iar-require-presentation)
+#### Require Presentation {#iar-require-presentation}
 
 If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_presentation` parameter containing an Authorization Request as defined in Section 5 of [@!OpenID4VP], encoded in JSON.
 
