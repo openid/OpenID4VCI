@@ -621,7 +621,11 @@ Location: https://client.example.net/cb?
 
 # Interactive Authorization Endpoint
 
-An Authorization Server MAY publish the `interactive_authorization_endpoint` parameter in its Authorization Server Metadata. In this case, the Wallet SHOULD use this endpoint to obtain authorization. This enables use cases where an Issuer requests Presentation of a Credential before issuing its Credential.
+An Authorization Server MAY publish the `interactive_authorization_endpoint` parameter in its Authorization Server Metadata.
+In this case, the Wallet SHOULD use this endpoint to obtain authorization.
+This enables use cases where an Issuer requests Presentation of a Credential before issuing its Credential.
+
+Note: This mechanism can only be used for interactions with the same Wallet that started the issuance process.
 
 The following Figure illustrates a flow using the Interactive Authorization Endpoint, where the Authorization Server requests presentation of a Credential from the Wallet before the issuance of another Credential to the Wallet.
 
