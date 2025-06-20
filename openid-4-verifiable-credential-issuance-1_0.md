@@ -619,11 +619,11 @@ Location: https://client.example.net/cb?
   &error_description=Unsupported%20response_type%20value
 ```
 
-# Authorization Challenge Endpoint
+# Interactive Authorization Endpoint
 
-An Authorization Server MAY publish the `authorization_challenge_endpoint` parameter in its Authorization Server Metadata. In this case, the Wallet SHOULD use this endpoint to obtain authorization. This enables use cases where an Issuer requests Presentation of a Credential before issuing its Credential.
+An Authorization Server MAY publish the `interactive_authorization_endpoint` parameter in its Authorization Server Metadata. In this case, the Wallet SHOULD use this endpoint to obtain authorization. This enables use cases where an Issuer requests Presentation of a Credential before issuing its Credential.
 
-The following Figure illustrates a flow using the Authorization Challenge Endpoint, where the Authorization Server requests presentation of a Credential from the Wallet before the issuance of another Credential to the Wallet.
+The following Figure illustrates a flow using the Interactive Authorization Endpoint, where the Authorization Server requests presentation of a Credential from the Wallet before the issuance of another Credential to the Wallet.
 
 
 !---
@@ -633,12 +633,12 @@ The following Figure illustrates a flow using the Authorization Challenge Endpoi
  +-----------+            +----------------------+     +-------------------+    +--------------------+
        |                              |                        |                           |
        |                              |                        |                           |
-       |----------------------------->|  (1) Authorization     |                           |
-       |                              |      Challenge         |                           |
+       |----------------------------->|  (1) Interactive       |                           |
+       |                              |      Authorization     |                           |
        |                              |      Request           |                           |
        |                              |                        |                           |
        |                              |                        |                           |
-       |<-----------------------------|  (2) Error: Request    |                           |
+       |<-----------------------------|  (2) Request           |                           |
        |                              |      Presentation      |                           |
        |                              |      (presentation     |                           |
        |                              |      request,          |                           |
@@ -648,14 +648,14 @@ The following Figure illustrates a flow using the Authorization Challenge Endpoi
        |                              |                        |                           |
        |<----------------------------------------------------------------------------------|  (4) (redirect_uri)
        |                              |                        |                           |    
-       |----------------------------->|  (5) Authorization     |                           |
-       |                              |      Challenge         |                           |
+       |----------------------------->|  (5) Interactive       |                           |
+       |                              |      Authorization     |                           |
        |                              |      Request           |                           |
        |                              |      (auth_session,    |                           |
        |                              |      redirect_uri)     |                           |
        |                              |                        |                           |    
-       |<-----------------------------|  (6) Authorization     |                           |
-       |                              |      Challenge         |                           |
+       |<-----------------------------|  (6) Interactive       |                           |
+       |                              |      Authorization     |                           |
        |                              |      Response (code)   |                           |
        |                              |                        |                           |
        |----------------------------->|  (7) Token Request     |                           |
@@ -675,36 +675,50 @@ The following Figure illustrates a flow using the Authorization Challenge Endpoi
        |<------------------------------------------------------|                           |
 ~~~
 !---
-Figure: Issuance using Authorization Challenge Endpoint
+Figure: Issuance using the Interactive Authorization Endpoint
 
+## Interactive Authorization Request {#interactive-authorization-request}
 
+The request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126, Section 2.1], with the following additions:
 
-## Authorization Challenge Request {#authorization-challenge-request}
-
-The request to the Authorization Challenge Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126, Section 2.1], with the following additions:
-
- - In case the Wallet has received an `auth_session` parameter previously, it has to be included in this request (see (#error-request-presentation)).
- - In case the Wallet has completed a Presentation, it has to include the received redirect URI in the parameter `openid4vp_redirect_uri` (see (#error-request-presentation)) during the next call to the Authorization Challenge Endpoint.
+ - In case the Wallet has received an `auth_session` parameter previously, it has to be included in this request (see (#iar-interaction-required)).
+ - In case the Wallet has completed a Presentation, it has to include the received redirect URI in the parameter `openid4vp_redirect_uri` (see (#iar-require-presentation)) during the next call to the Interactive Authorization Endpoint.
 
 Note: In case a wallet attestation is required by the Issuer, it has to be included in this request.
 
-## Authorization Challenge Response
+## Interactive Authorization Response
 
-Upon receiving an Authorization Challenge Request, the Issuer determines whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance. 
+Upon receiving an Interactive Authorization Request, the Issuer determines whether the authorization request is semantically correct and valid, and whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance.
+The response to an Interactive Authorization Request is an HTTP message with the content type `application/json` and a JSON document in the body that indicates
 
-Depending on this assessment, the response from the Authorization Challenge Endpoint can take one of the following forms:
+- an error as defined in Section 2.3 of [@!RFC9126], or
+- that additional user interaction is required, as defined in (#iar-interaction-required), or
+- a successful completion of the authorization, as defined in (#authorization-code-response).
 
-### Error - Request Presentation {#error-request-presentation}
+Depending on this assessment, the response from the Interactive Authorization Endpoint can take one of the following forms:
 
-The Authorization Server MAY request a Credential Presentation by responding with an error response, indicated by an HTTP 400 (Bad Request) status code. The content type of the error response MUST be `application/json` and the JSON document in the body MUST indicate the `error` code `insufficient_authorization` as shown in the following example. In this case, the response MUST include an `openid4vp_presentation` parameter containing an Authorization Request as defined in Section 5 of [@!OpenID4VP], encoded in JSON.
+### Additional Interaction Required {#iar-interaction-required}
+
+The Authorization Server MAY request an additional user interaction by sending a JSON body containing the following keys:
+
+* `status`: MANDATORY. MUST contain the string `require_interaction`, indicating that additional interaction is required.
+* `type`: MANDATORY. The value indicates which type of interaction is required, as defined below.
+* `auth_session`: OPTIONAL. The auth session allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. The Wallet MUST include the `auth_session` in follow-up requests to the Interactive Authorization Endpoint if it receives one along with the error response.
+
+Additional keys are defined based on the type of interaction, as shown next.
+
+#### Require Presentation (#iar-require-presentation)
+
+If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_presentation` parameter containing an Authorization Request as defined in Section 5 of [@!OpenID4VP], encoded in JSON.
 
 ```
-HTTP/1.1 400 Bad Request
+HTTP/1.1 200 OK
 Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "error": "insufficient_authorization",
+  "status": "require_interaction",
+  "type": "openid4vp_presentation",
   "auth_session": "123456789",
   "openid4vp_presentation": {
     "client_id": "x509_san_dns:rp.example.com",
@@ -732,11 +746,10 @@ Cache-Control: no-store
 }
 ```
 
-The Authorization Server MAY use the `auth_session` parameter in the Authorization Challenge Response. The auth session allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. The Wallet MUST include the `auth_session` in follow-up requests to the Authorization Challenge Endpoint if it receives one along with the error response.
+The Wallet MUST process the Authorization Request contained in the `openid4vp_presentation` parameter as defined in [@!OpenID4VP] to perform a Credential Presentation to the Authorization Server.
 
-If the error code is `insufficient_authorization` and an `openid4vp_presentation` parameter is present, the Wallet MUST process the Authorization Request contained in the `openid4vp_presentation` parameter as defined in [@!OpenID4VP] to perform a Credential Presentation to the Authorization Server.
-
-For the requested Presentation, the Issuer is acting as a Verifier to the Wallet. The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is out of scope of this specification.
+For the requested Presentation, the Issuer is acting as a Verifier to the Wallet.
+The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is out of scope of this specification.
 
 In the Authorization Request contained in the `openid4vp_presentation` parameter, the `response_type` MUST be `vp_token` (defined in Section 8 of [@!OpenID4VP]).
 
@@ -745,22 +758,65 @@ Following the definition of this response mode, the Wallet sends an HTTP POST re
 In either case, the Verifier responds by sending a JSON object containing a `redirect_uri` parameter.
 
 In a regular presentation flow, the Wallet would be expected to follow this redirect.
-In the case described here, the Wallet MUST NOT follow the redirect URI and MUST instead repeat the request to the Authorization Challenge Endpoint and in this request include the received redirect URI in the `openid4vp_redirect_uri` parameter.
-The Issuer MUST verify that the redirect URI is correct, i.e., matches the one sent in response to the request to the `response_uri`. Since the redirect URI MUST include a fresh, cryptographically random value, this check helps to present Session Fixation attacks as described in Section 14.2 of [@!OpenID4VP].
+In the case described here, the Wallet MUST NOT follow the redirect URI and MUST instead repeat the request to the Interactive Authorization Endpoint and in this request include the received redirect URI in the `openid4vp_redirect_uri` parameter.
+The Issuer MUST verify that the redirect URI is correct, i.e., matches the one sent in response to the request to the `response_uri`.
+Since the redirect URI MUST include a fresh, cryptographically random value, this check helps to present Session Fixation attacks, see (#iar-security).
 
-### Error - Show Website
+#### Redirect to Web
 
-If the error code is `redirect_to_web`, the Authorization Server wants to fall back to a regular interaction with the user.
+If the type is `redirect_to_web`, the Authorization Server wants to fall back to a regular interaction with the user.
 
-The Authorization Server MAY include `request_uri` and `expires_in` as defined in [@!RFC9126] in the error response. In this case, the Wallet MUST use the `request_uri` value to build an Authorization Request as defined in Section 4 of [@!RFC9126]. Otherwise, the Wallet MUST initiate a new OAuth Authorization Code flow to obtain authorization.
+In this case, the Authorization server MUST include the key `request_uri` in the response.
+The Wallet MUST use the `request_uri` value to build an Authorization Request as defined in Section 4 of [@!RFC9126] and complete the rest of the authorization process as defined there.
+The Authorization Server MAY include the `expires_in` key as defined in [@!RFC9126].
 
-### Other Errors
+Non-normative Example:
 
-The Authorization Server MAY respond with other errors as defined in [@!RFC9126]. Custom error codes MAY be defined by extensions of this specification to enable other types of interactions, for example, scanning of an NFC card.
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
 
-### Authorization Code Response
+{
+  "status": "require_interaction",
+  "type": "redirect_to_web",
+  "request_uri": "urn:ietf:params:oauth:request_uri:6esc_11ACC5bwc014ltc14eY22c",
+  "expires_in": 60
+ }
+```
 
-Once the Authorization Server has successfully processed the Authorization Challenge Request, it MUST respond with a 200 OK response using the `application/json` media type containing the `authorization_code` parameter.
+#### Custom Extensions {#iar-custom-extensions}
+
+Additional, custom types MAY be defined by extensions of this specification to enable other types of interactions, for example, scanning of an NFC card.
+It is RECOMMENDED to use this extension point instead of modifying the OAuth protocol in order to facilitate interactions that require interactions with native components of the Wallet application.
+
+Non-normative Example:
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "status": "require_interaction",
+  "type": "betelgeuse_intergalactic_id_card",
+  "biic_token": "73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049"
+ }
+```
+
+#### Security Considerations {#iar-security}
+
+Authorization Servers MUST ensure that the user interaction (OpenID4VP presentation, redirect to web, or a custom interaction) is securely bound to the authorization process in order avoid Session Fixation Attacks as described in Section 14.2 of [@!OpenID4VP].
+This can be achieved by securely linking all requests following the initial interactive authorization request.
+For OpenID4VP presentations, the Authorization Server MUST associate the `nonce` value used in the Presentation with the `auth_session` value and verify that the Presentation delivered from the Wallet to the Verifier uses the same nonce.
+Together with the verification of the `response_uri` delivered in the following Interactive Authorization Request described in {#iar-require-presentation}, this ensures a secure linking.
+
+Custom extensions (#iar-custom-extensions) MUST ensure that an equivalent binding is ensured.
+Authorization Servers can usually achieve this by providing a nonce for use in the custom process (`biic_token` in the example above) and verifying a non-predictable value returned from the process.
+
+### Authorization Code Response {#authorization-code-response}
+
+Once the Authorization Server has successfully processed the Interactive Authorization Request, it MUST respond with a 200 OK response using the `application/json` media type containing the `authorization_code` parameter as defined in [@!RFC9126].
 
 ```
 HTTP/1.1 200 OK
