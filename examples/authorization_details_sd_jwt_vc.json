@@ -1,0 +1,10 @@
+[
+  {
+    "type": "openid_credential",
+    "credential_configuration_id": "PID_SD_JWT_VC",
+    "claims": [
+      {"path": ["given_name"]},
+      {"path": ["family_name"]}
+    ]
+  }
+]
