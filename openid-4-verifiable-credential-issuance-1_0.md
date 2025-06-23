@@ -644,8 +644,9 @@ The following Figure illustrates a flow using the Interactive Authorization Endp
        |                              |      Request           |                           |
        |                              |                        |                           |
        |                              |                        |                           |
-       |<-----------------------------|  (2) Request           |                           |
-       |                              |      Presentation      |                           |
+       |<-----------------------------|  (2) Interactive       |                           |
+       |                              |      Authorization     |                           |
+       |                              |      Response          |                           |
        |                              |      (presentation     |                           |
        |                              |      request,          |                           |
        |                              |      auth_session)     |                           |
@@ -685,7 +686,7 @@ Figure: Issuance using the Interactive Authorization Endpoint
 
 ## Interactive Authorization Request {#interactive-authorization-request}
 
-The request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126, Section 2.1], with the following additions:
+The request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126, Section 2.1]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request), with the following additions:
 
  - In case the Wallet has received an Interactive Authorization Response previously, the `auth_session` parameter from that response MUST be included in all subsequent requests (see (#iar-interaction-required-response)).
  - In case the Wallet has completed a Presentation, it has to include the received redirect URI in the parameter `openid4vp_redirect_uri` (see (#iar-require-presentation)) during the next call to the Interactive Authorization Endpoint.
@@ -764,7 +765,9 @@ In the Authorization Request contained in the `openid4vp_presentation` parameter
 
 The `response_mode` of the request MUST be `direct_post` (defined in Section 8.2 of [@!OpenID4VP]) or `direct_post.jwt` (defined in Section 8.3.1 of [@!OpenID4VP]).
 Following the definition of this response mode, the Wallet sends an HTTP POST request to the endpoint indicated by the `response_uri` parameter in the Authorization Request to either complete the presentation (sending the VP Token) or to indicate an error.
-In either case, the Verifier responds by sending a JSON object containing a `redirect_uri` parameter.
+The Verifier MUST respond to this message by sending a JSON object containing a `redirect_uri` parameter.
+
+Note: Sending `redirect_uri` is defined as OPTIONAL in [@!OpenID4VP], but it is REQUIRED here.
 
 In a regular presentation flow, the Wallet would be expected to follow this redirect.
 In the case described here, the Wallet MUST NOT follow the redirect URI and MUST instead repeat the request to the Interactive Authorization Endpoint and in this request include the received redirect URI in the `openid4vp_redirect_uri` parameter.
@@ -821,7 +824,7 @@ This can be achieved by securely linking all requests following the initial inte
 For OpenID4VP presentations, the Authorization Server MUST associate the `nonce` value used in the Presentation with the `auth_session` value and verify that the Presentation delivered from the Wallet to the Verifier uses the same nonce.
 Together with the verification of the `response_uri` delivered in the following Interactive Authorization Request described in {#iar-require-presentation}, this ensures a secure linking.
 
-Custom extensions (#iar-custom-extensions) MUST ensure that an equivalent binding is ensured.
+Custom extensions (#iar-custom-extensions) MUST ensure an equivalent binding.
 Authorization Servers can usually achieve this by providing a nonce for use in the custom process (`biic_token` in the example above) and verifying a non-predictable value returned from the process.
 
 ### Authorization Code Response {#iar-authorization-code-response}
