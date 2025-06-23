@@ -687,7 +687,7 @@ Figure: Issuance using the Interactive Authorization Endpoint
 
 The request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126, Section 2.1], with the following additions:
 
- - In case the Wallet has received an `auth_session` parameter previously, it has to be included in this request (see (#iar-interaction-required)).
+ - In case the Wallet has received an Interactive Authorization Response previously, the `auth_session` parameter from that response MUST be included in all subsequent requests (see (#iar-interaction-required)).
  - In case the Wallet has completed a Presentation, it has to include the received redirect URI in the parameter `openid4vp_redirect_uri` (see (#iar-require-presentation)) during the next call to the Interactive Authorization Endpoint.
 
 Note: In case a Wallet Attestation is required by the Authorization Server, it has to be included in this request.
@@ -709,7 +709,7 @@ The Authorization Server MAY request an additional user interaction by sending a
 
 * `status`: REQUIRED. MUST contain the string `require_interaction`, indicating that additional interaction is required.
 * `type`: REQUIRED. The value indicates which type of interaction is required, as defined below.
-* `auth_session`: OPTIONAL. The auth session allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. The Wallet MUST include the `auth_session` in follow-up requests to the Interactive Authorization Endpoint if it receives one along with the error response.
+* `auth_session`: REQUIRED. The auth session allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. The Wallet MUST include the `auth_session` in follow-up requests to the Interactive Authorization Endpoint.
 
 Additional keys are defined based on the type of interaction, as shown next.
 
@@ -725,7 +725,7 @@ Cache-Control: no-store
 {
   "status": "require_interaction",
   "type": "openid4vp_presentation",
-  "auth_session": "123456789",
+  "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "openid4vp_presentation": {
     "client_id": "x509_san_dns:rp.example.com",
     "request_uri": "https://rp.example.com/oidc/request/1234"
@@ -795,6 +795,7 @@ Cache-Control: no-store
 
 Additional, custom types MAY be defined by extensions of this specification to enable other types of interactions, for example, scanning of an NFC card.
 It is RECOMMENDED to use this extension point instead of modifying the OAuth protocol in order to facilitate interactions that require interactions with native components of the Wallet application.
+See (#iar-security) for additional security considerations.
 
 Non-normative Example:
 
@@ -810,7 +811,7 @@ Cache-Control: no-store
  }
 ```
 
-#### Security Considerations {#iar-security}
+#### Preventing Session Fixation Attacks {#iar-security}
 
 Authorization Servers MUST ensure that the user interaction (OpenID4VP presentation, redirect to web, or a custom interaction) is securely bound to the authorization process in order avoid Session Fixation Attacks as described in Section 14.2 of [@!OpenID4VP].
 This can be achieved by securely linking all requests following the initial interactive authorization request.
