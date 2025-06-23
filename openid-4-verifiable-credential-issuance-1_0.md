@@ -709,7 +709,10 @@ The Authorization Server MAY request an additional user interaction by sending a
 
 * `status`: REQUIRED. MUST contain the string `require_interaction`, indicating that additional interaction is required.
 * `type`: REQUIRED. The value indicates which type of interaction is required, as defined below.
-* `auth_session`: REQUIRED. The auth session allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. The Wallet MUST include the `auth_session` in follow-up requests to the Interactive Authorization Endpoint.
+* `auth_session`: REQUIRED. The auth session allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence.
+
+The Wallet MUST include the `auth_session` in follow-up requests to the Interactive Authorization Endpoint.
+If, as a response to such a follow-up request, the Wallet receives an `auth_session` value that differs from the one sent in the request, it MUST abort the issuance process.
 
 Additional keys are defined based on the type of interaction, as shown next.
 
@@ -824,6 +827,7 @@ Authorization Servers can usually achieve this by providing a nonce for use in t
 ### Authorization Code Response {#iar-authorization-code-response}
 
 Once the Authorization Server has successfully processed the Interactive Authorization Request, it MUST respond with a 200 OK response using the `application/json` media type containing the `authorization_code` parameter as defined in [@!RFC9126].
+The `status` key MUST be set to `ok` in this case.
 
 ```
 HTTP/1.1 200 OK
@@ -831,7 +835,8 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "authorization_code": "uY29tL2F1dGhlbnRpY"
+  "authorization_code": "uY29tL2F1dGhlbnRpY",
+  "status": "ok"
 }
 ```
 
