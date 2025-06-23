@@ -687,7 +687,7 @@ Figure: Issuance using the Interactive Authorization Endpoint
 
 The request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126, Section 2.1], with the following additions:
 
- - In case the Wallet has received an Interactive Authorization Response previously, the `auth_session` parameter from that response MUST be included in all subsequent requests (see (#iar-interaction-required)).
+ - In case the Wallet has received an Interactive Authorization Response previously, the `auth_session` parameter from that response MUST be included in all subsequent requests (see (#iar-interaction-required-response)).
  - In case the Wallet has completed a Presentation, it has to include the received redirect URI in the parameter `openid4vp_redirect_uri` (see (#iar-require-presentation)) during the next call to the Interactive Authorization Endpoint.
 
 Note: In case a Wallet Attestation is required by the Authorization Server, it has to be included in this request.
