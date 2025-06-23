@@ -580,8 +580,7 @@ Content-Type: application/json
 Cache-Control: no-cache, no-store
 
 {
-"request_uri":
-  "urn:ietf:params:oauth:request_uri:6esc_11ACC5bwc014ltc14eY22c",
+  "request_uri": "urn:ietf:params:oauth:request_uri:6esc_11ACC5bwc014ltc14eY22c",
   "expires_in": 60
 }
 ```
@@ -621,9 +620,12 @@ Location: https://client.example.net/cb?
 
 # Interactive Authorization Endpoint
 
-An Authorization Server MAY publish the `interactive_authorization_endpoint` parameter in its Authorization Server Metadata.
-In this case, the Wallet SHOULD use this endpoint to obtain authorization.
-This enables use cases where an Issuer requests Presentation of a Credential before issuing its Credential.
+This endpoint is used by an Authorization Server to allow authorization flows beside the traditional authorization endpoint that is performed within the user agent (browser). In particular, this enables use cases where an Issuer requests a Presentation of a Credential using [@!OpenID4VP] before issuing its own Credential. Support for this endpoint is OPTIONAL.
+
+Communication with the Interactive Authorization Endpoint MUST utilize TLS.
+
+The Authorization Server indicates support for interactive authorization by publishing the `interactive_authorization_endpoint` parameter in its Authorization Server Metadata. In this case, the Wallet SHOULD use this endpoint to obtain authorization.
+
 
 Note: This mechanism can only be used for interactions with the same Wallet that started the issuance process.
 
@@ -688,25 +690,25 @@ The request to the Interactive Authorization Endpoint is formed and sent in the 
  - In case the Wallet has received an `auth_session` parameter previously, it has to be included in this request (see (#iar-interaction-required)).
  - In case the Wallet has completed a Presentation, it has to include the received redirect URI in the parameter `openid4vp_redirect_uri` (see (#iar-require-presentation)) during the next call to the Interactive Authorization Endpoint.
 
-Note: In case a wallet attestation is required by the Issuer, it has to be included in this request.
+Note: In case a Wallet Attestation is required by the Authorization Server, it has to be included in this request.
 
 ## Interactive Authorization Response
 
-Upon receiving an Interactive Authorization Request, the Issuer determines whether the authorization request is semantically correct and valid, and whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance.
+Upon receiving an Interactive Authorization Request, the Authorization Server determines whether the authorization request is semantically correct and valid, and whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance.
 The response to an Interactive Authorization Request is an HTTP message with the content type `application/json` and a JSON document in the body that indicates
 
 - an error as defined in Section 2.3 of [@!RFC9126], or
-- that additional user interaction is required, as defined in (#iar-interaction-required), or
-- a successful completion of the authorization, as defined in (#authorization-code-response).
+- that user interaction is required, as defined in (#iar-interaction-required-response), or
+- a successful completion of the authorization, as defined in (#iar-authorization-code-response).
 
 Depending on this assessment, the response from the Interactive Authorization Endpoint can take one of the following forms:
 
-### Additional Interaction Required {#iar-interaction-required}
+### Interaction Required Response {#iar-interaction-required-response}
 
 The Authorization Server MAY request an additional user interaction by sending a JSON body containing the following keys:
 
-* `status`: MANDATORY. MUST contain the string `require_interaction`, indicating that additional interaction is required.
-* `type`: MANDATORY. The value indicates which type of interaction is required, as defined below.
+* `status`: REQUIRED. MUST contain the string `require_interaction`, indicating that additional interaction is required.
+* `type`: REQUIRED. The value indicates which type of interaction is required, as defined below.
 * `auth_session`: OPTIONAL. The auth session allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. The Wallet MUST include the `auth_session` in follow-up requests to the Interactive Authorization Endpoint if it receives one along with the error response.
 
 Additional keys are defined based on the type of interaction, as shown next.
@@ -818,7 +820,7 @@ Together with the verification of the `response_uri` delivered in the following 
 Custom extensions (#iar-custom-extensions) MUST ensure that an equivalent binding is ensured.
 Authorization Servers can usually achieve this by providing a nonce for use in the custom process (`biic_token` in the example above) and verifying a non-predictable value returned from the process.
 
-### Authorization Code Response {#authorization-code-response}
+### Authorization Code Response {#iar-authorization-code-response}
 
 Once the Authorization Server has successfully processed the Interactive Authorization Request, it MUST respond with a 200 OK response using the `application/json` media type containing the `authorization_code` parameter as defined in [@!RFC9126].
 
