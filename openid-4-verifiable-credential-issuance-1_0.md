@@ -1263,7 +1263,7 @@ The Credential Issuer MUST respond with HTTP Status Code 200 and return the Cred
 * an unsigned JSON document using the media type `application/json`, or
 * a signed JSON Web Token (JWT) containing the Credential Issuer Metadata in its payload using the media type `application/jwt`.
 
-The Credential Issuer MUST indicate the media type of the returned Credential Issuer Metadata using the HTTP `Content-Type` header. It is RECOMMENDED for Credential Issuers to respond with a `Content-Type` matching to the Wallet's requested `Accept` header. However, the Credential Issuer MAY ignore the `Accept` header, e.g. if he doesn't support signed metadata or has another preference.
+The Credential Issuer MUST indicate the media type of the returned Credential Issuer Metadata using the HTTP `Content-Type` header. It is RECOMMENDED for Credential Issuers to respond with a `Content-Type` matching to the Wallet's requested `Accept` header. However, the Credential Issuer MAY ignore the `Accept` header, e.g. if it doesn't support signed metadata or has another preference.
 
 The Wallet is RECOMMENDED to send an `Accept-Language` Header in the HTTP GET request to indicate the language(s) preferred for display. It is up to the Credential Issuer whether to:
 
