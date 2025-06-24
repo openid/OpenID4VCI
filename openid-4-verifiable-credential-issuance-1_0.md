@@ -620,7 +620,7 @@ Location: https://client.example.net/cb?
 
 # Interactive Authorization Endpoint
 
-This endpoint is used by an Authorization Server to allow authorization flows beside the traditional authorization endpoint that is performed within the user agent (browser). In particular, this enables use cases where an Issuer requests a Presentation of a Credential using [@!OpenID4VP] before issuing its own Credential. Support for this endpoint is OPTIONAL.
+This endpoint is used by an Authorization Server to allow authorization flows beside the traditional authorization endpoint that is performed within the user agent (browser). In particular, this enables use cases where an Issuer interacts directly with the wallet, such as requesting a Presentation of a Credential using [@!OpenID4VP] before issuing its own Credential. Support for this endpoint is OPTIONAL.
 
 Communication with the Interactive Authorization Endpoint MUST utilize TLS.
 
