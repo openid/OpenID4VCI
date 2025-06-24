@@ -589,7 +589,7 @@ Below is a non-normative example of the GET request that might subsequently be s
 
 ```
 GET /authorize?client_id=s6BhdRkqt3
-  &request_uri=urn:ietf:params:oauth:request_uri:6esc_11ACC5bwc014ltc14eY22c
+  &request_uri=urn%3Aietf%3Aparams%3Aoauth%3Arequest_uri%3A6esc_11ACC5bwc014ltc14eY22c
 Host: server.example.com
 ```
 
@@ -702,6 +702,7 @@ The following non-normative example shows a request to the Interactive Authoriza
 POST /iar HTTP/1.1
 Host: server.example.com
 Content-Type: application/x-www-form-urlencoded
+
 response_type=code
 &client_id=CLIENT1234
 &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
@@ -713,7 +714,7 @@ response_type=code
 
 ## Interactive Authorization Response
 
-Upon receiving an Interactive Authorization Request, the Authorization Server determines whether the authorization request is syntactically and semantically correct and whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance.
+Upon receiving an Interactive Authorization Request, the Authorization Server determines whether the Authorization Request is syntactically and semantically correct and whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance.
 The response to an Interactive Authorization Request is an HTTP message with the content type `application/json` and a JSON document in the body that indicates either
 
  1. an error as defined in Section 2.3 of [@!RFC9126], or
@@ -842,7 +843,7 @@ Cache-Control: no-store
 #### Preventing Session Fixation Attacks {#iar-security}
 
 Authorization Servers MUST ensure that the user interaction (OpenID4VP presentation, redirect to web, or a custom interaction) is securely bound to the authorization process in order avoid Session Fixation Attacks as described in Section 14.2 of [@!OpenID4VP].
-This can be achieved by securely linking all requests following the initial interactive authorization request.
+This can be achieved by securely linking all requests following the initial Interactive Authorization Request.
 For OpenID4VP presentations, the Authorization Server MUST associate the `nonce` value used in the Presentation with the `auth_session` value and verify that the Presentation delivered from the Wallet to the Verifier uses the same nonce.
 Together with the verification of the value of the `interactive_binding_token` described in {#iar-require-presentation}, this ensures a secure linking.
 
@@ -2979,7 +2980,7 @@ established by [@!RFC8414].
 
 * Metadata Name: `interactive_authorization_endpoint`
 * Metadata Description: URL of the Authorization Server's Interactive Authorization Endpoint. This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Authorization Server does not support the Interactive Authorization Endpoint.
-* Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#interactive-authorization-request) of this specification
 
 ## OAuth Dynamic Client Registration Metadata Registry
