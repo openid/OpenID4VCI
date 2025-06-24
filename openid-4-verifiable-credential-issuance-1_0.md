@@ -1280,7 +1280,7 @@ Host: server.example.com
 Accept-Language: fr-ch, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5
 ```
 
-### Signed Metadata
+### Signed Metadata {#credential-issuer-signed-metadata}
 
 The signed metadata MUST be secured using a JSON Web Signature (JWS) [@!RFC7515] and contain the following elements:
 
@@ -2791,6 +2791,28 @@ in the manner described in [@RFC6838].
 * Interoperability considerations: n/a
 * Published specification: (#keyattestation-jwt) of this specification
 * Applications that use this media type: Applications that use the key attestation format defined in this specification
+* Additional information:
+  - Magic number(s): n/a
+  - File extension(s): n/a
+  - Macintosh file type code(s): n/a
+* Person & email address to contact for further information: Torsten Lodderstedt, torsten@lodderstedt.net
+* Intended usage: COMMON
+* Restrictions on usage: none
+* Author: Torsten Lodderstedt, torsten@lodderstedt.net
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Provisional registration? No
+
+### application/openidvci-issuer-metadata+jwt
+
+* Type name: `application`
+* Subtype name: `openidvci-issuer-metadata+jwt`
+* Required parameters: n/a
+* Optional parameters: n/a
+* Encoding considerations: Uses JWS Compact Serialization, as specified in [@!RFC7515].
+* Security considerations: See the Security Considerations in [@!RFC7519].
+* Interoperability considerations: n/a
+* Published specification: (#credential-issuer-signed-metadata) of this specification
+* Applications that use this media type: Applications that use signed metadata format defined in this specification
 * Additional information:
   - Magic number(s): n/a
   - File extension(s): n/a
