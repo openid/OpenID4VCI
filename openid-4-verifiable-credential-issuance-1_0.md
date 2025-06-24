@@ -634,9 +634,10 @@ The following Figure illustrates a flow using the Interactive Authorization Endp
 
 !---
 ~~~ ascii-art
- +-----------+            +----------------------+     +-------------------+    +--------------------+
- |   Wallet  |            | Authorization Server |     | Credential Issuer |    | OpenID4VP Verifier |
- +-----------+            +----------------------+     +-------------------+    +--------------------+
+
+ +-----------+            +----------------------+     +--------------------+    +--------------------+
+ |   Wallet  |            | Authorization Server |     | OpenID4VP Verifier |    | Credential Issuer  |
+ +-----------+            +----------------------+     +--------------------+    +--------------------+
        |                              |                        |                           |
        |                              |                        |                           |
        |----------------------------->|  (1) Interactive       |                           |
@@ -651,9 +652,9 @@ The following Figure illustrates a flow using the Interactive Authorization Endp
        |                              |      request,          |                           |
        |                              |      auth_session)     |                           |
        |                              |                        |                           |
-       |---------------------------------------------------------------------------------->|  (3) OpenID4VP direct_post to Response URI
+       |------------------------------------------------------>|  (3) OpenID4VP direct_post to Response URI
        |                              |                        |                           |
-       |<----------------------------------------------------------------------------------|  (4) (redirect_uri)
+       |<------------------------------------------------------|  (4) (redirect_uri)
        |                              |                        |                           |    
        |----------------------------->|  (5) Interactive       |                           |
        |                              |      Authorization     |                           |
@@ -674,12 +675,12 @@ The following Figure illustrates a flow using the Interactive Authorization Endp
        |                              |                        |                           |
        |  (9) Credential Request      |                        |                           |
        |      (Access Token, proof(s))|                        |                           |
-       |------------------------------------------------------>|                           |
+       |---------------------------------------------------------------------------------->|
        |                              |                        |                           |
        |  (10) Credential Response    |                        |                           |
        |       with Credential(s) OR  |                        |                           |
        |       Transaction ID         |                        |                           |
-       |<------------------------------------------------------|                           |
+       |<----------------------------------------------------------------------------------|
 ~~~
 !---
 Figure: Issuance using the Interactive Authorization Endpoint
@@ -790,6 +791,7 @@ Note: Sending `redirect_uri` is defined as OPTIONAL in [@!OpenID4VP], but it is 
 
 In a regular presentation flow, the Wallet would be expected to follow this redirect.
 In the case described here, the Wallet MUST NOT follow the redirect URI and MUST instead repeat the request to the Interactive Authorization Endpoint and in this request include the received redirect URI in the `interactive_binding_token` parameter.
+The Wallet MUST NOT modify the URI in any way and treat it as an opaque value.
 The Issuer MUST verify that the redirect URI in the `interactive_binding_token` parameter is correct, i.e., matches the one sent in response to the request to the `response_uri`.
 Since the redirect URI MUST include a fresh, cryptographically random value, this check helps to present Session Fixation attacks, see (#iar-security).
 
