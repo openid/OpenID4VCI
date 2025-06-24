@@ -2974,6 +2974,13 @@ established by [@!RFC8414].
 * Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
 * Reference: (#as-metadata) of this specification
 
+### interactive_authorization_endpoint
+
+* Metadata Name: `interactive_authorization_endpoint`
+* Metadata Description: URL of the Authorization Server's Interactive Authorization Endpoint. This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Authorization Server does not support the Interactive Authorization Endpoint.
+* Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+* Reference: (#interactive-authorization-request) of this specification
+
 ## OAuth Dynamic Client Registration Metadata Registry
 
 This specification registers the following client metadata parameter
@@ -3145,6 +3152,7 @@ The technology described in this specification was made available from contribut
    * change algorithm identifiers for credential_signing_alg_values_supported to COSE algorithm values for mdocs
    * Add Credential Request encryption and Zip support
    * Request encryption is now required when response encryption is used
+   * Add the interactive authorization endpoint for presentation during issuance
 
    -15
 
