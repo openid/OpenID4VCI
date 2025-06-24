@@ -1258,12 +1258,12 @@ Communication with the Credential Issuer Metadata Endpoint MUST utilize TLS.
 
 To fetch the Credential Issuer Metadata, the Wallet MUST send an HTTP request using the GET method and the path formed following the steps above. The Wallet is RECOMMENDED to send an `Accept` Header in the HTTP GET request to indicate the Content Type(s) it supports, and by doing so, signaling whether it supports signed metadata.
 
-The Credential Issuer MUST respond with HTTP Status Code 200 and return the Credential Issuer Metadata containing the [parameters defined in this specification](#credential-issuer-parameters) as either:
+The Credential Issuer MUST respond with HTTP Status Code 200 and return the Credential Issuer Metadata containing the parameters defined in (#credential-issuer-parameters) as either
 
-* an unsigned JSON document using the media type `application/json`
-* a signed JSON Web Token (JWT) containing the Credential Issuer Metadata in its payload using the media type `application/jwt`
+* an unsigned JSON document using the media type `application/json`, or
+* a signed JSON Web Token (JWT) containing the Credential Issuer Metadata in its payload using the media type `application/jwt`.
 
-The Credential Issuer MUST indicate the media type of the returned Credential Issuer Metadata using the HTTP `Content-Type` header. It is RECOMMENDED for Credential Issuers to respond with a `Content-Type` matching to the Wallet's requested `Accept` Header. However, the Credential Issuer MAY ignore the `Accept` Header.
+The Credential Issuer MUST indicate the media type of the returned Credential Issuer Metadata using the HTTP `Content-Type` header. It is RECOMMENDED for Credential Issuers to respond with a `Content-Type` matching to the Wallet's requested `Accept` header. However, the Credential Issuer MAY ignore the `Accept` header, e.g. if he doesn't support signed metadata or has another preference.
 
 The Wallet is RECOMMENDED to send an `Accept-Language` Header in the HTTP GET request to indicate the language(s) preferred for display. It is up to the Credential Issuer whether to:
 
