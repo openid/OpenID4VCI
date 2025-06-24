@@ -1263,7 +1263,7 @@ The Credential Issuer MUST respond with HTTP Status Code 200 and return the Cred
 * an unsigned JSON document using the media type `application/json`, or
 * a signed JSON Web Token (JWT) containing the Credential Issuer Metadata in its payload using the media type `application/jwt`.
 
-The Credential Issuer MUST indicate the media type of the returned Credential Issuer Metadata using the HTTP `Content-Type` header. It is RECOMMENDED for Credential Issuers to respond with a `Content-Type` matching to the Wallet's requested `Accept` header. However, the Credential Issuer MAY ignore the `Accept` header, e.g. if it doesn't support signed metadata or has another preference.
+The Credential Issuer MUST support returning metadata in an unsigned form 'application/json' and MAY support returning it in a signed form 'application/jwt'. In all cases the Credential Issuer MUST indicate the media type of the returned Metadata using the HTTP `Content-Type` header. It is RECOMMENDED for Credential Issuers to respond with a `Content-Type` matching to the Wallet's requested `Accept` header when the requested content type is supported.
 
 The Wallet is RECOMMENDED to send an `Accept-Language` Header in the HTTP GET request to indicate the language(s) preferred for display. It is up to the Credential Issuer whether to:
 
@@ -1294,7 +1294,7 @@ The signed metadata MUST be secured using a JSON Web Signature (JWS) [@!RFC7515]
   * `iat`: REQUIRED. Integer for the time at which the Credential Issuer Metadata was issued using the syntax defined in [@!RFC7519].
   * `exp`: OPTIONAL. Integer for the time at which the Credential Issuer Metadata is expiring, using the syntax defined in [@!RFC7519].
 
-The Wallet SHOULD establish trust in the signer of the metadata, and obtain the keys to validate the signature before processing the metadata, e.g. using JOSE header parameters like `x5c`, `kid` or `trust_chain` to convey the public key. The concrete mechanisms how to do that are out of scope of this specification. 
+The Wallet MUST establish trust in the signer of the metadata. Otherwise, the Wallet MUST reject the signed metadata. When validating the signature, the Wallet obtains the keys to validate the signature before processing the metadata, e.g. using JOSE header parameters like `x5c`, `kid` or `trust_chain` to convey the public key. The concrete mechanisms how to do that are out of scope of this specification.
 
 ### Credential Issuer Metadata Parameters {#credential-issuer-parameters}
 
