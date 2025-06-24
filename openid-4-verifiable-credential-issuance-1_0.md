@@ -994,7 +994,7 @@ If the Wallet is requesting the issuance of a Credential that is not supported b
   * `invalid_proof`: The `proofs` parameter in the Credential Request is invalid: (1) if the field is missing, or (2) one of the provided key proofs is invalid, or (3) if at least one of the key proofs does not contain a `c_nonce` value (refer to (#nonce-response)).
   * `invalid_nonce`: The `proofs` parameter in the Credential Request uses an invalid nonce: at least one of the key proofs contains an invalid `c_nonce` value. The wallet should retrieve a new `c_nonce` value (refer to (#nonce-endpoint)).
   * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
-  * `credential_request_denied`: The Credential Request has not been accepted by the Credential Issuer.
+  * `credential_request_denied`: The Credential Request has not been accepted by the Credential Issuer. The Wallet SHOULD treat this error as un-recoverable, meaning if received from a Credential Issuer the Credential cannot be issued. 
 * `error_description`: OPTIONAL. The `error_description` parameter MUST be a human-readable ASCII [@!USASCII] text, providing any additional information used to assist the Client implementers in understanding the occurred error. The values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
 
 The usage of these parameters takes precedence over the `invalid_request` parameter defined in (#authorization-errors), since they provide more details about the errors.
@@ -1122,6 +1122,8 @@ Cache-Control: no-store
 }
 ```
 
+In the event the Credential Issuer can no longer issue the credential(s), the `credential_request_denied` error code as defined in (#credential-request-errors) should be used in response to a request. A wallet upon receiving this error SHOULD stop making requests to the deferred credential endpoint for the given `transaction_id`. 
+
 ## Encrypted Messages {#encrypted-messages}
 Encryption of Request and Response Messages is performed as follows:
 
@@ -1132,7 +1134,6 @@ The Public Key used to encrypt the message is selected based on the context. In 
 If a `zip` (Compression Algorithm) value is specified, then compression is performed before encryption, as specified in [@!RFC7516]. If absent, no compression is performed.
 
 When encryption of a message was required but the received message is unencrypted, it SHOULD be rejected.
-
 
 # Notification Endpoint {#notification-endpoint}
 
