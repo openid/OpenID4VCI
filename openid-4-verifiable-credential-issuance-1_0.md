@@ -654,7 +654,7 @@ The following figure illustrates a flow using the Interactive Authorization Endp
        |                              |                        |                           |
        |------------------------------------------------------>|  (3) OpenID4VP direct_post to Response URI
        |                              |                        |                           |
-       |<------------------------------------------------------|  (4) (redirect_uri)
+       |<------------------------------------------------------|  (4) (redirect_uri)       |
        |                              |                        |                           |    
        |----------------------------->|  (5) Interactive       |                           |
        |                              |      Authorization     |                           |
