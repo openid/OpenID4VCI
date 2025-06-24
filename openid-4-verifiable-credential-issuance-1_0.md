@@ -695,10 +695,10 @@ The request to the Interactive Authorization Endpoint is formed and sent in the 
 
 Note: In case a Wallet Attestation is required by the Authorization Server, it has to be included in this request.
 
-Example request:
+The following non-normative example shows a request to the Interactive Authorization Endpoint where the Wallet has already received an `auth_session`:
 
 ```http
-POST /par HTTP/1.1
+POST /iar HTTP/1.1
 Host: server.example.com
 Content-Type: application/x-www-form-urlencoded
 response_type=code
@@ -713,7 +713,7 @@ response_type=code
 ## Interactive Authorization Response
 
 Upon receiving an Interactive Authorization Request, the Authorization Server determines whether the authorization request is syntactically and semantically correct and whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance.
-The response to an Interactive Authorization Request is an HTTP message with the content type `application/json` and a JSON document in the body that indicates either:
+The response to an Interactive Authorization Request is an HTTP message with the content type `application/json` and a JSON document in the body that indicates either
 
  1. an error as defined in Section 2.3 of [@!RFC9126], or
  2. that user interaction is required, either a Presentation or a custom interaction, as defined in (#iar-interaction-required-response), or
