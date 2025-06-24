@@ -688,6 +688,19 @@ Figure: Issuance using the Interactive Authorization Endpoint
 
 The request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126, Section 2.1]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request), with the following additions:
 
+~~~
+POST /par HTTP/1.1
+Host: server.example.com
+Content-Type: application/x-www-form-urlencoded
+response_type=code
+&client_id=CLIENT1234
+&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
+&code_challenge_method=S256
+&redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+&authorization_details=...
+&auth_session=wxroVrBY2MCq4dDNGXACS
+~~~
+
  - In case the Wallet has received an Interactive Authorization Response previously, the `auth_session` parameter from that response MUST be included in all subsequent requests (see (#iar-interaction-required-response)).
  - In case the Wallet has completed a Presentation, it has to include the received redirect URI in the parameter `openid4vp_redirect_uri` (see (#iar-require-presentation)) during the next call to the Interactive Authorization Endpoint.
 
@@ -709,8 +722,8 @@ Depending on this assessment, the response from the Interactive Authorization En
 The Authorization Server MAY request an additional user interaction by sending a JSON body containing the following keys:
 
 * `status`: REQUIRED. MUST contain the string `require_interaction`, indicating that additional interaction is required.
-* `type`: REQUIRED. The value indicates which type of interaction is required, as defined below.
-* `auth_session`: REQUIRED. The auth session allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence.
+* `type`: REQUIRED. String, where the value indicates which type of interaction is required, as defined below.
+* `auth_session`: REQUIRED. String, the purpose of this parameter is to allow the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value opaquely.
 
 The Wallet MUST include the `auth_session` in follow-up requests to the Interactive Authorization Endpoint.
 If, as a response to such a follow-up request, the Wallet receives an `auth_session` value that differs from the one sent in the request, it MUST abort the issuance process.
