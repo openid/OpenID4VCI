@@ -717,9 +717,9 @@ response_type=code
 Upon receiving an Interactive Authorization Request, the Authorization Server determines whether the Authorization Request is syntactically and semantically correct and whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance.
 The response to an Interactive Authorization Request is an HTTP message with the content type `application/json` and a JSON document in the body that indicates either
 
- 1. an error as defined in Section 2.3 of [@!RFC9126], or
- 2. that user interaction is required, either a Presentation or a custom interaction, as defined in (#iar-interaction-required-response), or
- 3. a successful completion of the authorization, as defined in (#iar-authorization-code-response).
+ 1. that user interaction is required, either a Presentation or a custom interaction, as defined in (#iar-interaction-required-response), or
+ 2. a successful completion of the authorization, as defined in (#iar-authorization-code-response), or
+ 3. an error as defined in Section 2.3 of [@!RFC9126].
 
 Except in error cases, the following key is required in the JSON document of the response:
 
