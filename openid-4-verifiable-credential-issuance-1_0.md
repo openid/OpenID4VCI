@@ -629,7 +629,7 @@ The Authorization Server indicates support for interactive authorization by publ
 
 Note: This mechanism can only be used for interactions with the same Wallet that started the issuance process.
 
-The following Figure illustrates a flow using the Interactive Authorization Endpoint, where the Authorization Server requests presentation of a Credential from the Wallet before the issuance of another Credential to the Wallet.
+The following figure illustrates a flow using the Interactive Authorization Endpoint, where the Authorization Server requests a Presentation (of another Credential) from the Wallet as part of the authorization process to issue a Credential to that Wallet. Note that the Authorization Server has a back-channel to the OpenID4VP Verifier to get the results of the Presentation.
 
 
 !---
@@ -713,7 +713,7 @@ response_type=code
 ## Interactive Authorization Response
 
 Upon receiving an Interactive Authorization Request, the Authorization Server determines whether the authorization request is syntactically and semantically correct and whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance.
-The response to an Interactive Authorization Request is an HTTP message with the content type `application/json` and a JSON document in the body that indicates
+The response to an Interactive Authorization Request is an HTTP message with the content type `application/json` and a JSON document in the body that indicates either:
 
  1. an error as defined in Section 2.3 of [@!RFC9126], or
  2. that user interaction is required, either a Presentation or a custom interaction, as defined in (#iar-interaction-required-response), or
