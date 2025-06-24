@@ -620,16 +620,13 @@ Location: https://client.example.net/cb?
 
 # Interactive Authorization Endpoint
 
-This endpoint is used by an Authorization Server to allow authorization flows beside the traditional authorization endpoint that is performed within the user agent (browser). In particular, this enables use cases where an Issuer interacts directly with the wallet, such as requesting a Presentation of a Credential using [@!OpenID4VP] before issuing its own Credential. Support for this endpoint is OPTIONAL.
-
-Communication with the Interactive Authorization Endpoint MUST utilize TLS.
+This endpoint is used by an Authorization Server to allow authorization flows beside the traditional authorization endpoint that is performed within the user agent (browser). In particular, this enables use cases where an Issuer interacts directly with the Wallet, such as requesting a Presentation of a Credential using [@!OpenID4VP] before issuing its own Credential. Support for this endpoint is OPTIONAL.
 
 The Authorization Server indicates support for interactive authorization by publishing the `interactive_authorization_endpoint` parameter in its Authorization Server Metadata. In this case, the Wallet SHOULD use this endpoint to obtain authorization.
 
-
 Note: This mechanism can only be used for interactions with the same Wallet that started the issuance process.
 
-The following figure illustrates a flow using the Interactive Authorization Endpoint, where the Authorization Server requests a Presentation (of another Credential) from the Wallet as part of the authorization process to issue a Credential to that Wallet. Note that the Authorization Server has a back-channel to the OpenID4VP Verifier to get the results of the Presentation.
+The following figure illustrates a flow using the Interactive Authorization Endpoint, where the Authorization Server requests a Presentation (of another Credential) from the Wallet as part of the authorization process to issue a Credential to that Wallet. The exact deployment model of the OpenID4VP Verifier in relation to the Authorization Server is out of scope of this specification. It can be integrated into the Authorization Server or a separate component, in which case backchannel communication between the Verifier and Authorization Server would need to happen (not shown here).
 
 
 !---
@@ -694,6 +691,8 @@ The request to the Interactive Authorization Endpoint is formed and sent in the 
  - In case the Wallet has completed a Presentation ((#iar-require-presentation)) or a custom interaction ((#iar-custom-extensions)), it has to include a token in the parameter `interactive_binding_token` during the next call to the Interactive Authorization Endpoint. The details of this token are specified in the respective section below.
 
 Note: In case a Wallet Attestation is required by the Authorization Server, it has to be included in this request.
+
+Communication with the Interactive Authorization Endpoint MUST utilize TLS.
 
 The following non-normative example shows a request to the Interactive Authorization Endpoint where the Wallet has already received an `auth_session`:
 
