@@ -822,7 +822,7 @@ Cache-Control: no-store
 
 #### Custom Interaction Extensions {#iar-custom-extensions}
 
-Additional, custom types of interactions MAY be defined by extensions of this specification to enable other types of interactions, for example, scanning of an NFC card.
+Additional, custom types of interactions MAY be defined by extensions of this specification to enable other types of interactions, for example, by interacting with a smart card.
 It is RECOMMENDED to use this extension point instead of modifying the OAuth protocol in order to facilitate interactions that require interactions with native components of the Wallet application.
 See (#iar-security) for additional security considerations.
 
