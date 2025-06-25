@@ -620,8 +620,8 @@ Location: https://client.example.net/cb?
 
 # Interactive Authorization Endpoint
 
-This is an extension of the traditional Authorization Endpoint defined in [@!RFC6749], enabling complex authentication and authorization flows where an Issuer interacts directly with the Wallet.
-A primary use case is an Issuer requesting a Presentation of a Credential using [@!OpenID4VP] before issuing its own Credential.
+This is an extension of the traditional Authorization Endpoint defined in [@!RFC6749], enabling complex authentication and authorization flows where interaction occurs directly with the Wallet rather than being intermediated by a browser. 
+A primary use case is requiring the Presentation of a Credential as a prerequisite for issuing a new Credential.
 Support for the Interactive Authorization Endpoint is OPTIONAL.
 
 The Authorization Server indicates support for interactive authorization by publishing the `interactive_authorization_endpoint` parameter in its Authorization Server Metadata. In this case, the Wallet SHOULD use this endpoint to obtain authorization.
