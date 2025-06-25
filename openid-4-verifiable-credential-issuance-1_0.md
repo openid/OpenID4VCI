@@ -728,7 +728,7 @@ Except in error cases, the following key is required in the JSON document of the
 Depending on this assessment, the response from the Interactive Authorization Endpoint can take one of the following forms:
 
 ### Interaction Required Response {#iar-interaction-required-response}
-By setting `status` to `require_indication` in the response, the Authorization Server requests an additional user interaction.
+By setting `status` to `require_interaction` in the response, the Authorization Server requests an additional user interaction.
 In this case, the following keys MUST be present in the response as well:
 
 * `type`: REQUIRED. String indicating which type of interaction is required, as defined below.
@@ -795,7 +795,7 @@ In a regular presentation flow, the Wallet would be expected to follow this redi
 In the case described here, the Wallet MUST NOT follow the redirect URI and MUST instead repeat the request to the Interactive Authorization Endpoint and in this request include the received redirect URI in the `interactive_binding_token` parameter.
 The Wallet MUST NOT modify the URI in any way and treat it as an opaque value.
 The Issuer MUST verify that the redirect URI in the `interactive_binding_token` parameter is correct, i.e., matches the one sent in response to the request to the `response_uri`.
-Since the redirect URI MUST include a fresh, cryptographically random value, this check helps to present Session Fixation attacks, see (#iar-security).
+Since the redirect URI MUST include a fresh, cryptographically random value, this check helps to prevent Session Fixation attacks, see (#iar-security).
 
 #### Redirect to Web
 
