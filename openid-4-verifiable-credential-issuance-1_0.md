@@ -740,7 +740,7 @@ The `nonce_endpoint` Credential Issuer Metadata parameter, as defined in (#crede
 
 ## Nonce Request {#nonce-request}
 
-A request for a nonce is made by sending an HTTP POST request to the URL provided in the `nonce_endpoint` Credential Issuer Metadata parameter.
+A request for a nonce is made by sending an HTTP POST request to the URL provided in the `nonce_endpoint` Credential Issuer Metadata parameter. The Nonce Endpoint is not a protected resource, meaning the Wallet does not need to supply an access token to access it.
 
 Below is a non-normative example of a Nonce Request:
 
