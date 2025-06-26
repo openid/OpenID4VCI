@@ -580,7 +580,7 @@ Below is a non-normative example of a successful Authorization Response:
 
 ```
 HTTP/1.1 302 Found
-Location: https://Wallet.example.org/cb?
+Location: https://client.example.org/cb?
   code=SplxlOBeZQQYbYS6WxSbIA
 ```
 
@@ -634,7 +634,7 @@ Content-Type: application/x-www-form-urlencoded
 grant_type=authorization_code
 &code=SplxlOBeZQQYbYS6WxSbIA
 &code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
-&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb
+&redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 &client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer
 &client_assertion=eyJhbGciOiJSU...
 ```
