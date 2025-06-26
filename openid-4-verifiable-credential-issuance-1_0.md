@@ -65,7 +65,7 @@ This specification also defines the following terms. In the case where a term ha
 Credential Dataset:
 :  A set of one or more claims about a subject, provided by a Credential Issuer.
 
-Credential (or Verifiable Credential):
+Credential (or Verifiable Credential (VC)):
 :  An instance of a Credential Configuration with a particular Credential Dataset, that is signed by an Issuer and can be cryptographically verified. An Issuer may provide multiple Credentials as separate instances of the same Credential Configuration and Credential Dataset but with different cryptographic values. In this specification, the term "Verifiable Credential" is also referred to as "Credential". It's important to note that the use of the term "Credential" here differs from its usage in [@!OpenID.Core] and [@!RFC6749]. In this context, "Credential" specifically does not encompass other meanings such as passwords used for login credentials.
 
 Credential Format:
@@ -270,9 +270,9 @@ Figure: Issuance using Authorization Code Flow
 
 (3) The Wallet sends an Authorization Request to the Authorization Endpoint. The Authorization Endpoint processes the Authorization Request, which typically includes authenticating the End-User and gathering End-User consent. Note: The Authorization Request may be sent as a Pushed Authorization Request.
 
-Note: Steps (3) and (4) happen in the front channel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization-endpoint). The Authorization Server and the User Agent may exchange any further messages between the steps if required by the Authorization Server to authenticate the End-User. For example, the Authorization Server may request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as described in (#use-case-5).
-
 (4) The Authorization Endpoint returns the Authorization Response with the Authorization Code upon successfully processing the Authorization Request.
+
+Note: Steps (3) and (4) happen in the front channel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization-endpoint). The Authorization Server and the User Agent may exchange any further messages between the steps if required by the Authorization Server to authenticate the End-User. For example, the Authorization Server may request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as described in (#use-case-5).
 
 (5) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in Step (4). The Token Endpoint returns an Access Token in the Token Response upon successfully validating the Authorization Code. This step happens in the back-channel communication (direct communication between two systems using HTTP requests and responses without using redirects through an intermediary such as a browser). This step is defined in (#token-endpoint).
 
@@ -1475,14 +1475,14 @@ The action leading to the Wallet performing another Credential Request can also 
 
 ## Relationship between the Credential Issuer Identifier in the Metadata and the Issuer Identifier in the Issued Credential
 
-The Credential Issuer Identifier is always a URL using the `https` scheme, as defined in (#credential-issuer-identifier). Depending on the Credential Format, the Issuer identifier in the issued Credential may not be a URL using the `https` scheme. Some other forms that it can take are a DID included in the `issuer` property in a [@VC_DATA] format, or the `Subject` value of the document signer certificate included in the `x5chain` element in an [@ISO.18013-5] format.
+The Credential Issuer Identifier is always a URL using the `https` scheme, as defined in (#credential-issuer-identifier). Depending on the Credential Format, the Issuer Identifier in the issued Credential may not be a URL using the `https` scheme. Some other forms that it can take are a DID included in the `issuer` property in a [@VC_DATA] format, or the `Subject` value of the document signer certificate included in the `x5chain` element in an [@ISO.18013-5] format.
 
-When the Issuer identifier in the issued Credential is a DID, a non-exhaustive list of mechanisms the Credential Issuer MAY use to bind to the Credential Issuer Identifier is as follows:
+When the Issuer Identifier in the issued Credential is a DID, a non-exhaustive list of mechanisms the Credential Issuer MAY use to bind to the Credential Issuer Identifier is as follows:
 
 1. Use the [@DIF.Well-Known_DID] Specification to provide binding between a DID and a certain domain.
-1. If the Issuer identifier in the issued Credential is an object, add to the object a `credential_issuer` claim, as defined in (#credential-issuer-identifier).
+1. If the Issuer Identifier in the issued Credential is an object, add to the object a `credential_issuer` claim, as defined in (#credential-issuer-identifier).
 
-The Wallet MAY check the binding between the Credential Issuer Identifier and the Issuer identifier in the issued Credential.
+The Wallet MAY check the binding between the Credential Issuer Identifier and the Issuer Identifier in the issued Credential.
 
 ## Refreshing Issued Credentials
 
