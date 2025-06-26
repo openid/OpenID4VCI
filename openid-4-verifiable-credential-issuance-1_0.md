@@ -659,7 +659,7 @@ grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
     credential_configuration_id%22%3A%20%22UniversityDegreeCredential%22%7D%5D
 ```
 
-The Wallet SHOULD not send the `authorization_details` parameter in the Token Request if the parameter has been previously sent in the Authorization Request(#credential-authz-request)
+The Wallet SHOULD NOT send the `authorization_details` parameter in the Token Request if the parameter has been previously sent in the Authorization Request(#credential-authz-request)
 
 ## Successful Token Response {#token-response}
 
