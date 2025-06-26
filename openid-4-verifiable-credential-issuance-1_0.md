@@ -592,7 +592,7 @@ Below is a non-normative example of an unsuccessful Authorization Response.
 
 ```json=
 HTTP/1.1 302 Found
-Location: https://wallet.example.net/cb?
+Location: https://wallet.example.org/cb?
   error=invalid_request
   &error_description=Unsupported%20response_type%20value
 ```
@@ -2446,8 +2446,8 @@ The following is a non-normative example of a Wallet Attestation:
 }
 .
 {
-  "iss": "https://wallet.example.com",
-  "sub": "https://wallet.example.com",
+  "iss": "https://wallet.example.org",
+  "sub": "https://wallet.example.org",
   "wallet_name": "Wallet Solution X by Wonderland State Department",
   "wallet_link": "https://example.com/wallet/detail_info.html",
   "nbf": 1300815780,
