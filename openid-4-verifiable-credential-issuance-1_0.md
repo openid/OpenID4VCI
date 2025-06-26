@@ -2892,18 +2892,18 @@ The technology described in this specification was made available from contribut
    [[ To be removed from the final specification ]]
 
    -16
-  
-   * Add option to have signed Credential Issuer metadata
-   * Remove `signed_metadata` from Credential Issuer metadata
+
+   * add new mechanism for signed Credential Issuer metadata
+   * remove `signed_metadata` from Credential Issuer metadata
    * move proof type section to the Annex for readability, add some introduction and fix text in Section 8.1
    * move `claims` and `display` into `credential_metadata` and allow for credential-format specific mechanisms to override it
-   * Remove the option to use `format` from `authorization_details` in the Authorization Request
+   * remove the option to use `format` from `authorization_details` in the Authorization Request
    * add implementation consideration about pre-final specs
-   * Move issuance pending from Deferred Credential Error Response to Deferred Credential Response
-   * Move the interval parameter from Deferred Credential Error Response to Credential Response
+   * move issuance pending from Deferred Credential Error Response to Deferred Credential Response
+   * move the interval parameter from Deferred Credential Error Response to Credential Response
    * rework the Credential Response text, fix immediate issuance to have HTTP 200 status code
-   * Adds an option to return DPoP Nonce from the Nonce Endpoint
-   * Change Cryptographic Holder Binding to Cryptographic Key Binding
+   * adds an option to return DPoP Nonce from the Nonce Endpoint
+   * change Cryptographic Holder Binding to Cryptographic Key Binding
    * add privacy considerations for the client_id used with wallet attestations
    * deprecate the proof parameter in the credential request
    * URL to retrieve Credential Issuer Metadata now requires `.well-known/openid-credential-issuer` to be added at start of path to align with IETF requirements
@@ -2913,7 +2913,7 @@ The technology described in this specification was made available from contribut
    * set key attestation nonce to c_nonce value for proof types with key attestations
    * use mdoc as a term, instead of mDL
    * clarify mdoc as a credential format can be used with non-mDL use-cases
-   * Remove the Dynamic Credential Request section and associated content
+   * remove the Dynamic Credential Request section and associated content
    * rename ldp_vp to di_vp
    * require proof_signing_alg_values_supported to match key proof algorithms
    * Align claims path query for ISO mdocs with JSON-based credentials
@@ -2921,8 +2921,24 @@ The technology described in this specification was made available from contribut
    * make type and values for credential_signing_alg_values_supported format specific
    * make type and values for proof_signing_alg_values_supported proof type specific
    * change algorithm identifiers for credential_signing_alg_values_supported to COSE algorithm values for mdocs
-   * Add Credential Request encryption and Zip support
-   * Request encryption is now required when response encryption is used
+   * add Credential Request encryption and Zip support
+   * request encryption is now required when response encryption is used
+   * clarify an access token is not required at the nonce endpoint
+   * clarify that credential_request_denied should be treated as non-recoverable and the request not retried
+   * clarify meaning of absence of `cryptographic_binding_methods_supported` / `proof_types_supported`
+   * cleanup language around c_nonce
+   * make OAuth2 security recommendations more actionable, including recommending use of FAPI2 Security Profile
+   * add `unknown_credential_configuration` and `unknown_credential_identifier` errors
+   * remove no-longer applicable `unsupported_credential_type` and `unsupported_credential_format` errors
+   * issuer value in metadata must be validated
+   * improve intro text about key attestations
+   * clarify that number of issued credentials is related to number of keys proofed or attested
+   * update OpenID Federation reference to draft 43
+   * "Multiple credential issuance" section renamed to "Batch credential issuance" and made editorial improvements to it
+   * clarify that when using scopes, if `credential_identifiers` are returned from the token endpoint they are inside `authorization_details`
+   * clarity that `x5c`, `kid` and `jwk` in the jwt proof type are mutually exclusive
+   * clarify what checks wallet performs after receiving credential offer
+   * editorial improvements to tx_code language
 
    -15
 
