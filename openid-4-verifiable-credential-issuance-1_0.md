@@ -54,7 +54,7 @@ Access to this API is authorized using OAuth 2.0 [@!RFC6749], i.e., the Wallet u
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [@!RFC2119] [@!RFC8174] when, and only when, they appear in all capitals, as shown here.
 
-# Terminology
+# Terminology {#terminology}
 
 This specification uses the terms "Access Token", "Authorization Endpoint", "Authorization Request", "Authorization Response", "Authorization Code Grant", "Authorization Server", "Client", "Client Authentication", "Client Identifier", "Grant Type", "Refresh Token", "Token Endpoint", "Token Request" and "Token Response" defined by OAuth 2.0 [@!RFC6749], the terms "End-User", "Entity", and "Request Object" as defined by OpenID Connect Core [@!OpenID.Core], the term "JSON Web Token (JWT)" defined by JSON Web Token (JWT) [@!RFC7519], the term "JOSE Header" defined by JSON Web Signature (JWS) [@!RFC7515].
 
@@ -119,11 +119,11 @@ Deferred Credential Issuance:
 
 This specification defines an API for Credential issuance provided by a Credential Issuer. The API is comprised of the following endpoints:
 
-* A mandatory Credential Endpoint from which Credentials can be issued (see (#credential-endpoint)). From this endpoint, one Credential, or multiple Credentials with the same Credential Dataset can be issued in one request.
+* A mandatory Credential Endpoint from which Credentials can be issued (see (#credential-endpoint)). From this endpoint, one Credential, or multiple Credentials with the same Credential Format and Credential Dataset can be issued in one request.
 * An optional Nonce Endpoint from which a fresh `c_nonce` value can be obtained to be used in proof of possession of key material in a subsequent request to the Credential Endpoint (see (#nonce-endpoint)).
 * An optional Deferred Credential Endpoint to allow for the deferred delivery of Credentials (see (#deferred-credential-issuance)).
 * An optional mechanism for the Credential Issuer to make a Credential Offer to the Wallet to encourage the Wallet to start the issuance flow (see (#credential-offer-endpoint)).
-* An optional mechanism for the Credential Issuer to receive from the Wallet notification(s) of the status of the Credential(s) that have been issued.
+* An optional mechanism for the Credential Issuer to receive notification(s) from the Wallet, about the status of the Credential(s) that have been issued (see (#notification-endpoint)).
 * A mechanism for the Credential Issuer to publish metadata about the Credentials it is capable of issuing (see (#credential-issuer-metadata)).
 
 The Credential Endpoint may bind an issued Credential to specific cryptographic key material. Credential requests thus should include proof(s) of possession for the key material. Multiple key proof types are supported.
@@ -143,9 +143,7 @@ Existing OAuth 2.0 mechanisms are extended as following:
 
 ## Core Concepts
 
-In the context of this specification, Credential Datasets define the data (claims) about a subject that is to be included in a Credential.
-The Credential Format defines how the data (or Dataset) within final Verifiable Credential is organized and secured.
-This can include the specific parameters needed to describe the Credential, which are established in the Credential Format Profile.
+In the context of this specification, Credential Datasets, Credential Format and Credential Format Profile are defined in {#terminology}.
 While in principle independent of each other, the Credential Dataset and the Credential Format can have a relationship in the sense that an Issuer may only offer certain Credential Formats for certain Credential Datasets.
 
 An End-User typically authorizes the issuance of Credentials with a specific Credential Dataset, but does not usually care about the Credential Format. The same Credential Dataset may even be issued in different Credential Formats or with multiple Credential instances.
@@ -1068,7 +1066,7 @@ The Deferred Credential Response MAY use the `notification_id` parameter as defi
 Additional Deferred Credential Response parameters MAY be defined and used.
 The Wallet MUST ignore any unrecognized parameters.
 
-If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Deferred Credential Response as specified by [#encrypted-messages], using the parameters from the `credential_response_encryption` object. Note that this is done regardless of the content. The `credential_response_encryption` object may be different from the one included in the initial Credential Request so the Credential Issuer MUST use the newly provided one. This is to simplify key management in the case of longer deferred issuance. 
+If the Client requested an encrypted response by including the `credential_response_encryption` object in the request, the Credential Issuer MUST encode the information in the Deferred Credential Response as specified by (#encrypted-messages), using the parameters from the `credential_response_encryption` object. Note that this is done regardless of the content. The `credential_response_encryption` object may be different from the one included in the initial Credential Request so the Credential Issuer MUST use the newly provided one. This is to simplify key management in the case of longer deferred issuance. 
 
 If the Deferred Credential Response is not encrypted, the media type of the response MUST be set to `application/json`.
 
