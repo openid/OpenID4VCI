@@ -143,7 +143,7 @@ Existing OAuth 2.0 mechanisms are extended as following:
 
 ## Core Concepts
 
-In the context of this specification, Credential Datasets, Credential Format and Credential Format Profile are defined in {#terminology}.
+In the context of this specification, Credential Datasets, Credential Format and Credential Format Profile are defined in (#terminology).
 While in principle independent of each other, the Credential Dataset and the Credential Format can have a relationship in the sense that an Issuer may only offer certain Credential Formats for certain Credential Datasets.
 
 An End-User typically authorizes the issuance of Credentials with a specific Credential Dataset, but does not usually care about the Credential Format. The same Credential Dataset may even be issued in different Credential Formats or with multiple Credential instances.
