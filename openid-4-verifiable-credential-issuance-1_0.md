@@ -686,17 +686,15 @@ Figure: Issuance using the Interactive Authorization Endpoint
 
 ## Interactive Authorization Request {#interactive-authorization-request}
 
-The request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126, Section 2.1]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request), with the following additions:
-
-
- - In case the Wallet has received an Interactive Authorization Response previously, the `auth_session` parameter from that response MUST be included in all subsequent requests (see (#iar-interaction-required-response)).
- - In case the Wallet has completed a Presentation ((#iar-require-presentation)) or a custom interaction ((#iar-custom-extensions)), it has to include a token in the parameter `interactive_binding_token` during the next call to the Interactive Authorization Endpoint. The details of this token are specified in the respective section below.
+All communication with the Interactive Authorization Endpoint MUST utilize TLS.
 
 Note: In case a Wallet Attestation is required by the Authorization Server, it has to be included in this request.
 
-Communication with the Interactive Authorization Endpoint MUST utilize TLS.
+### Initial Request
 
-The following non-normative example shows a request to the Interactive Authorization Endpoint where the Wallet has already received an `auth_session`:
+The initial request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126, Section 2.1]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request).
+
+The following non-normative example shows an initial request to the Interactive Authorization Endpoint:
 
 ```http
 POST /iar HTTP/1.1
@@ -709,7 +707,22 @@ response_type=code
 &code_challenge_method=S256
 &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 &authorization_details=...
-&auth_session=wxroVrBY2MCq4dDNGXACS
+```
+
+### Follow-up Request
+
+Follow-up requests to the Interactive Authorization Endpoint MUST include the `auth_session` received from the Authorization Server earlier (see (#iar-interaction-required-response)).
+
+In case the Wallet has completed a Presentation ((#iar-require-presentation)) or a custom interaction ((#iar-custom-extensions)), it has to include a token in the parameter `interactive_binding_token` during the next call to the Interactive Authorization Endpoint. The details of this token are specified in the respective section below.
+
+The following non-normative example shows a follow-up request to the Interactive Authorization Endpoint where the Wallet has already received an `auth_session`:
+
+```http
+POST /iar HTTP/1.1
+Host: server.example.com
+Content-Type: application/x-www-form-urlencoded
+
+auth_session=wxroVrBY2MCq4dDNGXACS
 ```
 
 ## Interactive Authorization Response
