@@ -741,7 +741,9 @@ Additional keys are defined based on the type of interaction, as shown next.
 
 #### Require Presentation {#iar-require-presentation}
 
-If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_presentation` parameter containing an Authorization Request as defined in Section 5 of [@!OpenID4VP], encoded in JSON.
+If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_presentation` parameter containing an OpenID4VP Authorization Request, either in unsigned form as defined in Appendix A.3.1 of [@!OpenID4VP] or signed as defined in Appendix A.3.2 of [@!OpenID4VP].
+
+The following is a non-normative example of an unsigned Authorization Request:
 
 ```
 HTTP/1.1 200 OK
@@ -754,7 +756,6 @@ Cache-Control: no-store
   "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "openid4vp_presentation": {
     "client_id": "x509_san_dns:rp.example.com",
-    "request_uri": "https://rp.example.com/oidc/request/1234"
     "response_type": "vp_token",
     "response_mode": "direct_post",
     "response_uri": "https//client.example.org/cb",
@@ -778,24 +779,45 @@ Cache-Control: no-store
 }
 ```
 
+The following is a non-normative example of a signed Authorization Request:
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-store
+
+{
+  "status": "require_interaction",
+  "type": "openid4vp_presentation",
+  "auth_session": "wxroVrBY2MCq4dDNGXACS",
+  "openid4vp_presentation": {
+    "request": "eyJhbGciOiJF..."
+  }
+}
+```
+
+
 The Wallet MUST process the Authorization Request contained in the `openid4vp_presentation` parameter as defined in [@!OpenID4VP] to perform a Credential Presentation to the Authorization Server.
 
 For the requested Presentation, the Issuer is acting as a Verifier to the Wallet.
 The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is out of scope of this specification.
 
-In the Authorization Request contained in the `openid4vp_presentation` parameter, the `response_type` MUST be `vp_token` (defined in Section 8 of [@!OpenID4VP]).
+The following additional requirements apply:
 
-The `response_mode` of the request MUST be `direct_post` (defined in Section 8.2 of [@!OpenID4VP]) or `direct_post.jwt` (defined in Section 8.3.1 of [@!OpenID4VP]).
-Following the definition of this response mode, the Wallet sends an HTTP POST request to the endpoint indicated by the `response_uri` parameter in the Authorization Request to either complete the presentation (sending the VP Token) or to indicate an error.
-The Verifier MUST respond to this message by sending a JSON object containing a `redirect_uri` parameter.
+  1. The `response_type` MUST be `vp_token` (defined in Section 8 of [@!OpenID4VP]).
+  2. The `response_mode` of the request MUST be `direct_post` (defined in Section 8.2 of [@!OpenID4VP]) or `direct_post.jwt` (defined in Section 8.3.1 of [@!OpenID4VP]).
+     Following the definition of this response mode, the Wallet sends an HTTP POST request to the endpoint indicated by the `response_uri` parameter in the Authorization Request to either complete the presentation (sending the VP Token) or to indicate an error.
+     The Verifier MUST respond to this message by sending a JSON object containing a `redirect_uri` parameter.
 
-Note: Sending `redirect_uri` is defined as OPTIONAL in [@!OpenID4VP], but it is REQUIRED here.
+     Note: Sending `redirect_uri` is defined as OPTIONAL in [@!OpenID4VP], but it is REQUIRED here.
 
-In a regular presentation flow, the Wallet would be expected to follow this redirect.
-In the case described here, the Wallet MUST NOT follow the redirect URI and MUST instead repeat the request to the Interactive Authorization Endpoint and in this request include the received redirect URI in the `interactive_binding_token` parameter.
-The Wallet MUST NOT modify the URI in any way and treat it as an opaque value.
-The Issuer MUST verify that the redirect URI in the `interactive_binding_token` parameter is correct, i.e., matches the one sent in response to the request to the `response_uri`.
-Since the redirect URI MUST include a fresh, cryptographically random value, this check helps to prevent Session Fixation attacks, see (#iar-security).
+     In a regular presentation flow, the Wallet would be expected to follow this redirect.
+     In the case described here, the Wallet MUST NOT follow the redirect URI and MUST instead repeat the request to the Interactive Authorization Endpoint and in this request include the received redirect URI in the `interactive_binding_token` parameter.
+     The Wallet MUST NOT modify the URI in any way and treat it as an opaque value.
+     The Issuer MUST verify that the redirect URI in the `interactive_binding_token` parameter is correct, i.e., matches the one sent in response to the request to the `response_uri`.
+     Since the redirect URI MUST include a fresh, cryptographically random value, this check helps to prevent Session Fixation attacks, see (#iar-security).
+  3. The URL of the Interactive Authorization Request endpoint becomes the Origin for the request; i.e., the Wallet MUST ensure that `expected_origins` contains the Interactive Authorization Request endpoint URL.
+  4. For both signed and unsigned requests, the audience in the response (for example, the `aud` value in a Key Binding JWT) MUST be the Interactive Authorization Request, prefixed with `iar:`, for example `iar:https://example.com/iar`. A response containing a different audience value MUST NOT be accepted.
 
 #### Redirect to Web
 
@@ -849,6 +871,16 @@ Together with the verification of the value of the `interactive_binding_token` d
 
 Custom extensions ((#iar-custom-extensions)) MUST ensure an equivalent binding.
 Authorization Servers can usually achieve this by providing a nonce for use in the custom process (`biic_token` in the example above) and verifying a non-predictable value returned from the process in the `interactive_binding_token`.
+
+#### Preventing Forwarding of Interactive Authorization Endpoint Presentation Requests
+
+In ecosystems with multiple Authorization Servers that may potentially use the Interactive Authorization Endpoint, there is a risk that a malicious (or compromised) Authorization Server forwards an Interactive Authorization Response containing a Interaction Required Response that it itself has acquired from another Authorization Server.
+This may lead to the malicious Authorization Server gaining access to Credentials issued by the other Authorization Server without the End-User's consent.
+
+Custom extensions ((#iar-custom-extensions)) MUST ensure that this attack is prevented by ensuring one or both of the following:
+
+ 1. The Wallet is able to detect that a request is not presented by the party that initiated the Interactive Authorization Request. In the case of the (#iar-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_origins` parameter in the request, which contains the URL of the Interactive Authorization Endpoint that initiated the request.
+ 2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#iar-require-presentation) interaction, this is achieved for both signed and unsigned requests by the Wallet including the Interactive Authorization Endpoint URL in the `aud` value of the request, which is then verified by the Authorization Server.
 
 ### Authorization Code Response {#iar-authorization-code-response}
 
