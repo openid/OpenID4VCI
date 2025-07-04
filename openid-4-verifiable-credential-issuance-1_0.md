@@ -218,46 +218,47 @@ Please note that the diagram does not illustrate all the optional features defin
 
 !---
 ~~~ ascii-art
-+----------+   +-----------+            +----------------------+     +-------------------+
-| End-User |   |   Wallet  |            | Authorization Server |     | Credential Issuer |
-+----------+   +-----------+            +----------------------+     +-------------------+
-    |                |                              |                        |
-    | (1a) End-User  |                              |                        |
-    |  selects       |  (1b) Credential Offer       |                        |
-    |  Credential--->|  (credential type)           |                        |
-    |                |<------------------------------------------------------|
-    |                |                              |                        |
-    |                |  (2) Obtains Issuer's        |                        |
-    |                |      Credential Issuer       |                        |
-    |                |      metadata                |                        |
-    |                |------------------------------------------------------>|
-    |                |                              |                        |
-    |                |                              |  (3) Authorization     |
-    |                |                              |      Request           |
-    |                |                              |      (type(s) of       |
-    |                |                              |      Credentials to    |
-    |                |                              |      be issued)        |
-    |                |----------------------------->|                        |
-    |                |                              |                        |
-    |  End-User Authentication / Consent            |                        |
-    |                |                              |  (4) Authorization     |
-    |                |                              |      Response (code)   |
-    |                |<-----------------------------|                        |
-    |                |                              |                        |
-    |                |                              |  (5) Token Request     |
-    |                |                              |      (code)            |
-    |                |----------------------------->|      Token Response    |
-    |                |                              |      (Access Token)    |
-    |                |<-----------------------------|                        |
-    |                |                              |                        |
-    |                |  (6) Credential Request      |                        |
-    |                |      (Access Token, proof(s))|                        |
-    |                |------------------------------------------------------>|
-    |                |                              |                        |
-    |                |      Credential Response     |                        |
-    |                |      with Credential(s) OR   |                        |
-    |                |      Transaction ID          |                        |
-    |                |<------------------------------------------------------|
++----------+    +-----------+        +----------------------+   +-------------------+
+| End-User |    |   Wallet  |        | Authorization Server |   | Credential Issuer |
++----------+    +-----------+        +----------------------+   +-------------------+
+      |               |                           |                        |
+      | (1a) End-User |                           |                        |
+      |  selects      |  (1b) Credential Offer    |                        |
+      |  Credential-->|  (credential type)        |                        |
+      |               |<---------------------------------------------------|
+      |               |                           |                        |
+      |               |  (2) Obtains Issuer's     |                        |
+      |               |      Credential Issuer    |                        |
+      |               |      metadata             |                        |
+      |               |--------------------------------------------------->|
+      |               |                           |                        |
+      |               |                           |  (3) Authorization     |
+      |               |                           |      Request           |
+      |               |                           |      (type(s) of       |
+      |               |                           |      Credentials to    |
+      |               |                           |      be issued)        |
+      |               |-------------------------->|                        |
+      |               |                           |                        |
+      |  End-User Authentication / Consent        |                        |
+      |               |                           |  (4) Authorization     |
+      |               |                           |      Response (code)   |
+      |               |<--------------------------|                        |
+      |               |                           |                        |
+      |               |                           |  (5) Token Request     |
+      |               |                           |      (code)            |
+      |               |-------------------------->|      Token Response    |
+      |               |                           |      (Access Token)    |
+      |               |<--------------------------|                        |
+      |               |                           |                        |
+      |               |  (6) Credential Request   |                        |
+      |               |      (Access Token,       |                        |
+      |               |       proof(s))           |                        |
+      |               |--------------------------------------------------->|
+      |               |                           |                        |
+      |               |      Credential Response  |                        |
+      |               |      with Credential(s)   |                        |
+      |               |      OR Transaction ID    |                        |
+      |               |<---------------------------------------------------|
 ~~~
 !---
 Figure: Issuance using Authorization Code Flow 
@@ -294,40 +295,40 @@ The following diagram is based on the Credential Issuer-initiated flow, as descr
 
 !---
 ~~~ ascii-art
-+--------------+   +-----------+            +----------------------+   +-------------------+
-|   End-User   |   |   Wallet  |            | Authorization Server |   | Credential Issuer |
-+--------------+   +-----------+            +----------------------+   +-------------------+
-        |                |                              |                        |
-        |                |  (1) End-User provides       |                        |
-        |                |      information required    |                        |
-        |                |      for the issuance of     |                        |
-        |                |      a certain Credential    |                        |
-        |                |------------------------------------------------------>|
-        |                |                              |                        |
-        |                |  (2) Credential Offer        |                        |
-        |                |      (Pre-Authorized Code)   |                        |
-        |                |<------------------------------------------------------|
-        |                |  (3) Obtains Issuer's        |                        |
-        |                |      Credential Issuer       |                        |
-        |                |      metadata                |                        |
-        |                |------------------------------------------------------>|
-        |   interacts    |                              |                        |
-        |--------------->|                              |                        |
-        |                |                              |                        |
-        |                |  (4) Token Request           |                        |
-        |                |      (Pre-Authorized Code,   |                        |
-        |                |       tx_code)               |                        |
-        |                |----------------------------->|                        |
-        |                |      Token Response          |                        |
-        |                |      (access_token)          |                        |
-        |                |<-----------------------------|                        |
-        |                |                              |                        |
-        |                |  (5) Credential Request      |                        |
-        |                |      (access_token, proof(s))|                        |
-        |                |------------------------------------------------------>|
-        |                |      Credential Response     |                        |
-        |                |      (Credential(s))         |                        |
-        |                |<------------------------------------------------------|         
++----------+   +-----------+           +----------------------+   +-------------------+
+| End-User |   |   Wallet  |           | Authorization Server |   | Credential Issuer |
++----------+   +-----------+           +----------------------+   +-------------------+
+      |              |                              |                       |
+      |              |  (1) End-User provides       |                       |
+      |              |      information required    |                       |
+      |              |      for the issuance of     |                       |
+      |              |      a certain Credential    |                       |
+      |              |----------------------------------------------------->|
+      |              |                              |                       |
+      |              |  (2) Credential Offer        |                       |
+      |              |      (Pre-Authorized Code)   |                       |
+      |              |<-----------------------------------------------------|
+      |              |  (3) Obtains Issuer's        |                       |
+      |              |      Credential Issuer       |                       |
+      |              |      metadata                |                       |
+      |              |----------------------------------------------------->|
+      |   interacts  |                              |                       |
+      |------------->|                              |                       |
+      |              |                              |                       |
+      |              |  (4) Token Request           |                       |
+      |              |      (Pre-Authorized Code,   |                       |
+      |              |       tx_code)               |                       |
+      |              |----------------------------->|                       |
+      |              |      Token Response          |                       |
+      |              |      (access_token)          |                       |
+      |              |<-----------------------------|                       |
+      |              |                              |                       |
+      |              |  (5) Credential Request      |                       |
+      |              |      (access_token, proof(s))|                       |
+      |              |----------------------------------------------------->|
+      |              |      Credential Response     |                       |
+      |              |      (Credential(s))         |                       |
+      |              |<-----------------------------------------------------|
 ~~~
 !---
 Figure: Issuance using Pre-Authorized Code Flow 
@@ -397,16 +398,27 @@ The following non-normative example shows a Credential Offer object where the Cr
 
 ### Sending Credential Offer by Value Using `credential_offer` Parameter
 
-Below is a non-normative example of a Credential Offer passed by value:
+Below is a non-normative example of a Credential Offer passed by value (with line breaks within values for display purposes only):
 
 ```
-GET /credential_offer?credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com%22,%22credential_configuration_ids%22:%5B%22UniversityDegree_JWT%22,%22org.iso.18013.5.1.mDL%22%5D,%22grants%22:%7B%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22pre-authorized_code%22:%22oaKazRN8I0IbtZ0C7JuMn5%22,%22tx_code%22:%7B%7D%7D%7D%7D
+GET /credential_offer?
+  credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.exam
+  ple.com%22,%22credential_configuration_ids%22:%5B%22UniversityDegree_JWT%22,%
+  22org.iso.18013.5.1.mDL%22%5D,%22grants%22:%7B%22urn:ietf:params:oauth:grant-
+  type:pre-authorized_code%22:%7B%22pre-authorized_code%22:%22oaKazRN8I0IbtZ0C7
+  JuMn5%22,%22tx_code%22:%7B%7D%7D%7D%7D
 ```
 
-The following is a non-normative example of a Credential Offer that can be included in a QR code or a link used to invoke a Wallet deployed as a native app:
+The following is a non-normative example of a Credential Offer that can be included in a QR code or a link used to invoke a Wallet deployed as a native app (with line breaks within values for display purposes only):
 
 ```
-openid-credential-offer://?credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.example.com%22,%22credential_configuration_ids%22:%5B%22org.iso.18013.5.1.mDL%22%5D,%22grants%22:%7B%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22:%7B%22pre-authorized_code%22:%22oaKazRN8I0IbtZ0C7JuMn5%22,%22tx_code%22:%7B%22input_mode%22:%22text%22,%22description%22:%22Please%20enter%20the%20serial%20number%20of%20your%20physical%20drivers%20license%22%7D%7D%7D%7D
+openid-credential-offer://?
+  credential_offer=%7B%22credential_issuer%22:%22https://credential-issuer.exam
+  ple.com%22,%22credential_configuration_ids%22:%5B%22org.iso.18013.5.1.mDL%22%
+  5D,%22grants%22:%7B%22urn:ietf:params:oauth:grant-type:pre-authorized_code%22
+  :%7B%22pre-authorized_code%22:%22oaKazRN8I0IbtZ0C7JuMn5%22,%22tx_code%22:%7B%
+  22input_mode%22:%22text%22,%22description%22:%22Please%20enter%20the%20serial
+  %20number%20of%20your%20physical%20drivers%20license%22%7D%7D%7D%7D
 ```
 
 ### Sending Credential Offer by Reference Using `credential_offer_uri` Parameter
@@ -588,7 +600,7 @@ Location: https://Wallet.example.org/cb?
 
 The Authorization Error Response MUST be made as defined in [@!RFC6749].
 
-Below is a non-normative example of an unsuccessful Authorization Response.
+Below is a non-normative example of an unsuccessful Authorization Response:
 
 ```json=
 HTTP/1.1 302 Found
@@ -693,7 +705,10 @@ Cache-Control: no-store
     {
       "type": "openid_credential",
       "credential_configuration_id": "UniversityDegreeCredential",
-      "credential_identifiers": [ "CivilEngineeringDegree-2023", "ElectricalEngineeringDegree-2023" ]
+      "credential_identifiers": [
+        "CivilEngineeringDegree-2023",
+        "ElectricalEngineeringDegree-2023"
+      ]
     }
   ]
 }
@@ -826,7 +841,7 @@ When performing Credential Request encryption, the Client MUST encode the inform
 
 If the Credential Request is not encrypted, the media type of the request MUST be set to `application/json`.
 
-Below is a non-normative example of a Credential Request for a Credential in [@ISO.18013-5] format using the Credential configuration identifier and a key proof type `jwt`:
+Below is a non-normative example of a Credential Request for a Credential in [@ISO.18013-5] format using the Credential configuration identifier and a key proof type `jwt` (with line breaks within values for display purposes only):
 
 ```
 POST /credential HTTP/1.1
@@ -838,13 +853,14 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
   "credential_configuration_id": "org.iso.18013.5.1.mDL",
   "proofs": {
     "jwt": [
-      "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ"
+      "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8x
+       IiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ"
     ]
   }
 }
 ```
 
-Below is a non-normative example of a Credential Request for two Credential instances in an IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format using a Credential identifier from the Token Response and key proof type `jwt`:
+Below is a non-normative example of a Credential Request for two Credential instances in an IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format using a Credential identifier from the Token Response and key proof type `jwt` (with line breaks within values for display purposes only):
 
 ```
 POST /credential HTTP/1.1
@@ -856,14 +872,18 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
   "credential_identifier": "CivilEngineeringDegree-2023",
   "proofs": {
     "jwt": [
-      "eyJ0eXAiOiJvcGVuaWQ0dmNpLXByb29mK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiblVXQW9BdjNYWml0aDhFN2kxOU9kYXhPTFlGT3dNLVoyRXVNMDJUaXJUNCIsInkiOiJIc2tIVThCalVpMVU5WHFpN1N3bWo4Z3dBS18weGtjRGpFV183MVNvc0VZIn19",
-      "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8xIiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ"
+      "eyJ0eXAiOiJvcGVuaWQ0dmNpLXByb29mK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0
+       eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiblVXQW9BdjNYWml0aDhFN2kxOU9kYXhPTFlG
+       T3dNLVoyRXVNMDJUaXJUNCIsInkiOiJIc2tIVThCalVpMVU5WHFpN1N3bWo4Z3dBS18weGtj
+       RGpFV183MVNvc0VZIn19",
+      "eyJraWQiOiJkaWQ6ZXhhbXBsZTplYmZlYjFmNzEyZWJjNmYxYzI3NmUxMmVjMjEva2V5cy8x
+       IiwiYWxnIjoiRVMyNTYiLCJ0eXAiOiJKV1QifQ"
     ]
   }
 }
 ```
 
-Below is a non-normative example of a Credential Request for one Credential in W3C VCDM format using a Credential identifier from the Token Response and key proof type `di_vp`:
+Below is a non-normative example of a Credential Request for one Credential in W3C VCDM format using a Credential identifier from the Token Response and key proof type `di_vp` (with line breaks within values for display purposes only):
 
 ```
 POST /credential HTTP/1.1
@@ -889,11 +909,13 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
             "type": "DataIntegrityProof",
             "cryptosuite": "eddsa-2022",
             "proofPurpose": "authentication",
-            "verificationMethod": "did:key:z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro#z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro",
+            "verificationMethod": "did:key:z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mq
+             h5XPvLsrPsro#z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro",
             "created": "2023-03-01T14:56:29.280619Z",
             "challenge": "82d4cb36-11f6-4273-b9c6-df1ac0ff17e9",
             "domain": "did:web:audience.company.com",
-            "proofValue": "z5hrbHzZiqXHNpLq6i7zePEUcUzEbZKmWfNQzXcUXUrqF7bykQ7ACiWFyZdT2HcptF1zd1t7NhfQSdqrbPEjZceg7"
+            "proofValue": "z5hrbHzZiqXHNpLq6i7zePEUcUzEbZKmWfNQzXcUXUrqF7bykQ7A
+             CiWFyZdT2HcptF1zd1t7NhfQSdqrbPEjZceg7"
           }
         ]
       }
@@ -2027,13 +2049,13 @@ The following is a non-normative example of an authorization details object with
 
 #### Credential Response {#credential-response-jwt-vc-json}
 
-The value of the `credential` claim in the Credential Response MUST be a JWT. Credentials of this format are already a sequence of base64url-encoded values separated by period characters and MUST NOT be re-encoded. 
+The value of the `credential` claim in the Credential Response MUST be a JWT. Credentials of this format are already a sequence of base64url-encoded values separated by period characters and MUST NOT be re-encoded.
 
-The following is a non-normative example of a Credential Response with Credential Format `jwt_vc_json`:
+The following is a non-normative example of a Credential Response with Credential Format `jwt_vc_json` (with line breaks within values for display purposes only):
 
 <{{examples/credential_response_jwt_vc_json.txt}}
 
-The following is the dereferenced document for the Issuer HTTP URL identifier that matches the Credential in the above example:
+The following is the dereferenced document for the Issuer HTTP URL identifier that matches the Credential in the above example (with line breaks within values for display purposes only):
 
 <{{examples/issuer_jwks.json}}
 
@@ -2174,7 +2196,7 @@ The following is a non-normative example of an authorization details object with
 
 The value of the `credential` claim in the Credential Response MUST be a string that is an SD-JWT VC. Credentials of this format are already suitable for transfer and, therefore, they need not and MUST NOT be re-encoded.
 
-The following is a non-normative example of a Credential Response containing a Credential of format `dc+sd-jwt`.
+The following is a non-normative example of a Credential Response containing a Credential of format `dc+sd-jwt` (with line breaks within values for display purposes only).
 
 <{{examples/credential_response_sd_jwt_vc.txt}}
 
@@ -2604,7 +2626,7 @@ The Credential Issuer MUST validate that the W3C Verifiable Presentation used as
 Additional properties in the W3C Verifiable Presentation and Data Integrity Proof MUST be ignored if not understood.
 Cryptographic algorithm identifiers used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type are case sensitive strings and SHOULD be one of those defined in, or referenced by, [@VC_Data_Integrity].
 
-Below is a non-normative example of a `proofs` parameter:
+Below is a non-normative example of a `proofs` parameter (with line breaks within values for display purposes only):
 
 ```json
 {
@@ -2623,11 +2645,13 @@ Below is a non-normative example of a `proofs` parameter:
           "type": "DataIntegrityProof",
           "cryptosuite": "eddsa-2022",
           "proofPurpose": "authentication",
-          "verificationMethod": "did:key:z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro#z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro",
+          "verificationMethod": "did:key:z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5
+           XPvLsrPsro#z6MkvrFpBNCoYewiaeBLgjUDvLxUtnK5R6mqh5XPvLsrPsro",
           "created": "2023-03-01T14:56:29.280619Z",
           "challenge": "82d4cb36-11f6-4273-b9c6-df1ac0ff17e9",
           "domain": "did:web:audience.company.com",
-          "proofValue": "z5hrbHzZiqXHNpLq6i7zePEUcUzEbZKmWfNQzXcUXUrqF7bykQ7ACiWFyZdT2HcptF1zd1t7NhfQSdqrbPEjZceg7"
+          "proofValue": "z5hrbHzZiqXHNpLq6i7zePEUcUzEbZKmWfNQzXcUXUrqF7bykQ7ACi
+           WFyZdT2HcptF1zd1t7NhfQSdqrbPEjZceg7"
         }
       ]
     }
@@ -2939,6 +2963,7 @@ The technology described in this specification was made available from contribut
    * clarity that `x5c`, `kid` and `jwk` in the jwt proof type are mutually exclusive
    * clarify what checks wallet performs after receiving credential offer
    * editorial improvements to tx_code language
+   * make sure examples fit the maximum length that is rendered properly
 
    -15
 
