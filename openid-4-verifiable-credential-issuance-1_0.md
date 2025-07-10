@@ -659,7 +659,7 @@ grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
     credential_configuration_id%22%3A%20%22UniversityDegreeCredential%22%7D%5D
 ```
 
-The Wallet SHOULD NOT send the `authorization_details` parameter in the Token Request if the parameter has been previously sent in the Authorization Request(#credential-authz-request)
+The Wallet may send the `authorization_details` parameter in the Token Request even when the parameter has been previously sent in the [Authorization Request](#credential-authz-request) as described in Section 6.1 of [@!RFC9396]. It allows the AS to make a decision based on whether the Wallet is asking for more or less access than the previous request. With respect to `authorization_details` items using the `credential_configuration_id` introduced in this specification, it is RECOMMENDED that a AS would accept a request from the Wallet containiing a subset of `credential_configuration_id` parameters received in the original [Authorization Request](#credential-authz-request) and issue a token for the reduced set.
 
 ## Successful Token Response {#token-response}
 
