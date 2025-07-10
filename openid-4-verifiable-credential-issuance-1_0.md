@@ -1135,6 +1135,8 @@ If a `zip` (Compression Algorithm) value is specified, then compression is perfo
 
 When encryption of a message was required but the received message is unencrypted, it SHOULD be rejected.
 
+For security considerations see [#encryption-security-considersations]
+
 # Notification Endpoint {#notification-endpoint}
 
 This endpoint is used by the Wallet to notify the Credential Issuer of certain events for issued Credentials. These events enable the Credential Issuer to take subsequent actions after issuance. The Credential Issuer needs to return one `notification_id` parameter per Credential Response or Deferred Credential Response for the Wallet to be able to use this endpoint. Support for this endpoint is OPTIONAL. The Issuer cannot assume that a notification will be sent for every issued Credential since the use of this Endpoint is not mandatory for the Wallet.
@@ -1448,6 +1450,16 @@ Whenever TLS is used, a TLS server certificate check MUST be performed, per [@!R
 Access Tokens represent End-User authorization and consent to issue certain Credential(s). Long-lived Access Tokens giving access to Credentials MUST not be issued unless sender-constrained. Access Tokens with lifetimes longer than 5 minutes are, in general, considered long lived.
 
 To sender-constrain Access Tokens, see the recommendations in (#securitybcp). If Bearer Access Tokens are stored by the Wallet, they MUST be stored in a secure manner, for example, encrypted using a key stored in a protected key store.
+
+## Application-Layer Encryption {#encryption-security-considersations}
+
+Depending on the architecture of the Wallet and the Issuer Additional encryption of requests and response may provide additional confidentiality for data beyond TLS at the cost of increased complexity. For example, when a Wallet is composed of different components with differring levels of trust (such as a Wallet Server backend and application). The same may apply to complex Issuer systems.
+
+It is important that the component performing the encryption on the Wallet is able to establish trust in the Issuer key material being used to perform the encryption, to prevent being man-in-the-middled. The simplest way to do this is to retrieve it directly from the Issuer-hosted Issuer Metadata. Another is to verify the signature in the case of signed Issuer Metadata.
+
+In cases where the application-layer encryption begins and terminates in the same component as TLS it provides no additional protection.
+
+While application encryption may provide additional confidentiality of the data in transit, it does nothing additional to protect against other attacks that may result in access to the data (such as theft of access token, impersonation of the client etc) which must be protected against separately.  
 
 # Implementation Considerations
 
@@ -2893,7 +2905,7 @@ The technology described in this specification was made available from contribut
 
    -17
 
-   * TBC
+   * Application-encryption security considerations.
 
    -16
 
