@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-16"
+value = "openid-4-verifiable-credential-issuance-1_0-17"
 status = "standard"
 
 [[author]]
@@ -2890,6 +2890,10 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -17
+
+   * TBC
 
    -16
 
