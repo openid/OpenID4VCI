@@ -711,8 +711,9 @@ response_type=code
 
 ### Follow-up Request
 
-Follow-up requests to the Interactive Authorization Endpoint MUST include the `auth_session` value received most recently from the Authorization Server (see (#iar-interaction-required-response)).
+Follow-up requests to the Interactive Authorization Endpoint only MUST include the `auth_session` value received most recently from the Authorization Server (see (#iar-interaction-required-response)).
 
+Besides `auth_session`, follow-up requests only include the parameters that are relevant for the next step in the authorization process.
 In case the Wallet has completed a Presentation ((#iar-require-presentation)) or a custom interaction ((#iar-custom-extensions)), it has to include a token in the parameter `interactive_binding_token` during the next call to the Interactive Authorization Endpoint. The details of this token are specified in the respective section below.
 
 The following non-normative example shows a follow-up request to the Interactive Authorization Endpoint where the Wallet has already received an `auth_session`:
