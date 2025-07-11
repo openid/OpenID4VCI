@@ -898,7 +898,7 @@ Custom extensions ((#iar-custom-extensions)) MUST ensure that this attack is pre
 
 ### Authorization Code Response {#iar-authorization-code-response}
 
-Once the Authorization Server has successfully processed the Interactive Authorization Request, it MUST respond with a 200 OK response using the `application/json` media type containing the `authorization_code` parameter as defined in [@!RFC9126].
+Once the Authorization Server has successfully processed the Interactive Authorization Request, it MUST respond with a 200 OK response using the `application/json` media type containing a `code` parameter, carrying the Authorization Code as defined in [@!RFC6749].
 The `status` key MUST be set to `ok` in this case.
 
 ```
@@ -907,7 +907,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "authorization_code": "uY29tL2F1dGhlbnRpY",
+  "code": "uY29tL2F1dGhlbnRpY",
   "status": "ok"
 }
 ```
