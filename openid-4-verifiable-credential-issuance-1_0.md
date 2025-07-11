@@ -1,5 +1,5 @@
 %%%
-title = "OpenID for Verifiable Credential Issuance - Editor's draft"
+title = "OpenID for Verifiable Credential Issuance 1.0 - Editor's draft"
 abbrev = "openid-4-verifiable-credential-issuance"
 ipr = "none"
 workgroup = "OpenID Digital Credentials Protocols"
@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-16"
+value = "openid-4-verifiable-credential-issuance-1_0-17"
 status = "standard"
 
 [[author]]
@@ -3214,6 +3214,10 @@ The technology described in this specification was made available from contribut
 # Document History
 
    [[ To be removed from the final specification ]]
+
+   -17
+
+   * TBC
 
    -16
 
