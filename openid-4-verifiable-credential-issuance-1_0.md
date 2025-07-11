@@ -690,7 +690,14 @@ Note: In case a Wallet Attestation is required by the Authorization Server, it h
 
 ### Initial Request
 
-The initial request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126, Section 2.1]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request).
+The initial request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126, Section 2.1]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request), with the following addition:
+
+`interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Authorization Server supports. The order of the values is significant. The following values are defined by this specification:
+
+* `openid4vp_presentation`: Indicates that the Authorization Server supports an OpenID4VP Presentation interaction, as defined in (#iar-require-presentation).
+* `redirect_to_web`: Indicates that the Authorization Server supports a redirect to a web-based interaction, as defined in (#iar-redirect-to-web).
+
+Custom interaction types (see (#iar-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter.
 
 The following non-normative example shows an initial request to the Interactive Authorization Endpoint:
 
@@ -705,6 +712,7 @@ response_type=code
 &code_challenge_method=S256
 &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 &authorization_details=...
+&interaction_types_supported=openid4vp_presentation,redirect_to_web
 ```
 
 ### Follow-up Request
@@ -743,11 +751,13 @@ Depending on this assessment, the response from the Interactive Authorization En
 By setting `status` to `require_interaction` in the response, the Authorization Server requests an additional user interaction.
 In this case, the following keys MUST be present in the response as well:
 
-* `type`: REQUIRED. String indicating which type of interaction is required, as defined below.
+* `type`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST NOT set this to a value that was not included in the `interaction_types_supported` parameter sent by the Wallet.
 * `auth_session`: REQUIRED. String containing a value that allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value as an opaque value.
 
 The Wallet MUST include the `auth_session` in all follow-up requests to the Interactive Authorization Endpoint.
 If, as a response to such a follow-up request, the Wallet receives an `auth_session` value that differs from the one sent in the request, it MUST abort the issuance process.
+
+If a wallet receives a `type` value that it does not recognize, it MUST abort the issuance process.
 
 Additional keys are defined based on the type of interaction, as shown next.
 
@@ -833,7 +843,7 @@ The following additional requirements apply:
 
 Note: This mechanism can only be used for interactions with the same Wallet that started the issuance process.
 
-#### Redirect to Web
+#### Redirect to Web {#iar-redirect-to-web}
 
 If the type is `redirect_to_web`, the Authorization Server wants to fall back to a regular interaction with the user.
 
@@ -3217,6 +3227,7 @@ The technology described in this specification was made available from contribut
 
    -17
 
+   * add the interactive authorization endpoint to allow for complex authentication and authorization flows where interaction occurs directly with the Wallet, including presentation during issuance
    * TBC
 
    -16
@@ -3249,7 +3260,6 @@ The technology described in this specification was made available from contribut
    * make type and values for credential_signing_alg_values_supported format specific
    * make type and values for proof_signing_alg_values_supported proof type specific
    * change algorithm identifiers for credential_signing_alg_values_supported to COSE algorithm values for mdocs
-   * add the interactive authorization endpoint to enable presentation during issuance
    * add Credential Request encryption and Zip support
    * request encryption is now required when response encryption is used
    * clarify an access token is not required at the nonce endpoint
