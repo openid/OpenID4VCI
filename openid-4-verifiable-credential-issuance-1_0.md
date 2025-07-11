@@ -626,8 +626,6 @@ Support for the Interactive Authorization Endpoint is OPTIONAL.
 
 The Authorization Server indicates support for interactive authorization by publishing the `interactive_authorization_endpoint` parameter in its Authorization Server Metadata. In this case, the Wallet SHOULD use this endpoint to obtain authorization.
 
-Note: This mechanism can only be used for interactions with the same Wallet that started the issuance process.
-
 The following figure illustrates a flow using the Interactive Authorization Endpoint, where the Authorization Server requests a Presentation (of another Credential) from the Wallet as part of the authorization process to issue a Credential to that Wallet. The exact deployment model of the OpenID4VP Verifier in relation to the Authorization Server is out of scope of this specification. It can be integrated into the Authorization Server or a separate component, in which case backchannel communication between the Verifier and Authorization Server would need to happen (not shown here).
 
 
@@ -832,6 +830,8 @@ The following additional requirements apply:
      Since the redirect URI MUST include a fresh, cryptographically random value, this check helps to prevent Session Fixation attacks, see (#iar-security).
   3. The URL of the Interactive Authorization Request endpoint becomes the Origin for the request; i.e., the Wallet MUST ensure that `expected_origins` contains the Interactive Authorization Request endpoint URL.
   4. For both signed and unsigned requests, the audience in the response (for example, the `aud` value in a Key Binding JWT) MUST be the Interactive Authorization Request, prefixed with `iar:`, for example `iar:https://example.com/iar`. A response containing a different audience value MUST NOT be accepted.
+
+Note: This mechanism can only be used for interactions with the same Wallet that started the issuance process.
 
 #### Redirect to Web
 
