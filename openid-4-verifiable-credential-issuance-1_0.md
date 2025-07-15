@@ -1453,7 +1453,7 @@ To sender-constrain Access Tokens, see the recommendations in (#securitybcp). If
 
 ## Application-Layer Encryption {#encryption-security-considersations}
 
-Depending on the architecture of the Wallet and the Issuer Additional encryption of requests and response may provide additional confidentiality for data beyond TLS at the cost of increased complexity. For example, when a Wallet is composed of different components with differring levels of trust (such as a Wallet Server backend and application). The same may apply to complex Issuer systems.
+Depending on the architecture of the Wallet and the Issuer, additional encryption of requests and responses may provide additional confidentiality for data beyond TLS, at the cost of increased complexity. An example is when a Wallet is composed of different components with differing levels of trust (such as a Wallet server backend and client application). The same may apply to complex Issuer systems.
 
 It is important that the component performing the encryption on the Wallet is able to establish trust in the Issuer key material being used to perform the encryption, to prevent being man-in-the-middled. The simplest way to do this is to retrieve it directly from the Issuer-hosted Issuer Metadata. Another is to verify the signature in the case of signed Issuer Metadata.
 
