@@ -493,7 +493,7 @@ GET /authorize?
   &code_challenge_method=S256
   &authorization_details=%5B%7B%22type%22%3A%20%22openid_credential%22%2C%20%22
     credential_configuration_id%22%3A%20%22UniversityDegreeCredential%22%7D%5D
-  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+  &redirect_uri=https%3A%2F%2Fwallet.example.org%2Fcb
   
 Host: server.example.com
 ```
@@ -535,7 +535,7 @@ GET /authorize?
   &client_id=s6BhdRkqt3
   &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
   &code_challenge_method=S256
-  &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+  &redirect_uri=https%3A%2F%2Fwallet.example.org%2Fcb
 Host: server.example.com
 ```
 
@@ -568,7 +568,7 @@ response_type=code
 &client_id=CLIENT1234
 &code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
 &code_challenge_method=S256
-&redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+&redirect_uri=https%3A%2F%2Fwallet.example.org%2Fcb
 &authorization_details=...
 ```
 
@@ -580,7 +580,7 @@ Below is a non-normative example of a successful Authorization Response:
 
 ```
 HTTP/1.1 302 Found
-Location: https://Wallet.example.org/cb?
+Location: https://wallet.example.org/cb?
   code=SplxlOBeZQQYbYS6WxSbIA
 ```
 
@@ -592,7 +592,7 @@ Below is a non-normative example of an unsuccessful Authorization Response.
 
 ```json=
 HTTP/1.1 302 Found
-Location: https://client.example.net/cb?
+Location: https://wallet.example.org/cb?
   error=invalid_request
   &error_description=Unsupported%20response_type%20value
 ```
@@ -634,7 +634,7 @@ Content-Type: application/x-www-form-urlencoded
 grant_type=authorization_code
 &code=SplxlOBeZQQYbYS6WxSbIA
 &code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk
-&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb
+&redirect_uri=https%3A%2F%2Fwallet.example.org%2Fcb
 &client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer
 &client_assertion=eyJhbGciOiJSU...
 ```
@@ -2468,8 +2468,8 @@ The following is a non-normative example of a Wallet Attestation:
 }
 .
 {
-  "iss": "https://client.example.com",
-  "sub": "https://client.example.com",
+  "iss": "https://wallet.example.org",
+  "sub": "https://wallet.example.org",
   "wallet_name": "Wallet Solution X by Wonderland State Department",
   "wallet_link": "https://example.com/wallet/detail_info.html",
   "nbf": 1300815780,
