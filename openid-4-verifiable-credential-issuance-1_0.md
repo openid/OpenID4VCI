@@ -1311,11 +1311,13 @@ The signed metadata MUST be secured using a JSON Web Signature (JWS) [@!RFC7515]
   * `alg`: REQUIRED. A digital signature algorithm identifier such as per IANA "JSON Web Signature and Encryption Algorithms" registry [@IANA.JOSE]. It MUST NOT be `none` or an identifier for a symmetric algorithm (MAC).
   * `typ`: REQUIRED. MUST be `openidvci-issuer-metadata+jwt`, which explicitly types the key proof JWT as recommended in Section 3.11 of [@!RFC8725].
 
-* in the JWT body,
+* in the JWS payload,
   * `iss`: OPTIONAL. String denoting the party attesting to the claims in the signed metadata
   * `sub`: REQUIRED. String matching the Credential Issuer Identifier
   * `iat`: REQUIRED. Integer for the time at which the Credential Issuer Metadata was issued using the syntax defined in [@!RFC7519].
   * `exp`: OPTIONAL. Integer for the time at which the Credential Issuer Metadata is expiring, using the syntax defined in [@!RFC7519].
+
+All [metadata parameters](#credential-issuer-parameters) used by the Credential Issuer MUST be added as top-level claims in the JWS payload.
 
 When requesting signed metadata, the Wallet MUST establish trust in the signer of the metadata. Otherwise, the Wallet MUST reject the signed metadata. When validating the signature, the Wallet obtains the keys to validate the signature before processing the metadata, e.g. using JOSE header parameters like `x5c`, `kid` or `trust_chain` to convey the public key. The concrete mechanisms how to do that are out of scope of this specification.
 
@@ -2917,7 +2919,7 @@ The technology described in this specification was made available from contribut
 
    -17
 
-   * TBC
+   * clarification on signed metadata that parameters are included as top-level claims in JWS payload
 
    -16
 
