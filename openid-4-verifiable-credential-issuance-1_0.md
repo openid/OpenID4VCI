@@ -1453,13 +1453,13 @@ To sender-constrain Access Tokens, see the recommendations in (#securitybcp). If
 
 ## Application-Layer Encryption {#encryption-security-considersations}
 
-Depending on the architecture of the Wallet and the Issuer, additional encryption of requests and responses may provide additional confidentiality for data beyond TLS, at the cost of increased complexity. An example is when a Wallet is composed of different components with differing levels of trust (such as a Wallet server backend and client application). The same may apply to complex Issuer systems.
+Depending on the architecture of the Wallet and the Issuer, adding encryption to requests and responses, beyond transport-level security (TLS), can offer enhanced data confidentiality. This can come at the cost of added complexity. This approach can be particularly relevant when the Wallet consists of multiple components with varying trust levels, such as a backend server and a client application. Similar considerations may apply to more complex Issuer architectures.
 
-It is important that the component performing the encryption on the Wallet is able to establish trust in the Issuer key material being used to perform the encryption, to prevent being man-in-the-middled. The simplest way to do this is to retrieve it directly from the Issuer-hosted Issuer Metadata. Another is to verify the signature in the case of signed Issuer Metadata.
+It is important that the Wallet component responsible for encryption can establish trust in the Issuer's key material to prevent man-in-the-middle attacks. The simplest way to achieve this is by retrieving the keys directly from the Issuer’s hosted Issuer Metadata. Alternatively, in the case of signed Issuer Metadata, the signature can be verified to ensure authenticity.
 
-In cases where the application-layer encryption begins and terminates in the same component as TLS it provides no additional protection.
+In cases where the application-layer encryption begins and terminates in the same component as TLS, it provides no additional protection.
 
-While application encryption may provide additional confidentiality of the data in transit, it does nothing additional to protect against other attacks that may result in access to the data (such as theft of access token, impersonation of the client etc) which must be protected against separately.  
+While application-layer encryption can enhance the confidentiality of data in transit, it does not protect against other threats, such as access token theft, client impersonation, or other forms of unauthorized access. These risks must be mitigated through additional security measures.
 
 # Implementation Considerations
 
