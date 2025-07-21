@@ -777,10 +777,8 @@ Cache-Control: no-store
   "type": "openid4vp_presentation",
   "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "openid4vp_presentation": {
-    "client_id": "x509_san_dns:rp.example.com",
     "response_type": "vp_token",
     "response_mode": "iar-post",
-    "response_uri": "https//client.example.org/cb",
     "dcql_query": {
       "credentials": [
         {
