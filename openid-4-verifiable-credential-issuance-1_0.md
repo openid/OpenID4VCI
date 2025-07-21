@@ -632,52 +632,50 @@ The following figure illustrates a flow using the Interactive Authorization Endp
 !---
 ~~~ ascii-art
 
- +-----------+            +----------------------+     +--------------------+    +--------------------+
- |   Wallet  |            | Authorization Server |     | OpenID4VP Verifier |    | Credential Issuer  |
- +-----------+            +----------------------+     +--------------------+    +--------------------+
-       |                              |                        |                           |
-       |                              |                        |                           |
-       |----------------------------->|  (1) Interactive       |                           |
-       |                              |      Authorization     |                           |
-       |                              |      Request           |                           |
-       |                              |                        |                           |
-       |                              |                        |                           |
-       |<-----------------------------|  (2) Interactive       |                           |
-       |                              |      Authorization     |                           |
-       |                              |      Response          |                           |
-       |                              |      (presentation     |                           |
-       |                              |      request,          |                           |
-       |                              |      auth_session)     |                           |
-       |                              |                        |                           |
-       |------------------------------------------------------>|  (3) OpenID4VP direct_post to Response URI
-       |                              |                        |                           |
-       |<------------------------------------------------------|  (4) (redirect_uri)       |
-       |                              |                        |                           |    
-       |----------------------------->|  (5) Interactive       |                           |
-       |                              |      Authorization     |                           |
-       |                              |      Request           |                           |
-       |                              |      (auth_session,    |                           |
-       |                              |      redirect_uri)     |                           |
-       |                              |                        |                           |    
-       |<-----------------------------|  (6) Interactive       |                           |
-       |                              |      Authorization     |                           |
-       |                              |      Response (code)   |                           |
-       |                              |                        |                           |
-       |----------------------------->|  (7) Token Request     |                           |
-       |                              |      (code)            |                           |
-       |                              |                        |                           |
-       |<-----------------------------|  (8) Token Response    |                           |
-       |                              |      (Access Token)    |                           |
-       |                              |                        |                           |
-       |                              |                        |                           |
-       |  (9) Credential Request      |                        |                           |
-       |      (Access Token, proof(s))|                        |                           |
-       |---------------------------------------------------------------------------------->|
-       |                              |                        |                           |
-       |  (10) Credential Response    |                        |                           |
-       |       with Credential(s) OR  |                        |                           |
-       |       Transaction ID         |                        |                           |
-       |<----------------------------------------------------------------------------------|
+ +-----------+            +----------------------+     +--------------------+
+ |   Wallet  |            | Authorization Server |     | Credential Issuer  |
+ +-----------+            +----------------------+     +--------------------+
+       |                              |                        |
+       |                              |                        |
+       |----------------------------->|  (1) Interactive       |
+       |                              |      Authorization     |
+       |                              |      Request           |
+       |                              |                        |
+       |                              |                        |
+       |<-----------------------------|  (2) Interactive       |
+       |                              |      Authorization     |
+       |                              |      Response          |
+       |                              |      (presentation     |
+       |                              |      request,          |
+       |                              |      auth_session)     |
+       |                              |                        |
+       |                              |                        |    
+       |----------------------------->|  (3) Interactive       |
+       |                              |      Authorization     |
+       |                              |      Request           |
+       |                              |      (auth_session,    |
+       |                              |      presentation      |
+       |                              |      response)         |
+       |                              |                        |    
+       |<-----------------------------|  (4) Interactive       |
+       |                              |      Authorization     |
+       |                              |      Response (code)   |
+       |                              |                        |
+       |----------------------------->|  (5) Token Request     |
+       |                              |      (code)            |
+       |                              |                        |
+       |<-----------------------------|  (6) Token Response    |
+       |                              |      (Access Token)    |
+       |                              |                        |
+       |                              |                        |
+       |  (7) Credential Request      |                        |
+       |      (Access Token, proof(s))|                        |
+       |------------------------------------------------------>|
+       |                              |                        |
+       |  (8) Credential Response     |                        |
+       |       with Credential(s) OR  |                        |
+       |       Transaction ID         |                        |
+       |<------------------------------------------------------|
 ~~~
 !---
 Figure: Issuance using the Interactive Authorization Endpoint
@@ -719,8 +717,7 @@ response_type=code
 
 Follow-up requests to the Interactive Authorization Endpoint only MUST include the `auth_session` value received most recently from the Authorization Server (see (#iar-interaction-required-response)).
 
-Besides `auth_session`, follow-up requests only include the parameters that are relevant for the next step in the authorization process.
-In case the Wallet has completed a Presentation ((#iar-require-presentation)) or a custom interaction ((#iar-custom-extensions)), it has to include a token in the parameter `interactive_binding_token` during the next call to the Interactive Authorization Endpoint. The details of this token are specified in the respective section below.
+Besides `auth_session`, follow-up requests only include the parameters that are relevant for the next step in the authorization process. The specific parameters are defined by each interaction type.
 
 The following non-normative example shows a follow-up request to the Interactive Authorization Endpoint where the Wallet has already received an `auth_session`:
 
@@ -763,7 +760,10 @@ Additional keys are defined based on the type of interaction, as shown next.
 
 #### Require Presentation {#iar-require-presentation}
 
-If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_presentation` parameter containing an OpenID4VP Authorization Request, either in unsigned form as defined in Appendix A.3.1 of [@!OpenID4VP] or signed as defined in Appendix A.3.2 of [@!OpenID4VP].
+If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_presentation` parameter containing an OpenID4VP Authorization Request. Construction of the request follow the same requirements for requests used in conjunction with the DC API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows: 
+
+* The `response_mode` must be either `iar-post`, for unencrypted responses or `iar-post.jwt` for encrypted responses. This new mode is used to indicate to the Wallet to return the response back to the same Interactive Authorization Request endpoint URL. 
+* For signed requests, the contents of `expected_origins` MUST contain only the Issuer's Interactive Authorization Request endpoint URL.
 
 The following is a non-normative example of an unsigned Authorization Request:
 
@@ -779,7 +779,7 @@ Cache-Control: no-store
   "openid4vp_presentation": {
     "client_id": "x509_san_dns:rp.example.com",
     "response_type": "vp_token",
-    "response_mode": "direct_post",
+    "response_mode": "iar-post",
     "response_uri": "https//client.example.org/cb",
     "dcql_query": {
       "credentials": [
@@ -818,28 +818,58 @@ Cache-Control: no-store
 }
 ```
 
-
 The Wallet MUST process the Authorization Request contained in the `openid4vp_presentation` parameter as defined in [@!OpenID4VP] to perform a Credential Presentation to the Authorization Server.
 
 For the requested Presentation, the Issuer is acting as a Verifier to the Wallet.
 The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is out of scope of this specification.
 
-The following additional requirements apply:
+When processing the request the following logic applies:
 
-  1. The `response_type` MUST be `vp_token` (defined in Section 8 of [@!OpenID4VP]).
-  2. The `response_mode` of the request MUST be `direct_post` (defined in Section 8.2 of [@!OpenID4VP]) or `direct_post.jwt` (defined in Section 8.3.1 of [@!OpenID4VP]).
-     Following the definition of this response mode, the Wallet sends an HTTP POST request to the endpoint indicated by the `response_uri` parameter in the Authorization Request to either complete the presentation (sending the VP Token) or to indicate an error.
-     The Verifier MUST respond to this message by sending a JSON object containing a `redirect_uri` parameter.
+  1. The URL of the Interactive Authorization Request endpoint becomes the Origin for the request; i.e., the Wallet MUST ensure that `expected_origins` contains the Interactive Authorization Request endpoint URL.
+  2. The audience in the response (for example, the `aud` value in a Key Binding JWT) MUST be the Interactive Authorization Request, prefixed with `iar:`, for example `iar:https://example.com/iar`. A response containing a different audience value MUST NOT be accepted.
+  3. If a `SessionTranscript` is needed, it is generated according Appendix B.2.6.2 of [@!OpenID4VP]. As above, the value for origin is the Interactive Authorization Request endpoint URL.
 
-     Note: Sending `redirect_uri` is defined as OPTIONAL in [@!OpenID4VP], but it is REQUIRED here.
+Every OpenID4VP Request results in a response being provided back to the Interactive Authorization Request endpoint as a follow-up Interactive Authorization Request.
 
-     In a regular presentation flow, the Wallet would be expected to follow this redirect.
-     In the case described here, the Wallet MUST NOT follow the redirect URI and MUST instead repeat the request to the Interactive Authorization Endpoint and in this request include the received redirect URI in the `interactive_binding_token` parameter.
-     The Wallet MUST NOT modify the URI in any way and treat it as an opaque value.
-     The Issuer MUST verify that the redirect URI in the `interactive_binding_token` parameter is correct, i.e., matches the one sent in response to the request to the `response_uri`.
-     Since the redirect URI MUST include a fresh, cryptographically random value, this check helps to prevent Session Fixation attacks, see (#iar-security).
-  3. The URL of the Interactive Authorization Request endpoint becomes the Origin for the request; i.e., the Wallet MUST ensure that `expected_origins` contains the Interactive Authorization Request endpoint URL.
-  4. For both signed and unsigned requests, the audience in the response (for example, the `aud` value in a Key Binding JWT) MUST be the Interactive Authorization Request, prefixed with `iar:`, for example `iar:https://example.com/iar`. A response containing a different audience value MUST NOT be accepted.
+The Interactive Authorization Request MUST contain a `openid4vp_presentation`, in addition to the `auth_session`. The `openid4vp_presentation` is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iar-post.jwt` the OpenID4VP Authorization Response must be encrypted according to Section 8.3 of [@!OpenID4VP].
+
+The following us an example non-normative example of a Interactive Authorization Request containing an OpenID4VP Authorization Response:
+
+```http
+POST /iar HTTP/1.1
+Host: server.example.com
+Content-Type: application/x-www-form-urlencoded
+
+auth_session=wxroVrBY2MCq4dDNGXACS
+&openid4vp_presentation=...
+```
+
+The following is a non-normative example of the `openid4vp_presentation` JSON object:
+
+```json
+{
+  "vp_token": ...
+}
+
+```
+
+The following is a non-normative example of the `openid4vp_presentation` JSON object with an encrypted response:
+
+```json
+{
+  "response": ...
+}
+
+```
+
+The following is a non-normative example of the `openid4vp_presentation` JSON object with an Authorization Error Response.
+
+```json
+{
+  "error": "invalid_request",
+  "error_description": "unsupported client_id_prefix"
+}
+```
 
 Note: This mechanism can only be used for interactions with the same Wallet that started the issuance process.
 
@@ -891,10 +921,9 @@ Cache-Control: no-store
 Authorization Servers MUST ensure that the user interaction (OpenID4VP presentation, redirect to web, or a custom interaction) is securely bound to the authorization process in order avoid Session Fixation Attacks as described in Section 14.2 of [@!OpenID4VP].
 This can be achieved by securely linking all requests following the initial Interactive Authorization Request.
 For OpenID4VP presentations, the Authorization Server MUST associate the `nonce` value used in the Presentation with the `auth_session` value and verify that the Presentation delivered from the Wallet to the Verifier uses the same nonce.
-Together with the verification of the value of the `interactive_binding_token` described in {#iar-require-presentation}, this ensures a secure linking.
 
 Custom extensions ((#iar-custom-extensions)) MUST ensure an equivalent binding.
-Authorization Servers can usually achieve this by providing a nonce for use in the custom process (`biic_token` in the example above) and verifying a non-predictable value returned from the process in the `interactive_binding_token`.
+Authorization Servers can usually achieve this by providing a nonce for use in the custom process (`biic_token` in the example above) and either only responding to the Interactive Authorization Request Endpoint (as done by (#iar-require-presentation)) or returning a non-predictable value from the process to the Interactive Authorization Request Endpoint that can be verified.
 
 #### Preventing Forwarding of Interactive Authorization Endpoint Presentation Requests
 
@@ -904,7 +933,7 @@ This may lead to the malicious Authorization Server gaining access to Credential
 Custom extensions ((#iar-custom-extensions)) MUST ensure that this attack is prevented by ensuring one or both of the following:
 
  1. The Wallet is able to detect that a request is not presented by the party that initiated the Interactive Authorization Request. In the case of the (#iar-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_origins` parameter in the request, which contains the URL of the Interactive Authorization Endpoint that initiated the request.
- 2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#iar-require-presentation) interaction, this is achieved for both signed and unsigned requests by the Wallet including the Interactive Authorization Endpoint URL in the `aud` value of the request, which is then verified by the Authorization Server.
+ 2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#iar-require-presentation) interaction, this is achieved for both signed and unsigned requests by the Wallet including the Interactive Authorization Endpoint URL in the `aud` value of the request, and/or `SessionTranscript` which is then verified by the Authorization Server.
 
 ### Authorization Code Response {#iar-authorization-code-response}
 
