@@ -2918,7 +2918,7 @@ The technology described in this specification was made available from contribut
    -17
 
    * clarification on signed metadata that parameters are included as top-level claims in JWS payload
-   * fix indentation of nested credential log object
+   * fix indentation of nested credential logo object
 
    -16
 
