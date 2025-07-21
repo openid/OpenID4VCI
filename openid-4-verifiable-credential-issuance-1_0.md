@@ -760,9 +760,9 @@ Additional keys are defined based on the type of interaction, as shown next.
 
 #### Require Presentation {#iar-require-presentation}
 
-If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_presentation` parameter containing an OpenID4VP Authorization Request. Construction of the request follow the same requirements for requests used in conjunction with the DC API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows: 
+If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_presentation` parameter containing an OpenID4VP Authorization Request. The contents of the request is the same as for requests passed to the Digital Credentials API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows: 
 
-* The `response_mode` must be either `iar-post`, for unencrypted responses or `iar-post.jwt` for encrypted responses. This new mode is used to indicate to the Wallet to return the response back to the same Interactive Authorization Request endpoint URL. 
+* The `response_mode` must be either `iar-post` for unencrypted responses or `iar-post.jwt` for encrypted responses. These modes are used to indicate to the Wallet to return the response back to the same Interactive Authorization Request endpoint URL. 
 * For signed requests, the contents of `expected_origins` MUST contain only the Issuer's Interactive Authorization Request endpoint URL.
 
 The following is a non-normative example of an unsigned Authorization Request:
@@ -829,7 +829,7 @@ When processing the request the following logic applies:
 
 Every OpenID4VP Request results in a response being provided back to the Interactive Authorization Request endpoint as a follow-up Interactive Authorization Request.
 
-The Interactive Authorization Request MUST contain a `openid4vp_presentation`, in addition to the `auth_session`. The `openid4vp_presentation` is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iar-post.jwt` the OpenID4VP Authorization Response must be encrypted according to Section 8.3 of [@!OpenID4VP].
+The Interactive Authorization Request MUST contain a `openid4vp_presentation`, in addition to the `auth_session`. The `openid4vp_presentation` is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iar-post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
 
 The following us an example non-normative example of a Interactive Authorization Request containing an OpenID4VP Authorization Response:
 
@@ -931,7 +931,7 @@ This may lead to the malicious Authorization Server gaining access to Credential
 Custom extensions ((#iar-custom-extensions)) MUST ensure that this attack is prevented by ensuring one or both of the following:
 
  1. The Wallet is able to detect that a request is not presented by the party that initiated the Interactive Authorization Request. In the case of the (#iar-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_origins` parameter in the request, which contains the URL of the Interactive Authorization Endpoint that initiated the request.
- 2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#iar-require-presentation) interaction, this is achieved for both signed and unsigned requests by the Wallet including the Interactive Authorization Endpoint URL in the `aud` value of the request, and/or `SessionTranscript` which is then verified by the Authorization Server.
+ 2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#iar-require-presentation) interaction, this is achieved for both signed and unsigned requests by the Wallet including the Interactive Authorization Endpoint URL in the `aud` value and/or `SessionTranscript` within the returned Presentation, which is then verified by the Authorization Server.
 
 ### Authorization Code Response {#iar-authorization-code-response}
 
