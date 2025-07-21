@@ -717,7 +717,7 @@ response_type=code
 
 Follow-up requests to the Interactive Authorization Endpoint only MUST include the `auth_session` value received most recently from the Authorization Server (see (#iar-interaction-required-response)).
 
-Besides `auth_session`, follow-up requests only include the parameters that are relevant for the next step in the authorization process. The specific parameters are defined by each interaction type.
+Besides `auth_session`, follow-up requests only include the parameters that are in response to the interaction type the Authorization Server requested in the most recent response. The specific parameters are defined by each interaction type.
 
 The following non-normative example shows a follow-up request to the Interactive Authorization Endpoint where the Wallet has already received an `auth_session`:
 
