@@ -770,7 +770,7 @@ Additional keys are defined based on the type of interaction, as shown next.
 
 #### Require Presentation {#iar-require-presentation}
 
-If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_presentation` parameter containing an OpenID4VP Authorization Request. The contents of the request is the same as for requests passed to the Digital Credentials API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows: 
+If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_request` parameter containing an OpenID4VP Authorization Request. The contents of the request is the same as for requests passed to the Digital Credentials API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows: 
 
 * The `response_mode` must be either `iar-post` for unencrypted responses or `iar-post.jwt` for encrypted responses. These modes are used to indicate to the Wallet to return the response back to the same Interactive Authorization Request endpoint URL. 
 * For signed requests, the contents of `expected_origins` MUST contain only the Issuer's Interactive Authorization Request endpoint URL.
@@ -786,7 +786,7 @@ Cache-Control: no-store
   "status": "require_interaction",
   "type": "openid4vp_presentation",
   "auth_session": "wxroVrBY2MCq4dDNGXACS",
-  "openid4vp_presentation": {
+  "openid4vp_request": {
     "response_type": "vp_token",
     "response_mode": "iar-post",
     "dcql_query": {
@@ -820,13 +820,13 @@ Cache-Control: no-store
   "status": "require_interaction",
   "type": "openid4vp_presentation",
   "auth_session": "wxroVrBY2MCq4dDNGXACS",
-  "openid4vp_presentation": {
+  "openid4vp_request": {
     "request": "eyJhbGciOiJF..."
   }
 }
 ```
 
-The Wallet MUST process the Authorization Request contained in the `openid4vp_presentation` parameter as defined in [@!OpenID4VP] to perform a Credential Presentation to the Authorization Server.
+The Wallet MUST process the Authorization Request contained in the `openid4vp_request` parameter as defined in [@!OpenID4VP] to perform a Credential Presentation to the Authorization Server.
 
 For the requested Presentation, the Issuer is acting as a Verifier to the Wallet.
 The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is out of scope of this specification.
@@ -837,7 +837,7 @@ When processing the request the following logic applies:
   2. The audience in the response (for example, the `aud` value in a Key Binding JWT) MUST be the Interactive Authorization Request, prefixed with `iar:`, for example `iar:https://example.com/iar`. A response containing a different audience value MUST NOT be accepted.
   3. If a `SessionTranscript` is needed, it is generated according Appendix B.2.6.2 of [@!OpenID4VP]. As above, the value for origin is the Interactive Authorization Request endpoint URL.
 
-The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_presentation` request parameter. The value of the `openid4vp_presentation` request parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iar-post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
+The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_request` request parameter. The value of the `openid4vp_request` request parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iar-post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
 
 The following us an example non-normative example of a Interactive Authorization Request containing an OpenID4VP Authorization Response:
 
