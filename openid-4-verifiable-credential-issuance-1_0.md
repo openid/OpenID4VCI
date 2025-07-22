@@ -892,6 +892,8 @@ Cache-Control: no-store
 }
 ```
 
+Once this phase of the Authorization process is completed, the Authorization Server MUST redirect back to the Wallet as per [@RFC6749]. If the Authorization process is complete when this redirect occurs, the Authorization Server returns a response with the `authorization_code` parameter as per Section 1.3.1 of [@RFC6749]. If the Authorization process is not complete when this redirect occurs, the Authorization Server returns a response with the `auth_session` parameter. In the event a Wallet receives a response from the Authorization Server which features the `auth_session` parameter, the Wallet MUST make a follow-up request as per (#follow-up-request) to continue the Authorization process.
+
 #### Custom Interaction Extensions {#iar-custom-extensions}
 
 Additional, custom types of interactions MAY be defined by extensions of this specification to enable other types of interactions, for example, by interacting with a smart card.
