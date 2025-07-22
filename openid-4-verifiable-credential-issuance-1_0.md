@@ -2748,7 +2748,7 @@ established by [@!RFC8414].
 
 * Metadata Name: `pre-authorized_grant_anonymous_access_supported`
 * Metadata Description: Boolean indicating whether Credential Issuer accepts Token Request with Pre-Authorized Code but without `client_id`
-* Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#as-metadata) of this specification
 
 ## OAuth Dynamic Client Registration Metadata Registry
@@ -2860,7 +2860,7 @@ in the IANA "Uniform Resource Identifier (URI) Schemes" registry [@IANA.URI.Sche
 * Description: Custom scheme used for credential offers
 * Status: Permanent
 * Well-Known URI Support: -
-* Change Controller: OpenID Foundation Artifact Binding Working Group - openid-specs-ab@lists.openid.net
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#client-metadata-retrieval) of this specification
 
 # Use Cases
