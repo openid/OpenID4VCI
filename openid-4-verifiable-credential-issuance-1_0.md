@@ -3047,6 +3047,13 @@ This specification registers the following OAuth parameter
 in the IANA "OAuth Parameters" registry [@IANA.OAuth.Parameters]
 established by [@!RFC6749].
 
+### interaction_types_supported
+
+* Name: `interaction_types_supported`
+* Parameter Usage Location: authorization request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#interactive-authorization-request) of this specification
+
 ### issuer_state
 
 * Name: `issuer_state`
