@@ -669,6 +669,8 @@ grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code
     credential_configuration_id%22%3A%20%22UniversityDegreeCredential%22%7D%5D
 ```
 
+The Wallet may send the `authorization_details` parameter in the Token Request even when the parameter has been previously sent in the [Authorization Request](#credential-authz-request) as described in Section 6.1 of [@!RFC9396]. It allows the AS to make a decision based on whether the Wallet is asking for more or less access than the previous request. With respect to `authorization_details` items using the `credential_configuration_id` introduced in this specification, it is RECOMMENDED that the AS would accept a request from the Wallet containing a subset of `credential_configuration_id` parameters received in the original [Authorization Request](#credential-authz-request) and issue a token for the reduced set.
+
 ## Successful Token Response {#token-response}
 
 Token Responses are made as defined in [@!RFC6749].
@@ -677,8 +679,8 @@ The Authorization Server might decide to authorize issuance of multiple instance
 
 In addition to the response parameters defined in [@!RFC6749], the Authorization Server MAY return the following parameters:
 
-* `authorization_details`: REQUIRED when the `authorization_details` parameter is used to request issuance of a Credential of a certain Credential Configuration as defined in (#authorization-details). OPTIONAL when `scope` parameter was used to request issuance of a Credential of a certain Credential Configuration. It is a non-empty array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
-  * `credential_identifiers`: REQUIRED. A non-empty array of strings, each uniquely identifying a Credential Dataset that can be issued using the Access Token returned in this response. Each of these Credential Datasets corresponds to the same Credential Configuration in the `credential_configurations_supported` parameter of the Credential Issuer metadata. The Wallet MUST use these identifiers together with an Access Token in subsequent Credential Requests. See (#identifying_credential) for the summary of the options how requested Credential(s) are identified throughout the Issuance flow.
+* `authorization_details`: REQUIRED when the `authorization_details` parameter, as defined in (#authorization-details), is used in either the [Authorization Request](#credential-authz-request) or [Token Request](#token-request). OPTIONAL when `scope` parameter was used to request issuance of a Credential of a certain Credential Configuration. It is a non-empty array of objects, as defined in Section 7 of [@!RFC9396]. In addition to the parameters defined in (#authorization-details), this specification defines the following parameter to be used with the authorization details type `openid_credential` in the Token Response:
+  * `credential_identifiers`: REQUIRED. A non-empty array of strings, each uniquely identifying a Credential Dataset that can be issued using the Access Token returned in this response. Each of these Credential Datasets corresponds to the Credential Configuration referenced in the `credential_configuration_id` parameter. The Wallet MUST use these identifiers together with an Access Token in subsequent Credential Requests. See (#identifying_credential) for the summary of the options how requested Credential(s) are identified throughout the Issuance flow.
 
 
 Additional Token Response parameters MAY be defined and used,
