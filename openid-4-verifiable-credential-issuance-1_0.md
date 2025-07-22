@@ -688,7 +688,7 @@ Note: In case a Wallet Attestation is required by the Authorization Server, it h
 
 ### Initial Request
 
-The initial request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in [@!RFC9126, Section 2.1]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request), with the following addition:
+The initial request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in Section 2.1 of [@!RFC9126]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request), with the following addition:
 
 `interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Authorization Server supports. The order of the values is significant. The following values are defined by this specification:
 
@@ -713,7 +713,7 @@ response_type=code
 &interaction_types_supported=openid4vp_presentation,redirect_to_web
 ```
 
-### Follow-up Request
+### Follow-up Request {#follow-up-request}
 
 Follow-up requests to the Interactive Authorization Endpoint only MUST include the `auth_session` value received most recently from the Authorization Server (see (#iar-interaction-required-response)).
 
@@ -827,9 +827,7 @@ When processing the request the following logic applies:
   2. The audience in the response (for example, the `aud` value in a Key Binding JWT) MUST be the Interactive Authorization Request, prefixed with `iar:`, for example `iar:https://example.com/iar`. A response containing a different audience value MUST NOT be accepted.
   3. If a `SessionTranscript` is needed, it is generated according Appendix B.2.6.2 of [@!OpenID4VP]. As above, the value for origin is the Interactive Authorization Request endpoint URL.
 
-Every OpenID4VP Request results in a response being provided back to the Interactive Authorization Request endpoint as a follow-up Interactive Authorization Request.
-
-The Interactive Authorization Request MUST contain a `openid4vp_presentation`, in addition to the `auth_session`. The `openid4vp_presentation` is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iar-post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
+The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_presentation` request parameter. The value of the `openid4vp_presentation` request parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iar-post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
 
 The following us an example non-normative example of a Interactive Authorization Request containing an OpenID4VP Authorization Response:
 
@@ -873,7 +871,7 @@ Note: This mechanism can only be used for interactions with the same Wallet that
 
 #### Redirect to Web {#iar-redirect-to-web}
 
-If the type is `redirect_to_web`, the Authorization Server wants to fall back to a regular interaction with the user.
+If the type is `redirect_to_web`, the Authorization Server is indicating that the authorization process must continue via interactions with the user in a web browser.
 
 In this case, the Authorization server MUST include the key `request_uri` in the response.
 The Wallet MUST use the `request_uri` value to build an Authorization Request as defined in Section 4 of [@!RFC9126] and complete the rest of the authorization process as defined there.
