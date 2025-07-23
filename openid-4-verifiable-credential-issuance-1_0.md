@@ -2909,11 +2909,11 @@ Wallet Providers may also provide a market place where Issuers can register to b
 
 This section contains additional examples for Credential issuer Metadata
 
-The following is a non-normative example of Credential Issuer metadata of a Credential in the IETF SD-JWT VC [I-D.ietf-oauth-sd-jwt-vc] format in signed form (JWT):
+The following is a non-normative example of Credential Issuer metadata of a Credential in the IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format in signed form (JWT):
 
 <{{examples/credential_issuer_metadata_sd_jwt_jwt.txt}}
 
-The following is a non-normative example of Credential Issuer metadata of a Credential in the IETF SD-JWT VC [I-D.ietf-oauth-sd-jwt-vc] format with optional parameters present:
+The following is a non-normative example of Credential Issuer metadata of a Credential in the IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format with optional parameters present:
 
 <{{examples/credential_issuer_metadata_sd_jwt_long.json}}
 
