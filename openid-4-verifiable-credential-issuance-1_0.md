@@ -812,7 +812,7 @@ For Cryptographic Key Binding, the Client has different options to provide Crypt
 
 A Client makes a Credential Request to the Credential Endpoint by sending parameters in the entity-body of an HTTP POST request. The Credential Request MAY be encrypted (on top of TLS) using the `credential_request_encryption` parameter in (#credential-issuer-metadata) as specified in (#encrypted-messages).
 
-In an initial Credential Request the Client includes the following parameters: 
+In a Credential Request made to the Credential Endpoint the Client includes the following parameters: 
 
 * `credential_identifier`: REQUIRED when an Authorization Details of type `openid_credential` was returned from the Token Response. It MUST NOT be used otherwise. A string that identifies a Credential Dataset that is requested for issuance. When this parameter is used, the `credential_configuration_id` MUST NOT be present.
 * `credential_configuration_id`: REQUIRED if a `credential_identifiers` parameter was not returned from the Token Response as part of the `authorization_details` parameter. It MUST NOT be used otherwise. String that uniquely identifies one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The corresponding object in the `credential_configurations_supported` map MUST contain one of the value(s) used in the `scope` parameter in the Authorization Request. When this parameter is used, the `credential_identifier` MUST NOT be present.
@@ -827,41 +827,6 @@ The proof(s) in the `proofs` parameter MUST incorporate the Credential Issuer Id
 The `proofs` parameter MUST be present if the `proof_types_supported` parameter is present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential.
 
 The `c_nonce` value is retrieved from the Nonce Endpoint as defined in (#nonce-endpoint).
-
-In subsequent (i.e Deferred) Credential Requests the Client instead includes the following parameter:
-
-* `transaction_id`: REQUIRED. String identifying a Deferred Issuance transaction.
-
-The Credential Issuer MUST invalidate the `transaction_id` after the Credential for which it was meant has been obtained by the Wallet.
-
-The following is a non-normative example of a Deferred Credential Request:
-
-```
-POST /deferred_credential HTTP/1.1 
-Host: server.example.com
-Content-Type: application/json
-Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
-
-{
-  "transaction_id": "8xLOxBtZp8"
-}
-```
-
-All Credential Request(s) include the following parameters:
-
-* `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If this request element is not present, the corresponding credential response returned is not encrypted.
-    * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
-    * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
-    * `zip`: OPTIONAL. JWE [@!RFC7516] `zip` algorithm [@!RFC7518] for compressing Credential Responses prior to encryption. If absent then compression MUST not be used.
-
-Additional Credential Request parameters MAY be defined and used.
-The Credential Issuer MUST ignore any unrecognized parameters.
-
-The Credential Issuer indicates support for encrypted requests by including the `credential_request_encryption` parameter in the Credential Issuer Metadata. The Client MAY encrypt the request when `encryption_required` is `false` and MUST do so when `encryption_required` is `true`. 
-
-When performing Credential Request encryption, the Client MUST encode the information in the Credential Request in a JWT as specified by (#encrypted-messages), using the parameters from the `credential_request_encryption` object in the Credential Issuer Metadata.
-
-If the Credential Request is not encrypted, the media type of the request MUST be set to `application/json`.
 
 Below is a non-normative example of a Credential Request for a Credential in [@ISO.18013-5] format using the Credential configuration identifier and a key proof type `jwt` (with line breaks within values for display purposes only):
 
@@ -946,6 +911,41 @@ Authorization: BEARER czZCaGRSa3F0MzpnWDFmQmF0M2JW
 }
 ```
 
+If the Credential Issuance was deferred, the Wallet continues by making requests to the Deferred Credential Endpoint. These Credential Requests include the following parameter:
+
+* `transaction_id`: REQUIRED. String identifying a Deferred Issuance transaction.
+
+The Credential Issuer MUST invalidate the `transaction_id` after the Credential for which it was meant has been obtained by the Wallet.
+
+The following is a non-normative example of a Deferred Credential Request:
+
+```
+POST /deferred_credential HTTP/1.1 
+Host: server.example.com
+Content-Type: application/json
+Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+{
+  "transaction_id": "8xLOxBtZp8"
+}
+```
+
+All Credential Request(s) include the following parameters:
+
+* `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If this request element is not present, the corresponding credential response returned is not encrypted.
+    * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
+    * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
+    * `zip`: OPTIONAL. JWE [@!RFC7516] `zip` algorithm [@!RFC7518] for compressing Credential Responses prior to encryption. If absent then compression MUST not be used.
+
+Additional Credential Request parameters MAY be defined and used.
+The Credential Issuer MUST ignore any unrecognized parameters.
+
+The Credential Issuer indicates support for encrypted requests by including the `credential_request_encryption` parameter in the Credential Issuer Metadata. The Client MAY encrypt the request when `encryption_required` is `false` and MUST do so when `encryption_required` is `true`. 
+
+When performing Credential Request encryption, the Client MUST encode the information in the Credential Request in a JWT as specified by (#encrypted-messages), using the parameters from the `credential_request_encryption` object in the Credential Issuer Metadata.
+
+If the Credential Request is not encrypted, the media type of the request MUST be set to `application/json`.
+
 The Credential Issuer indicates support for encrypted responses by including the `credential_response_encryption` parameter in the Credential Issuer Metadata. The Client MAY request encrypted responses by providing its encryption parameters in the Credential Request when `encryption_required` is `false` and MUST do so when `encryption_required` is `true`. Credential Request encryption MUST be used if the `credential_response_encryption` parameter is included, to prevent it being substituted by an attacker.
 
 ## Credential Response {#credential-response}
@@ -963,7 +963,7 @@ The following parameters are used in the JSON-encoded Credential Response body:
 
 * `credentials`: OPTIONAL. Contains an array of one or more issued Credentials. It MUST NOT be used if the `transaction_id` parameter is present. The elements of the array MUST be objects. The number of elements in the `credentials` array matches the number of keys that the Wallet has provided via the `proofs` parameter of the Credential Request, unless the Issuer decides to issue fewer Credentials. Each key provided by the Wallet is used to bind to, at most, one Credential. This specification defines the following parameters to be used inside this object:
    * `credential`: REQUIRED. Contains one issued Credential. The encoding of the Credential depends on the Credential Format and MAY be a string or an object. Credential Formats expressed as binary data MUST be base64url-encoded and returned as a string. More details are defined in the Credential Format Profiles in (#format-profiles).
-* `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This parameter is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used if the `credentials` parameter is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet. This MAY be omitted if the request contained `transaction_id`, in which case the Client should continue to use the previously obtained `transaction_id`.
+* `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This parameter is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used if the `credentials` parameter is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet. If `transaction_id` was present in the request then it MUST be unchanged in the response.
 * `interval`: REQUIRED if `transaction_id` is present. Contains a positive number that represents the minimum amount of time in seconds that the Wallet SHOULD wait after receiving the response before sending a new request to the Deferred Credential Endpoint. It MUST NOT be used if the `credentials` parameter is present.
 * `notification_id`: OPTIONAL. String identifying one or more Credentials issued in one Credential Response. It MUST be included in the Notification Request as defined in (#notification). It MUST not be used if the `credentials` parameter is not present.
 
@@ -1060,7 +1060,7 @@ Cache-Control: no-store
 
 # Deferred Credential Endpoint {#deferred-credential-issuance}
 
-This endpoint is a specialized Credential Endpoint for handling Deferred Credential Requests. The Deferred Credential Endpoint follows all the requirements in {#credential-endpoint}. All Credential Requests MUST contain `transaction_id`. Support for this endpoint is OPTIONAL.
+The Deferred Credential Endpoint is used to handle deferred Credential Issuance. The Deferred Credential Endpoint follows the requirements in {#credential-endpoint}. Support for this endpoint is OPTIONAL.
 
 ## Encrypted Messages {#encrypted-messages}
 Encryption of Request and Response Messages is performed as follows:
