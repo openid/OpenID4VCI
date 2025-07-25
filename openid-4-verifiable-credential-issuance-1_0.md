@@ -1155,7 +1155,7 @@ If a `zip` (Compression Algorithm) value is specified, then compression is perfo
 
 When encryption of a message was required but the received message is unencrypted, it SHOULD be rejected.
 
-For security considerations see [#encryption-security-considersations]
+For security considerations see (#encryption-security-considersations)
 
 # Notification Endpoint {#notification-endpoint}
 
