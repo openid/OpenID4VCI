@@ -2027,7 +2027,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         </front>
 </reference>
 
-<reference anchor="VC_DATA" target="https://www.w3.org/TR/vc-data-model">
+<reference anchor="VC_DATA" target="https://www.w3.org/TR/2022/REC-vc-data-model-20220303">
   <front>
     <title>Verifiable Credentials Data Model 1.1</title>
     <author fullname="Manu Sporny">
