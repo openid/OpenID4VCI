@@ -1677,6 +1677,8 @@ All [metadata parameters](#credential-issuer-parameters) used by the Credential 
 
 When requesting signed metadata, the Wallet MUST establish trust in the signer of the metadata. Otherwise, the Wallet MUST reject the signed metadata. When validating the signature, the Wallet obtains the keys to validate the signature before processing the metadata, e.g., using JOSE header parameters like `x5c`, `kid` or `trust_chain` to convey the public key. The concrete mechanisms for doing this are out of scope of this specification.
 
+See (#additional-issuer-metadata-examples) for a non-normative example of signed Credential Issuer Metadata.
+
 ### Credential Issuer Metadata Parameters {#credential-issuer-parameters}
 
 This specification defines the following Credential Issuer Metadata parameters:
@@ -1745,6 +1747,8 @@ The following is a non-normative example of Credential Issuer metadata of a Cred
 <{{examples/credential_metadata_sd_jwt_vc.json}}
 
 Note: The Client MAY use other mechanisms to obtain information about the Verifiable Credentials that a Credential Issuer can issue.
+
+See (#additional-issuer-metadata-examples) for additional examples of Credential Issuer Metadata.
 
 ## OAuth 2.0 Authorization Server Metadata {#as-metadata}
 
@@ -3281,6 +3285,20 @@ The End-User installs a new Wallet and opens it. The Wallet offers the End-User 
 
 Wallet Providers may also provide a market place where Issuers can register to be found for Wallet-initiated flows.
 
+# Additional Examples {#additional-examples}
+
+## Credential Issuer Metadata {#additional-issuer-metadata-examples}
+
+This section contains additional examples for Credential issuer Metadata
+
+The following is a non-normative example of Credential Issuer metadata of a Credential in the IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format in signed form (JWT):
+
+<{{examples/credential_issuer_metadata_sd_jwt_jwt.txt}}
+
+The following is a non-normative example of Credential Issuer metadata of a Credential in the IETF SD-JWT VC [@!I-D.ietf-oauth-sd-jwt-vc] format with optional parameters present:
+
+<{{examples/credential_issuer_metadata_sd_jwt_long.json}}
+
 # Acknowledgements {#Acknowledgements}
 
 We would like to thank Richard Barnes, Paul Bastian, Vittorio Bertocci, Christian Bormann, John Bradley, Brian Campbell, Gabe Cohen, David Chadwick, Andrii Deinega, Giuseppe De Marco, Mark Dobrinic, Daniel Fett, Pedro Felix, George Fletcher, Christian Fries, Timo Glasta, Mark Haine, Fabian Hauck, Roland Hedberg, Joseph Heenan, Alen Horvat, Andrew Hughes, Jacob Ideskog, Lukasz Jaromin, Edmund Jay, Michael B. Jones, Tom Jones, Judith Kahrer, Takahiko Kawasaki, Niels Klomp, Ronald Koenig, Micha Kraus, Markus Kreusch, Philipp Lehwalder, Adam Lemmon, Dave Longley, David Luna, Daniel McGrogan, Jeremie Miller, Kenichi Nakamura, Andres Olave, Rolson Quadras, Nat Sakimura, Sudesh Shetty, Oliver Terbu, Dimitri James Tsiflitzis, Mike Varley, Arjen van Veen, Jan Vereecken, David Waite, Jacob Ward for their valuable feedback and contributions to this specification.
@@ -3302,6 +3320,8 @@ The technology described in this specification was made available from contribut
    * Application-encryption security considerations.
    * add the interactive authorization endpoint to allow for complex authentication and authorization flows where interaction occurs directly with the Wallet, including presentation during issuance
    * clarification on signed metadata that parameters are included as top-level claims in JWS payload
+   * add example for signed credential issuer metadata
+   * add another more complex example for credential issuer metadata
    * fix indentation of nested credential logo object
 
    -16
