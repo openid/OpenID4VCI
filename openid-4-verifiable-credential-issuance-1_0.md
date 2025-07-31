@@ -902,7 +902,17 @@ Cache-Control: no-store
 }
 ```
 
-Once this phase of the Authorization process is completed, the Authorization Server MUST redirect back to the Wallet as per [@RFC6749]. If the Authorization process is complete when this redirect occurs, the Authorization Server returns a response with the `code` parameter as per Section 1.3.1 of [@RFC6749].
+Once this phase of the Authorization process is completed, the Authorization Server MUST redirect back to the Wallet as per [@RFC6749]. If the Authorization process is complete when this redirect occurs, the Authorization Server returns a response with the `authorization_code` parameter as per Section 1.3.1 of [@RFC6749]. If the Authorization process is not complete when this redirect occurs, the Authorization Server returns a response with the `auth_session` parameter. In the event a Wallet receives a response from the Authorization Server which features the `auth_session` parameter, the Wallet MUST make a follow-up request as per (#follow-up-request) to continue the Authorization process. In the event that PKCE as defined in [@RFC7636] was used in the initial authorization request to the interactive authorization endpoint, the Wallet MUST include the `code_verifier` in the follow-up request that follows the completion of the `redirect_to_web` interaction. If the `code_verifier` parameter is present in a follow-up request as per (#follow-up-request), the Authorization Server MUST use the `code_verifier` parameter value to verify against the original `code_challenge` present in the initial request.  
+
+A Non-normative Example of a follow-up request featuring PKCE:
+
+```
+POST /iar HTTP/1.1
+Host: server.example.com
+Content-Type: application/x-www-form-urlencoded
+
+auth_session=wxroVrBY2MCq4dDNGXACS&code_verifier=avjebhrnqwketh
+```
 
 #### Custom Interaction Extensions {#iar-custom-extensions}
 
