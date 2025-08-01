@@ -1948,6 +1948,8 @@ methods, including but not limited to the following ones:
 * Issue a batch of Credentials with the same Credential Dataset to facilitate the use of a unique Credential per presentation or per Verifier. This approach solely aids in achieving Verifier-to-Verifier unlinkability.
 * Use cryptographic schemes that can provide non-correlation.
 
+In batch-issued Credentials, claims containing time-related information, such as issuance or expiration dates, SHOULD be either randomized within an appropriate time window (e.g., within the last 24 hours) or rounded (e.g., to the start of the day), to avoid unnecessary correlation.
+
 Credential Issuers specifically SHOULD discard values that can be used in collusion with a Verifier to track a user, such as the Issuer's signature or cryptographic key material to which an issued credential was bound to.
 
 ### Credential Offer
