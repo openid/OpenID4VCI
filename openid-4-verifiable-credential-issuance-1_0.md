@@ -700,7 +700,7 @@ Note: In case a Wallet Attestation is required by the Authorization Server, it h
 
 The initial request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in Section 2.1 of [@!RFC9126]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request), with the following addition:
 
-`interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Authorization Server supports. The order of the values is not significant. The following values are defined by this specification:
+`interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Wallet supports. The order of the values is not significant. The following values are defined by this specification:
 
 * `openid4vp_presentation`: Indicates that the Authorization Server supports an OpenID4VP Presentation interaction, as defined in (#iar-require-presentation).
 * `redirect_to_web`: Indicates that the Authorization Server supports a redirect to a web-based interaction, as defined in (#iar-redirect-to-web).
