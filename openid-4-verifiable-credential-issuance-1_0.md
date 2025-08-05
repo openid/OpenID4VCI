@@ -833,9 +833,8 @@ The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is 
 
 When processing the request the following logic applies:
 
-  1. The URL of the Interactive Authorization Request endpoint becomes the Origin for the request; i.e., the Wallet MUST ensure that `expected_origins` contains the Interactive Authorization Request endpoint URL.
-  2. The audience in the response (for example, the `aud` value in a Key Binding JWT) MUST be the Interactive Authorization Request, prefixed with `iar:`, for example `iar:https://example.com/iar`. A response containing a different audience value MUST NOT be accepted.
-  3. If a `SessionTranscript` is needed, it is generated according Appendix B.2.6.2 of [@!OpenID4VP]. As above, the value for origin is the Interactive Authorization Request endpoint URL.
+  1. The URL of the Interactive Authorization Request (IAR) endpoint becomes the Origin for the request; i.e., the Wallet MUST ensure that `expected_origins` contains the IAR endpoint URL.
+  2. If the response includes Verifiable Presentations with Holder Binding, each such Verifiable Presentation MUST be bound to the IAR endpoint, as specified by the corresponding Credential Format. For Credential Format-specific binding mechanisms, see "Interactive Authorization Request Endpoint Binding" subsections in (#format-profiles). A response MUST be rejected if any such Verifiable Presentations is not bound to the IAR endpoint accordingly.
 
 The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_request` request parameter. The value of the `openid4vp_request` request parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iar-post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
 
@@ -2431,6 +2430,10 @@ The following is the dereferenced document for the Issuer HTTP URL identifier th
 
 <{{examples/issuer_jwks.json}}
 
+### Interactive Authorization Request Endpoint Binding {#iar-endpoint-binding-jwt-vc-json}
+
+To bind the Interactive Authorization Request endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim value MUST be set to the IAR endpoint URL, prefixed with `iar:` (e.g., `iar:https://example.com/iar`).
+
 ### VC Secured using Data Integrity, using JSON-LD, with a Proof Suite Requiring Linked Data Canonicalization
 
 #### Format Identifier
@@ -2471,6 +2474,10 @@ The following is a non-normative example of a Credential Response with Credentia
 
 <{{examples/credential_response_ldp_vc.txt}}
 
+### Interactive Authorization Request Endpoint Binding {#iar-endpoint-binding-ldp-vc}
+
+To bind the Interactive Authorization Request endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `domain` claim value MUST be set to the IAR endpoint URL, prefixed with `iar:` (e.g., `iar:https://example.com/iar`).
+
 ### VC signed as a JWT, Using JSON-LD
 
 #### Format Identifier
@@ -2492,6 +2499,10 @@ The definitions in (#authorization-ldp-vc) apply for Credentials of this type as
 #### Credential Response
 
 The definitions in (#credential-response-jwt-vc-json) apply for Credentials of this type as well.
+
+### Interactive Authorization Request Endpoint Binding
+
+The definitions in (#credential-iar-endpoint-binding-jwt-vc-json) apply for Credentials of this type as well.
 
 ## Mobile Documents or mdocs (ISO/IEC 18013) {#mdocs}
 
@@ -2537,6 +2548,128 @@ The following is a non-normative example of a Credential Response containing a C
 
 <{{examples/credential_response_mso_mdoc.txt}}
 
+### Interactive Authorization Request Endpoint Binding {#iar-endpoint-binding-mso-mdoc}
+
+To bind the Interactive Authorization Request endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `SessionTranscript` CBOR structured as defined in Section 9.1.5.1 in [@ISO.18013-5] MUST be used with the following changes:
+
+* `DeviceEngagementBytes` MUST be `null`.
+* `EReaderKeyBytes` MUST be `null`.
+* `Handover` MUST be the `OpenID4VCIIARHandover` CBOR structure as defined below.
+
+Note: The following section contains a definition in Concise Data Definition Language (CDDL), a language used to define data structures - see [@RFC8610] for more details. `bstr` refers to Byte String, defined as major type 2 in CBOR and `tstr` refers to Text String, defined as major type 3 in CBOR (encoded in utf-8) as defined in section 3.1 of [@RFC8949].
+
+```cddl
+OpenID4VCIIARHandover = [
+  "OpenID4VCIIARHandover", ; A fixed identifier for this handover type
+  OpenID4VCIIARHandoverInfoHash ; A cryptographic hash of OpenID4VCIIARHandoverInfo
+]
+
+; Contains the sha-256 hash of OpenID4VCIIARHandoverInfoBytes
+OpenID4VCIIARHandoverInfoHash = bstr
+
+; Contains the bytes of OpenID4VCIIARHandoverInfo encoded as CBOR
+OpenID4VCIIARHandoverBytes = bstr .cbor OpenID4VCIIARHandoverInfo
+
+OpenID4VCIIARHandoverInfo = [
+  iarEndpointUrl,
+  nonce,
+  jwkThumbprint
+] ; Array containing handover parameters
+
+origin = tstr
+
+nonce = tstr
+
+jwkThumbprint = bstr
+```
+
+The `OpenID4VCIIARHandover` structure has the following elements:
+
+* The first element MUST be the string `OpenID4VCIIARHandover`. This serves as a unique identifier for the handover structure to prevent misinterpretation or confusion.
+* The second element MUST be a Byte String which contains the sha-256 hash of the bytes of `OpenID4VCIIARHandoverInfo` when encoded as CBOR.
+* The `OpenID4VCIIARHandoverInfo` has the following elements:
+  * The first element MUST be the string representing the IAR endpoint URL of the request as described in (#interactive-authorization-request). It MUST NOT be prefixed with `iar:`.
+  * The second element MUST be the value of the `nonce` request parameter.
+  * For the Response Mode `iar-post.jwt`, the third element MUST be the JWK SHA-256 Thumbprint as defined in [@!RFC7638], encoded as a Byte String, of the Verifier's public key used to encrypt the response. If the Response Mode is `iar-post`, the third element MUST be `null`. For unsigned requests, including the JWK Thumbprint in the `SessionTranscript` allows the Verifier to detect whether the response was re-encrypted by a third party, potentially leading to the leakage of sensitive information. While this does not prevent such an attack, it makes it detectable and helps preserve the confidentiality of the response.  
+
+The following is a non-normative example of the input JWK for calculating the JWK Thumbprint in the context of `OpenID4VCIIARHandoverInfo`:
+```json
+{
+  "kty": "EC",
+  "crv": "P-256",
+  "x": "DxiH5Q4Yx3UrukE2lWCErq8N8bqC9CHLLrAwLz5BmE0",
+  "y": "XtLM4-3h5o3HUH0MHVJV0kyq0iBlrBwlh8qEDMZ4-Pc",
+  "use": "enc",
+  "alg": "ECDH-ES",
+  "kid": "1"
+}
+```
+
+The following is a non-normative example of the `OpenID4VCIIARHandoverInfo` structure:
+```
+Hex:
+
+837368747470733a2f2f6578616d706c652e636f6d782b6578633767426b786a7831
+726463397564527276654b7653734a4971383061766c58654c486847777174415820
+4283ec927ae0f208daaa2d026a814f2b22dca52cf85ffa8f3f8626c6bd669047
+
+CBOR diagnostic:
+
+83                                 # array(3)
+  73                               #   string(19)
+    68747470733a2f2f6578616d706c65 #     "https://example"
+    2e636f6d                       #     ".com"
+  78 2b                            #   string(43)
+    6578633767426b786a783172646339 #     "exc7gBkxjx1rdc9"
+    7564527276654b7653734a49713830 #     "udRrveKvSsJIq80"
+    61766c58654c48684777717441     #     "avlXeLHhGwqtA"
+  58 20                            #   bytes(32)
+    4283ec927ae0f208daaa2d026a814f #     "B\x83ì\x92zàò\x08Úª-\x02j\x81O"
+    2b22dca52cf85ffa8f3f8626c6bd66 #     "+"Ü¥,ø_ú\x8f?\x86&Æ½f"
+    9047                           #     "\x90G"
+```
+
+The following is a non-normative example of the `OpenID4VCIIARHandover` structure:
+```
+Hex:
+
+82764f70656e4944345650444341504948616e646f7665725820fbece366f4212f97
+62c74cfdbf83b8c69e371d5d68cea09cb4c48ca6daab761a
+
+CBOR diagnostic:
+
+82                                 # array(2)
+  76                               #   string(22)
+    4f70656e4944345650444341504948 #     "OpenID4VPDCAPIH"
+    616e646f766572                 #     "andover"
+  58 20                            #   bytes(32)
+    fbece366f4212f9762c74cfdbf83b8 #     "ûìãfô!/\x97bÇLý¿\x83¸"
+    c69e371d5d68cea09cb4c48ca6daab #     "Æ\x9e7\x1d]hÎ\xa0\x9c´Ä\x8c¦Ú«"
+    761a                           #     "v\x1a"
+```
+
+The following is a non-normative example of the `SessionTranscript` structure:
+```
+Hex:
+
+83f6f682764f70656e4944345650444341504948616e646f7665725820fbece366f4
+212f9762c74cfdbf83b8c69e371d5d68cea09cb4c48ca6daab761a
+
+CBOR diagnostic:
+
+83                                 # array(3)
+  f6                               #   null
+  f6                               #   null
+  82                               #   array(2)
+    76                             #     string(22)
+      4f70656e49443456504443415049 #       "OpenID4VPDCAPI"
+      48616e646f766572             #       "Handover"
+    58 20                          #     bytes(32)
+      fbece366f4212f9762c74cfdbf83 #       "ûìãfô!/\x97bÇLý¿\x83"
+      b8c69e371d5d68cea09cb4c48ca6 #       "¸Æ\x9e7\x1d]hÎ\xa0\x9c´Ä\x8c¦"
+      daab761a                     #       "Ú«v\x1a"
+```
+
 ## IETF SD-JWT VC
 
 This section defines a Credential Format Profile for Credentials complying with [@!I-D.ietf-oauth-sd-jwt-vc].
@@ -2564,13 +2697,17 @@ The following is a non-normative example of an authorization details object with
 
 <{{examples/authorization_details_sd_jwt_vc.json}}
 
-### Credential Response {#credential-response-jwt-vc-json}
+### Credential Response {#credential-response-sd-jwt-vc}
 
 The value of the `credential` claim in the Credential Response MUST be a string that is an SD-JWT VC. Credentials of this format are already suitable for transfer and, therefore, they need not and MUST NOT be re-encoded.
 
 The following is a non-normative example of a Credential Response containing a Credential of format `dc+sd-jwt` (with line breaks within values for display purposes only).
 
 <{{examples/credential_response_sd_jwt_vc.txt}}
+
+### Interactive Authorization Request Endpoint Binding {#iar-endpoint-binding-sd-jwt-vc}
+
+To bind the Interactive Authorization Request endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim in the Key Binding JWT MUST be set to the Interactive Authorization Request endpoint URL, prefixed with `iar:` (e.g., `iar:https://example.com/iar`).
 
 # Claims Description 
 
