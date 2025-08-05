@@ -723,6 +723,32 @@ response_type=code
 &interaction_types_supported=openid4vp_presentation,redirect_to_web
 ```
 
+The following non-normative example shows an initial request to the Interactive Authorization Endpoint with a signed request object:
+
+```http
+POST /iar HTTP/1.1
+Host: server.example.com
+Content-Type: application/x-www-form-urlencoded
+
+request=eyJrd...
+```
+
+The following non-normative example shows a payload of a signed request object:
+
+```json
+{
+  "iss": "CLIENT1234",
+  "aud": "https://server.example.com",
+  "response_type": "code",
+  "client_id": "CLIENT1234",
+  "code_challenge": "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM",
+  "code_challenge_method": "S256",
+  "redirect_uri": "https%3A%2F%2Fclient.example.org%2Fcb",
+  "authorization_details: {...},
+  "interaction_types_supported": "openid4vp_presentation,redirect_to_web"
+}
+```
+
 ### Follow-up Request {#follow-up-request}
 
 Follow-up requests to the Interactive Authorization Endpoint only MUST include the `auth_session` value received most recently from the Authorization Server (see (#iar-interaction-required-response)).
