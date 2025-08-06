@@ -2502,7 +2502,7 @@ The definitions in (#credential-response-jwt-vc-json) apply for Credentials of t
 
 ### Interactive Authorization Endpoint Binding
 
-The definitions in (#iae-endpoint-binding-jwt-vc-json) apply for Credentials of this type as well.
+The definitions in (#iae-binding-jwt-vc-json) apply for Credentials of this type as well.
 
 ## Mobile Documents or mdocs (ISO/IEC 18013) {#mdocs}
 
