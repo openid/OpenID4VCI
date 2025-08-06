@@ -2554,45 +2554,45 @@ To bind the Interactive Authorization Endpoint to a Verifiable Presentation usin
 
 * `DeviceEngagementBytes` MUST be `null`.
 * `EReaderKeyBytes` MUST be `null`.
-* `Handover` MUST be the `OpenID4VCIIARHandover` CBOR structure as defined below.
+* `Handover` MUST be the `OpenID4VCIIAEHandover` CBOR structure as defined below.
 
 Note: The following section contains a definition in Concise Data Definition Language (CDDL), a language used to define data structures - see [@RFC8610] for more details. `bstr` refers to Byte String, defined as major type 2 in CBOR and `tstr` refers to Text String, defined as major type 3 in CBOR (encoded in utf-8) as defined in section 3.1 of [@RFC8949].
 
 ```cddl
-OpenID4VCIIARHandover = [
-  "OpenID4VCIIARHandover", ; A fixed identifier for this handover type
-  OpenID4VCIIARHandoverInfoHash ; A cryptographic hash of OpenID4VCIIARHandoverInfo
+OpenID4VCIIAEHandover = [
+  "OpenID4VCIIAEHandover", ; A fixed identifier for this handover type
+  OpenID4VCIIAEHandoverInfoHash ; A cryptographic hash of OpenID4VCIIAEHandoverInfo
 ]
 
-; Contains the sha-256 hash of OpenID4VCIIARHandoverInfoBytes
-OpenID4VCIIARHandoverInfoHash = bstr
+; Contains the sha-256 hash of OpenID4VCIIAEHandoverInfoBytes
+OpenID4VCIIAEHandoverInfoHash = bstr
 
-; Contains the bytes of OpenID4VCIIARHandoverInfo encoded as CBOR
-OpenID4VCIIARHandoverBytes = bstr .cbor OpenID4VCIIARHandoverInfo
+; Contains the bytes of OpenID4VCIIAEHandoverInfo encoded as CBOR
+OpenID4VCIIAEHandoverBytes = bstr .cbor OpenID4VCIIAEHandoverInfo
 
-OpenID4VCIIARHandoverInfo = [
-  iarEndpointUrl,
+OpenID4VCIIAEHandoverInfo = [
+  iaeUrl,
   nonce,
   jwkThumbprint
 ] ; Array containing handover parameters
 
-origin = tstr
+iaeUrl = tstr
 
 nonce = tstr
 
 jwkThumbprint = bstr
 ```
 
-The `OpenID4VCIIARHandover` structure has the following elements:
+The `OpenID4VCIIAEHandover` structure has the following elements:
 
-* The first element MUST be the string `OpenID4VCIIARHandover`. This serves as a unique identifier for the handover structure to prevent misinterpretation or confusion.
-* The second element MUST be a Byte String which contains the sha-256 hash of the bytes of `OpenID4VCIIARHandoverInfo` when encoded as CBOR.
-* The `OpenID4VCIIARHandoverInfo` has the following elements:
-  * The first element MUST be the string representing the IAR endpoint URL of the request as described in (#interactive-authorization-request). It MUST NOT be prefixed with `iar:`.
+* The first element MUST be the string `OpenID4VCIIAEHandover`. This serves as a unique identifier for the handover structure to prevent misinterpretation or confusion.
+* The second element MUST be a Byte String which contains the sha-256 hash of the bytes of `OpenID4VCIIAEHandoverInfo` when encoded as CBOR.
+* The `OpenID4VCIIAEHandoverInfo` has the following elements:
+  * The first element MUST be the string representing the Interactive Authorization Endpoint URL of the request as described in (#interactive-authorization-request). It MUST NOT be prefixed with `iar:`.
   * The second element MUST be the value of the `nonce` request parameter.
   * For the Response Mode `iar-post.jwt`, the third element MUST be the JWK SHA-256 Thumbprint as defined in [@!RFC7638], encoded as a Byte String, of the Verifier's public key used to encrypt the response. If the Response Mode is `iar-post`, the third element MUST be `null`. For unsigned requests, including the JWK Thumbprint in the `SessionTranscript` allows the Verifier to detect whether the response was re-encrypted by a third party, potentially leading to the leakage of sensitive information. While this does not prevent such an attack, it makes it detectable and helps preserve the confidentiality of the response.  
 
-The following is a non-normative example of the input JWK for calculating the JWK Thumbprint in the context of `OpenID4VCIIARHandoverInfo`:
+The following is a non-normative example of the input JWK for calculating the JWK Thumbprint in the context of `OpenID4VCIIAEHandoverInfo`:
 ```json
 {
   "kty": "EC",
@@ -2605,7 +2605,7 @@ The following is a non-normative example of the input JWK for calculating the JW
 }
 ```
 
-The following is a non-normative example of the `OpenID4VCIIARHandoverInfo` structure:
+The following is a non-normative example of the `OpenID4VCIIAEHandoverInfo` structure:
 ```
 Hex:
 
@@ -2629,18 +2629,18 @@ CBOR diagnostic:
     22dca52cf85ffa8f3f8626c6bd669047 #     ""Ü¥,ø_ú\x8f?\x86&Æ½f\x90G"
 ```
 
-The following is a non-normative example of the `OpenID4VCIIARHandover` structure:
+The following is a non-normative example of the `OpenID4VCIIAEHandover` structure:
 ```
 Hex:
 
-82754f70656e49443456434949415248616e646f7665725820cf3cbd10e9d68754ef
+82754f70656e49443456434949414548616e646f7665725820cf3cbd10e9d68754ef
 01c0fa0fab3188a757bdab209a2c4b6235f1597b9d2e16
 
 CBOR diagnostic:
 
 82                                   # array(2)
   75                                 #   string(21)
-    4f70656e49443456434949415248616e #     "OpenID4VCIIARHan"
+    4f70656e49443456434949414548616e #     "OpenID4VCIIAEHan"
     646f766572                       #     "dover"
   58 20                              #   bytes(32)
     cf3cbd10e9d68754ef01c0fa0fab3188 #     "Ï<½\x10éÖ\x87Tï\x01Àú\x0f«1\x88"
@@ -2651,7 +2651,7 @@ The following is a non-normative example of the `SessionTranscript` structure:
 ```
 Hex:
 
-83f6f682754f70656e49443456434949415248616e646f7665725820cf3cbd10e9d6
+83f6f682754f70656e49443456434949414548616e646f7665725820cf3cbd10e9d6
 8754ef01c0fa0fab3188a757bdab209a2c4b6235f1597b9d2e16
 
 CBOR diagnostic:
@@ -2661,7 +2661,7 @@ CBOR diagnostic:
   f6                                 #   null
   82                                 #   array(2)
     75                               #     string(21)
-      4f70656e4944345643494941524861 #       "OpenID4VCIIARHa"
+      4f70656e4944345643494941454861 #       "OpenID4VCIIAEHa"
       6e646f766572                   #       "ndover"
     58 20                            #     bytes(32)
       cf3cbd10e9d68754ef01c0fa0fab31 #       "Ï<½\x10éÖ\x87Tï\x01Àú\x0f«1"
