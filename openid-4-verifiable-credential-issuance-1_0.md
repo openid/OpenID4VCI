@@ -2611,8 +2611,8 @@ Hex:
 
 837768747470733a2f2f6578616d706c652e636f6d2f696172782b6578633767426b
 786a7831726463397564527276654b7653734a4971383061766c58654c4868477771
-7441d84058204283ec927ae0f208daaa2d026a814f2b22dca52cf85ffa8f3f8626c6
-bd669047
+744158204283ec927ae0f208daaa2d026a814f2b22dca52cf85ffa8f3f8626c6bd66
+9047
 
 CBOR diagnostic:
 
@@ -2624,37 +2624,35 @@ CBOR diagnostic:
     6578633767426b786a78317264633975 #     "exc7gBkxjx1rdc9u"
     64527276654b7653734a497138306176 #     "dRrveKvSsJIq80av"
     6c58654c48684777717441           #     "lXeLHhGwqtA"
-  d8 40                              #   tag(64)
-    58 20                            #     bytes(32)
-      4283ec927ae0f208daaa2d026a814f #       "B\x83ì\x92zàò\x08Úª-\x02j\x81O"
-      2b22dca52cf85ffa8f3f8626c6bd66 #       "+"Ü¥,ø_ú\x8f?\x86&Æ½f"
-      9047                           #       "\x90G"
+  58 20                              #   bytes(32)
+    4283ec927ae0f208daaa2d026a814f2b #     "B\x83ì\x92zàò\x08Úª-\x02j\x81O+"
+    22dca52cf85ffa8f3f8626c6bd669047 #     ""Ü¥,ø_ú\x8f?\x86&Æ½f\x90G"
 ```
 
 The following is a non-normative example of the `OpenID4VCIIARHandover` structure:
 ```
 Hex:
 
-82764f70656e4944345650444341504948616e646f766572582094044d18b3a87987
-3f43ab3fea4e5f2180800828db193560ed4c561df9b5005e
+82754f70656e49443456434949415248616e646f7665725820cf3cbd10e9d68754ef
+01c0fa0fab3188a757bdab209a2c4b6235f1597b9d2e16
 
 CBOR diagnostic:
 
 82                                   # array(2)
-  76                                 #   string(22)
-    4f70656e494434565044434150494861 #     "OpenID4VPDCAPIHa"
-    6e646f766572                     #     "ndover"
+  75                                 #   string(21)
+    4f70656e49443456434949415248616e #     "OpenID4VCIIARHan"
+    646f766572                       #     "dover"
   58 20                              #   bytes(32)
-    94044d18b3a879873f43ab3fea4e5f21 #     "\x94\x04M\x18³¨y\x87?C«?êN_!"
-    80800828db193560ed4c561df9b5005e #     "\x80\x80\x08(Û\x195`íLV\x1dùµ\x00^"
+    cf3cbd10e9d68754ef01c0fa0fab3188 #     "Ï<½\x10éÖ\x87Tï\x01Àú\x0f«1\x88"
+    a757bdab209a2c4b6235f1597b9d2e16 #     "§W½« \x9a,Kb5ñY{\x9d.\x16"
 ```
 
 The following is a non-normative example of the `SessionTranscript` structure:
 ```
 Hex:
 
-83f6f682764f70656e4944345650444341504948616e646f766572582094044d18b3
-a879873f43ab3fea4e5f2180800828db193560ed4c561df9b5005e
+83f6f682754f70656e49443456434949415248616e646f7665725820cf3cbd10e9d6
+8754ef01c0fa0fab3188a757bdab209a2c4b6235f1597b9d2e16
 
 CBOR diagnostic:
 
@@ -2662,13 +2660,13 @@ CBOR diagnostic:
   f6                                 #   null
   f6                                 #   null
   82                                 #   array(2)
-    76                               #     string(22)
-      4f70656e4944345650444341504948 #       "OpenID4VPDCAPIH"
-      616e646f766572                 #       "andover"
+    75                               #     string(21)
+      4f70656e4944345643494941524861 #       "OpenID4VCIIARHa"
+      6e646f766572                   #       "ndover"
     58 20                            #     bytes(32)
-      94044d18b3a879873f43ab3fea4e5f #       "\x94\x04M\x18³¨y\x87?C«?êN_"
-      2180800828db193560ed4c561df9b5 #       "!\x80\x80\x08(Û\x195`íLV\x1dùµ"
-      005e                           #       "\x00^"
+      cf3cbd10e9d68754ef01c0fa0fab31 #       "Ï<½\x10éÖ\x87Tï\x01Àú\x0f«1"
+      88a757bdab209a2c4b6235f1597b9d #       "\x88§W½« \x9a,Kb5ñY{\x9d"
+      2e16                           #       ".\x16"
 ```
 
 ## IETF SD-JWT VC
