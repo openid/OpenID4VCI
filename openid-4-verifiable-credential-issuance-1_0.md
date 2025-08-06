@@ -833,8 +833,8 @@ The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is 
 
 When processing the request the following logic applies:
 
-  1. The URL of the Interactive Authorization Request (IAR) endpoint becomes the Origin for the request; i.e., the Wallet MUST ensure that `expected_origins` contains the IAR endpoint URL.
-  2. If the response includes Verifiable Presentations with Holder Binding, each such Verifiable Presentation MUST be bound to the IAR endpoint, as specified by the corresponding Credential Format. For Credential Format-specific binding mechanisms, see "Interactive Authorization Request Endpoint Binding" subsections in (#format-profiles). A response MUST be rejected if any such Verifiable Presentations is not bound to the IAR endpoint accordingly.
+  1. The URL of the Interactive Authorization Endpoint becomes the Origin for the request; i.e., the Wallet MUST ensure that `expected_origins` contains the Interactive Authorization Endpoint URL.
+  2. If the response includes Verifiable Presentations with Holder Binding, each such Verifiable Presentation MUST be bound to the Interactive Authorization Endpoint, as specified by the corresponding Credential Format. For Credential Format-specific binding mechanisms, see "Interactive Authorization Endpoint Binding" subsections in (#format-profiles). In this case, the Credential Format refers to the Credential Format of the Verifiable Presentation, which may differ from the Credential Format of the Credentials being issued. A response MUST be rejected if any such Verifiable Presentations is not bound to the Interactive Authorization Endpoint accordingly.
 
 The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_request` request parameter. The value of the `openid4vp_request` request parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iar-post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
 
@@ -2430,7 +2430,7 @@ The following is the dereferenced document for the Issuer HTTP URL identifier th
 
 <{{examples/issuer_jwks.json}}
 
-### Interactive Authorization Request Endpoint Binding {#iar-endpoint-binding-jwt-vc-json}
+### Interactive Authorization Endpoint Binding {#iae-binding-jwt-vc-json}
 
 To bind the Interactive Authorization Request endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim value MUST be set to the IAR endpoint URL, prefixed with `iar:` (e.g., `iar:https://example.com/iar`).
 
@@ -2474,9 +2474,9 @@ The following is a non-normative example of a Credential Response with Credentia
 
 <{{examples/credential_response_ldp_vc.txt}}
 
-### Interactive Authorization Request Endpoint Binding {#iar-endpoint-binding-ldp-vc}
+### Interactive Authorization Endpoint Binding {#iae-binding-ldp-vc}
 
-To bind the Interactive Authorization Request endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `domain` claim value MUST be set to the IAR endpoint URL, prefixed with `iar:` (e.g., `iar:https://example.com/iar`).
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `domain` claim value MUST be set to the IAR endpoint URL, prefixed with `iar:` (e.g., `iar:https://example.com/iar`).
 
 ### VC signed as a JWT, Using JSON-LD
 
@@ -2500,9 +2500,9 @@ The definitions in (#authorization-ldp-vc) apply for Credentials of this type as
 
 The definitions in (#credential-response-jwt-vc-json) apply for Credentials of this type as well.
 
-### Interactive Authorization Request Endpoint Binding
+### Interactive Authorization Endpoint Binding
 
-The definitions in (#credential-iar-endpoint-binding-jwt-vc-json) apply for Credentials of this type as well.
+The definitions in (#iae-endpoint-binding-jwt-vc-json) apply for Credentials of this type as well.
 
 ## Mobile Documents or mdocs (ISO/IEC 18013) {#mdocs}
 
@@ -2548,9 +2548,9 @@ The following is a non-normative example of a Credential Response containing a C
 
 <{{examples/credential_response_mso_mdoc.txt}}
 
-### Interactive Authorization Request Endpoint Binding {#iar-endpoint-binding-mso-mdoc}
+### Interactive Authorization Endpoint Binding {#iae-binding-mso-mdoc}
 
-To bind the Interactive Authorization Request endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `SessionTranscript` CBOR structured as defined in Section 9.1.5.1 in [@ISO.18013-5] MUST be used with the following changes:
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `SessionTranscript` CBOR structured as defined in Section 9.1.5.1 in [@ISO.18013-5] MUST be used with the following changes:
 
 * `DeviceEngagementBytes` MUST be `null`.
 * `EReaderKeyBytes` MUST be `null`.
@@ -2705,9 +2705,9 @@ The following is a non-normative example of a Credential Response containing a C
 
 <{{examples/credential_response_sd_jwt_vc.txt}}
 
-### Interactive Authorization Request Endpoint Binding {#iar-endpoint-binding-sd-jwt-vc}
+### Interactive Authorization Endpoint Binding {#iae-binding-sd-jwt-vc}
 
-To bind the Interactive Authorization Request endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim in the Key Binding JWT MUST be set to the Interactive Authorization Request endpoint URL, prefixed with `iar:` (e.g., `iar:https://example.com/iar`).
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim in the Key Binding JWT MUST be set to the Interactive Authorization Request endpoint URL, prefixed with `iar:` (e.g., `iar:https://example.com/iar`).
 
 # Claims Description 
 
