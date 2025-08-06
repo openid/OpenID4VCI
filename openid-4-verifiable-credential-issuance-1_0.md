@@ -810,7 +810,7 @@ For Cryptographic Key Binding, the Client has different options to provide Crypt
 
 ## Credential Request {#credential-request}
 
-A Client makes a Credential Request to the Credential Endpoint by sending parameters in the entity-body of an HTTP POST request. The Credential Request MAY be encrypted (on top of TLS) using the `credential_request_encryption` parameter in (#credential-issuer-metadata) as specified in (#encrypted-messages).
+A Client makes a Credential Request to the Credential Endpoint by sending parameters in the entity-body of an HTTP POST request. The Credential Request MAY be encrypted (on top of TLS) using the encryption settings as defined in the `credential_request_encryption` metadata parameter in (#credential-issuer-metadata) as specified in (#encrypted-messages).
 
 In a Credential Request made to the Credential Endpoint the Client includes the following parameters: 
 
@@ -930,7 +930,7 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 }
 ```
 
-All Credential Request(s) include the following parameters:
+All Credential Request(s) MAY include the following parameters:
 
 * `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If this request element is not present, the corresponding credential response returned is not encrypted.
     * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
