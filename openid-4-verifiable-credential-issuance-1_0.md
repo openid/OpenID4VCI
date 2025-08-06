@@ -2430,9 +2430,9 @@ The following is the dereferenced document for the Issuer HTTP URL identifier th
 
 <{{examples/issuer_jwks.json}}
 
-### Interactive Authorization Endpoint Binding {#iae-binding-jwt-vc-json}
+#### Interactive Authorization Endpoint Binding {#iae-binding-jwt-vc-json}
 
-To bind the Interactive Authorization Request endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim value MUST be set to the IAR endpoint URL, prefixed with `iar:` (e.g., `iar:https://example.com/iar`).
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim value MUST be set to the IAR endpoint URL, prefixed with `iar:` (e.g., `iar:https://example.com/iar`).
 
 ### VC Secured using Data Integrity, using JSON-LD, with a Proof Suite Requiring Linked Data Canonicalization
 
@@ -2474,7 +2474,7 @@ The following is a non-normative example of a Credential Response with Credentia
 
 <{{examples/credential_response_ldp_vc.txt}}
 
-### Interactive Authorization Endpoint Binding {#iae-binding-ldp-vc}
+#### Interactive Authorization Endpoint Binding {#iae-binding-ldp-vc}
 
 To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `domain` claim value MUST be set to the IAR endpoint URL, prefixed with `iar:` (e.g., `iar:https://example.com/iar`).
 
@@ -2500,7 +2500,7 @@ The definitions in (#authorization-ldp-vc) apply for Credentials of this type as
 
 The definitions in (#credential-response-jwt-vc-json) apply for Credentials of this type as well.
 
-### Interactive Authorization Endpoint Binding
+#### Interactive Authorization Endpoint Binding
 
 The definitions in (#iae-binding-jwt-vc-json) apply for Credentials of this type as well.
 
