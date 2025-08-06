@@ -3334,6 +3334,7 @@ The technology described in this specification was made available from contribut
    * add example for signed credential issuer metadata
    * add another more complex example for credential issuer metadata
    * fix indentation of nested credential logo object
+   * add security considerations on split-architecture wallets.
 
    -16
 
