@@ -2609,65 +2609,66 @@ The following is a non-normative example of the `OpenID4VCIIARHandoverInfo` stru
 ```
 Hex:
 
-837368747470733a2f2f6578616d706c652e636f6d782b6578633767426b786a7831
-726463397564527276654b7653734a4971383061766c58654c486847777174415820
-4283ec927ae0f208daaa2d026a814f2b22dca52cf85ffa8f3f8626c6bd669047
+837768747470733a2f2f6578616d706c652e636f6d2f696172782b6578633767426b
+786a7831726463397564527276654b7653734a4971383061766c58654c4868477771
+7441d84058204283ec927ae0f208daaa2d026a814f2b22dca52cf85ffa8f3f8626c6
+bd669047
 
 CBOR diagnostic:
 
-83                                 # array(3)
-  73                               #   string(19)
-    68747470733a2f2f6578616d706c65 #     "https://example"
-    2e636f6d                       #     ".com"
-  78 2b                            #   string(43)
-    6578633767426b786a783172646339 #     "exc7gBkxjx1rdc9"
-    7564527276654b7653734a49713830 #     "udRrveKvSsJIq80"
-    61766c58654c48684777717441     #     "avlXeLHhGwqtA"
-  58 20                            #   bytes(32)
-    4283ec927ae0f208daaa2d026a814f #     "B\x83ì\x92zàò\x08Úª-\x02j\x81O"
-    2b22dca52cf85ffa8f3f8626c6bd66 #     "+"Ü¥,ø_ú\x8f?\x86&Æ½f"
-    9047                           #     "\x90G"
+83                                   # array(3)
+  77                                 #   string(23)
+    68747470733a2f2f6578616d706c652e #     "https://example."
+    636f6d2f696172                   #     "com/iar"
+  78 2b                              #   string(43)
+    6578633767426b786a78317264633975 #     "exc7gBkxjx1rdc9u"
+    64527276654b7653734a497138306176 #     "dRrveKvSsJIq80av"
+    6c58654c48684777717441           #     "lXeLHhGwqtA"
+  d8 40                              #   tag(64)
+    58 20                            #     bytes(32)
+      4283ec927ae0f208daaa2d026a814f #       "B\x83ì\x92zàò\x08Úª-\x02j\x81O"
+      2b22dca52cf85ffa8f3f8626c6bd66 #       "+"Ü¥,ø_ú\x8f?\x86&Æ½f"
+      9047                           #       "\x90G"
 ```
 
 The following is a non-normative example of the `OpenID4VCIIARHandover` structure:
 ```
 Hex:
 
-82764f70656e4944345650444341504948616e646f7665725820fbece366f4212f97
-62c74cfdbf83b8c69e371d5d68cea09cb4c48ca6daab761a
+82764f70656e4944345650444341504948616e646f766572582094044d18b3a87987
+3f43ab3fea4e5f2180800828db193560ed4c561df9b5005e
 
 CBOR diagnostic:
 
-82                                 # array(2)
-  76                               #   string(22)
-    4f70656e4944345650444341504948 #     "OpenID4VPDCAPIH"
-    616e646f766572                 #     "andover"
-  58 20                            #   bytes(32)
-    fbece366f4212f9762c74cfdbf83b8 #     "ûìãfô!/\x97bÇLý¿\x83¸"
-    c69e371d5d68cea09cb4c48ca6daab #     "Æ\x9e7\x1d]hÎ\xa0\x9c´Ä\x8c¦Ú«"
-    761a                           #     "v\x1a"
+82                                   # array(2)
+  76                                 #   string(22)
+    4f70656e494434565044434150494861 #     "OpenID4VPDCAPIHa"
+    6e646f766572                     #     "ndover"
+  58 20                              #   bytes(32)
+    94044d18b3a879873f43ab3fea4e5f21 #     "\x94\x04M\x18³¨y\x87?C«?êN_!"
+    80800828db193560ed4c561df9b5005e #     "\x80\x80\x08(Û\x195`íLV\x1dùµ\x00^"
 ```
 
 The following is a non-normative example of the `SessionTranscript` structure:
 ```
 Hex:
 
-83f6f682764f70656e4944345650444341504948616e646f7665725820fbece366f4
-212f9762c74cfdbf83b8c69e371d5d68cea09cb4c48ca6daab761a
+83f6f682764f70656e4944345650444341504948616e646f766572582094044d18b3
+a879873f43ab3fea4e5f2180800828db193560ed4c561df9b5005e
 
 CBOR diagnostic:
 
-83                                 # array(3)
-  f6                               #   null
-  f6                               #   null
-  82                               #   array(2)
-    76                             #     string(22)
-      4f70656e49443456504443415049 #       "OpenID4VPDCAPI"
-      48616e646f766572             #       "Handover"
-    58 20                          #     bytes(32)
-      fbece366f4212f9762c74cfdbf83 #       "ûìãfô!/\x97bÇLý¿\x83"
-      b8c69e371d5d68cea09cb4c48ca6 #       "¸Æ\x9e7\x1d]hÎ\xa0\x9c´Ä\x8c¦"
-      daab761a                     #       "Ú«v\x1a"
+83                                   # array(3)
+  f6                                 #   null
+  f6                                 #   null
+  82                                 #   array(2)
+    76                               #     string(22)
+      4f70656e4944345650444341504948 #       "OpenID4VPDCAPIH"
+      616e646f766572                 #       "andover"
+    58 20                            #     bytes(32)
+      94044d18b3a879873f43ab3fea4e5f #       "\x94\x04M\x18³¨y\x87?C«?êN_"
+      2180800828db193560ed4c561df9b5 #       "!\x80\x80\x08(Û\x195`íLV\x1dùµ"
+      005e                           #       "\x00^"
 ```
 
 ## IETF SD-JWT VC
