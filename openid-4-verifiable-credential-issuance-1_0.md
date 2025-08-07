@@ -572,6 +572,8 @@ Below is a non-normative example of a Pushed Authorization Request:
 ```
 POST /par HTTP/1.1
 Host: server.example.com
+OAuth-Client-Attestation: eyJ...
+OAuth-Client-Attestation-PoP: eyJ...
 Content-Type: application/x-www-form-urlencoded
 
 response_type=code
@@ -712,6 +714,8 @@ The following non-normative example shows an initial request to the Interactive 
 ```http
 POST /iar HTTP/1.1
 Host: server.example.com
+OAuth-Client-Attestation: eyJ...
+OAuth-Client-Attestation-PoP: eyJ...
 Content-Type: application/x-www-form-urlencoded
 
 response_type=code
@@ -734,6 +738,8 @@ The following non-normative example shows a follow-up request to the Interactive
 ```http
 POST /iar HTTP/1.1
 Host: server.example.com
+OAuth-Client-Attestation: eyJ...
+OAuth-Client-Attestation-PoP: eyJ...
 Content-Type: application/x-www-form-urlencoded
 
 auth_session=wxroVrBY2MCq4dDNGXACS
@@ -844,6 +850,8 @@ The following us an example non-normative example of a Interactive Authorization
 ```http
 POST /iar HTTP/1.1
 Host: server.example.com
+OAuth-Client-Attestation: eyJ...
+OAuth-Client-Attestation-PoP: eyJ...
 Content-Type: application/x-www-form-urlencoded
 
 auth_session=wxroVrBY2MCq4dDNGXACS
