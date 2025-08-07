@@ -1787,15 +1787,16 @@ The following mechanisms in concert can be utilized to fulfill those objectives:
 **Wallet Attestation** is a signed proof provided by the Wallet Provider, verifying the client's authenticity and genuineness. This process uses the mechanisms outlined in Attestation-Based Client Authentication, described in the Section [Wallet Attestation](#walletattestation). Once obtained, the Wallet Attestation can be used as a client authentication for the Wallet.
 
 ## Split-Architecture Wallets
-A Wallet can be made up of several different components that have different levels of trust, security and privacy. A common example of this is a Wallet with a both a server and a native application component. A server component may provide benefits (such as reliability, security and privacy). It also has different risks associated with it compared to the application component due to the increased difficulty of audits (especially by external security experts), ease of opaque updates and increased insider attack risk.
 
-For the server component to provide useful functionality whilst preserving user privacy, a minimum trust model should be used where some information (such as knowledge of the user having credentials and the issuers of those credentials) has to be known by the server component, whilst unnecessary information (such as the claims in the credentials) remains opaque to it. 
+A Wallet may consist of multiple components with varying levels of trust, security, and privacy. A common example of this is an architecture that involves both a server-side component and a native application. While the server component can offer advantages such as enhanced reliability, centralized security controls, and certain privacy protections, it also introduces distinct risks. These include increased difficulty in conducting audits (particularly by external security experts), the potential for opaque or unverified updates, and a higher susceptibility to insider threats.
 
-Credential Request/Response encryption from the device through the server component should be used to provide confidentiality of the user's data.
+To ensure the server component can provide meaningful functionality while preserving user privacy, a minimal trust model is encouraged to be employed. Under this model, the server may require access to limited information, such as the fact that a user holds Credentials and the identity of the Issuers, while remaining blind to unnecessary details, such as the claims contained within those Credentials.
 
-It's important to note that if the server component is the source of trust (e.g. for Wallet Attestations or Key Attestations) then that can not be used to protect against the same server component.
+To ensure the confidentiality of user data, Credential Request/Response encryption can be applied end-to-end: from the device through the server component.
 
-If the server component has access to authorization codes, pre-auth codes or other tokens/proofs then, unless additional steps not defined here are taken, it can potentially trivially impersonate the application and access the confidential information. If the server component cannot be trusted in this way then these items must not be passed to/via the server component.
+It is important to note that when the server component acts as the trust anchor (e.g., for Wallet Attestations or Key Attestations), it cannot also serve as a safeguard against itself.
+
+If the server component has access to authorization codes, pre-authorization codes, or other sensitive tokens or proofs, and no additional mitigations are implemented beyond those outlined here, it MAY be able to impersonate the application and gain access to confidential data. In cases where the server component is not fully trusted, these sensitive elements MUST NOT be passed to or routed through it.
 
 ## Credential Offer {#credential-offer-security}
 
