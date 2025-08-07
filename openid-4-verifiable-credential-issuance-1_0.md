@@ -725,7 +725,7 @@ response_type=code
 
 ### Follow-up Request {#follow-up-request}
 
-Follow-up requests to the Interactive Authorization Endpoint only MUST include the `auth_session` value received most recently from the Authorization Server (see (#iar-interaction-required-response)).
+Follow-up requests to the Interactive Authorization Endpoint MUST include the `auth_session` value received most recently from the Authorization Server (see (#iar-interaction-required-response)).
 
 Besides `auth_session`, follow-up requests only include the parameters that are in response to the interaction type the Authorization Server requested in the most recent response. The specific parameters are defined by each interaction type.
 
@@ -755,14 +755,12 @@ Except in error cases, the following key is required in the JSON document of the
 Depending on this assessment, the response from the Interactive Authorization Endpoint can take one of the following forms:
 
 ### Interaction Required Response {#iar-interaction-required-response}
+
 By setting `status` to `require_interaction` in the response, the Authorization Server requests an additional user interaction.
 In this case, the following keys MUST be present in the response as well:
 
 * `type`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST NOT set this to a value that was not included in the `interaction_types_supported` parameter sent by the Wallet.
-* `auth_session`: REQUIRED. String containing a value that allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value as an opaque value.
-
-The Wallet MUST include the `auth_session` in all follow-up requests to the Interactive Authorization Endpoint.
-If, as a response to such a follow-up request, the Wallet receives an `auth_session` value that differs from the one sent in the request, it MUST abort the issuance process.
+* `auth_session`: REQUIRED. String containing a value that allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value as an opaque value. The value returned MUST be distinct for each interactive authorization response.
 
 If a wallet receives a `type` value that it does not recognize, it MUST abort the issuance process.
 
