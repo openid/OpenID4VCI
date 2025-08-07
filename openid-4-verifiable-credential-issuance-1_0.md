@@ -1770,6 +1770,10 @@ The Wallet MUST ignore any unrecognized parameters.
 
 # Security Considerations {#security-considerations}
 
+## Formal Security Analysis
+
+The security properties of some features in a previous revision of this specification have been formally analyzed, see [@secanalysis].
+
 ## Best Current Practice for OAuth 2.0 Security {#securitybcp}
 
 Implementers of this specification SHOULD follow the Best Current Practice for OAuth 2.0 Security given in [@BCP240]. It is RECOMMENDED that implementers do this by following the [@!FAPI2_Security_Profile] where it is applicable.
@@ -2377,6 +2381,15 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
   <front>
     <author fullname="ISO"></author>
     <title>ISO/IEC 29100:2011 Information technology — Security techniques — Privacy framework</title>
+  </front>
+</reference>
+
+<reference anchor="secanalysis" target="https://elib.uni-stuttgart.de/items/07055a8e-a85e-42b9-98b5-11f046d5fb91">
+  <front>
+    <title>OpenID for Verifiable Credentials: Formal Security Analysis using the Web Infrastructure Model</title>
+    <author fullname="Fabian Hauck">
+    </author>
+    <date day="2" month="October" year="2023"/>
   </front>
 </reference>
 
