@@ -746,7 +746,12 @@ The following non-normative example shows a payload of a signed request object:
   "code_challenge": "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM",
   "code_challenge_method": "S256",
   "redirect_uri": "https%3A%2F%2Fclient.example.org%2Fcb",
-  "authorization_details": [...],
+  "authorization_details": [
+    {
+      "type": "openid_credential",
+      "credential_configuration_id": "UniversityDegreeCredential"
+    }
+  ],
   "interaction_types_supported": "openid4vp_presentation,redirect_to_web"
 }
 ```
