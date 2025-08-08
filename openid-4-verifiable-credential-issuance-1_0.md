@@ -636,7 +636,7 @@ This is an extension of the traditional Authorization Endpoint defined in [@!RFC
 A primary use case is requiring the Presentation of a Credential as a prerequisite for issuing a new Credential.
 Support for the Interactive Authorization Endpoint is OPTIONAL.
 
-The Authorization Server indicates support for interactive authorization by publishing the `interactive_authorization_endpoint` parameter in its Authorization Server Metadata. In this case, the Wallet SHOULD use this endpoint to obtain authorization.
+The Authorization Server indicates support for interactive authorization by publishing the `interactive_authorization_endpoint` parameter in its Authorization Server Metadata as defined in (#as-metadata).
 
 The following figure illustrates a flow using the Interactive Authorization Endpoint, where the Authorization Server requests a Presentation (of another Credential) from the Wallet as part of the authorization process to issue a Credential to that Wallet. The exact deployment model of the OpenID4VP Verifier in relation to the Authorization Server is out of scope of this specification. It can be integrated into the Authorization Server or a separate component, in which case backchannel communication between the Verifier and Authorization Server would need to happen (not shown here).
 
@@ -1762,7 +1762,9 @@ See (#additional-issuer-metadata-examples) for additional examples of Credential
 
 This specification also defines a new OAuth 2.0 Authorization Server metadata [@!RFC8414] parameter to publish whether the Authorization Server that the Credential Issuer relies on for authorization supports anonymous Token Requests with the Pre-Authorized Grant Type. It is defined as follows:
 
-* `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A boolean indicating whether the Credential Issuer accepts a Token Request with a Pre-Authorized Code but without a `client_id`. The default is `false`. 
+* `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A boolean indicating whether the Credential Issuer accepts a Token Request with a Pre-Authorized Code but without a `client_id`. The default is `false`.
+* `interactive_authorization_endpoint`: OPTIONAL. URL of the Authorization Server's Interactive Authorization Endpoint. This URL MUST use the https scheme and MAY contain port, path, and query parameter components. If omitted, the Authorization Server does not support the Interactive Authorization Endpoint. If present, the Wallet SHOULD use this endpoint to obtain authorization as defined in (#interactive-authorization-endpoint).
+* `require_interactive_authorization_requests`: OPTIONAL. A boolean indicating whether the Authorization Server accepts Authorization Request only via the Interactive Authorization Endpoint defined in (#interactive-authorization-endpoint). If omitted, the default value is false. Note that the presence of pushed_authorization_request_endpoint is sufficient for a client to determine that it may use the PAR flow.
 
 Additional Authorization Server metadata parameters MAY be defined and used,
 as described in [@!RFC8414].
@@ -3158,7 +3160,7 @@ established by [@!RFC8414].
 * Metadata Name: `interactive_authorization_endpoint`
 * Metadata Description: URL of the Authorization Server's Interactive Authorization Endpoint. This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Authorization Server does not support the Interactive Authorization Endpoint.
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#interactive-authorization-request) of this specification
+* Reference: (#as-metadata) of this specification
 
 ## OAuth Dynamic Client Registration Metadata Registry
 
@@ -3346,6 +3348,8 @@ The technology described in this specification was made available from contribut
    * add example for signed credential issuer metadata
    * add another more complex example for credential issuer metadata
    * fix indentation of nested credential logo object
+   * add require_interactive_authorization_requests to AS metadata
+   * add interactive_authorization_endpoint to AS metadata section
 
    -16
 
