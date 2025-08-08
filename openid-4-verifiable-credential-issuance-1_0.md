@@ -975,6 +975,8 @@ In addition to the error processing rules defined in Section 2.3 of [@RFC9126], 
 
 * `missing_interaction_type`: The `interaction_types_supported` parameter in the Interactive Authorization Request does not include all interaction types required to complete all phases of the authorization process.
 
+The following is an example of an error response from the Interactive Authorization Endpoint:
+
 ```
 HTTP/1.1 400 Bad Request
 Content-Type: application/json
