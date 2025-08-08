@@ -904,7 +904,7 @@ Once this phase of the Authorization process is completed, the Authorization Ser
 
 To ensure the security of the `redirect_to_web` flow, the redirect URI MUST be an `https` URL as per Section 7.2 of [@!RFC8252]. The Wallet MUST NOT use an embedded user-agent to perform the `redirect_to_web` flow. The considerations in Section 8.12 of [@!RFC8252] apply. Platform-specific implementation details are provided in Appendix B of the same document.
 
-A non-normative example of a follow-up request featuring PKCE:
+A non-normative example of a follow-up request, that follows the completion of the `redirect_to_web` interaction, featuring PKCE:
 
 ```
 POST /iar HTTP/1.1
