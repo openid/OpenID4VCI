@@ -3366,6 +3366,7 @@ The technology described in this specification was made available from contribut
    * add example for signed credential issuer metadata
    * add another more complex example for credential issuer metadata
    * fix indentation of nested credential logo object
+   * add missing_interaction_type error code to Interactive Authorization Endpoint
 
    -16
 
