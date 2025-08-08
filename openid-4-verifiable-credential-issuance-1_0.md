@@ -834,7 +834,7 @@ The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is 
 When processing the request the following logic applies:
 
   1. The URL of the Interactive Authorization Endpoint becomes the Origin for the request; i.e., the Wallet MUST ensure that `expected_origins` contains the Interactive Authorization Endpoint URL.
-  2. If the response includes Verifiable Presentations with Holder Binding, each such Verifiable Presentation MUST be bound to the Interactive Authorization Endpoint, as specified by the corresponding Credential Format. For Credential Format-specific binding mechanisms, see "Interactive Authorization Endpoint Binding" subsections in (#format-profiles). In this case, the Credential Format refers to the Credential Format of the Verifiable Presentation requested by the OpenID4VP Authorization Request, which can differ from the Credential Format of the Credentials being issued. A response MUST be rejected if any such Verifiable Presentation is not bound to the Interactive Authorization Endpoint accordingly.
+  2. If the response contains Verifiable Presentations that include Holder Binding, each of those must be properly bound to the Interactive Authorization Endpoint, following the rules defined by their Credential Format. Details on how to do this for each format can be found in the "Interactive Authorization Endpoint Binding" sections under (#format-profiles). Note that the Credential Format here refers to the format of the Verifiable Presentation requested in the OpenID4VP Authorization Request, which may be different from the format used for issuing the Credentials themselves. If any Verifiable Presentation with Holder Binding is not correctly bound to the Interactive Authorization Endpoint, the response MUST be rejected.
 
 The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_request` request parameter. The value of the `openid4vp_request` request parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iar-post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
 
@@ -2502,7 +2502,7 @@ The definitions in (#credential-response-jwt-vc-json) apply for Credentials of t
 
 #### Interactive Authorization Endpoint Binding
 
-The definitions in (#iae-binding-jwt-vc-json) apply for Credentials of this type as well.
+The definitions in (#iae-binding-jwt-vc-json) apply to the Credentials of this format.
 
 ## Mobile Documents or mdocs (ISO/IEC 18013) {#mdocs}
 
@@ -2593,6 +2593,7 @@ The `OpenID4VCIIAEHandover` structure has the following elements:
   * For the Response Mode `iar-post.jwt`, the third element MUST be the JWK SHA-256 Thumbprint as defined in [@!RFC7638], encoded as a Byte String, of the Verifier's public key used to encrypt the response. If the Response Mode is `iar-post`, the third element MUST be `null`. For unsigned requests, including the JWK Thumbprint in the `SessionTranscript` allows the Verifier to detect whether the response was re-encrypted by a third party, potentially leading to the leakage of sensitive information. While this does not prevent such an attack, it makes it detectable and helps preserve the confidentiality of the response.  
 
 The following is a non-normative example of the input JWK for calculating the JWK Thumbprint in the context of `OpenID4VCIIAEHandoverInfo`:
+
 ```json
 {
   "kty": "EC",
@@ -2606,6 +2607,7 @@ The following is a non-normative example of the input JWK for calculating the JW
 ```
 
 The following is a non-normative example of the `OpenID4VCIIAEHandoverInfo` structure:
+
 ```
 Hex:
 
@@ -2630,6 +2632,7 @@ CBOR diagnostic:
 ```
 
 The following is a non-normative example of the `OpenID4VCIIAEHandover` structure:
+
 ```
 Hex:
 
@@ -2648,6 +2651,7 @@ CBOR diagnostic:
 ```
 
 The following is a non-normative example of the `SessionTranscript` structure:
+
 ```
 Hex:
 
