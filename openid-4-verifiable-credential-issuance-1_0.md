@@ -1764,7 +1764,7 @@ This specification also defines a new OAuth 2.0 Authorization Server metadata [@
 
 * `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A boolean indicating whether the Credential Issuer accepts a Token Request with a Pre-Authorized Code but without a `client_id`. The default is `false`.
 * `interactive_authorization_endpoint`: OPTIONAL. URL of the Authorization Server's Interactive Authorization Endpoint. This URL MUST use the https scheme and MAY contain port, path, and query parameter components. If omitted, the Authorization Server does not support the Interactive Authorization Endpoint. If present, the Wallet SHOULD use this endpoint to obtain authorization as defined in (#interactive-authorization-endpoint).
-* `require_interactive_authorization_requests`: OPTIONAL. A boolean indicating whether the Authorization Server accepts Authorization Request only via the Interactive Authorization Endpoint defined in (#interactive-authorization-endpoint). If omitted, the default value is false. Note that the presence of pushed_authorization_request_endpoint is sufficient for a client to determine that it may use the PAR flow.
+* `require_interactive_authorization_requests`: OPTIONAL. A boolean indicating whether the Authorization Server accepts Authorization Request only via the Interactive Authorization Endpoint defined in (#interactive-authorization-endpoint). If omitted, the default value is false. Note that the presence of `interactive_authorization_endpoint` is sufficient for a client to determine that it may use the IAE flow.
 
 Additional Authorization Server metadata parameters MAY be defined and used,
 as described in [@!RFC8414].
