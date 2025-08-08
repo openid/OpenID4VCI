@@ -768,7 +768,9 @@ In this case, the following keys MUST be present in the response as well:
 * `auth_session`: REQUIRED. String containing a value that allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value as an opaque value.
 
 The Wallet MUST include the `auth_session` in all follow-up requests to the Interactive Authorization Endpoint.
-If, as a response to such a follow-up request, the Wallet receives an `auth_session` value that differs from the one sent in the request, it MUST abort the issuance process.
+If, as a response to such a follow-up request, the Wallet receives an `auth_session` value that differs from the one sent in the request, it MUST use the newly received `auth_session` for all subsequent requests, until a different `auth_session` value is received.
+
+the abort the issuance process.
 
 If a wallet receives a `type` value that it does not recognize, it MUST abort the issuance process.
 
@@ -3346,6 +3348,7 @@ The technology described in this specification was made available from contribut
    * add example for signed credential issuer metadata
    * add another more complex example for credential issuer metadata
    * fix indentation of nested credential logo object
+   * allow new `auth_session` values in interactive authorization responses
 
    -16
 
