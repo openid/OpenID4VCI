@@ -770,8 +770,6 @@ In this case, the following keys MUST be present in the response as well:
 The Wallet MUST include the `auth_session` in all follow-up requests to the Interactive Authorization Endpoint.
 If, as a response to such a follow-up request, the Wallet receives an `auth_session` value that differs from the one sent in the request, it MUST use the newly received `auth_session` for all subsequent requests, until a different `auth_session` value is received.
 
-the abort the issuance process.
-
 If a wallet receives a `type` value that it does not recognize, it MUST abort the issuance process.
 
 Additional keys are defined based on the type of interaction, as shown next.
