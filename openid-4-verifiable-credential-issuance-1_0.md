@@ -1850,6 +1850,18 @@ The following mechanisms in concert can be utilized to fulfill those objectives:
 
 **Wallet Attestation** is a signed proof provided by the Wallet Provider, verifying the client's authenticity and genuineness. This process uses the mechanisms outlined in Attestation-Based Client Authentication, described in the Section [Wallet Attestation](#walletattestation). Once obtained, the Wallet Attestation can be used as a client authentication for the Wallet.
 
+## Split-Architecture Wallets
+
+A Wallet may consist of multiple components with varying levels of trust, security, and privacy. A common example of this is an architecture that involves both a server-side component and a native application. While the server component can offer advantages such as enhanced reliability, centralized security controls, and certain privacy protections, it also introduces distinct risks. These include increased difficulty in conducting audits (particularly by external security experts), the potential for opaque or unverified updates, and a higher susceptibility to insider threats.
+
+To ensure the server component can provide meaningful functionality while preserving user privacy, a minimal trust model is encouraged to be employed. Under this model, the server may require access to limited information, such as the fact that a user holds Credentials and the identity of the Issuers, while remaining blind to unnecessary details, such as the claims contained within those Credentials.
+
+To ensure the confidentiality of user data, Credential Request/Response encryption can be applied end-to-end: from the device through the server component.
+
+It is important to note that when the server component acts as the trust anchor (e.g., for Wallet Attestations or Key Attestations), it cannot also serve as a safeguard against itself.
+
+If the server component has access to authorization codes, pre-authorization codes, or other sensitive tokens or proofs, and no additional mitigations are implemented beyond those outlined here, it MAY be able to impersonate the application and gain access to confidential data. In cases where the server component is not fully trusted, these sensitive elements MUST NOT be passed to or routed through it.
+
 ## Credential Offer {#credential-offer-security}
 
 The Wallet MUST consider the parameter values in the Credential Offer as not trustworthy, since the origin is not authenticated and the message integrity is not protected. The Credential Issuer is not considered trustworthy just because it sent the Credential Offer. Therefore, the Wallet MUST perform the same validation checks on the Credential Issuer as it would when initiating the flow directly from the Wallet. An attacker might attempt to use a Credential Offer to conduct a phishing or injection attack.
@@ -3412,6 +3424,7 @@ The technology described in this specification was made available from contribut
    * add example for signed credential issuer metadata
    * add another more complex example for credential issuer metadata
    * fix indentation of nested credential logo object
+   * add security considerations on split-architecture wallets.
    * allow new `auth_session` values in interactive authorization responses
    * add missing_interaction_type error code to Interactive Authorization Endpoint
 
