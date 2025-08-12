@@ -785,7 +785,7 @@ The response to an Interactive Authorization Request is an HTTP message with the
 
  1. that user interaction is required, either a Presentation or a custom interaction, as defined in (#iar-interaction-required-response), or
  2. a successful completion of the authorization, as defined in (#iar-authorization-code-response), or
- 3. an error as defined in Section 2.3 of [@!RFC9126].
+ 3. an error as defined in Section 2.3 of [@!RFC9126] including the additional error codes defined in (#iar-error-response).
 
 Except in error cases, the following key is required in the JSON document of the response:
 
@@ -1001,6 +1001,26 @@ Cache-Control: no-store
 ```
 
 The Wallet MUST use this authorization code in the subsequent Token Request to the Token Endpoint.
+
+### Interactive Authorization Error Response {#iar-error-response}
+
+In addition to the error processing rules defined in Section 2.3 of [@RFC9126], this specification defines the following error codes for the Interactive Authorization Endpoint:
+
+* `missing_interaction_type`: The `interaction_types_supported` parameter in the Interactive Authorization Request does not include all interaction types required to complete all phases of the authorization process.
+
+The following is an example of an error response from the Interactive Authorization Endpoint:
+
+```
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Cache-Control: no-cache, no-store
+
+{
+  "error": "missing_interaction_type",
+  "error_description":
+    "interaction_types_supported in the request is missing the required interaction type 'openid4vp_presentation'"
+}
+```
 
 # Token Endpoint {#token-endpoint}
 
@@ -3206,6 +3226,18 @@ established by [@!RFC7591].
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#client-metadata) of this specification
 
+## OAuth Extensions Error Registry
+
+This specification registers the following errors in the IANA "OAuth Extensions Error" registry [@IANA.OAuth.Parameters] established by [@!RFC6755].
+
+### missing_interaction_type
+
+* Error name: `missing_interaction_type`
+* Error usage location: Interactive Authorization Error Response
+* Related protocol extension: OpenID for Verifiable Credential Issuance
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Specification document: (#iar-error-response) of this specification
+
 ## Well-Known URI Registry
 
 This specification registers the following well-known URI
@@ -3379,6 +3411,7 @@ The technology described in this specification was made available from contribut
    * add example for signed credential issuer metadata
    * add another more complex example for credential issuer metadata
    * fix indentation of nested credential logo object
+   * add missing_interaction_type error code to Interactive Authorization Endpoint
 
    -16
 
