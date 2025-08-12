@@ -3193,6 +3193,18 @@ established by [@!RFC7591].
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#client-metadata) of this specification
 
+## OAuth Extensions Error Registry
+
+This specification registers the following errors in the IANA "OAuth Extensions Error" registry [@IANA.OAuth.Parameters] established by [@!RFC6755].
+
+### missing_interaction_type
+
+* Error name: `missing_interaction_type`
+* Error usage location: Interactive Authorization Error Response
+* Related protocol extension: OpenID for Verifiable Credential Issuance
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Specification document: (#iar-error-response) of this specification
+
 ## Well-Known URI Registry
 
 This specification registers the following well-known URI
