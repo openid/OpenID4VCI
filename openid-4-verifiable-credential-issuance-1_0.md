@@ -380,7 +380,7 @@ The Wallet MUST ignore any unrecognized parameters.
 The following values are defined by this specification: 
 
 * Grant Type `authorization_code`:
-  * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the subsequent Authorization Request with the Credential Issuer to a context set up during previous steps. If the Wallet decides to use the Authorization Code Flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Credential Issuer as the `issuer_state` parameter value.
+  * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the subsequent Authorization Request with a context set up during previous process steps. If the Wallet decides to use the Authorization Code Flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Authorization Server as the `issuer_state` parameter value.
   * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. It MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
 * Grant Type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
   * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single use. If the Wallet decides to use the Pre-Authorized Code Flow, this parameter value MUST be included in the subsequent Token Request with the Pre-Authorized Code Flow.
@@ -572,6 +572,8 @@ Below is a non-normative example of a Pushed Authorization Request:
 ```
 POST /par HTTP/1.1
 Host: server.example.com
+OAuth-Client-Attestation: eyJ...
+OAuth-Client-Attestation-PoP: eyJ...
 Content-Type: application/x-www-form-urlencoded
 
 response_type=code
@@ -700,10 +702,10 @@ Note: In case a Wallet Attestation is required by the Authorization Server, it h
 
 The initial request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in Section 2.1 of [@!RFC9126]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request), with the following addition:
 
-`interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Authorization Server supports. The order of the values is not significant. The following values are defined by this specification:
+`interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Wallet supports. The order of the values is not significant. The following values are defined by this specification:
 
-* `openid4vp_presentation`: Indicates that the Authorization Server supports an OpenID4VP Presentation interaction, as defined in (#iar-require-presentation).
-* `redirect_to_web`: Indicates that the Authorization Server supports a redirect to a web-based interaction, as defined in (#iar-redirect-to-web).
+* `openid4vp_presentation`: Indicates that the Wallet supports an OpenID4VP Presentation interaction, as defined in (#iar-require-presentation).
+* `redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#iar-redirect-to-web).
 
 Custom interaction types (see (#iar-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter.
 
@@ -712,6 +714,8 @@ The following non-normative example shows an initial request to the Interactive 
 ```http
 POST /iar HTTP/1.1
 Host: server.example.com
+OAuth-Client-Attestation: eyJ...
+OAuth-Client-Attestation-PoP: eyJ...
 Content-Type: application/x-www-form-urlencoded
 
 response_type=code
@@ -721,6 +725,39 @@ response_type=code
 &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 &authorization_details=...
 &interaction_types_supported=openid4vp_presentation,redirect_to_web
+```
+
+The following non-normative example shows an initial request to the Interactive Authorization Endpoint with a signed request object:
+
+```http
+POST /iar HTTP/1.1
+Host: server.example.com
+OAuth-Client-Attestation: eyJ...
+OAuth-Client-Attestation-PoP: eyJ...
+Content-Type: application/x-www-form-urlencoded
+
+request=eyJrd...
+```
+
+The following non-normative example shows a payload of a signed request object:
+
+```json
+{
+  "iss": "CLIENT1234",
+  "aud": "https://server.example.com",
+  "response_type": "code",
+  "client_id": "CLIENT1234",
+  "code_challenge": "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM",
+  "code_challenge_method": "S256",
+  "redirect_uri": "https%3A%2F%2Fclient.example.org%2Fcb",
+  "authorization_details": [
+    {
+      "type": "openid_credential",
+      "credential_configuration_id": "UniversityDegreeCredential"
+    }
+  ],
+  "interaction_types_supported": "openid4vp_presentation,redirect_to_web"
+}
 ```
 
 ### Follow-up Request {#follow-up-request}
@@ -734,6 +771,8 @@ The following non-normative example shows a follow-up request to the Interactive
 ```http
 POST /iar HTTP/1.1
 Host: server.example.com
+OAuth-Client-Attestation: eyJ...
+OAuth-Client-Attestation-PoP: eyJ...
 Content-Type: application/x-www-form-urlencoded
 
 auth_session=wxroVrBY2MCq4dDNGXACS
@@ -746,7 +785,7 @@ The response to an Interactive Authorization Request is an HTTP message with the
 
  1. that user interaction is required, either a Presentation or a custom interaction, as defined in (#iar-interaction-required-response), or
  2. a successful completion of the authorization, as defined in (#iar-authorization-code-response), or
- 3. an error as defined in Section 2.3 of [@!RFC9126].
+ 3. an error as defined in Section 2.3 of [@!RFC9126] including the additional error codes defined in (#iar-error-response).
 
 Except in error cases, the following key is required in the JSON document of the response:
 
@@ -843,6 +882,8 @@ The following us an example non-normative example of a Interactive Authorization
 ```http
 POST /iar HTTP/1.1
 Host: server.example.com
+OAuth-Client-Attestation: eyJ...
+OAuth-Client-Attestation-PoP: eyJ...
 Content-Type: application/x-www-form-urlencoded
 
 auth_session=wxroVrBY2MCq4dDNGXACS
@@ -959,6 +1000,26 @@ Cache-Control: no-store
 ```
 
 The Wallet MUST use this authorization code in the subsequent Token Request to the Token Endpoint.
+
+### Interactive Authorization Error Response {#iar-error-response}
+
+In addition to the error processing rules defined in Section 2.3 of [@RFC9126], this specification defines the following error codes for the Interactive Authorization Endpoint:
+
+* `missing_interaction_type`: The `interaction_types_supported` parameter in the Interactive Authorization Request does not include all interaction types required to complete all phases of the authorization process.
+
+The following is an example of an error response from the Interactive Authorization Endpoint:
+
+```
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Cache-Control: no-cache, no-store
+
+{
+  "error": "missing_interaction_type",
+  "error_description":
+    "interaction_types_supported in the request is missing the required interaction type 'openid4vp_presentation'"
+}
+```
 
 # Token Endpoint {#token-endpoint}
 
@@ -1708,7 +1769,7 @@ This specification defines the following Credential Issuer Metadata parameters:
     * `alt_text`: OPTIONAL. String value of the alternative text for the logo image.
 * `credential_configurations_supported`: REQUIRED. Object that describes specifics of the Credential that the Credential Issuer supports issuance of. This object contains a list of name/value pairs, where each name is a unique identifier of the supported Credential being described. This identifier is used in the Credential Offer as defined in (#credential-offer-parameters) to communicate to the Wallet which Credential is being offered. The value is an object that contains metadata about a specific Credential and contains the following parameters defined by this specification:
   * `format`: REQUIRED. A JSON string identifying the format of this Credential, i.e., `jwt_vc_json` or `ldp_vc`. Depending on the format value, the object contains further elements defining the type and (optionally) particular claims the Credential MAY contain and information about how to display the Credential. (#format-profiles) contains Credential Format Profiles introduced by this specification.
-  * `scope`: OPTIONAL. A JSON string identifying the scope value that this Credential Issuer supports for this particular Credential. The value can be the same across multiple `credential_configurations_supported` objects. The Authorization Server MUST be able to uniquely identify the Credential Issuer based on the scope value. The Wallet can use this value in the Authorization Request as defined in (#credential-request-using-type-specific-scope). Scope values in this Credential Issuer metadata MAY duplicate those in the `scopes_supported` parameter of the Authorization Server.
+  * `scope`: OPTIONAL. A JSON string identifying the scope value that this Credential Issuer supports for this particular Credential. The value can be the same across multiple `credential_configurations_supported` objects. The Authorization Server MUST be able to uniquely identify the Credential Issuer based on the scope value. The Wallet can use this value in the Authorization Request as defined in (#credential-request-using-type-specific-scope). Scope values in this Credential Issuer metadata MAY duplicate those in the `scopes_supported` parameter of the Authorization Server. If `scope` is absent, the only alternate way for requesting Credential is using `authorization_details` [@!RFC9396], conditional to `authorization_details_types_supported` AS metadata being present.
   * `credential_signing_alg_values_supported`: OPTIONAL. A non-empty array of algorithm identifiers that identify the algorithms that the Issuer uses to sign the issued Credential. Algorithm identifier types and values used are determined by the Credential Format and are defined in (#format-profiles).
   * `cryptographic_binding_methods_supported`: OPTIONAL. A non-empty array of case sensitive strings that identify the representation of the cryptographic key material that the issued Credential is bound to, as defined in (#credential-binding). It MUST be present when key binding is required for a credential, and omitted otherwise. If absent, key binding is not required for this credential. Support for keys in JWK format [@!RFC7517] is indicated by the value `jwk`. Support for keys expressed as a COSE Key object [@!RFC8152] (for example, used in [@!ISO.18013-5]) is indicated by the value `cose_key`. When the Cryptographic Key Binding method is a DID, valid values are a `did:` prefix followed by a method-name using a syntax as defined in Section 3.1 of [@!DID-Core], but without a `:` and method-specific-id. For example, support for the DID method with a method-name "example" would be represented by `did:example`.
   * `proof_types_supported`: OPTIONAL. Object that describes specifics of the key proof(s) that the Credential Issuer supports. It MUST be present if `cryptographic_binding_methods_supported` is present, and omitted otherwise. If absent, the Wallet is not required to supply proofs when requesting this credential. This object contains a list of name/value pairs, where each name is a unique identifier of the supported proof type(s). Valid values are defined in (#proof-types), other values MAY be used. The Wallet also uses this identifier in the Credential Request as defined in (#credential-request). The value in the name/value pair is an object that contains metadata about the key proof and contains the following parameters defined by this specification:
@@ -1760,6 +1821,10 @@ as described in [@!RFC8414].
 The Wallet MUST ignore any unrecognized parameters.
 
 # Security Considerations {#security-considerations}
+
+## Formal Security Analysis
+
+The security properties of some features in a previous revision of this specification have been formally analyzed, see [@secanalysis].
 
 ## Best Current Practice for OAuth 2.0 Security {#securitybcp}
 
@@ -1946,6 +2011,8 @@ methods, including but not limited to the following ones:
 
 * Issue a batch of Credentials with the same Credential Dataset to facilitate the use of a unique Credential per presentation or per Verifier. This approach solely aids in achieving Verifier-to-Verifier unlinkability.
 * Use cryptographic schemes that can provide non-correlation.
+
+Claims containing time-related information, such as issuance or expiration dates, SHOULD be either individually randomized within an appropriate time window (e.g., within the last 24 hours), or rounded (e.g., to the start of the day), to avoid unintended correlation factors.
 
 Credential Issuers specifically SHOULD discard values that can be used in collusion with a Verifier to track a user, such as the Issuer's signature or cryptographic key material to which an issued credential was bound to.
 
@@ -2366,6 +2433,15 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
   <front>
     <author fullname="ISO"></author>
     <title>ISO/IEC 29100:2011 Information technology — Security techniques — Privacy framework</title>
+  </front>
+</reference>
+
+<reference anchor="secanalysis" target="https://elib.uni-stuttgart.de/items/07055a8e-a85e-42b9-98b5-11f046d5fb91">
+  <front>
+    <title>OpenID for Verifiable Credentials: Formal Security Analysis using the Web Infrastructure Model</title>
+    <author fullname="Fabian Hauck">
+    </author>
+    <date day="2" month="October" year="2023"/>
   </front>
 </reference>
 
@@ -3290,6 +3366,18 @@ established by [@!RFC7591].
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#client-metadata) of this specification
 
+## OAuth Extensions Error Registry
+
+This specification registers the following errors in the IANA "OAuth Extensions Error" registry [@IANA.OAuth.Parameters] established by [@!RFC6755].
+
+### missing_interaction_type
+
+* Error name: `missing_interaction_type`
+* Error usage location: Interactive Authorization Error Response
+* Related protocol extension: OpenID for Verifiable Credential Issuance
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Specification document: (#iar-error-response) of this specification
+
 ## Well-Known URI Registry
 
 This specification registers the following well-known URI
@@ -3464,6 +3552,7 @@ The technology described in this specification was made available from contribut
    * add another more complex example for credential issuer metadata
    * fix indentation of nested credential logo object
    * move IAE binding to dedicated format-specific sections
+   * add missing_interaction_type error code to Interactive Authorization Endpoint
 
    -16
 
