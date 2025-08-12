@@ -2550,7 +2550,7 @@ The following is a non-normative example of a Credential Response containing a C
 
 ### Interactive Authorization Endpoint Binding {#iae-binding-mso-mdoc}
 
-To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `SessionTranscript` CBOR structured as defined in Section 9.1.5.1 in [@ISO.18013-5] MUST be used with the following changes:
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `SessionTranscript` CBOR structured as defined in Section 9.1.5.1 in [@ISO.18013-5] MUST be used in Verifiable Presentations submitted in a response to Interactive Authorization Requests using the `openid4vp_presentation` interaction type, with the following modifications. This `SessionTranscript` differs from those defined in Section B.5.6 in [@OpenID4VP] and is defined as follows:
 
 * `DeviceEngagementBytes` MUST be `null`.
 * `EReaderKeyBytes` MUST be `null`.
