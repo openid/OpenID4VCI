@@ -724,7 +724,7 @@ response_type=code
 &code_challenge_method=S256
 &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 &authorization_details=...
-&interaction_types_supported=openid4vp_presentation,redirect_to_web
+&interaction_types_supported=openid4vp_presentation%2Credirect_to_web
 ```
 
 The following non-normative example shows an initial request to the Interactive Authorization Endpoint with a signed request object:
@@ -800,8 +800,7 @@ In this case, the following keys MUST be present in the response as well:
 * `type`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST NOT set this to a value that was not included in the `interaction_types_supported` parameter sent by the Wallet.
 * `auth_session`: REQUIRED. String containing a value that allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value as an opaque value.
 
-The Wallet MUST include the `auth_session` in all follow-up requests to the Interactive Authorization Endpoint.
-If, as a response to such a follow-up request, the Wallet receives an `auth_session` value that differs from the one sent in the request, it MUST abort the issuance process.
+The Wallet MUST include the most recently received `auth_session` in follow-up requests to the Interactive Authorization Endpoint.
 
 If a wallet receives a `type` value that it does not recognize, it MUST abort the issuance process.
 
@@ -1850,6 +1849,18 @@ The following mechanisms in concert can be utilized to fulfill those objectives:
 
 **Wallet Attestation** is a signed proof provided by the Wallet Provider, verifying the client's authenticity and genuineness. This process uses the mechanisms outlined in Attestation-Based Client Authentication, described in the Section [Wallet Attestation](#walletattestation). Once obtained, the Wallet Attestation can be used as a client authentication for the Wallet.
 
+## Split-Architecture Wallets
+
+A Wallet may consist of multiple components with varying levels of trust, security, and privacy. A common example of this is an architecture that involves both a server-side component and a native application. While the server component can offer advantages such as enhanced reliability, centralized security controls, and certain privacy protections, it also introduces distinct risks. These include increased difficulty in conducting audits (particularly by external security experts), the potential for opaque or unverified updates, and a higher susceptibility to insider threats.
+
+To ensure the server component can provide meaningful functionality while preserving user privacy, a minimal trust model is encouraged to be employed. Under this model, the server may require access to limited information, such as the fact that a user holds Credentials and the identity of the Issuers, while remaining blind to unnecessary details, such as the claims contained within those Credentials.
+
+To ensure the confidentiality of user data, Credential Request/Response encryption can be applied end-to-end: from the device through the server component.
+
+It is important to note that when the server component acts as the trust anchor (e.g., for Wallet Attestations or Key Attestations), it cannot also serve as a safeguard against itself.
+
+If the server component has access to authorization codes, pre-authorization codes, or other sensitive tokens or proofs, and no additional mitigations are implemented beyond those outlined here, it MAY be able to impersonate the application and gain access to confidential data. In cases where the server component is not fully trusted, these sensitive elements MUST NOT be passed to or routed through it.
+
 ## Credential Offer {#credential-offer-security}
 
 The Wallet MUST consider the parameter values in the Credential Offer as not trustworthy, since the origin is not authenticated and the message integrity is not protected. The Credential Issuer is not considered trustworthy just because it sent the Credential Offer. Therefore, the Wallet MUST perform the same validation checks on the Credential Issuer as it would when initiating the flow directly from the Wallet. An attacker might attempt to use a Credential Offer to conduct a phishing or injection attack.
@@ -1928,6 +1939,8 @@ Another use case is when the Credential Issuer uses cryptographic schemes that c
 The Credential Endpoint can be accessed multiple times by a Wallet using the same Access Token, even for the same Credential. The Credential Issuer determines if the subsequent successful requests will return the same or an updated Credential, such as having a new expiration time or using the most current End-User claims.
 
 The Credential Issuer MAY also decide to no longer accept the Access Token and a re-authentication or Token Refresh (see [@!RFC6749], Section 6) MAY be required at the Credential Issuer's discretion. The policies between the Credential Endpoint and the Authorization Server that MAY change the behavior of what is returned with a new Access Token are beyond the scope of this specification (see Section 7 of [@!RFC6749]).
+
+The Credential Issuer SHOULD NOT revoke previously issued, valid Credentials solely as a result of a subsequent successful Credential Request. This, for example, ensures that the Wallet can keep a desired number of Credentials without causing additional revocation and issuance overhead.
 
 The action leading to the Wallet performing another Credential Request can also be triggered by a background process, or by the Credential Issuer using an out-of-band mechanism (SMS, email, etc.) to inform the End-User.
 
@@ -3552,6 +3565,8 @@ The technology described in this specification was made available from contribut
    * add another more complex example for credential issuer metadata
    * fix indentation of nested credential logo object
    * move IAE binding to dedicated format-specific sections
+   * add security considerations on split-architecture wallets.
+   * allow new `auth_session` values in interactive authorization responses
    * add missing_interaction_type error code to Interactive Authorization Endpoint
 
    -16
