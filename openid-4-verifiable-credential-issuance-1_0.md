@@ -2875,7 +2875,7 @@ The Wallet Attestation format follows Section 5.1 "Client Attestation JWT" of [@
 * `wallet_link`: OPTIONAL. String containing a URL to get further information about the Wallet and the Wallet Provider.
 * `status`: OPTIONAL. Status mechanism for the Wallet Attestation as defined in [@!I-D.ietf-oauth-status-list]
 
-The following is a non-normative example of a Wallet Attestation:
+The following is a non-normative example of a decoded Wallet Attestation:
 
 ```
 {
@@ -2885,7 +2885,7 @@ The following is a non-normative example of a Wallet Attestation:
 }
 .
 {
-  "iss": "https://wallet.example.org",
+  "iss": "https://wallet-provider.example.com",
   "sub": "https://wallet.example.org",
   "wallet_name": "Wallet Solution X by Wonderland State Department",
   "wallet_link": "https://example.com/wallet/detail_info.html",
@@ -2902,6 +2902,8 @@ The following is a non-normative example of a Wallet Attestation:
   }
 }
 ```
+
+See (#wallet-attestation-example) for an example of a signed Wallet Attestation JWT.
 
 To use the Wallet Attestation towards the Authorization Server, the Wallet MUST generate a proof of possession according to Section 5.2 "Client Attestation PoP JWT" of Attestation-Based Client Authentication.
 
@@ -3322,6 +3324,12 @@ The following is a non-normative example of Credential Issuer metadata of a Cred
 
 <{{examples/credential_issuer_metadata_sd_jwt_long.json}}
 
+## Wallet Attestation JWT {#wallet-attestation-example}
+
+The following is a non-normative example of a signed Wallet Attestation:
+
+<{{examples/wallet_attestation.jwt.txt}}
+
 # Acknowledgements {#Acknowledgements}
 
 We would like to thank Richard Barnes, Paul Bastian, Vittorio Bertocci, Christian Bormann, John Bradley, Brian Campbell, Gabe Cohen, David Chadwick, Andrii Deinega, Giuseppe De Marco, Mark Dobrinic, Daniel Fett, Pedro Felix, George Fletcher, Christian Fries, Timo Glasta, Mark Haine, Fabian Hauck, Roland Hedberg, Joseph Heenan, Alen Horvat, Andrew Hughes, Jacob Ideskog, Lukasz Jaromin, Edmund Jay, Michael B. Jones, Tom Jones, Judith Kahrer, Takahiko Kawasaki, Niels Klomp, Ronald Koenig, Micha Kraus, Markus Kreusch, Philipp Lehwalder, Adam Lemmon, Dave Longley, David Luna, Daniel McGrogan, Jeremie Miller, Kenichi Nakamura, Andres Olave, Rolson Quadras, Nat Sakimura, Sudesh Shetty, Oliver Terbu, Dimitri James Tsiflitzis, Mike Varley, Arjen van Veen, Jan Vereecken, David Waite, Jacob Ward for their valuable feedback and contributions to this specification.
@@ -3346,6 +3354,7 @@ The technology described in this specification was made available from contribut
    * add example for signed credential issuer metadata
    * add another more complex example for credential issuer metadata
    * fix indentation of nested credential logo object
+   * add example for signed wallet attestation jwt
 
    -16
 
