@@ -985,7 +985,7 @@ Cache-Control: no-cache, no-store
 {
   "error": "missing_interaction_type",
   "error_description":
-    "The interaction_types_supported is missing a required interaction type"
+    "interaction_types_supported in the request is missing the required interaction type 'openid4vp_presentation'"
 }
 ```
 
