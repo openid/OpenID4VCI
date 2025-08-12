@@ -702,10 +702,10 @@ Note: In case a Wallet Attestation is required by the Authorization Server, it h
 
 The initial request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in Section 2.1 of [@!RFC9126]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request), with the following addition:
 
-`interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Authorization Server supports. The order of the values is not significant. The following values are defined by this specification:
+`interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Wallet supports. The order of the values is not significant. The following values are defined by this specification:
 
-* `openid4vp_presentation`: Indicates that the Authorization Server supports an OpenID4VP Presentation interaction, as defined in (#iar-require-presentation).
-* `redirect_to_web`: Indicates that the Authorization Server supports a redirect to a web-based interaction, as defined in (#iar-redirect-to-web).
+* `openid4vp_presentation`: Indicates that the Wallet supports an OpenID4VP Presentation interaction, as defined in (#iar-require-presentation).
+* `redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#iar-redirect-to-web).
 
 Custom interaction types (see (#iar-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter.
 
@@ -725,6 +725,39 @@ response_type=code
 &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 &authorization_details=...
 &interaction_types_supported=openid4vp_presentation,redirect_to_web
+```
+
+The following non-normative example shows an initial request to the Interactive Authorization Endpoint with a signed request object:
+
+```http
+POST /iar HTTP/1.1
+Host: server.example.com
+OAuth-Client-Attestation: eyJ...
+OAuth-Client-Attestation-PoP: eyJ...
+Content-Type: application/x-www-form-urlencoded
+
+request=eyJrd...
+```
+
+The following non-normative example shows a payload of a signed request object:
+
+```json
+{
+  "iss": "CLIENT1234",
+  "aud": "https://server.example.com",
+  "response_type": "code",
+  "client_id": "CLIENT1234",
+  "code_challenge": "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM",
+  "code_challenge_method": "S256",
+  "redirect_uri": "https%3A%2F%2Fclient.example.org%2Fcb",
+  "authorization_details": [
+    {
+      "type": "openid_credential",
+      "credential_configuration_id": "UniversityDegreeCredential"
+    }
+  ],
+  "interaction_types_supported": "openid4vp_presentation,redirect_to_web"
+}
 ```
 
 ### Follow-up Request {#follow-up-request}
@@ -752,7 +785,7 @@ The response to an Interactive Authorization Request is an HTTP message with the
 
  1. that user interaction is required, either a Presentation or a custom interaction, as defined in (#iar-interaction-required-response), or
  2. a successful completion of the authorization, as defined in (#iar-authorization-code-response), or
- 3. an error as defined in Section 2.3 of [@!RFC9126].
+ 3. an error as defined in Section 2.3 of [@!RFC9126] including the additional error codes defined in (#iar-error-response).
 
 Except in error cases, the following key is required in the JSON document of the response:
 
@@ -967,6 +1000,26 @@ Cache-Control: no-store
 ```
 
 The Wallet MUST use this authorization code in the subsequent Token Request to the Token Endpoint.
+
+### Interactive Authorization Error Response {#iar-error-response}
+
+In addition to the error processing rules defined in Section 2.3 of [@RFC9126], this specification defines the following error codes for the Interactive Authorization Endpoint:
+
+* `missing_interaction_type`: The `interaction_types_supported` parameter in the Interactive Authorization Request does not include all interaction types required to complete all phases of the authorization process.
+
+The following is an example of an error response from the Interactive Authorization Endpoint:
+
+```
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Cache-Control: no-cache, no-store
+
+{
+  "error": "missing_interaction_type",
+  "error_description":
+    "interaction_types_supported in the request is missing the required interaction type 'openid4vp_presentation'"
+}
+```
 
 # Token Endpoint {#token-endpoint}
 
@@ -3172,6 +3225,18 @@ established by [@!RFC7591].
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#client-metadata) of this specification
 
+## OAuth Extensions Error Registry
+
+This specification registers the following errors in the IANA "OAuth Extensions Error" registry [@IANA.OAuth.Parameters] established by [@!RFC6755].
+
+### missing_interaction_type
+
+* Error name: `missing_interaction_type`
+* Error usage location: Interactive Authorization Error Response
+* Related protocol extension: OpenID for Verifiable Credential Issuance
+* Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Specification document: (#iar-error-response) of this specification
+
 ## Well-Known URI Registry
 
 This specification registers the following well-known URI
@@ -3346,6 +3411,7 @@ The technology described in this specification was made available from contribut
    * add another more complex example for credential issuer metadata
    * fix indentation of nested credential logo object
    * allow new `auth_session` values in interactive authorization responses
+   * add missing_interaction_type error code to Interactive Authorization Endpoint
 
    -16
 
