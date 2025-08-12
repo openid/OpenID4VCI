@@ -767,7 +767,7 @@ In this case, the following keys MUST be present in the response as well:
 * `type`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST NOT set this to a value that was not included in the `interaction_types_supported` parameter sent by the Wallet.
 * `auth_session`: REQUIRED. String containing a value that allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value as an opaque value.
 
-The Wallet MUST include the `auth_session` in all follow-up requests to the Interactive Authorization Endpoint.
+The Wallet MUST include the most recently received `auth_session` in follow-up requests to the Interactive Authorization Endpoint.
 If, as a response to such a follow-up request, the Wallet receives an `auth_session` value that differs from the one sent in the request, it MUST use the newly received `auth_session` for all subsequent requests, until a different `auth_session` value is received.
 
 If a wallet receives a `type` value that it does not recognize, it MUST abort the issuance process.
