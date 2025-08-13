@@ -3572,7 +3572,8 @@ The technology described in this specification was made available from contribut
    * add security considerations on split-architecture wallets.
    * allow new `auth_session` values in interactive authorization responses
    * add missing_interaction_type error code to Interactive Authorization Endpoint
-   * rename `iar:` prefix in `iae:` prefix in IAE flow
+   * rename `iar:` prefix in `iae:` in IAE flow
+   * rename `iar-post` response mode in `iae_post` in IAE flow
    * use derived origin for `expected_origins` in IAE flow
 
    -16
