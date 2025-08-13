@@ -760,7 +760,7 @@ By setting `status` to `require_interaction` in the response, the Authorization 
 In this case, the following keys MUST be present in the response as well:
 
 * `type`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST NOT set this to a value that was not included in the `interaction_types_supported` parameter sent by the Wallet.
-* `auth_session`: REQUIRED. String containing a value that allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value as an opaque value. The value returned MUST be distinct and unpredictable for each interactive authorization response.
+* `auth_session`: REQUIRED. String containing a value that allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value as an opaque value. The value returned MUST be distinct for each interactive authorization response.
 
 If a wallet receives a `type` value that it does not recognize, it MUST abort the issuance process.
 
@@ -900,11 +900,11 @@ Cache-Control: no-store
 }
 ```
 
-Once this phase of the Authorization process is completed, the Authorization Server MUST redirect back to the Wallet as per [@RFC6749]. If the Authorization process is complete when this redirect occurs, the Authorization Server returns a response with the `code` parameter as per Section 1.3.1 of [@RFC6749]. If the Authorization process is not complete when this redirect occurs, the Authorization Server returns a response with the `auth_session` parameter. In the event a Wallet receives a response from the Authorization Server which features the `auth_session` parameter, the Wallet MUST make a follow-up request as per (#follow-up-request) to continue the Authorization process. In the event that PKCE as defined in [@RFC7636] was used in the initial authorization request to the interactive authorization endpoint, the Wallet MUST include the `code_verifier` in the follow-up request that follows the completion of the `redirect_to_web` interaction. If the `code_verifier` parameter is present in a follow-up request as per (#follow-up-request), the Authorization Server MUST use the `code_verifier` parameter value to verify against the original `code_challenge` present in the initial request.  
+Once this phase of the Authorization process is completed, the Authorization Server MUST redirect back to the Wallet as per [@RFC6749]. If the Authorization process is complete when this redirect occurs, the Authorization Server returns a response with the `code` parameter as per Section 1.3.1 of [@RFC6749]. If the Authorization process is not complete when this redirect occurs, the Authorization Server returns a response with the `auth_session` parameter. In the event a Wallet receives a response from the Authorization Server which features the `auth_session` parameter, the Wallet MUST make a follow-up request as per (#follow-up-request) to continue the Authorization process. In the event that PKCE as defined in [@RFC7636] was used in the initial authorization request to the interactive authorization endpoint, the Authorization Server MUST enforce the correct usage of the `code_verifier` in the follow-up request that follows the completion of the `redirect_to_web` interaction.
 
 To ensure the security of the `redirect_to_web` flow, the redirect URI MUST be an `https` URL as per Section 7.2 of [@!RFC8252]. The Wallet MUST NOT use an embedded user-agent to perform the `redirect_to_web` flow. The considerations in Section 8.12 of [@!RFC8252] apply. Platform-specific implementation details are provided in Appendix B of the same document.
 
-A non-normative example of a follow-up request, that follows the completion of the `redirect_to_web` interaction, featuring PKCE:
+A non-normative example of a follow-up request featuring PKCE:
 
 ```
 POST /iar HTTP/1.1
