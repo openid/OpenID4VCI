@@ -2714,7 +2714,7 @@ CBOR diagnostic:
 83                                   # array(3)
   77                                 #   string(23)
     68747470733a2f2f6578616d706c652e #     "https://example."
-    636f6d2f696172                   #     "com/iae"
+    636f6d2f696172                   #     "com/iar"
   78 2b                              #   string(43)
     6578633767426b786a78317264633975 #     "exc7gBkxjx1rdc9u"
     64527276654b7653734a497138306176 #     "dRrveKvSsJIq80av"
@@ -2729,8 +2729,8 @@ The following is a non-normative example of the `OpenID4VCIIAEHandover` structur
 ```
 Hex:
 
-82754f70656e49443456434949414548616e646f7665725820cf3cbd10e9d68754ef
-01c0fa0fab3188a757bdab209a2c4b6235f1597b9d2e16
+82754f70656e49443456434949414548616e646f7665725820df679426cc1bf8996e
+8eb549ee078815a87a97c5e95c1c5a8ec39eedca28a838
 
 CBOR diagnostic:
 
@@ -2739,8 +2739,8 @@ CBOR diagnostic:
     4f70656e49443456434949414548616e #     "OpenID4VCIIAEHan"
     646f766572                       #     "dover"
   58 20                              #   bytes(32)
-    cf3cbd10e9d68754ef01c0fa0fab3188 #     "Ï<½\x10éÖ\x87Tï\x01Àú\x0f«1\x88"
-    a757bdab209a2c4b6235f1597b9d2e16 #     "§W½« \x9a,Kb5ñY{\x9d.\x16"
+    df679426cc1bf8996e8eb549ee078815 #     "ßg\x94&Ì\x1bø\x99n\x8eµIî\x07\x88\x15"
+    a87a97c5e95c1c5a8ec39eedca28a838 #     "¨z\x97Åé\\x1cZ\x8eÃ\x9eíÊ(¨8"
 ```
 
 The following is a non-normative example of the `SessionTranscript` structure:
@@ -2748,8 +2748,8 @@ The following is a non-normative example of the `SessionTranscript` structure:
 ```
 Hex:
 
-83f6f682754f70656e49443456434949414548616e646f7665725820cf3cbd10e9d6
-8754ef01c0fa0fab3188a757bdab209a2c4b6235f1597b9d2e16
+83f6f682754f70656e49443456434949414548616e646f7665725820df679426cc1b
+f8996e8eb549ee078815a87a97c5e95c1c5a8ec39eedca28a838
 
 CBOR diagnostic:
 
@@ -2761,9 +2761,9 @@ CBOR diagnostic:
       4f70656e4944345643494941454861 #       "OpenID4VCIIAEHa"
       6e646f766572                   #       "ndover"
     58 20                            #     bytes(32)
-      cf3cbd10e9d68754ef01c0fa0fab31 #       "Ï<½\x10éÖ\x87Tï\x01Àú\x0f«1"
-      88a757bdab209a2c4b6235f1597b9d #       "\x88§W½« \x9a,Kb5ñY{\x9d"
-      2e16                           #       ".\x16"
+      df679426cc1bf8996e8eb549ee0788 #       "ßg\x94&Ì\x1bø\x99n\x8eµIî\x07\x88"
+      15a87a97c5e95c1c5a8ec39eedca28 #       "\x15¨z\x97Åé\\x1cZ\x8eÃ\x9eíÊ("
+      a838                           #       "¨8"
 ```
 
 ## IETF SD-JWT VC
