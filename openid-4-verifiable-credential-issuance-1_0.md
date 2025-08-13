@@ -887,10 +887,10 @@ OAuth-Client-Attestation-PoP: eyJ...
 Content-Type: application/x-www-form-urlencoded
 
 auth_session=wxroVrBY2MCq4dDNGXACS
-&openid4vp_presentation=...
+&openid4vp_response=...
 ```
 
-The following is a non-normative example of the `openid4vp_presentation` JSON object:
+The following is a non-normative example of the `openid4vp_response` JSON object:
 
 ```json
 {
@@ -899,7 +899,7 @@ The following is a non-normative example of the `openid4vp_presentation` JSON ob
 
 ```
 
-The following is a non-normative example of the `openid4vp_presentation` JSON object with an encrypted response:
+The following is a non-normative example of the `openid4vp_response` JSON object with an encrypted response:
 
 ```json
 {
@@ -908,7 +908,7 @@ The following is a non-normative example of the `openid4vp_presentation` JSON ob
 
 ```
 
-The following is a non-normative example of the `openid4vp_presentation` JSON object with an Authorization Error Response.
+The following is a non-normative example of the `openid4vp_response` JSON object with an Authorization Error Response.
 
 ```json
 {
