@@ -876,7 +876,7 @@ The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is 
 When processing the request the following logic applies:
 
   1. If `expected_origins` is present, the Wallet MUST ensure that `expected_origins` contains the derived Origin as defined above.
-  2. If the response contains Verifiable Presentations that include Holder Binding, each of those MUST be properly bound to the Interactive Authorization Endpoint, following the rules defined by their Credential Format. Details on how to do this for each format can be found in the "Interactive Authorization Endpoint Binding" sections under (#format-profiles). Note that the Credential Format here refers to the format of the Verifiable Presentation requested in the OpenID4VP Authorization Request, which may be different from the format used for issuing the Credentials themselves. If any Verifiable Presentation with Holder Binding is not correctly bound to the Interactive Authorization Endpoint, the response MUST be rejected.
+  2. If the response contains Verifiable Presentations that include Holder Binding, each of those MUST be properly bound to the derived Origin of the Interactive Authorization Endpoint, following the rules defined by their Credential Format. Details on how to do this for each format can be found in the "Interactive Authorization Endpoint Binding" sections under (#format-profiles). Note that the Credential Format here refers to the format of the Verifiable Presentation requested in the OpenID4VP Authorization Request, which may be different from the format used for issuing the Credentials themselves. If any Verifiable Presentation with Holder Binding is not correctly bound to the derived Origin of the Interactive Authorization Endpoint, the response MUST be rejected.
 
 The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_request` request parameter. The value of the `openid4vp_request` request parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iae_post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
 
@@ -984,7 +984,7 @@ This may lead to the malicious Authorization Server gaining access to Credential
 Custom extensions ((#iae-custom-extensions)) MUST ensure that this attack is prevented by ensuring one or both of the following:
 
  1. The Wallet is able to detect that a request is not presented by the party that initiated the Interactive Authorization Request. In the case of the (#iae-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_origins` parameter in the request, which contains the derived Origin of the Interactive Authorization Endpoint that initiated the request.
- 2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#iae-require-presentation) interaction, this is achieved for both signed and unsigned requests by the binding the Interactive Authorization Endpoint to the Verifiable Presentation (see "Interactive Authorization Endpoint Binding" sections under (#format-profiles)), which is then verified by the Authorization Server.
+ 2. The Authorization Server is able to detect that the request was forwarded from a different party. In the case of the (#iae-require-presentation) interaction, this is achieved for both signed and unsigned requests by the binding the derived Origin of the Interactive Authorization Endpoint to the Verifiable Presentation (see "Interactive Authorization Endpoint Binding" sections under (#format-profiles)), which is then verified by the Authorization Server.
 
 ### Authorization Code Response {#iae-authorization-code-response}
 
@@ -2525,7 +2525,7 @@ The following is the dereferenced document for the Issuer HTTP URL identifier th
 
 #### Interactive Authorization Endpoint Binding {#iae-binding-jwt-vc-json}
 
-To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim value MUST be set to the Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com/iae`).
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim value MUST be set to the derived Origin of the Interactive Authorization Endpoint (as defined in (#iae-require-presentation)), prefixed with `iae:` (e.g., `iae:https://example.com`).
 
 ### VC Secured using Data Integrity, using JSON-LD, with a Proof Suite Requiring Linked Data Canonicalization
 
@@ -2569,7 +2569,7 @@ The following is a non-normative example of a Credential Response with Credentia
 
 #### Interactive Authorization Endpoint Binding {#iae-binding-ldp-vc}
 
-To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `domain` claim value MUST be set to the Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com/iae`).
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `domain` claim value MUST be set to the derived Origin of the Interactive Authorization Endpoint (as defined in (#iae-require-presentation)), prefixed with `iae:` (e.g., `iae:https://example.com`).
 
 ### VC signed as a JWT, Using JSON-LD
 
@@ -2664,12 +2664,12 @@ OpenID4VCIIAEHandoverInfoHash = bstr
 OpenID4VCIIAEHandoverBytes = bstr .cbor OpenID4VCIIAEHandoverInfo
 
 OpenID4VCIIAEHandoverInfo = [
-  iae,
+  origin,
   nonce,
   jwkThumbprint
 ] ; Array containing handover parameters
 
-iae = tstr
+origin = tstr
 
 nonce = tstr
 
@@ -2681,7 +2681,7 @@ The `OpenID4VCIIAEHandover` structure has the following elements:
 * The first element MUST be the string `OpenID4VCIIAEHandover`. This serves as a unique identifier for the handover structure to prevent misinterpretation or confusion.
 * The second element MUST be a Byte String which contains the sha-256 hash of the bytes of `OpenID4VCIIAEHandoverInfo` when encoded as CBOR.
 * The `OpenID4VCIIAEHandoverInfo` has the following elements:
-  * The first element MUST be the string representing the Interactive Authorization Endpoint of the request as described in (#interactive-authorization-request). It MUST NOT be prefixed with `iae:`.
+  * The first element MUST be the string representing the derived Origin of the Interactive Authorization Endpoint (as defined in (#iae-require-presentation)). It MUST NOT be prefixed with `iae:`.
   * The second element MUST be the value of the `nonce` request parameter.
   * For the Response Mode `iae_post.jwt`, the third element MUST be the JWK SHA-256 Thumbprint as defined in [@!RFC7638], encoded as a Byte String, of the Verifier's public key used to encrypt the response. If the Response Mode is `iae_post`, the third element MUST be `null`. For unsigned requests, including the JWK Thumbprint in the `SessionTranscript` allows the Verifier to detect whether the response was re-encrypted by a third party, potentially leading to the leakage of sensitive information. While this does not prevent such an attack, it makes it detectable and helps preserve the confidentiality of the response.  
 
@@ -2704,17 +2704,16 @@ The following is a non-normative example of the `OpenID4VCIIAEHandoverInfo` stru
 ```
 Hex:
 
-837768747470733a2f2f6578616d706c652e636f6d2f696165782b6578633767426b
-786a7831726463397564527276654b7653734a4971383061766c58654c4868477771
-744158204283ec927ae0f208daaa2d026a814f2b22dca52cf85ffa8f3f8626c6bd66
-9047
+837368747470733a2f2f6578616d706c652e636f6d782b6578633767426b786a7831
+726463397564527276654b7653734a4971383061766c58654c486847777174415820
+4283ec927ae0f208daaa2d026a814f2b22dca52cf85ffa8f3f8626c6bd669047
 
 CBOR diagnostic:
 
 83                                   # array(3)
-  77                                 #   string(23)
+  73                                 #   string(19)
     68747470733a2f2f6578616d706c652e #     "https://example."
-    636f6d2f696165                   #     "com/iae"
+    636f6d                           #     "com"
   78 2b                              #   string(43)
     6578633767426b786a78317264633975 #     "exc7gBkxjx1rdc9u"
     64527276654b7653734a497138306176 #     "dRrveKvSsJIq80av"
@@ -2729,8 +2728,8 @@ The following is a non-normative example of the `OpenID4VCIIAEHandover` structur
 ```
 Hex:
 
-82754f70656e49443456434949414548616e646f7665725820df679426cc1bf8996e
-8eb549ee078815a87a97c5e95c1c5a8ec39eedca28a838
+82754f70656e49443456434949414548616e646f7665725820fbece366f4212f9762
+c74cfdbf83b8c69e371d5d68cea09cb4c48ca6daab761a
 
 CBOR diagnostic:
 
@@ -2739,8 +2738,8 @@ CBOR diagnostic:
     4f70656e49443456434949414548616e #     "OpenID4VCIIAEHan"
     646f766572                       #     "dover"
   58 20                              #   bytes(32)
-    df679426cc1bf8996e8eb549ee078815 #     "ßg\x94&Ì\x1bø\x99n\x8eµIî\x07\x88\x15"
-    a87a97c5e95c1c5a8ec39eedca28a838 #     "¨z\x97Åé\\x1cZ\x8eÃ\x9eíÊ(¨8"
+    fbece366f4212f9762c74cfdbf83b8c6 #     "ûìãfô!/\x97bÇLý¿\x83¸Æ"
+    9e371d5d68cea09cb4c48ca6daab761a #     "\x9e7\x1d]hÎ\xa0\x9c´Ä\x8c¦Ú«v\x1a"
 ```
 
 The following is a non-normative example of the `SessionTranscript` structure:
@@ -2748,8 +2747,8 @@ The following is a non-normative example of the `SessionTranscript` structure:
 ```
 Hex:
 
-83f6f682754f70656e49443456434949414548616e646f7665725820df679426cc1b
-f8996e8eb549ee078815a87a97c5e95c1c5a8ec39eedca28a838
+83f6f682754f70656e49443456434949414548616e646f7665725820fbece366f421
+2f9762c74cfdbf83b8c69e371d5d68cea09cb4c48ca6daab761a
 
 CBOR diagnostic:
 
@@ -2761,9 +2760,9 @@ CBOR diagnostic:
       4f70656e4944345643494941454861 #       "OpenID4VCIIAEHa"
       6e646f766572                   #       "ndover"
     58 20                            #     bytes(32)
-      df679426cc1bf8996e8eb549ee0788 #       "ßg\x94&Ì\x1bø\x99n\x8eµIî\x07\x88"
-      15a87a97c5e95c1c5a8ec39eedca28 #       "\x15¨z\x97Åé\\x1cZ\x8eÃ\x9eíÊ("
-      a838                           #       "¨8"
+      fbece366f4212f9762c74cfdbf83b8 #       "ûìãfô!/\x97bÇLý¿\x83¸"
+      c69e371d5d68cea09cb4c48ca6daab #       "Æ\x9e7\x1d]hÎ\xa0\x9c´Ä\x8c¦Ú«"
+      761a                           #       "v\x1a"
 ```
 
 ## IETF SD-JWT VC
