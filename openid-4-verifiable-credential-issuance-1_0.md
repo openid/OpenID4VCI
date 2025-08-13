@@ -709,6 +709,8 @@ The initial request to the Interactive Authorization Endpoint is formed and sent
 
 Custom interaction types (see (#iar-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter.
 
+The rules for client authentication as defined in [@!RFC9126] and [@!RFC6749] for pushed authorization requests, including the applicable authentication methods, apply for all requests to the Interactive Authorization Endpoint as well.
+
 The following non-normative example shows an initial request to the Interactive Authorization Endpoint:
 
 ```http
@@ -762,7 +764,7 @@ The following non-normative example shows a payload of a signed request object:
 
 ### Follow-up Request {#follow-up-request}
 
-Follow-up requests to the Interactive Authorization Endpoint only MUST include the `auth_session` value received most recently from the Authorization Server (see (#iar-interaction-required-response)).
+Follow-up requests to the Interactive Authorization Endpoint only, MUST include the `auth_session` value received most recently from the Authorization Server (see (#iar-interaction-required-response)).
 
 Besides `auth_session`, follow-up requests only include the parameters that are in response to the interaction type the Authorization Server requested in the most recent response. The specific parameters are defined by each interaction type.
 
