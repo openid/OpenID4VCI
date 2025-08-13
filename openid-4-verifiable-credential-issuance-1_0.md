@@ -815,7 +815,7 @@ Additional keys are defined based on the type of interaction, as shown next.
 If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_request` parameter containing an OpenID4VP Authorization Request. The contents of the request is the same as for requests passed to the Digital Credentials API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows: 
 
 * The `response_mode` must be either `iae-post` for unencrypted responses or `iae-post.jwt` for encrypted responses. These modes are used to indicate to the Wallet to return the response back to the same Interactive Authorization Endpoint. 
-* For signed requests, the contents of `expected_origins` MUST contain only the derived Origin from the Interactive Authorization Endpoint, as defined in Section 4 of [@RFC6454].
+* If `expected_origins` is present, it MUST contain only the derived Origin from the Interactive Authorization Endpoint, as defined in Section 4 of [@RFC6454].
 
 The following is a non-normative example of an unsigned Authorization Request:
 
@@ -875,7 +875,7 @@ The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is 
 
 When processing the request the following logic applies:
 
-  1. For signed requests, the Origin of the request MUST be derived from the The Interactive Authorization Endpoint as defined in Section 4 in [@RFC6454]; i.e., the Wallet MUST ensure that `expected_origins` contains the derived Origin. For example, the derived Origin from `https://example.com/iae` is `https://example.com`.
+  1. If `expected_origins` is present in request, the Origin of the request MUST be derived from the The Interactive Authorization Endpoint as defined in Section 4 in [@RFC6454]; i.e., the Wallet MUST ensure that `expected_origins` contains the derived Origin. For example, the derived Origin from `https://example.com/iae` is `https://example.com`.
   2. If the response contains Verifiable Presentations that include Holder Binding, each of those MUST be properly bound to the Interactive Authorization Endpoint, following the rules defined by their Credential Format. Details on how to do this for each format can be found in the "Interactive Authorization Endpoint Binding" sections under (#format-profiles). Note that the Credential Format here refers to the format of the Verifiable Presentation requested in the OpenID4VP Authorization Request, which may be different from the format used for issuing the Credentials themselves. If any Verifiable Presentation with Holder Binding is not correctly bound to the Interactive Authorization Endpoint, the response MUST be rejected.
 
 The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_request` request parameter. The value of the `openid4vp_request` request parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iae-post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
@@ -983,7 +983,7 @@ This may lead to the malicious Authorization Server gaining access to Credential
 
 Custom extensions ((#iae-custom-extensions)) MUST ensure that this attack is prevented by ensuring one or both of the following:
 
- 1. The Wallet is able to detect that a request is not presented by the party that initiated the Interactive Authorization Request. In the case of the (#iae-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_origins` parameter in the request, which contains the URL of the Interactive Authorization Endpoint that initiated the request.
+ 1. The Wallet is able to detect that a request is not presented by the party that initiated the Interactive Authorization Request. In the case of the (#iae-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_origins` parameter in the request, which contains the derived Origin of the Interactive Authorization Endpoint that initiated the request.
  2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#iae-require-presentation) interaction, this is achieved for both signed and unsigned requests by the Wallet including the Interactive Authorization Endpoint URL in the `aud` value and/or `SessionTranscript` within the returned Presentation, which is then verified by the Authorization Server.
 
 ### Authorization Code Response {#iae-authorization-code-response}
@@ -2525,7 +2525,7 @@ The following is the dereferenced document for the Issuer HTTP URL identifier th
 
 #### Interactive Authorization Endpoint Binding {#iae-binding-jwt-vc-json}
 
-To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim value MUST be set to the iae endpoint URL, prefixed with `iae:` (e.g., `iae:https://example.com/iae`).
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim value MUST be set to the Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com/iae`).
 
 ### VC Secured using Data Integrity, using JSON-LD, with a Proof Suite Requiring Linked Data Canonicalization
 
