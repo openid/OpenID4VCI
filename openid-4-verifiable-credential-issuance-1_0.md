@@ -2704,7 +2704,7 @@ The following is a non-normative example of the `OpenID4VCIIAEHandoverInfo` stru
 ```
 Hex:
 
-837768747470733a2f2f6578616d706c652e636f6d2f696172782b6578633767426b
+837768747470733a2f2f6578616d706c652e636f6d2f696165782b6578633767426b
 786a7831726463397564527276654b7653734a4971383061766c58654c4868477771
 744158204283ec927ae0f208daaa2d026a814f2b22dca52cf85ffa8f3f8626c6bd66
 9047
@@ -2714,7 +2714,7 @@ CBOR diagnostic:
 83                                   # array(3)
   77                                 #   string(23)
     68747470733a2f2f6578616d706c652e #     "https://example."
-    636f6d2f696172                   #     "com/iar"
+    636f6d2f696165                   #     "com/iae"
   78 2b                              #   string(43)
     6578633767426b786a78317264633975 #     "exc7gBkxjx1rdc9u"
     64527276654b7653734a497138306176 #     "dRrveKvSsJIq80av"
@@ -3572,6 +3572,8 @@ The technology described in this specification was made available from contribut
    * add security considerations on split-architecture wallets.
    * allow new `auth_session` values in interactive authorization responses
    * add missing_interaction_type error code to Interactive Authorization Endpoint
+   * rename `iar:` prefix in `iae:` prefix in IAE flow
+   * use derived origin for `expected_origins` in IAE flow
 
    -16
 
