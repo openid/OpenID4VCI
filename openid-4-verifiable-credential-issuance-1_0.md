@@ -1497,7 +1497,7 @@ The Credential Issuer indicates support for encrypted responses by including the
 A Deferred Credential Response may either contain the requested Credentials or further defer the issuance:
 
 * If the Credential Issuer is able to issue the requested Credentials, the Deferred Credential Response MUST use the `credentials` parameter as defined in (#credential-response) and MUST respond with the HTTP status code 200 (see Section 15.3.3 of [@!RFC9110]).
-* If the Credential Issuer still requires more time, the Deferred Credential Response MUST use the `interval` parameter as defined in (#credential-response) and MUST respond with the HTTP status code 202 (see Section 15.3.3 of [@!RFC9110]).
+* If the Credential Issuer still requires more time, the Deferred Credential Response MUST use the `interval` and `transaction_id` parameters as defined in (#credential-response) and it MUST respond with the HTTP status code 202 (see Section 15.3.3 of [@!RFC9110]). The value of `transaction_id` MUST be same as the value of `transaction_id` in the Deferred Credential Request.
 
 The Deferred Credential Response MAY use the `notification_id` parameter as defined in (#credential-response).
 
@@ -1534,6 +1534,7 @@ HTTP/1.1 202 OK
 Content-Type: application/json
 
 {
+  "transaction_id": "8xLOxBtZp8",
   "interval": 86400
 }
 ```
@@ -3436,6 +3437,7 @@ The technology described in this specification was made available from contribut
    * add security considerations on split-architecture wallets.
    * allow new `auth_session` values in interactive authorization responses
    * add missing_interaction_type error code to Interactive Authorization Endpoint
+   * require `transaction_id` in Deferred Credential Response to align with Credential Response behavior.  
 
    -16
 
