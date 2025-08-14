@@ -253,7 +253,7 @@ Please note that the diagram does not illustrate all the optional features defin
       |               |       proof(s))           |                        |
       |               |--------------------------------------------------->|
       |               |                           |                        |
-      |               |      Credential Response  |                        |
+      |               |        |                        |
       |               |      with Credential(s)   |                        |
       |               |      OR Transaction ID    |                        |
       |               |<---------------------------------------------------|
@@ -275,9 +275,9 @@ Note: Steps (3) and (4) happen in the front channel, by redirecting the End-User
 
 (5) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in Step (4). The Token Endpoint returns an Access Token in the Token Response upon successfully validating the Authorization Code. This step happens in the back-channel communication (direct communication between two systems using HTTP requests and responses without using redirects through an intermediary such as a browser). This step is defined in (#token-endpoint).
 
-(6) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and (optionally) the proof(s) of possession of the private key of a key pair to which the Credential Issuer should bind the issued Credential to. Upon successfully validating Access Token and proof(s), the Credential Issuer returns a Credential in the Credential Response. This step is defined in (#credential-endpoint).
+(6) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and (optionally) the proof(s) of possession of the private key of a key pair to which the Credential Issuer should bind the issued Credential to. Upon successfully validating Access Token and proof(s), the Credential Issuer returns a Credential in the . This step is defined in (#credential-endpoint).
 
-If the Credential Issuer requires more time to issue a Credential, the Credential Issuer may return a Transaction ID and a time interval in the Credential Response. The Wallet may send a Deferred Credential Request with the Transaction ID to obtain a Credential after the specified time interval has passed, as defined in (#deferred-credential-issuance).
+If the Credential Issuer requires more time to issue a Credential, the Credential Issuer may return a Transaction ID and a time interval in the . The Wallet may send a Deferred Credential Request with the Transaction ID to obtain a Credential after the specified time interval has passed, as defined in (#deferred-credential-issuance).
 
 Note: This flow is based on OAuth 2.0 and the Authorization Code Grant type, but this specification can be used with other OAuth 2.0 grant types as well.
 
@@ -1497,7 +1497,7 @@ The Credential Issuer indicates support for encrypted responses by including the
 A Deferred Credential Response may either contain the requested Credentials or further defer the issuance:
 
 * If the Credential Issuer is able to issue the requested Credentials, the Deferred Credential Response MUST use the `credentials` parameter as defined in (#credential-response) and MUST respond with the HTTP status code 200 (see Section 15.3.3 of [@!RFC9110]).
-* If the Credential Issuer still requires more time, the Deferred Credential Response MUST use the `interval` parameter as defined in (#credential-response) and MUST respond with the HTTP status code 202 (see Section 15.3.3 of [@!RFC9110]).
+* If the Credential Issuer still requires more time, the Deferred Credential Response MUST use the `interval` and `transaction_id` parameter as defined in (#credential-response) and it MUST respond with the HTTP status code 202 (see Section 15.3.3 of [@!RFC9110]). The value of `transaction_id` MUST be same as the value of `transaction_id` in the Deferred Credential Request.
 
 The Deferred Credential Response MAY use the `notification_id` parameter as defined in (#credential-response).
 
@@ -1534,6 +1534,7 @@ HTTP/1.1 202 OK
 Content-Type: application/json
 
 {
+  "transaction_id": "8xLOxBtZp8"
   "interval": 86400
 }
 ```
@@ -3436,6 +3437,7 @@ The technology described in this specification was made available from contribut
    * add security considerations on split-architecture wallets.
    * allow new `auth_session` values in interactive authorization responses
    * add missing_interaction_type error code to Interactive Authorization Endpoint
+   * require `transaction_id` in Deferred Credential Response to align with Credential Response behavior.  
 
    -16
 
