@@ -253,7 +253,7 @@ Please note that the diagram does not illustrate all the optional features defin
       |               |       proof(s))           |                        |
       |               |--------------------------------------------------->|
       |               |                           |                        |
-      |               |        |                        |
+      |               |      Credential Response  |                        |
       |               |      with Credential(s)   |                        |
       |               |      OR Transaction ID    |                        |
       |               |<---------------------------------------------------|
