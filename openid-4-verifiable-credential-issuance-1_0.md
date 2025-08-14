@@ -1817,7 +1817,7 @@ This specification also defines a new OAuth 2.0 Authorization Server metadata [@
 
 * `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A boolean indicating whether the Credential Issuer accepts a Token Request with a Pre-Authorized Code but without a `client_id`. The default is `false`.
 * `interactive_authorization_endpoint`: OPTIONAL. URL of the Authorization Server's Interactive Authorization Endpoint. This URL MUST use the https scheme and MAY contain port, path, and query parameter components. If omitted, the Authorization Server does not support the Interactive Authorization Endpoint. If present, the Wallet SHOULD use this endpoint to obtain authorization as defined in (#interactive-authorization-endpoint).
-* `require_interactive_authorization_requests`: OPTIONAL. A boolean indicating whether the Authorization Server accepts Authorization Request that request Credential issuance only via the Interactive Authorization Endpoint defined in (#interactive-authorization-endpoint). If omitted, the default value is `false`. This parameter MUST NOT be present if `interactive_authorization_endpoint` is omitted. Note that the presence of `interactive_authorization_endpoint` is sufficient for a Wallet to determine that it can use the Interactive Authorization Endpoint.
+* `require_interactive_authorization_request`: OPTIONAL. A boolean indicating whether the Authorization Server only accepts an Authorization Request for Credential issuance via the Interactive Authorization Endpoint defined in [#interactive-authorization-endpoint]. If omitted, the default value is `false`. This parameter MUST NOT be present if `interactive_authorization_endpoint` is omitted. Note that the presence of `interactive_authorization_endpoint` is sufficient for a Wallet to determine that it can use the Interactive Authorization Endpoint.
 
 Additional Authorization Server metadata parameters MAY be defined and used,
 as described in [@!RFC8414].
@@ -3413,7 +3413,7 @@ The technology described in this specification was made available from contribut
    * add example for signed credential issuer metadata
    * add another more complex example for credential issuer metadata
    * fix indentation of nested credential logo object
-   * add require_interactive_authorization_requests to AS metadata
+   * add require_interactive_authorization_request to AS metadata
    * add interactive_authorization_endpoint to AS metadata section
    * add missing_interaction_type error code to Interactive Authorization Endpoint
 
