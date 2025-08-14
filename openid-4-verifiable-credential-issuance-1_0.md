@@ -1534,7 +1534,7 @@ HTTP/1.1 202 OK
 Content-Type: application/json
 
 {
-  "transaction_id": "8xLOxBtZp8"
+  "transaction_id": "8xLOxBtZp8",
   "interval": 86400
 }
 ```
