@@ -3012,6 +3012,21 @@ The technology described in this specification was made available from contribut
 
    * Application-encryption security considerations.
    * clarification on signed metadata that parameters are included as top-level claims in JWS payload
+   * clarify how sub in wallet attestation is selected
+   * make it clear the AS checks if the wallet attestation is signed by a trusted issuer
+   * add guidance that credentials should not be revoked by issuer just because the wallet has requested more credentials
+   * add link to formal security analysis
+   * clarify that absence of 'scope' in a credential configuration means RAR must be used to request the credential
+   * add requirement in correlation privacy considerations that claims containing time-related information should be randomized or rounded
+   * add OAuth client authentication to various examples
+   * clarify that `issuer_state` is sent to the authorization server by the wallet
+   * various grammar/punctuation/typo/formatting fixes
+   * update VC_DATA reference to point to the 1.1 version
+   * clarifications on use of `authorization_details` in token requests/responses
+   * add 'non-empty' to a few more definitions of arrays
+   * update change controller for `pre-authorized_grant_anonymous_access_supported` to DCP WG
+   * updates so that latest defined terms are used consistently
+   * make urls in examples consistent
    * add example for signed credential issuer metadata
    * add another more complex example for credential issuer metadata
    * fix indentation of nested credential logo object
