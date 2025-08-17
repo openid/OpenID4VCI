@@ -95,17 +95,17 @@ Verifier:
 Issuer-Holder-Verifier Model:
 :  Model that facilitates the exchange of claims, where claims are issued as Verifiable Credentials independently of the process of presenting them to Verifiers in the form of Presentations. An issued Verifiable Credential may be used multiple times, although this is not a requirement.
 
-Holder Binding:
-:  Ability of the Holder to prove legitimate possession of a Verifiable Credential.
+Holder Binding or Key Binding:
+:  Ability of the Holder to prove legitimate possession of a Credential.
 
-Cryptographic Key Binding:
-:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proving control over the same private key used during issuance and presentation. The mechanism might depend on the Credential Format. For example, in IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], the Issuer can enable key binding by including a public key or a reference to a public key, matching a private key controlled by the Holder, in the `cnf` claim.
+Cryptographic Holder Binding:
+:  Ability of the Holder to prove legitimate possession of a Credential by proving control over the same private key during the issuance and presentation. Mechanism might depend on the Credential Format. For example, in IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], the Issuer can enable this binding by including a public key or a reference to a public key that matches to the private key controlled by the Holder.
 
-Claims-based Binding:
-:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proofing certain claims, e.g., name and date of birth, for example, by presenting another Verifiable Credential. Claims-based Holder Binding allows long-term, cross-device use of a Credential as it does not depend on cryptographic key material stored on a certain device. One example of such a Verifiable Credential could be a Diploma.
+Claims-based Holder Binding:
+:  Ability of the Holder to prove legitimate possession of a Credential by proving certain claims, e.g., name and date of birth, for example by presenting another Credential. Claims-based Holder Binding allows long-term, cross-device use of a Credential as it does not depend on cryptographic key material stored on a certain device. One example of such a Credential could be a diploma.
 
-Biometrics-based Binding:
-:  Ability of the Holder to prove legitimate possession of a Verifiable Credential by demonstrating a certain biometric trait, such as fingerprint or face. One example of a Verifiable Credential with Biometrics-based Holder Binding is a mobile driving license [@ISO.18013-5], which contains a portrait of the holder.
+Biometrics-based Holder Binding:
+:  Ability of the Holder to prove legitimate possession of a Credential by demonstrating a certain biometric trait, such as a fingerprint or face. One example of a Credential with biometric Holder Binding is a mobile driving license [@ISO.18013-5], which contains a portrait of the Holder.
 
 Wallet:
 :  An entity used by the Holder to request, receive, store, present, and manage Verifiable Credentials and cryptographic key material. There is no single deployment model of a Wallet: Credentials and keys can be stored and managed either locally, through a remote self-hosted service, or via a remote third-party service. In the context of this specification, the Wallet acts as an OAuth 2.0 Client (see [@!RFC6749]) and obtains an Access Token to access an OAuth 2.0 Resource Server (Credential Endpoint).
