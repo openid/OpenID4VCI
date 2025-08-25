@@ -851,6 +851,8 @@ The proof type contained in the `proofs` parameter is an extension point that en
 
 The proof(s) in the `proofs` parameter MUST incorporate the Credential Issuer Identifier (audience) and, if the Credential Issuer has a Nonce Endpoint, a `c_nonce` value to allow the Credential Issuer to detect freshness. The way that data is incorporated depends on the key proof type. In a JWT, for example, the `c_nonce` value is conveyed in the `nonce` claim, whereas the audience is conveyed in the `aud` claim. In a Linked Data proof, for example, the `c_nonce` is included as the `challenge` element in the key proof object and the Credential Issuer (the intended audience) is included as the `domain` element.
 
+If the `batch_credential_issuance` parameter is not present in the Issuer metadata and the `proofs` parameter in the Credential Request contains more than one proof, the Credential Issuer MUST ignore the extra proofs. Similarly, if the number of proofs in the `proofs` parameter is greater than the value of the `batch_size` parameter in the Issuer metadata, the Credential Issuer MUST ignore the extra proofs.
+
 The `proofs` parameter MUST be present if the `proof_types_supported` parameter is present in the `credential_configurations_supported` parameter of the Issuer metadata for the requested Credential.
 
 The `c_nonce` value is retrieved from the Nonce Endpoint as defined in (#nonce-endpoint).
