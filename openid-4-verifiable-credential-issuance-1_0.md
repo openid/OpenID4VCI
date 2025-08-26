@@ -1466,7 +1466,7 @@ A Wallet may consist of multiple components with varying levels of trust, securi
 
 To ensure the server component can provide meaningful functionality while preserving user privacy, it is recommended to minimize the server's access to unnecessary data. 
 
-To ensure the server component can provide meaningful functionality while preserving user privacy, the principal of data minimization is encouraged to be employed. In particular, it is RECOMMENDED that Credential Request/Response encryption is be applied end-to-end: from the device through the server component.
+To ensure the server component can provide meaningful functionality while preserving user privacy, the principal of data minimization is encouraged to be employed. In particular, ensure the confidentiality of user data the Credential Request/Response SHOULD have encryption applied end-to-end: from the device through the server component.
 
 It is important to note that when the server component acts as the trust anchor (e.g., for Wallet Attestations or Key Attestations), it cannot also serve as a safeguard against itself.
 
