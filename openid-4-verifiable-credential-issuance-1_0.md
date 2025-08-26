@@ -98,7 +98,7 @@ Issuer-Holder-Verifier Model:
 Holder Binding or Key Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential.
 
-Cryptographic Holder or Key Binding:
+Cryptographic Holder Binding or Cryptographic Key Binding:
 :  Ability of the Holder to prove legitimate possession of a Verifiable Credential by proving control over the same private key during the issuance and presentation. Mechanism might depend on the Credential Format. For example, in IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], the Issuer can enable this binding by including a public key or a reference to a public key that matches to the private key controlled by the Holder.
 
 Claims-based Holder Binding:
