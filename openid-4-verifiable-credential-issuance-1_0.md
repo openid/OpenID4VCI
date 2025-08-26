@@ -2770,6 +2770,7 @@ To validate a key proof, the Credential Issuer MUST ensure that:
 - the header parameter does not contain a private key,
 - if the server has a Nonce Endpoint, the nonce in the key proof matches the server-provided `c_nonce` value,
 - the creation time of the JWT, as determined by either the issuance time, or a server managed timestamp via the nonce claim, is within an acceptable window (see (#key-proof-replay)).
+- the key proof contains or refers to at least one Proven Key
 
 These checks may be performed in any order.
 
