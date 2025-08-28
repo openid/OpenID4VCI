@@ -1464,9 +1464,8 @@ The following mechanisms in concert can be utilized to fulfill those objectives:
 
 A Wallet may consist of multiple components with varying levels of trust, security, and privacy. A common example of this is an architecture that involves both a server-side component and a native application. While the server component can offer advantages such as enhanced reliability, centralized security controls, and certain privacy protections, it also introduces distinct risks. These include increased difficulty in conducting audits (particularly by external security experts), the potential for opaque or unverified updates, and a higher susceptibility to insider threats.
 
-To ensure the server component can provide meaningful functionality while preserving user privacy, a minimal trust model is encouraged to be employed. Under this model, the server may require access to limited information, such as the fact that a user holds Credentials and the identity of the Issuers, while remaining blind to unnecessary details, such as the claims contained within those Credentials.
 
-To ensure the confidentiality of user data, Credential Request/Response encryption can be applied end-to-end: from the device through the server component.
+To ensure the server component can provide meaningful functionality while preserving user privacy, the principle of data minimization is encouraged to be employed. In particular, ensure the confidentiality of user data, it is best to apply application level encryption to the Credential Request/Response, from the device through the server component.
 
 It is important to note that when the server component acts as the trust anchor (e.g., for Wallet Attestations or Key Attestations), it cannot also serve as a safeguard against itself.
 
