@@ -1888,15 +1888,15 @@ While application-layer encryption can enhance the confidentiality of data in tr
 
 # Implementation Considerations
 
-## Claims-based Binding of the Credential to the End-User possessing the Credential {#claims-based-binding}
+## Claims-based Holder Binding of the Credential to the End-User possessing the Credential {#claims-based-binding}
 
 Credentials not cryptographically bound to the identifier of the End-User possessing it (see (#credential-binding)), should be bound to the End-User possessing the Credential, based on the claims included in the Credential.
 
-In Claims-based Binding, no Cryptographic Key Binding material is provided. Instead, the issued Credential includes End-User claims that can be used by the Verifier to verify possession of the Credential by requesting presentation of existing forms of physical or digital identification that includes the same claims (e.g., a driving license or other ID cards in person, or an online ID verification service).
+In Claims-based Holder Binding, no Cryptographic Key Binding material is provided. Instead, the issued Credential includes End-User claims that can be used by the Verifier to verify possession of the Credential by requesting presentation of existing forms of physical or digital identification that includes the same claims (e.g., a driving license or other ID cards in person, or an online ID verification service).
 
-## Binding of the Credential without Cryptographic Key Binding or Claims-based Binding {#no-binding}
+## Binding of the Credential without Cryptographic Key Binding or Claims-based Holder Binding {#no-binding}
 
-Some Credential Issuers might choose to issue bearer Credentials without either Cryptographic Key Binding or Claims-based Binding because they are meant to be presented without proof of possession.
+Some Credential Issuers might choose to issue bearer Credentials without either Cryptographic Key Binding or Claims-based Holder Binding because they are meant to be presented without proof of possession.
 
 One such use case is low assurance Credentials, such as coupons or tickets.
 
