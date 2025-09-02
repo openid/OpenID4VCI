@@ -1575,6 +1575,10 @@ Credential Refresh can be initiated by the Wallet independently from the Credent
 
 It is up to the Credential Issuer whether to update both the signature and the claim values, or only the signature.
 
+## Batch Issuing Credentials
+
+When the `batch_credential_issuance` parameter is not present in the Issuer metadata, it is at the discretion of the Credential Issuer to determine the number of the Credentials issued in the Credential Response, regardless of number of proofs contained in the `proofs` parameter in the Credential Request.
+
 ## Pre-Final Specifications
 
 Implementers should be aware that this specification uses several specifications that are not yet final specifications. Those specifications are:
