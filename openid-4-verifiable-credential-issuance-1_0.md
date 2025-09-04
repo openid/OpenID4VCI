@@ -1577,7 +1577,7 @@ It is up to the Credential Issuer whether to update both the signature and the c
 
 ## Batch Issuing Credentials
 
-When the `batch_credential_issuance` parameter is not present in the Issuer metadata, it is at the discretion of the Credential Issuer to determine the number of the Credentials issued in the Credential Response, regardless of number of proofs contained in the `proofs` parameter in the Credential Request.
+The Credential Issuer determines the number of the Credentials issued in the Credential Response, regardless of number of proofs/keys contained in the `proofs` parameter in the Credential Request.
 
 ## Pre-Final Specifications
 
