@@ -1168,8 +1168,8 @@ Cache-Control: no-store
 
 In the event the Credential Issuer can no longer issue the credential(s), the `credential_request_denied` error code as defined in (#credential-request-errors) should be used in response to a request. A wallet upon receiving this error SHOULD stop making requests to the deferred credential endpoint for the given `transaction_id`. 
 
-## Encrypted Messages {#encrypted-messages}
-Encryption of Request and Response Messages is performed as follows:
+# Encrypted Credential Requests and Responses {#encrypted-messages}
+Encryption of requests and responses for the Credential and Deferred Credential Endpoints is performed as follows:
 
 The contents of the message MUST be encoded as a JWT as described in [@!RFC7519]. The media type MUST be set to `application/jwt`.
 
