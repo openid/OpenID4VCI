@@ -1584,9 +1584,9 @@ The Credential Issuer determines the number of the Credentials issued in the Cre
 Implementers should be aware that this specification uses several specifications that are not yet final specifications. Those specifications are:
 
 * OpenID Federation 1.0 draft -43 [@!OpenID.Federation]
-* SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -08 [@!I-D.ietf-oauth-sd-jwt-vc]
-* Attestation-Based Client Authentication draft -05 [@!I-D.ietf-oauth-attestation-based-client-auth]
-* Token Status List draft -11 [@!I-D.ietf-oauth-status-list]
+* SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -11 [@!I-D.ietf-oauth-sd-jwt-vc]
+* Attestation-Based Client Authentication draft -07 [@!I-D.ietf-oauth-attestation-based-client-auth]
+* Token Status List draft -12 [@!I-D.ietf-oauth-status-list]
 
 While breaking changes to the specifications referenced in this specification are not expected, should they occur, OpenID4VCI implementations should continue to use the specifically referenced versions above in preference to the final versions, unless updated by a profile or new version of this specification.
 
@@ -1703,7 +1703,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
 
 {backmatter}
 
-<reference anchor="DID-Core" target="https://www.w3.org/TR/did-core/">
+<reference anchor="DID-Core" target="https://www.w3.org/TR/2022/REC-did-core-20220719/">
         <front>
         <title>Decentralized Identifiers (DIDs) v1.0</title>
         <author fullname="Manu Sporny">
@@ -1747,7 +1747,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
   </front>
 </reference>
 
-<reference anchor="VC_DATA_2.0" target="https://www.w3.org/TR/vc-data-model-2.0">
+<reference anchor="VC_DATA_2.0" target="https://www.w3.org/TR/2025/REC-vc-data-model-2.0-20250515/">
   <front>
     <title>Verifiable Credentials Data Model 2.0</title>
     <author fullname="Manu Sporny">
@@ -1766,7 +1766,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
   </front>
 </reference>
 
-<reference anchor="VC_Data_Integrity" target="https://www.w3.org/TR/vc-data-integrity">
+<reference anchor="VC_Data_Integrity" target="https://www.w3.org/TR/2025/REC-vc-data-integrity-20250515/">
   <front>
     <title>Verifiable Credential Data Integrity 1.0</title>
     <author fullname="Manu Sporny">
@@ -1804,7 +1804,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
           <author>
             <organization>IETF</organization>
           </author>
-          <date month="November" year="2022"/>
+          <date month="Nov" year="2022"/>
         </front>
 </reference>
 
@@ -1814,7 +1814,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
           <author>
             <organization>IETF</organization>
           </author>
-          <date month="November" year="2022"/>
+          <date month="Jan" year="2025"/>
         </front>
 </reference>
 
@@ -1871,7 +1871,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
         </front>
 </reference>
 
-<reference anchor="CSS-Color" target="https://www.w3.org/TR/css-color-3">
+<reference anchor="CSS-Color" target="https://www.w3.org/TR/2022/REC-css-color-3-20220118/">
       <front>
         <title>CSS Color Module Level 3</title>
         <author initials="T." surname="Çelik" fullname="Tantek Çelik">
@@ -1887,7 +1887,7 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
       </front>
 </reference>
 
-<reference anchor="JSON-LD" target="https://www.w3.org/TR/json-ld11/">
+<reference anchor="JSON-LD" target="https://www.w3.org/TR/2020/REC-json-ld11-20200716/">
       <front>
         <title>JSON-LD 1.1: A JSON-based Serialization for Linked Data.</title>
         <author fullname="Gregg Kellogg">
@@ -1951,15 +1951,18 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
          <organization>Mattr</organization>
         </author>
         <author initials="T." surname="Lodderstedt" fullname="Torsten Lodderstedt">
-          <organization>German Federal Agency for Disruptive Innovation (SPRIND)</organization>
+          <organization>SPRIND</organization>
         </author>
         <author initials="K." surname="Yasuda" fullname="Kristina Yasuda">
-          <organization>German Federal Agency for Disruptive Innovation (SPRIND)</organization>
+          <organization>SPRIND</organization>
         </author>
-        <author initials="T." surname="Looker" fullname="Tobias Looker">
-          <organization>Mattr</organization>
+        <author initials="D" surname="Fett" fullname="Daniel Fett">
+          <organization>Authlete</organization>
         </author>
-       <date day="24" month="April" year="2025"/>
+        <author initials="J" surname="Heenan" fullname="Joseph Heenan">
+          <organization>Authlete</organization>
+        </author>
+       <date day="9" month="Jul" year="2025"/>
       </front>
 </reference>
 
@@ -3011,6 +3014,7 @@ The technology described in this specification was made available from contribut
 
    -17
 
+   * update (pre-final) references and ensure static links for w3c references
    * Application-encryption security considerations.
    * clarification on signed metadata that parameters are included as top-level claims in JWS payload
    * clarify how sub in wallet attestation is selected
