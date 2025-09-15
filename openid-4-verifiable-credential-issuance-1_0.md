@@ -1584,7 +1584,7 @@ The Credential Issuer determines the number of the Credentials issued in the Cre
 Implementers should be aware that this specification uses several specifications that are not yet final specifications. Those specifications are:
 
 * OpenID Federation 1.0 draft -43 [@!OpenID.Federation]
-* SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -10 [@!I-D.ietf-oauth-sd-jwt-vc]
+* SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -11 [@!I-D.ietf-oauth-sd-jwt-vc]
 * Attestation-Based Client Authentication draft -07 [@!I-D.ietf-oauth-attestation-based-client-auth]
 * Token Status List draft -12 [@!I-D.ietf-oauth-status-list]
 
