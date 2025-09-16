@@ -1397,10 +1397,10 @@ This specification defines the following Credential Issuer Metadata parameters:
           * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the logo of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
           * `alt_text`: OPTIONAL. String value of the alternative text for the logo image.
       * `description`: OPTIONAL. String value of a description of the Credential.
-      * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
+      * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 3 [@!CSS-Color].
       * `background_image`: OPTIONAL. Object with information about the background image of the Credential. At least the following parameter MUST be included:
           * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the background image of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
-      * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 37 [@!CSS-Color].
+      * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 3 [@!CSS-Color].
     * `claims`: OPTIONAL. A non-empty array of claims description objects as defined in (#claims-description-issuer-metadata).
 
 An Authorization Server that only supports the Pre-Authorized Code grant type MAY omit the `response_types_supported` parameter in its metadata despite [@!RFC8414] mandating it.
