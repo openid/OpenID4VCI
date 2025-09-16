@@ -34,6 +34,14 @@ organization="Mattr"
     [author.address]
     email = "tobias.looker@mattr.global"
 
+[[author]]
+initials="P."
+surname="Bastian"
+fullname="Paul Bastian"
+organization="Bundesdruckerei"
+    [author.address]
+    email = "paul.bastian@bdr.de"
+
 %%%
 
 .# Abstract
