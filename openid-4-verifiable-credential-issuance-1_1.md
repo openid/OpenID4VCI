@@ -1,5 +1,5 @@
 %%%
-title = "OpenID for Verifiable Credential Issuance 1.0"
+title = "OpenID for Verifiable Credential Issuance 1.1 - Editor's draft"
 abbrev = "openid-4-verifiable-credential-issuance"
 ipr = "none"
 workgroup = "OpenID Digital Credentials Protocols"
@@ -7,7 +7,7 @@ keyword = ["security", "openid", "ssi"]
 
 [seriesInfo]
 name = "Internet-Draft"
-value = "openid-4-verifiable-credential-issuance-1_0-17"
+value = "openid-4-verifiable-credential-issuance-1_1-01"
 status = "standard"
 
 [[author]]
@@ -57,10 +57,6 @@ This specification defines an OAuth-protected API for the issuance of Verifiable
 Verifiable Credentials are very similar to identity assertions, like ID Tokens in OpenID Connect [@OpenID.Core], in that they allow a Credential Issuer to assert End-User claims. A Verifiable Credential follows a pre-defined schema (the Credential type) and MAY be bound to a certain Holder, e.g., through Cryptographic Key Binding. Verifiable Credentials can be securely presented for the End-User to the RP, without the involvement of the Credential Issuer.
 
 Access to this API is authorized using OAuth 2.0 [@!RFC6749], i.e., the Wallet uses OAuth 2.0 to obtain authorization to receive Verifiable Credentials. This way the issuance process can benefit from the proven security, simplicity, and flexibility of OAuth 2.0 and existing OAuth 2.0 deployments and OpenID Connect OPs (see [@OpenID.Core]) can be extended to become Credential Issuers.
-
-## Errata revisions
-
-The latest revision of this specification, incorporating any errata updates, is published at [openid-4-verifiable-credential-issuance-1_0](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html). The text of the final specification as approved will always be available at [openid-4-verifiable-credential-issuance-1_0-final](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0-final.html). When referring to this specification from other documents, it is recommended to reference [openid-4-verifiable-credential-issuance-1_0](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html).
 
 ## Requirements Notation and Conventions
 
@@ -3019,3 +3015,11 @@ Copyright (c) 2025 The OpenID Foundation.
 The OpenID Foundation (OIDF) grants to any Contributor, developer, implementer, or other interested party a non-exclusive, royalty free, worldwide copyright license to reproduce, prepare derivative works from, distribute, perform and display, this Implementers Draft, Final Specification, or Final Specification Incorporating Errata Corrections solely for the purposes of (i) developing specifications, and (ii) implementing Implementers Drafts, Final Specifications, and Final Specification Incorporating Errata Corrections based on such documents, provided that attribution be made to the OIDF as the source of the material, but that such attribution does not indicate an endorsement by the OIDF.
 
 The technology described in this specification was made available from contributions from various sources, including members of the OpenID Foundation and others. Although the OpenID Foundation has taken steps to help ensure that the technology is available for distribution, it takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this specification or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any independent effort to identify any such rights. The OpenID Foundation and the contributors to this specification make no (and hereby expressly disclaim any) warranties (express, implied, or otherwise), including implied warranties of merchantability, non-infringement, fitness for a particular purpose, or title, related to this specification, and the entire risk as to implementing this specification is assumed by the implementer. The OpenID Intellectual Property Rights policy (found at openid.net) requires contributors to offer a patent promise not to assert certain patent claims against other contributors and against implementers. OpenID invites any interested party to bring to its attention any copyrights, patents, patent applications, or other proprietary rights that may cover technology that may be required to practice this specification.
+
+# Document History
+
+   [[ To be removed from the final specification ]]
+
+   -01
+
+   * Initial draft created with same text as 1.0 Final
