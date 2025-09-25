@@ -15,10 +15,10 @@ jobs:
             run: |     
                 docker run \
                 -v /${{ github.workspace }}:/data danielfett/markdown2rfc \
-                openid-4-verifiable-credential-issuance-1_0.md
+                openid-4-verifiable-credential-issuance-1_1.md
           - name: rename
             run: |
-                mv ./openid-4-verifiable-credential-issuance-1_0*.html ./openid-4-verifiable-credential-issuance-wg-draft.html
+                mv ./openid-4-verifiable-credential-issuance-1_1*.html ./openid-4-verifiable-credential-issuance-wg-draft.html
           - uses: actions/upload-artifact@v4
             with:
                 # Artifact name
