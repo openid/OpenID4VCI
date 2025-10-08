@@ -11,14 +11,20 @@ jobs:
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v4
-          - name: Run the build process with Docker
-            run: |     
+          - name: 1.0 Run the build process with Docker
+            run: |
                 docker run \
-                -v /${{ github.workspace }}:/data danielfett/markdown2rfc \
+                -v /${{ github.workspace }}/1.0:/data danielfett/markdown2rfc \
+                openid-4-verifiable-credential-issuance-1_0.md
+          - name: 1.1 Run the build process with Docker
+            run: |
+                docker run \
+                -v /${{ github.workspace }}/1.1:/data danielfett/markdown2rfc \
                 openid-4-verifiable-credential-issuance-1_1.md
           - name: rename
             run: |
-                mv ./openid-4-verifiable-credential-issuance-1_1*.html ./openid-4-verifiable-credential-issuance-wg-draft.html
+                mv ./1.0/openid-4-verifiable-credential-issuance-1_0*.html ./openid-4-verifiable-credential-issuance-1_0-wg-draft.html && \
+                mv ./1.1/openid-4-verifiable-credential-issuance-1_1*.html ./openid-4-verifiable-credential-issuance-1_1-wg-draft.html
           - uses: actions/upload-artifact@v4
             with:
                 # Artifact name

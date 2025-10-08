@@ -1,0 +1,12 @@
+[
+  {
+    "type": "openid_credential",
+    "credential_configuration_id": "org.iso.18013.5.1.mDL",
+    "claims": [
+      {"path": ["org.iso.18013.5.1","given_name"]},
+      {"path": ["org.iso.18013.5.1","family_name"]},
+      {"path": ["org.iso.18013.5.1","birth_date"]},
+      {"path": ["org.iso.18013.5.1.aamva","organ_donor"]}
+    ]
+  }
+]

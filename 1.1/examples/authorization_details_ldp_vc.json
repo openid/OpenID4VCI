@@ -1,0 +1,11 @@
+[
+  {
+    "type": "openid_credential",
+    "credential_configuration_id": "UniversityDegree_LDP_VC",
+    "claims": [
+      {"path": ["credentialSubject", "given_name"]},
+      {"path": ["credentialSubject", "family_name"]},
+      {"path": ["credentialSubject", "degree"]}
+    ]
+  }
+]
