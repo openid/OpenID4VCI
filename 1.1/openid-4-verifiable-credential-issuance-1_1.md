@@ -713,6 +713,8 @@ The initial request to the Interactive Authorization Endpoint is formed and sent
 
 Custom interaction types (see (#iar-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter.
 
+The rules for client authentication as defined in [@!RFC9126] and [@!RFC6749] for pushed authorization requests, including the applicable authentication methods, apply for all requests to the Interactive Authorization Endpoint as well.
+
 When the wallet includes `redirect_to_web` in `interaction_types_supported`, the `code_challenge` and `code_challenge_method` parameters (see (#securitybcp)) are included in the initial request.
 
 The following non-normative example shows an initial request to the Interactive Authorization Endpoint:
@@ -881,7 +883,7 @@ When processing the request the following logic applies:
   2. The audience in the response (for example, the `aud` value in a Key Binding JWT) MUST be the Interactive Authorization Request, prefixed with `iar:`, for example `iar:https://example.com/iar`. A response containing a different audience value MUST NOT be accepted.
   3. If a `SessionTranscript` is needed, it is generated according Appendix B.2.6.2 of [@!OpenID4VP]. As above, the value for origin is the Interactive Authorization Request endpoint URL.
 
-The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_request` request parameter. The value of the `openid4vp_request` request parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iar-post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
+The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_response` parameter. The value of the `openid4vp_response` parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iar-post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
 
 The following us an example non-normative example of a Interactive Authorization Request containing an OpenID4VP Authorization Response:
 
@@ -893,10 +895,10 @@ OAuth-Client-Attestation-PoP: eyJ...
 Content-Type: application/x-www-form-urlencoded
 
 auth_session=wxroVrBY2MCq4dDNGXACS
-&openid4vp_presentation=...
+&openid4vp_response=...
 ```
 
-The following is a non-normative example of the `openid4vp_presentation` JSON object:
+The following is a non-normative example of the `openid4vp_response` JSON object:
 
 ```json
 {
@@ -905,7 +907,7 @@ The following is a non-normative example of the `openid4vp_presentation` JSON ob
 
 ```
 
-The following is a non-normative example of the `openid4vp_presentation` JSON object with an encrypted response:
+The following is a non-normative example of the `openid4vp_response` JSON object with an encrypted response:
 
 ```json
 {
@@ -914,7 +916,7 @@ The following is a non-normative example of the `openid4vp_presentation` JSON ob
 
 ```
 
-The following is a non-normative example of the `openid4vp_presentation` JSON object with an Authorization Error Response.
+The following is a non-normative example of the `openid4vp_response` JSON object with an Authorization Error Response.
 
 ```json
 {
