@@ -277,7 +277,7 @@ Figure: Issuance using Authorization Code Flow
 
 (4) The Authorization Endpoint returns the Authorization Response with the Authorization Code upon successfully processing the Authorization Request.
 
-Note: Steps (3) and (4) happen in the front channel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization-endpoint). The Authorization Server and the User Agent may exchange any further messages between the steps if required by the Authorization Server to authenticate the End-User. For example, the Authorization Server may request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as described in (#use-case-5).
+Note: Steps (3) and (4) may happen in the front channel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization-endpoint). The Authorization Server and the User Agent may exchange any further messages between the steps if required by the Authorization Server to authenticate the End-User. The Authorization Server may request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as described in (#use-case-5), by using the mechanism defined in (#interactive-authorization-endpoint).
 
 (5) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in Step (4). The Token Endpoint returns an Access Token in the Token Response upon successfully validating the Authorization Code. This step happens in the back-channel communication (direct communication between two systems using HTTP requests and responses without using redirects through an intermediary such as a browser). This step is defined in (#token-endpoint).
 
@@ -466,9 +466,7 @@ The Wallet does not create a response. UX control stays with the Wallet after co
 
 # Authorization Endpoint {#authorization-endpoint}
 
-The Authorization Endpoint is used in the same manner as defined in [@!RFC6749]. Implementers SHOULD follow the best current practices for OAuth 2.0 Security given in [@!BCP240].
-
-When the grant type `authorization_code` is used, it is RECOMMENDED to use PKCE [@!RFC7636] and Pushed Authorization Requests [@RFC9126]. PKCE prevents authorization code interception attacks. Pushed Authorization Requests ensure the integrity and authenticity of the authorization request.
+Authorization is obtained using the `authorization_code` grant type defined in [@!RFC6749], optionally with either PAR ((#pushed-authorization-request)) or the Interactive Authorization Endpoint (#interactive-authorization-endpoint). Implementers SHOULD follow the best current practices for OAuth 2.0 Security given in [@!BCP240], see (#securitybcp). This includes the use of mechanisms like PKCE to prevent authorization code interception attacks and Pushed (or Interactive) Authorization Requests to ensure the integrity and authenticity of the authorization request.
 
 ## Authorization Request {#credential-authz-request}
 
@@ -571,7 +569,7 @@ The Authorization Server MUST ignore any unrecognized parameters.
 
 ### Pushed Authorization Request {#pushed-authorization-request}
 
-Use of Pushed Authorization Requests is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues caused by large requests sizes.
+Use of Pushed Authorization Requests or the Interactive Authorization Endpoint (see (#interactive-authorization-endpoint) is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues caused by large requests sizes.
 
 Below is a non-normative example of a Pushed Authorization Request:
 
@@ -636,7 +634,7 @@ Location: https://wallet.example.org/cb?
   &error_description=Unsupported%20response_type%20value
 ```
 
-# Interactive Authorization Endpoint
+# Interactive Authorization Endpoint {#interactive-authorization-endpoint}
 
 This is an extension of the traditional Authorization Endpoint defined in [@!RFC6749], enabling complex authentication and authorization flows where interaction occurs directly with the Wallet rather than being intermediated by a browser.
 A primary use case is requiring the Presentation of a Credential as a prerequisite for issuing a new Credential.
@@ -716,6 +714,8 @@ The initial request to the Interactive Authorization Endpoint is formed and sent
 Custom interaction types (see (#iar-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter.
 
 The rules for client authentication as defined in [@!RFC9126] and [@!RFC6749] for pushed authorization requests, including the applicable authentication methods, apply for all requests to the Interactive Authorization Endpoint as well.
+
+When the wallet includes `redirect_to_web` in `interaction_types_supported`, the `code_challenge` and `code_challenge_method` parameters (see (#securitybcp)) are included in the initial request.
 
 The following non-normative example shows an initial request to the Interactive Authorization Endpoint:
 
@@ -1031,7 +1031,7 @@ Cache-Control: no-cache, no-store
 
 # Token Endpoint {#token-endpoint}
 
-The Token Endpoint issues an Access Token and, optionally, a Refresh Token in exchange for the Authorization Code that Client obtained in a successful Authorization Response. It is used in the same manner as defined in [@!RFC6749]. Implementers SHOULD follow the best current practices for OAuth 2.0 Security given in [@!BCP240].
+The Token Endpoint issues an Access Token and, optionally, a Refresh Token in exchange for the Authorization Code that Client obtained in a successful Authorization Response. It is used in the same manner as defined in [@!RFC6749]. Implementers SHOULD follow the best current practices for OAuth 2.0 Security given in [@!BCP240], see (#securitybcp).
 
 ## Token Request {#token-request}
 
@@ -1843,6 +1843,7 @@ The parts of [@!FAPI2_Security_Profile] that may not be applicable when using th
 
 1. Client authentication: The private_key_jwt and MTLS client authentication methods may not be practical to implement in a secure way for native app Wallets. The use of Wallet Attestations as defined in (#walletattestation) is RECOMMENDED instead.
 2. Sender-constrained access tokens: MTLS sender constrained access token may not be practical to implement in a secure way for native app Wallets. The use of DPoP [@!RFC9449] is RECOMMENDED.
+3. Pushed Authorization Requests: The Interactive Authorization Endpoint is permitted as an alternative to Pushed Authorization Requests (PAR), see (#interactive-authorization-endpoint).
 
 ## Trust between Wallet and Issuer
 
