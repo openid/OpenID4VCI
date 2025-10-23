@@ -715,6 +715,8 @@ The initial request to the Interactive Authorization Endpoint is formed and sent
 
 Custom interaction types (see (#iar-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter.
 
+The rules for client authentication as defined in [@!RFC9126] and [@!RFC6749] for pushed authorization requests, including the applicable authentication methods, apply for all requests to the Interactive Authorization Endpoint as well.
+
 The following non-normative example shows an initial request to the Interactive Authorization Endpoint:
 
 ```http
