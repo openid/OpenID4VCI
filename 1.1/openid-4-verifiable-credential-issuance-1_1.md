@@ -466,7 +466,7 @@ The Wallet does not create a response. UX control stays with the Wallet after co
 
 # Authorization Endpoint {#authorization-endpoint}
 
-The Authorization is obtained using the `authorization_code` grant type defined in [@!RFC6749], optionally with either PAR ((#pushed-authorization-request)) or the Interactive Authorization Endpoint (#interactive-authorization-endpoint). Implementers SHOULD follow the best current practices for OAuth 2.0 Security given in [@!BCP240], see (#securitybcp). This includes the use of mechanisms like PKCE to prevent authorization code interception attacks and Pushed (or Interactive) Authorization Requests to ensure the integrity and authenticity of the authorization request.
+Authorization is obtained using the `authorization_code` grant type defined in [@!RFC6749], optionally with either PAR ((#pushed-authorization-request)) or the Interactive Authorization Endpoint (#interactive-authorization-endpoint). Implementers SHOULD follow the best current practices for OAuth 2.0 Security given in [@!BCP240], see (#securitybcp). This includes the use of mechanisms like PKCE to prevent authorization code interception attacks and Pushed (or Interactive) Authorization Requests to ensure the integrity and authenticity of the authorization request.
 
 ## Authorization Request {#credential-authz-request}
 
@@ -1843,7 +1843,7 @@ The parts of [@!FAPI2_Security_Profile] that may not be applicable when using th
 
 1. Client authentication: The private_key_jwt and MTLS client authentication methods may not be practical to implement in a secure way for native app Wallets. The use of Wallet Attestations as defined in (#walletattestation) is RECOMMENDED instead.
 2. Sender-constrained access tokens: MTLS sender constrained access token may not be practical to implement in a secure way for native app Wallets. The use of DPoP [@!RFC9449] is RECOMMENDED.
-3. Pushed Authorization Requests: The Interactive Authorization Endpoint is permitted as alternative to Pushed Authorization Requests (PAR), see (see (#interactive-authorization-endpoint).
+3. Pushed Authorization Requests: The Interactive Authorization Endpoint is permitted as an alternative to Pushed Authorization Requests (PAR), see (#interactive-authorization-endpoint).
 
 ## Trust between Wallet and Issuer
 
