@@ -708,10 +708,10 @@ The initial request to the Interactive Authorization Endpoint is formed and sent
 
 `interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Wallet supports. The order of the values is not significant. The following values are defined by this specification:
 
-* `openid4vp_presentation`: Indicates that the Wallet supports an OpenID4VP Presentation interaction, as defined in (#iar-require-presentation).
-* `redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#iar-redirect-to-web).
+* `openid4vp_presentation`: Indicates that the Wallet supports an OpenID4VP Presentation interaction, as defined in (#iae-require-presentation).
+* `redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#iae-redirect-to-web).
 
-Custom interaction types (see (#iar-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter.
+Custom interaction types (see (#iae-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter.
 
 The rules for client authentication as defined in [@!RFC9126] and [@!RFC6749] for pushed authorization requests, including the applicable authentication methods, apply for all requests to the Interactive Authorization Endpoint as well.
 
@@ -720,7 +720,7 @@ When the wallet includes `redirect_to_web` in `interaction_types_supported`, the
 The following non-normative example shows an initial request to the Interactive Authorization Endpoint:
 
 ```http
-POST /iar HTTP/1.1
+POST /iae HTTP/1.1
 Host: server.example.com
 OAuth-Client-Attestation: eyJ...
 OAuth-Client-Attestation-PoP: eyJ...
@@ -738,7 +738,7 @@ response_type=code
 The following non-normative example shows an initial request to the Interactive Authorization Endpoint with a signed request object:
 
 ```http
-POST /iar HTTP/1.1
+POST /iae HTTP/1.1
 Host: server.example.com
 OAuth-Client-Attestation: eyJ...
 OAuth-Client-Attestation-PoP: eyJ...
@@ -770,14 +770,14 @@ The following non-normative example shows a payload of a signed request object:
 
 ### Follow-up Request {#follow-up-request}
 
-Follow-up requests to the Interactive Authorization Endpoint MUST include the `auth_session` value received most recently from the Authorization Server (see (#iar-interaction-required-response)).
+Follow-up requests to the Interactive Authorization Endpoint MUST include the `auth_session` value received most recently from the Authorization Server (see (#iae-interaction-required-response)).
 
 Besides `auth_session`, follow-up requests only include the parameters that are in response to the interaction type the Authorization Server requested in the most recent response. The specific parameters are defined by each interaction type.
 
 The following non-normative example shows a follow-up request to the Interactive Authorization Endpoint where the Wallet has already received an `auth_session`:
 
 ```http
-POST /iar HTTP/1.1
+POST /iae HTTP/1.1
 Host: server.example.com
 OAuth-Client-Attestation: eyJ...
 OAuth-Client-Attestation-PoP: eyJ...
@@ -791,9 +791,9 @@ auth_session=wxroVrBY2MCq4dDNGXACS
 Upon receiving an Interactive Authorization Request, the Authorization Server determines whether the Authorization Request is syntactically and semantically correct and whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance.
 The response to an Interactive Authorization Request is an HTTP message with the content type `application/json` and a JSON document in the body that indicates either
 
- 1. that user interaction is required, either a Presentation or a custom interaction, as defined in (#iar-interaction-required-response), or
- 2. a successful completion of the authorization, as defined in (#iar-authorization-code-response), or
- 3. an error as defined in Section 2.3 of [@!RFC9126] including the additional error codes defined in (#iar-error-response).
+ 1. that user interaction is required, either a Presentation or a custom interaction, as defined in (#iae-interaction-required-response), or
+ 2. a successful completion of the authorization, as defined in (#iae-authorization-code-response), or
+ 3. an error as defined in Section 2.3 of [@!RFC9126] including the additional error codes defined in (#iae-error-response).
 
 Except in error cases, the following key is required in the JSON document of the response:
 
@@ -801,7 +801,11 @@ Except in error cases, the following key is required in the JSON document of the
 
 Depending on this assessment, the response from the Interactive Authorization Endpoint can take one of the following forms:
 
-### Interaction Required Response {#iar-interaction-required-response}
+* Interaction Required Response as defined in (#iae-interaction-required-response)
+* Authorization Code Response as defined in (#iae-authorization-code-response)
+* Interactive Authorization Error Response as defined in (#iae-error-response)
+
+### Interaction Required Response {#iae-interaction-required-response}
 
 By setting `status` to `require_interaction` in the response, the Authorization Server requests an additional user interaction.
 In this case, the following keys MUST be present in the response as well:
@@ -811,16 +815,16 @@ In this case, the following keys MUST be present in the response as well:
 
 The Wallet MUST include the most recently received `auth_session` in follow-up requests to the Interactive Authorization Endpoint.
 
-If a wallet receives a `type` value that it does not recognize, it MUST abort the issuance process.
+If a Wallet receives a `type` value that it does not recognize, it MUST abort the issuance process.
 
 Additional keys are defined based on the type of interaction, as shown next.
 
-#### Require Presentation {#iar-require-presentation}
+#### Require Presentation {#iae-require-presentation}
 
 If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_request` parameter containing an OpenID4VP Authorization Request. The contents of the request is the same as for requests passed to the Digital Credentials API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows:
 
-* The `response_mode` must be either `iar-post` for unencrypted responses or `iar-post.jwt` for encrypted responses. These modes are used to indicate to the Wallet to return the response back to the same Interactive Authorization Request endpoint URL.
-* For signed requests, the contents of `expected_origins` MUST contain only the Issuer's Interactive Authorization Request endpoint URL.
+* The `response_mode` MUST be either `iae-post` for unencrypted responses or `iae-post.jwt` for encrypted responses. These modes are used to indicate to the Wallet to return the response back to the same Interactive Authorization Endpoint.
+* If `expected_origins` is present, it MUST contain only the derived Origin of the Interactive Authorization Endpoint as defined in Section 4 in [@RFC6454]. For example, the derived Origin from `https://example.com/iae` is `https://example.com`.
 
 The following is a non-normative example of an unsigned Authorization Request:
 
@@ -835,7 +839,7 @@ Cache-Control: no-store
   "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "openid4vp_request": {
     "response_type": "vp_token",
-    "response_mode": "iar-post",
+    "response_mode": "iae_post",
     "dcql_query": {
       "credentials": [
         {
@@ -880,16 +884,15 @@ The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is 
 
 When processing the request the following logic applies:
 
-  1. The URL of the Interactive Authorization Request endpoint becomes the Origin for the request; i.e., the Wallet MUST ensure that `expected_origins` contains the Interactive Authorization Request endpoint URL.
-  2. The audience in the response (for example, the `aud` value in a Key Binding JWT) MUST be the Interactive Authorization Request, prefixed with `iar:`, for example `iar:https://example.com/iar`. A response containing a different audience value MUST NOT be accepted.
-  3. If a `SessionTranscript` is needed, it is generated according Appendix B.2.6.2 of [@!OpenID4VP]. As above, the value for origin is the Interactive Authorization Request endpoint URL.
+  1. If `expected_origins` is present, the Wallet MUST ensure that `expected_origins` contains the derived Origin as defined above.
+  2. If the response contains Verifiable Presentations that include Holder Binding, the audience of each of those MUST be properly bound to the Interactive Authorization Endpoint, following the rules defined by their Credential Format. Details on how to do this for each format can be found in the "Interactive Authorization Endpoint Binding" sections under (#format-profiles). Note that the Credential Format here refers to the format of the Verifiable Presentation requested in the OpenID4VP Authorization Request, which may be different from the format used for issuing the Credentials themselves. If any Verifiable Presentation with Holder Binding is not correctly bound to the Interactive Authorization Endpoint, the response MUST be rejected.
 
-The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_response` parameter. The value of the `openid4vp_response` parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iar-post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
+The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_response` parameter. The value of the `openid4vp_response` parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iae-post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
 
 The following us an example non-normative example of a Interactive Authorization Request containing an OpenID4VP Authorization Response:
 
 ```http
-POST /iar HTTP/1.1
+POST /iae HTTP/1.1
 Host: server.example.com
 OAuth-Client-Attestation: eyJ...
 OAuth-Client-Attestation-PoP: eyJ...
@@ -928,7 +931,7 @@ The following is a non-normative example of the `openid4vp_response` JSON object
 
 Note: This mechanism can only be used for interactions with the same Wallet that started the issuance process.
 
-#### Redirect to Web {#iar-redirect-to-web}
+#### Redirect to Web {#iae-redirect-to-web}
 
 If the type is `redirect_to_web`, the Authorization Server is indicating that the authorization process must continue via interactions with the user in a web browser.
 
@@ -958,18 +961,18 @@ To ensure the security of the `redirect_to_web` flow, the redirect URI MUST be a
 A non-normative example of a follow-up request featuring PKCE:
 
 ```
-POST /iar HTTP/1.1
+POST /iae HTTP/1.1
 Host: server.example.com
 Content-Type: application/x-www-form-urlencoded
 
 auth_session=wxroVrBY2MCq4dDNGXACS&code_verifier=avjebhrnqwketh
 ```
 
-#### Custom Interaction Extensions {#iar-custom-extensions}
+#### Custom Interaction Extensions {#iae-custom-extensions}
 
 Additional, custom types of interactions MAY be defined by extensions of this specification to enable other types of interactions, for example, by interacting with a smart card.
 It is RECOMMENDED to use this extension point instead of modifying the OAuth protocol in order to facilitate interactions that require interactions with native components of the Wallet application.
-See (#iar-security) for additional security considerations.
+See (#iae-security) for additional security considerations.
 
 In the following non-normative example, this extension point is used to read the Betelgeuse Intergalactic ID card through an NFC interface in the Wallet. A token called `biic_token` is used to start the process.
 
@@ -985,26 +988,26 @@ Cache-Control: no-store
 }
 ```
 
-#### Preventing Session Fixation Attacks {#iar-security}
+#### Preventing Session Fixation Attacks {#iae-security}
 
 Authorization Servers MUST ensure that the user interaction (OpenID4VP presentation, redirect to web, or a custom interaction) is securely bound to the authorization process in order avoid Session Fixation Attacks as described in Section 14.2 of [@!OpenID4VP].
 This can be achieved by securely linking all requests following the initial Interactive Authorization Request.
 For OpenID4VP presentations, the Authorization Server MUST associate the `nonce` value used in the Presentation with the `auth_session` value and verify that the Presentation delivered from the Wallet to the Verifier uses the same nonce.
 
-Custom extensions ((#iar-custom-extensions)) MUST ensure an equivalent binding.
-Authorization Servers can usually achieve this by providing a nonce for use in the custom process (`biic_token` in the example above) and either only responding to the Interactive Authorization Request Endpoint (as done by (#iar-require-presentation)) or returning a non-predictable value from the process to the Interactive Authorization Request Endpoint that can be verified.
+Custom extensions ((#iae-custom-extensions)) MUST ensure an equivalent binding.
+Authorization Servers can usually achieve this by providing a nonce for use in the custom process (`biic_token` in the example above) and either only responding to the Interactive Authorization Request Endpoint (as done by (#iae-require-presentation)) or returning a non-predictable value from the process to the Interactive Authorization Request Endpoint that can be verified.
 
 #### Preventing Forwarding of Interactive Authorization Endpoint Presentation Requests
 
 In ecosystems with multiple Authorization Servers that may potentially use the Interactive Authorization Endpoint, there is a risk that a malicious (or compromised) Authorization Server forwards an Interactive Authorization Response containing a Interaction Required Response that it itself has acquired from another Authorization Server.
 This may lead to the malicious Authorization Server gaining access to Credentials issued by the other Authorization Server without the End-User's consent.
 
-Custom extensions ((#iar-custom-extensions)) MUST ensure that this attack is prevented by ensuring one or both of the following:
+Custom extensions ((#iae-custom-extensions)) MUST ensure that this attack is prevented by ensuring one or both of the following:
 
- 1. The Wallet is able to detect that a request is not presented by the party that initiated the Interactive Authorization Request. In the case of the (#iar-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_origins` parameter in the request, which contains the URL of the Interactive Authorization Endpoint that initiated the request.
- 2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#iar-require-presentation) interaction, this is achieved for both signed and unsigned requests by the Wallet including the Interactive Authorization Endpoint URL in the `aud` value and/or `SessionTranscript` within the returned Presentation, which is then verified by the Authorization Server.
+ 1. The Wallet is able to detect that a request is not presented by the party that initiated the Interactive Authorization Request. In the case of the (#iae-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_origins` parameter in the request, which contains the derived Origin of the Interactive Authorization Endpoint that initiated the request.
+ 2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#iae-require-presentation) interaction, this is achieved for both signed and unsigned requests by the binding the Interactive Authorization Endpoint to the Verifiable Presentation (see "Interactive Authorization Endpoint Binding" sections under (#format-profiles)), which is then verified by the Authorization Server.
 
-### Authorization Code Response {#iar-authorization-code-response}
+### Authorization Code Response {#iae-authorization-code-response}
 
 Once the Authorization Server has successfully processed the Interactive Authorization Request, it MUST respond with a 200 OK response using the `application/json` media type containing a `code` parameter, carrying the Authorization Code as defined in [@!RFC6749].
 The `status` key MUST be set to `ok` in this case.
@@ -1022,7 +1025,7 @@ Cache-Control: no-store
 
 The Wallet MUST use this authorization code in the subsequent Token Request to the Token Endpoint.
 
-### Interactive Authorization Error Response {#iar-error-response}
+### Interactive Authorization Error Response {#iae-error-response}
 
 In addition to the error processing rules defined in Section 2.3 of [@RFC9126], this specification defines the following error codes for the Interactive Authorization Endpoint:
 
@@ -2549,6 +2552,10 @@ The following is the dereferenced document for the Issuer HTTP URL identifier th
 
 <{{examples/issuer_jwks.json}}
 
+#### Interactive Authorization Endpoint Binding {#iae-binding-jwt-vc-json}
+
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim value MUST be set to the Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com/iae`).
+
 ### VC Secured using Data Integrity, using JSON-LD, with a Proof Suite Requiring Linked Data Canonicalization
 
 #### Format Identifier
@@ -2589,6 +2596,10 @@ The following is a non-normative example of a Credential Response with Credentia
 
 <{{examples/credential_response_ldp_vc.txt}}
 
+#### Interactive Authorization Endpoint Binding {#iae-binding-ldp-vc}
+
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `domain` claim value MUST be set to the Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com/iae`).
+
 ### VC signed as a JWT, Using JSON-LD
 
 #### Format Identifier
@@ -2610,6 +2621,10 @@ The definitions in (#authorization-ldp-vc) apply for Credentials of this type as
 #### Credential Response
 
 The definitions in (#credential-response-jwt-vc-json) apply for Credentials of this type as well.
+
+#### Interactive Authorization Endpoint Binding
+
+The definitions in (#iae-binding-jwt-vc-json) apply to the Credentials of this format.
 
 ## Mobile Documents or mdocs (ISO/IEC 18013) {#mdocs}
 
@@ -2655,6 +2670,131 @@ The following is a non-normative example of a Credential Response containing a C
 
 <{{examples/credential_response_mso_mdoc.txt}}
 
+### Interactive Authorization Endpoint Binding {#iae-binding-mso-mdoc}
+
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `SessionTranscript` CBOR structured as defined in Section 9.1.5.1 in [@ISO.18013-5] MUST be used in Verifiable Presentations submitted in a response to Interactive Authorization Requests using the `openid4vp_presentation` interaction type, with the following modifications. This `SessionTranscript` differs from those defined in Section B.5.6 in [@OpenID4VP] and is defined as follows:
+
+* `DeviceEngagementBytes` MUST be `null`.
+* `EReaderKeyBytes` MUST be `null`.
+* `Handover` MUST be the `OpenID4VCIIAEHandover` CBOR structure as defined below.
+
+Note: The following section contains a definition in Concise Data Definition Language (CDDL), a language used to define data structures - see [@RFC8610] for more details. `bstr` refers to Byte String, defined as major type 2 in CBOR and `tstr` refers to Text String, defined as major type 3 in CBOR (encoded in utf-8) as defined in section 3.1 of [@RFC8949].
+
+```cddl
+OpenID4VCIIAEHandover = [
+  "OpenID4VCIIAEHandover", ; A fixed identifier for this handover type
+  OpenID4VCIIAEHandoverInfoHash ; A cryptographic hash of OpenID4VCIIAEHandoverInfo
+]
+
+; Contains the sha-256 hash of OpenID4VCIIAEHandoverInfoBytes
+OpenID4VCIIAEHandoverInfoHash = bstr
+
+; Contains the bytes of OpenID4VCIIAEHandoverInfo encoded as CBOR
+OpenID4VCIIAEHandoverBytes = bstr .cbor OpenID4VCIIAEHandoverInfo
+
+OpenID4VCIIAEHandoverInfo = [
+  iae,
+  nonce,
+  jwkThumbprint
+] ; Array containing handover parameters
+
+iae = tstr
+
+nonce = tstr
+
+jwkThumbprint = bstr
+```
+
+The `OpenID4VCIIAEHandover` structure has the following elements:
+
+* The first element MUST be the string `OpenID4VCIIAEHandover`. This serves as a unique identifier for the handover structure to prevent misinterpretation or confusion.
+* The second element MUST be a Byte String which contains the sha-256 hash of the bytes of `OpenID4VCIIAEHandoverInfo` when encoded as CBOR.
+* The `OpenID4VCIIAEHandoverInfo` has the following elements:
+  * The first element MUST be the string representing the Interactive Authorization Endpoint of the request as described in (#interactive-authorization-request). It MUST NOT be prefixed with `iae:`.
+  * The second element MUST be the value of the `nonce` request parameter.
+  * For the Response Mode `iae_post.jwt`, the third element MUST be the JWK SHA-256 Thumbprint as defined in [@!RFC7638], encoded as a Byte String, of the Verifier's public key used to encrypt the response. If the Response Mode is `iae_post`, the third element MUST be `null`. For unsigned requests, including the JWK Thumbprint in the `SessionTranscript` allows the Verifier to detect whether the response was re-encrypted by a third party, potentially leading to the leakage of sensitive information. While this does not prevent such an attack, it makes it detectable and helps preserve the confidentiality of the response.  
+
+The following is a non-normative example of the input JWK for calculating the JWK Thumbprint in the context of `OpenID4VCIIAEHandoverInfo`:
+
+```json
+{
+  "kty": "EC",
+  "crv": "P-256",
+  "x": "DxiH5Q4Yx3UrukE2lWCErq8N8bqC9CHLLrAwLz5BmE0",
+  "y": "XtLM4-3h5o3HUH0MHVJV0kyq0iBlrBwlh8qEDMZ4-Pc",
+  "use": "enc",
+  "alg": "ECDH-ES",
+  "kid": "1"
+}
+```
+
+The following is a non-normative example of the `OpenID4VCIIAEHandoverInfo` structure:
+
+```
+Hex:
+
+837768747470733a2f2f6578616d706c652e636f6d2f696165782b6578633767426b
+786a7831726463397564527276654b7653734a4971383061766c58654c4868477771
+744158204283ec927ae0f208daaa2d026a814f2b22dca52cf85ffa8f3f8626c6bd66
+9047
+
+CBOR diagnostic:
+
+83                                   # array(3)
+  77                                 #   string(23)
+    68747470733a2f2f6578616d706c652e #     "https://example."
+    636f6d2f696165                   #     "com/iae"
+  78 2b                              #   string(43)
+    6578633767426b786a78317264633975 #     "exc7gBkxjx1rdc9u"
+    64527276654b7653734a497138306176 #     "dRrveKvSsJIq80av"
+    6c58654c48684777717441           #     "lXeLHhGwqtA"
+  58 20                              #   bytes(32)
+    4283ec927ae0f208daaa2d026a814f2b #     "B\x83ì\x92zàò\x08Úª-\x02j\x81O+"
+    22dca52cf85ffa8f3f8626c6bd669047 #     ""Ü¥,ø_ú\x8f?\x86&Æ½f\x90G"
+```
+
+The following is a non-normative example of the `OpenID4VCIIAEHandover` structure:
+
+```
+Hex:
+
+82754f70656e49443456434949414548616e646f7665725820df679426cc1bf8996e
+8eb549ee078815a87a97c5e95c1c5a8ec39eedca28a838
+
+CBOR diagnostic:
+
+82                                   # array(2)
+  75                                 #   string(21)
+    4f70656e49443456434949414548616e #     "OpenID4VCIIAEHan"
+    646f766572                       #     "dover"
+  58 20                              #   bytes(32)
+    df679426cc1bf8996e8eb549ee078815 #     "ßg\x94&Ì\x1bø\x99n\x8eµIî\x07\x88\x15"
+    a87a97c5e95c1c5a8ec39eedca28a838 #     "¨z\x97Åé\\x1cZ\x8eÃ\x9eíÊ(¨8"
+```
+
+The following is a non-normative example of the `SessionTranscript` structure:
+
+```
+Hex:
+
+83f6f682754f70656e49443456434949414548616e646f7665725820df679426cc1b
+f8996e8eb549ee078815a87a97c5e95c1c5a8ec39eedca28a838
+
+CBOR diagnostic:
+
+83                                   # array(3)
+  f6                                 #   null
+  f6                                 #   null
+  82                                 #   array(2)
+    75                               #     string(21)
+      4f70656e4944345643494941454861 #       "OpenID4VCIIAEHa"
+      6e646f766572                   #       "ndover"
+    58 20                            #     bytes(32)
+      df679426cc1bf8996e8eb549ee0788 #       "ßg\x94&Ì\x1bø\x99n\x8eµIî\x07\x88"
+      15a87a97c5e95c1c5a8ec39eedca28 #       "\x15¨z\x97Åé\\x1cZ\x8eÃ\x9eíÊ("
+      a838                           #       "¨8"
+```
+
 ## IETF SD-JWT VC
 
 This section defines a Credential Format Profile for Credentials complying with [@!I-D.ietf-oauth-sd-jwt-vc].
@@ -2682,13 +2822,17 @@ The following is a non-normative example of an authorization details object with
 
 <{{examples/authorization_details_sd_jwt_vc.json}}
 
-### Credential Response {#credential-response-jwt-vc-json}
+### Credential Response {#credential-response-sd-jwt-vc}
 
 The value of the `credential` claim in the Credential Response MUST be a string that is an SD-JWT VC. Credentials of this format are already suitable for transfer and, therefore, they need not and MUST NOT be re-encoded.
 
 The following is a non-normative example of a Credential Response containing a Credential of format `dc+sd-jwt` (with line breaks within values for display purposes only).
 
 <{{examples/credential_response_sd_jwt_vc.txt}}
+
+### Interactive Authorization Endpoint Binding {#iae-binding-sd-jwt-vc}
+
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim in the Key Binding JWT MUST be set to the derived Origin (as defined in (#iae-require-presentation)) of the Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com`).
 
 # Claims Description 
 
@@ -3280,7 +3424,7 @@ This specification registers the following errors in the IANA "OAuth Extensions 
 * Error usage location: Interactive Authorization Error Response
 * Related protocol extension: OpenID for Verifiable Credential Issuance
 * Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Specification document: (#iar-error-response) of this specification
+* Specification document: (#iae-error-response) of this specification
 
 ## Well-Known URI Registry
 
@@ -3457,3 +3601,7 @@ The technology described in this specification was made available from contribut
 
    * Initial draft created with same text as 1.0 Final
    * Add back Interactive Authorization Endpoint text that was removed from the 1.0 draft
+   * move IAE binding to dedicated format-specific sections
+   * rename `iar:` prefix in `iae:` in IAE flow
+   * rename `iar-post` response mode in `iae_post` in IAE flow
+   * use derived origin for `expected_origins` in IAE flow
