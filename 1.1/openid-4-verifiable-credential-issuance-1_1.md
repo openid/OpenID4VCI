@@ -1632,7 +1632,7 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 }
 ```
 
-Below is a non-normative example of a Notification Request when a Credential was deleted by the End-User:
+Below is a non-normative example of a Notification Request when a Credential was rejected by the End-User:
 
 ```
 POST /notification HTTP/1.1
@@ -1643,7 +1643,7 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 {
   "notification_id": "3fwe98js",
   "event": "credential_deleted",
-  "event_description": "User deleted the issued Credential."
+  "event_description": "User rejected the issued Credential."
 }
 ```
 
