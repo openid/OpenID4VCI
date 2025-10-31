@@ -1642,6 +1642,21 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 
 {
   "notification_id": "3fwe98js",
+  "event": "credential_deleted",
+  "event_description": "User deleted the issued Credential."
+}
+```
+
+Below is a non-normative example of a Notification Request when a Credential could not be stored in the Wallet:
+
+```
+POST /notification HTTP/1.1
+Host: server.example.com
+Content-Type: application/json
+Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+{
+  "notification_id": "3fwe98js",
   "event": "credential_failure",
   "event_description": "Could not store the Credential. Out of storage."
 }
