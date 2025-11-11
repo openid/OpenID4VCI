@@ -3457,3 +3457,4 @@ The technology described in this specification was made available from contribut
 
    * Initial draft created with same text as 1.0 Final
    * Add back Interactive Authorization Endpoint text that was removed from the 1.0 draft
+   * Rephrase conditions to provide `nonce` in proof types based on presence of Nonce endpoint
