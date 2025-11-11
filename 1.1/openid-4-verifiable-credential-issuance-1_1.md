@@ -3033,7 +3033,7 @@ The JWT MUST contain the following elements:
   * `kid`: OPTIONAL. JOSE Header containing the key ID. If the Credential is to be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential is to be bound to. It MUST NOT be present if `jwk` or `x5c` is present.
   * `jwk`: OPTIONAL. JOSE Header containing the key material the new Credential is to be bound to. It MUST NOT be present if `kid` or `x5c` is present.
   * `x5c`: OPTIONAL. JOSE Header containing at least one certificate where the first certificate contains the key that the Credential is to be bound to, additional certificates may also be present. It MUST NOT be present if `kid` or `jwk` is present.
-  * `key_attestation`: OPTIONAL. JOSE Header containing a key attestation as described in (#keyattestation). If the Credential Issuer provided a `c_nonce`, the `nonce` claim in the key attestation MUST be set to a server-provided `c_nonce`.
+  * `key_attestation`: OPTIONAL. JOSE Header containing a key attestation as described in (#keyattestation). If present, the `nonce` claim in the key attestation MUST be set to a server-provided `c_nonce`.
   * `trust_chain`: OPTIONAL. JOSE Header containing an [@!OpenID.Federation] Trust Chain. This element MAY be used to convey key attestation, metadata, metadata policies, federation Trust Marks and any other information related to a specific federation, if available in the chain. When used for signature verification, the header parameter `kid` MUST be present.
 
 * in the JWT body,
@@ -3111,7 +3111,7 @@ When a W3C Verifiable Presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] se
   * `cryptosuite`: REQUIRED. If Credential Issuer metadata is provided, the value MUST match one of the entries in the `proof_signing_alg_values_supported` metadata parameter.
   * `proofPurpose`: REQUIRED. MUST be set to `authentication`.
   * `domain`: REQUIRED. MUST be set to the Credential Issuer Identifier.  
-  * `challenge`: REQUIRED when the Credential Issuer has provided a `c_nonce`. It MUST NOT be used otherwise. String, where the value is a server-provided `c_nonce`. It MUST be present when the issuer has a Nonce Endpoint as defined in (#nonce-endpoint).
+  * `challenge`: REQUIRED when the Credential Issuer has a Nonce Endpoint as defined in (#nonce-endpoint). It MUST NOT be used otherwise. String, where the value is a server-provided `c_nonce`.
 
 The Credential Issuer MUST validate that the W3C Verifiable Presentation used as a proof is actually signed with a key in the possession of the Holder.
 
