@@ -640,7 +640,7 @@ This is an extension of the traditional Authorization Endpoint defined in [@!RFC
 A primary use case is requiring the Presentation of a Credential as a prerequisite for issuing a new Credential.
 Support for the Interactive Authorization Endpoint is OPTIONAL.
 
-The Authorization Server indicates support for interactive authorization by publishing the `interactive_authorization_endpoint` parameter in its Authorization Server Metadata. In this case, the Wallet SHOULD use this endpoint to obtain authorization.
+The Authorization Server indicates support for interactive authorization by publishing the `interactive_authorization_endpoint` parameter in its Authorization Server Metadata as defined in (#as-metadata).
 
 The following figure illustrates a flow using the Interactive Authorization Endpoint, where the Authorization Server requests a Presentation (of another Credential) from the Wallet as part of the authorization process to issue a Credential to that Wallet. The exact deployment model of the OpenID4VP Verifier in relation to the Authorization Server is out of scope of this specification. It can be integrated into the Authorization Server or a separate component, in which case backchannel communication between the Verifier and Authorization Server would need to happen (not shown here).
 
@@ -1836,7 +1836,9 @@ See (#additional-issuer-metadata-examples) for additional examples of Credential
 
 This specification also defines a new OAuth 2.0 Authorization Server metadata [@!RFC8414] parameter to publish whether the Authorization Server that the Credential Issuer relies on for authorization supports anonymous Token Requests with the Pre-Authorized Grant Type. It is defined as follows:
 
-* `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A boolean indicating whether the Credential Issuer accepts a Token Request with a Pre-Authorized Code but without a `client_id`. The default is `false`. 
+* `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A boolean indicating whether the Credential Issuer accepts a Token Request with a Pre-Authorized Code but without a `client_id`. The default is `false`.
+* `interactive_authorization_endpoint`: OPTIONAL. URL of the Authorization Server's Interactive Authorization Endpoint. This URL MUST use the https scheme and MAY contain port, path, and query parameter components. If omitted, the Authorization Server does not support the Interactive Authorization Endpoint. If present, the Wallet SHOULD use this endpoint to obtain authorization as defined in (#interactive-authorization-endpoint).
+* `require_interactive_authorization_request`: OPTIONAL. A boolean indicating whether the Authorization Server only accepts an Authorization Request for Credential issuance via the Interactive Authorization Endpoint defined in [#interactive-authorization-endpoint]. If omitted, the default value is `false`. This parameter MUST NOT be present if `interactive_authorization_endpoint` is omitted. Note that the presence of `interactive_authorization_endpoint` is sufficient for a Wallet to determine that it can use the Interactive Authorization Endpoint.
 
 Additional Authorization Server metadata parameters MAY be defined and used,
 as described in [@!RFC8414].
@@ -3255,7 +3257,7 @@ established by [@!RFC8414].
 * Metadata Name: `interactive_authorization_endpoint`
 * Metadata Description: URL of the Authorization Server's Interactive Authorization Endpoint. This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Authorization Server does not support the Interactive Authorization Endpoint.
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#interactive-authorization-request) of this specification
+* Reference: (#as-metadata) of this specification
 
 ## OAuth Dynamic Client Registration Metadata Registry
 
@@ -3457,4 +3459,6 @@ The technology described in this specification was made available from contribut
 
    * Initial draft created with same text as 1.0 Final
    * Add back Interactive Authorization Endpoint text that was removed from the 1.0 draft
+   * add require_interactive_authorization_request to AS metadata
+   * add interactive_authorization_endpoint to AS metadata section
    * Rephrase conditions to provide `nonce` in proof types based on presence of Nonce endpoint
