@@ -1449,7 +1449,7 @@ If the Wallet is requesting the issuance of a Credential that is not supported b
   * `unknown_credential_configuration`: Requested Credential Configuration is unknown.
   * `unknown_credential_identifier`: Requested Credential identifier is unknown.
   * `invalid_proof`: The `proofs` parameter in the Credential Request is invalid: (1) if the field is missing, or (2) one of the provided key proofs is invalid, or (3) if at least one of the key proofs does not contain a `c_nonce` value (refer to (#nonce-response)).
-  * `invalid_nonce`: The `proofs` parameter in the Credential Request uses an invalid nonce: at least one of the key proofs contains an invalid `c_nonce` value. The wallet should retrieve a new `c_nonce` value (refer to (#nonce-endpoint)).
+  * `invalid_nonce`: The `proofs` parameter in the Credential Request uses an invalid nonce: at least one of the key proofs contains an invalid `c_nonce` value. The Wallet should retrieve a new `c_nonce` value (refer to (#nonce-endpoint)).
   * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
   * `credential_request_denied`: The Credential Request has not been accepted by the Credential Issuer. The Wallet SHOULD treat this error as unrecoverable, meaning if received from a Credential Issuer the Credential cannot be issued. 
 * `error_description`: OPTIONAL. The `error_description` parameter MUST be a human-readable ASCII [@!USASCII] text, providing any additional information used to assist the Client implementers in understanding the occurred error. The values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
@@ -3033,14 +3033,14 @@ The JWT MUST contain the following elements:
   * `kid`: OPTIONAL. JOSE Header containing the key ID. If the Credential is to be bound to a DID, the `kid` refers to a DID URL which identifies a particular key in the DID Document that the Credential is to be bound to. It MUST NOT be present if `jwk` or `x5c` is present.
   * `jwk`: OPTIONAL. JOSE Header containing the key material the new Credential is to be bound to. It MUST NOT be present if `kid` or `x5c` is present.
   * `x5c`: OPTIONAL. JOSE Header containing at least one certificate where the first certificate contains the key that the Credential is to be bound to, additional certificates may also be present. It MUST NOT be present if `kid` or `jwk` is present.
-  * `key_attestation`: OPTIONAL. JOSE Header containing a key attestation as described in (#keyattestation). If the `nonce` claim is present in the key attestation, its value MUST be set to a server-provided `c_nonce`.
+  * `key_attestation`: OPTIONAL. JOSE Header containing a key attestation as described in (#keyattestation). If the `nonce` claim is present in the key attestation, its value MUST be set to a server-provided `c_nonce` from the Nonce Endpoint as defined in (#nonce-endpoint). Note that including a `nonce` claim is left to the Wallet. In some environments, a `nonce` is unnecessary because the key material in the `key_attestation` already provides sufficient entropy and freshness. Omitting the `nonce` also enables pre-generation of attestations prior to interacting with a specific Issuer. If the Issuer returns an `invalid_nonce` error, this can be interpreted as an indication that the Issuer expects a `nonce` claim in the `key_attestation`.
   * `trust_chain`: OPTIONAL. JOSE Header containing an [@!OpenID.Federation] Trust Chain. This element MAY be used to convey key attestation, metadata, metadata policies, federation Trust Marks and any other information related to a specific federation, if available in the chain. When used for signature verification, the header parameter `kid` MUST be present.
 
 * in the JWT body,
   * `iss`: OPTIONAL (string). The value of this claim MUST be the `client_id` of the Client making the Credential request. This claim MUST be omitted if the access token authorizing the issuance call was obtained from a Pre-Authorized Code Flow through anonymous access to the token endpoint.
   * `aud`: REQUIRED (string). The value of this claim MUST be the Credential Issuer Identifier.
   * `iat`: REQUIRED (number). The value of this claim MUST be the time at which the key proof was issued using the syntax defined in [@!RFC7519].
-  * `nonce`: OPTIONAL (string). The value type of this claim MUST be a string, where the value is a server-provided `c_nonce`. It MUST be present when the issuer has a Nonce Endpoint as defined in (#nonce-endpoint).
+  * `nonce`: OPTIONAL (string). The value type of this claim MUST be a string, where the value is a server-provided `c_nonce`. It MUST be present when the Issuer has a Nonce Endpoint as defined in (#nonce-endpoint).
 
 The Credential Issuer MUST validate that the JWT used as a proof is actually signed by a key identified in the JOSE Header through either `kid`, `jwk` or `x5c` element.
 
@@ -3156,7 +3156,7 @@ Below is a non-normative example of a `proofs` parameter (with line breaks withi
 
 A key attestation in JWT format as defined in (#keyattestation-jwt).
 
-If the Credential Issuer has a Nonce Endpoint (as defined in (#nonce-endpoint)), the `c_nonce` value provided by the Credential Issuer MUST be provided in the key attestation's `nonce` parameter.
+If the Credential Issuer has a Nonce Endpoint (as defined in (#nonce-endpoint)), the `nonce` claim of the `attestation` MUST be present and set to the `c_nonce` value provided by the Credential Issuer.
 
 Cryptographic algorithm identifiers used in the `proof_signing_alg_values_supported` Credential Issuer metadata parameter for this proof type are case sensitive strings and SHOULD be one of those defined in [@IANA.JOSE].
 
