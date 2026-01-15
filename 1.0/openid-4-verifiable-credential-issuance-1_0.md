@@ -3026,8 +3026,8 @@ The technology described in this specification was made available from contribut
 
 -19
 
-   * TBD    
-
+   * TBD 
+   
 -final
    
    * https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0-final.html
