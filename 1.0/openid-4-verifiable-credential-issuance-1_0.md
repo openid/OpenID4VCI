@@ -760,12 +760,15 @@ The following additional clarifications are provided for some of the error codes
 
 `invalid_grant`:
 
-- The Authorization Server expects a Transaction Code in the Pre-Authorized Code Flow but the Client provides the wrong Transaction Code.
-- The End-User provides the wrong Pre-Authorized Code or the Pre-Authorized Code has expired.
+- The End-User provides the wrong Pre-Authorized Code or the Pre-Authorized Code has expired or is no longer valid.
 
 `invalid_client`:
 
 - The Client tried to send a Token Request with a Pre-Authorized Code without a Client ID but the Authorization Server does not support anonymous access.
+
+`invalid_tx_code`:
+
+- The Authorization Server expects a Transaction Code in the Pre-Authorized Code Flow but the Client provides the wrong Transaction Code.
 
 Below is a non-normative example of a Token Error Response:
 
@@ -1502,6 +1505,16 @@ The Pre-Authorized Code Flow is vulnerable to the replay of the Pre-Authorized C
 An attacker might leverage the Credential issuance process and the End-User's trust in the Wallet to phish Transaction Codes sent out by a different service that grant the attacker access to services other than Credential issuance. The attacker could set up a Credential Issuer site and in parallel to the issuance request, trigger transmission of a Transaction Code to the End-User's phone from a service other than Credential issuance, e.g., from a payment service. The End-User would then be asked to enter this Transaction Code into the Wallet and since the Wallet sends this Transaction Code to the Token Endpoint of the Credential Issuer (the attacker), the attacker would get access to the Transaction Code, and access to that other service.
 
 In order to cope with that issue, the Wallet is RECOMMENDED to interact with trusted Credential Issuers only. In that case, the Wallet would not process a Credential Offer with an untrusted issuer URL. The Wallet MAY also show the End-User the endpoint of the Credential Issuer it will be sending the Transaction Code to and ask the End-User for confirmation.
+
+### Transaction Code Guessing
+
+When the Pre-Authorized Code Flow is used together with a Transaction Code (`tx_code`), the Transaction Code is typically short, low-entropy, and intended for one-time use. As a result, it may be susceptible to online guessing or brute-force attacks if an attacker can repeatedly submit Token Requests using the same Pre-Authorized Code.
+
+To mitigate this risk, the Authorization Server SHOULD limit the number of failed Transaction Code verification attempts associated with a Pre-Authorized Code or issuance transaction. Once a configurable maximum number of failed attempts is exceeded, the Authorization Server SHOULD invalidate the Pre-Authorized Code and reject further Token Requests for that transaction.
+
+Transaction Codes SHOULD be short-lived and SHOULD be treated as single-use. Upon successful verification, a Transaction Code SHOULD NOT be accepted again.
+
+When a valid Pre-Authorized Code is presented with an incorrect Transaction Code, the Authorization Server SHOULD return the `invalid_tx_code` error. If the Pre-Authorized Code has expired, has been invalidated (including due to too many failed attempts), or is otherwise no longer valid, the Authorization Server SHOULD return the `invalid_grant` error.
 
 ## Credential Lifecycle Management 
 
