@@ -3039,7 +3039,7 @@ The technology described in this specification was made available from contribut
 
 -19
 
-   * TBD 
+   * add invalid_tx_code to Pre-Authz Code Flow
    
 -final
    

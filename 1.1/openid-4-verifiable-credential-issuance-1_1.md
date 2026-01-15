@@ -3474,3 +3474,4 @@ The technology described in this specification was made available from contribut
    * Add back Interactive Authorization Endpoint text that was removed from the 1.0 draft
    * add require_interactive_authorization_request to AS metadata
    * add interactive_authorization_endpoint to AS metadata section
+   * add invalid_tx_code to Pre-Authz Code Flow
