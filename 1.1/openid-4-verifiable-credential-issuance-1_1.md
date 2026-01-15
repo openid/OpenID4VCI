@@ -2692,7 +2692,7 @@ OpenID4VCIIAEHandover = [
 OpenID4VCIIAEHandoverInfoHash = bstr
 
 ; Contains the bytes of OpenID4VCIIAEHandoverInfo encoded as CBOR
-OpenID4VCIIAEHandoverBytes = bstr .cbor OpenID4VCIIAEHandoverInfo
+OpenID4VCIIAEHandoverInfoBytes = bstr .cbor OpenID4VCIIAEHandoverInfo
 
 OpenID4VCIIAEHandoverInfo = [
   iae,
