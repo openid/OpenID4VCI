@@ -3113,7 +3113,7 @@ When a W3C Verifiable Presentation as defined by [@VC_DATA_2.0] or [@VC_DATA] se
   * `cryptosuite`: REQUIRED. If Credential Issuer metadata is provided, the value MUST match one of the entries in the `proof_signing_alg_values_supported` metadata parameter.
   * `proofPurpose`: REQUIRED. MUST be set to `authentication`.
   * `domain`: REQUIRED. MUST be set to the Credential Issuer Identifier.  
-  * `challenge`: REQUIRED when the Credential Issuer has a Nonce Endpoint as defined in (#nonce-endpoint). It MUST NOT be used otherwise. String, where the value is a server-provided `c_nonce`.
+  * `challenge`: OPTIONAL. The value type of this claim MUST be a string, where the value is a server-provided `c_nonce`. It MUST NOT be used otherwise. It MUST be present when the Issuer has a Nonce Endpoint as defined in (#nonce-endpoint).
 
 The Credential Issuer MUST validate that the W3C Verifiable Presentation used as a proof is actually signed with a key in the possession of the Holder.
 
