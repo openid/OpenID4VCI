@@ -77,6 +77,9 @@ This specification also defines the following terms. In the case where a term ha
 Credential Dataset:
 :  A set of one or more claims about a subject, provided by a Credential Issuer.
 
+Credential Dataset Identifier
+:  A unique identifier that refers to a specific version of a Credential Dataset. This identifier remains stable across multiple instances of a Credential that share the same set of claim values, even if they differ in cryptographic proofs. When the claim values in the dataset change, a new Credential Dataset Identifier is assigned. This identifier enables Wallets to detect changes to the underlying data and to distinguish between Credentials issued with different versions of a Credential Dataset under the same Credential Configuration.
+
 Credential (or Verifiable Credential (VC)):
 :  An instance of a Credential Configuration with a particular Credential Dataset, that is signed by an Issuer and can be cryptographically verified. An Issuer may provide multiple Credentials as separate instances of the same Credential Configuration and Credential Dataset but with different cryptographic values. In this specification, the term "Verifiable Credential" is also referred to as "Credential". It's important to note that the use of the term "Credential" here differs from its usage in [@!OpenID.Core] and [@!RFC6749]. In this context, "Credential" specifically does not encompass other meanings such as passwords used for login credentials.
 
@@ -996,7 +999,7 @@ Cache-Control: no-store
 }
 ```
 
-Below is a non-normative example of a Credential Response in an immediate issuance flow for multiple Credential instances in JWT VC format (JSON encoded) with an additional `notification_id` parameter:
+Below is a non-normative example of a Credential Response in an immediate issuance flow for multiple Credential instances in JWT VC format (JSON encoded) with an additional `notification_id` and `credential_dataset_id` parameter:
 
 ```
 HTTP/1.1 200 OK
@@ -1011,7 +1014,8 @@ Content-Type: application/json
       "credential": "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
     }
   ],
-  "notification_id": "3fwe98js"
+  "notification_id": "3fwe98js",
+  "credential_data_set_id": "Jk0eOt4CXQe1NXK"
 }
 ```
 
