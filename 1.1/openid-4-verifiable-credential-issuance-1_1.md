@@ -2186,6 +2186,22 @@ regulation), the Credential Issuer should properly authenticate the Wallet and e
   </front>
 </reference>
 
+<reference anchor="VC_JOSE_COSE" target="https://www.w3.org/TR/2025/REC-vc-jose-cose-20250515/">
+  <front>
+    <title>Securing Verifiable Credentials using JOSE and COSE</title>
+    <author fullname="Michael B. Jones">
+      <organization>Self-Issued Consulting</organization>
+    </author>
+    <author fullname="Michael Prorock">
+      <organization>Mesur.io</organization>
+    </author>
+    <author fullname="Gabe Cohen">
+      <organization>Block</organization>
+    </author>
+   <date day="15" month="May" year="2025"/>
+  </front>
+</reference>
+
 <reference anchor="VC_Data_Integrity" target="https://www.w3.org/TR/2025/REC-vc-data-integrity-20250515/">
   <front>
     <title>Verifiable Credential Data Integrity 1.0</title>
@@ -2627,6 +2643,92 @@ The definitions in (#credential-response-jwt-vc-json) apply for Credentials of t
 #### Interactive Authorization Endpoint Binding
 
 The definitions in (#iae-binding-jwt-vc-json) apply to the Credentials of this format.
+
+## W3C Verifiable Credentials Data Model 2.0
+
+The W3C Verifiable Credentials Data Model v2.0 [@VC_DATA_2.0] specification defines verifiable credentials that can be secured using various methods. The [@VC_JOSE_COSE] specification defines how to secure credentials and presentations conforming to [@VC_DATA_2.0] using JOSE and COSE, including the format identifiers and securing mechanisms for JWT and SD-JWT.
+
+This specification differentiates between the following two Credential Formats for W3C VCDM 2.0:
+
+* VC secured as a JWT (`vc+jwt`)
+* VC secured as an SD-JWT (`vc+sd-jwt`)
+
+Distinct Credential Format Identifiers, extension parameters/claims, and processing rules are defined for each of the above-mentioned Credential Formats.
+
+### VC Secured as a JWT {#vc-jwt}
+
+#### Format Identifier
+
+The Credential Format Identifier is `vc+jwt`. This format identifier is registered by the [@VC_JOSE_COSE] specification.
+
+When the `format` value is `vc+jwt`, the Credential conforms to the W3C Verifiable Credentials Data Model v2.0 [@VC_DATA_2.0] and is secured as a JWT as defined in [@VC_JOSE_COSE].
+
+#### Credential Issuer Metadata {#server-metadata-vc-jwt}
+
+Cryptographic algorithm identifiers used in the `credential_signing_alg_values_supported` parameter are case sensitive strings and SHOULD be one of those JWS Algorithm Names defined in [@IANA.JOSE].
+
+The following additional Credential Issuer metadata parameters are defined for this Credential Format for use in the `credential_configurations_supported` parameter, in addition to those defined in (#credential-issuer-parameters).
+
+* `credential_definition`: REQUIRED. Object containing the detailed description of the Credential type. It consists of the following parameter:
+  * `type`: REQUIRED. Array designating the types a certain Credential type supports, according to [@VC_DATA_2.0], Section 4.5.
+
+The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential Format `vc+jwt`:
+
+<{{examples/credential_metadata_vc_jwt.json}}
+
+#### Authorization Details {#authorization-vc-jwt}
+
+The following is a non-normative example of an authorization details object with Credential Format `vc+jwt`:
+
+<{{examples/authorization_details_vc_jwt.json}}
+
+#### Credential Response {#credential-response-vc-jwt}
+
+The value of the `credential` claim in the Credential Response MUST be a string that is a JWT-secured W3C VCDM 2.0 Verifiable Credential. Credentials of this format are already a sequence of base64url-encoded values separated by period characters and MUST NOT be re-encoded.
+
+The following is a non-normative example of a Credential Response with Credential Format `vc+jwt` (with line breaks within values for display purposes only):
+
+<{{examples/credential_response_vc_jwt.txt}}
+
+#### Interactive Authorization Endpoint Binding {#iae-binding-vc-jwt}
+
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, when the presentation is secured as a JWT (`vp+jwt`) as defined in [@VC_JOSE_COSE], the Verifiable Credential in the presentation is contained in an `EnvelopedVerifiableCredential` as defined in [@VC_DATA_2.0]. The `aud` claim value in the Verifiable Presentation JWT MUST be set to the Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com/iae`).
+
+### VC Secured as an SD-JWT {#vc-sd-jwt}
+
+#### Format Identifier
+
+The Credential Format Identifier is `vc+sd-jwt`. This format identifier is registered by the [@VC_JOSE_COSE] specification.
+
+When the `format` value is `vc+sd-jwt`, the Credential conforms to the W3C Verifiable Credentials Data Model v2.0 [@VC_DATA_2.0] and is secured as an SD-JWT as defined in [@VC_JOSE_COSE].
+
+#### Credential Issuer Metadata {#server-metadata-vc-sd-jwt}
+
+The definitions in (#server-metadata-vc-jwt) apply for metadata of Credentials of this type as well.
+
+The following is a non-normative example of an object containing the `credential_configurations_supported` parameter for Credential Format `vc+sd-jwt`:
+
+<{{examples/credential_metadata_vc_sd_jwt.json}}
+
+#### Authorization Details {#authorization-vc-sd-jwt}
+
+The definitions in (#authorization-vc-jwt) apply for Credentials of this type as well.
+
+The following is a non-normative example of an authorization details object with Credential Format `vc+sd-jwt`:
+
+<{{examples/authorization_details_vc_sd_jwt.json}}
+
+#### Credential Response {#credential-response-vc-sd-jwt}
+
+The value of the `credential` claim in the Credential Response MUST be a string that is an SD-JWT-secured W3C VCDM 2.0 Verifiable Credential. Credentials of this format are already suitable for transfer and, therefore, they need not and MUST NOT be re-encoded.
+
+The following is a non-normative example of a Credential Response with Credential Format `vc+sd-jwt` (with line breaks within values for display purposes only):
+
+<{{examples/credential_response_vc_sd_jwt.txt}}
+
+#### Interactive Authorization Endpoint Binding {#iae-binding-vc-sd-jwt}
+
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, when the presentation is secured as an SD-JWT (`vp+sd-jwt`) as defined in [@VC_JOSE_COSE], the Verifiable Credential in the presentation is contained in an `EnvelopedVerifiableCredential` as defined in [@VC_DATA_2.0]. The `aud` claim value in the Key Binding JWT MUST be set to the Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com/iae`).
 
 ## Mobile Documents or mdocs (ISO/IEC 18013) {#mdocs}
 
