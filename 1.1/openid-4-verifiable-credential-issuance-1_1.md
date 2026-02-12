@@ -700,6 +700,8 @@ Figure: Issuance using the Interactive Authorization Endpoint
 
 All communication with the Interactive Authorization Endpoint MUST utilize TLS.
 
+The rules for client authentication as defined in [@!RFC9126] and [@!RFC6749] for pushed authorization requests, including the applicable authentication methods, apply for all requests to the Interactive Authorization Endpoint as well.
+
 Note: In case a Wallet Attestation is required by the Authorization Server, it has to be included in this request.
 
 ### Initial Request
@@ -712,8 +714,6 @@ The initial request to the Interactive Authorization Endpoint is formed and sent
 * `redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#iae-redirect-to-web).
 
 Custom interaction types (see (#iae-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter.
-
-The rules for client authentication as defined in [@!RFC9126] and [@!RFC6749] for pushed authorization requests, including the applicable authentication methods, apply for all requests to the Interactive Authorization Endpoint as well.
 
 When the wallet includes `redirect_to_web` in `interaction_types_supported`, the `code_challenge` and `code_challenge_method` parameters (see (#securitybcp)) are included in the initial request.
 
