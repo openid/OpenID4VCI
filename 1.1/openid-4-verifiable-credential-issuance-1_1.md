@@ -808,9 +808,13 @@ Depending on this assessment, the response from the Interactive Authorization En
 ### Interaction Required Response {#iae-interaction-required-response}
 
 By setting `status` to `require_interaction` in the response, the Authorization Server requests an additional user interaction.
-In this case, the following keys MUST be present in the response as well:
+In this case, the following key MUST be present in the response as well:
 
 * `type`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST NOT set this to a value that was not included in the `interaction_types_supported` parameter sent by the Wallet.
+
+The Authorization Server MUST provide a mechanism to associate the next request by this Wallet with the ongoing authorization request sequence.
+If no other mechanism to associate the next request by this Wallet with the ongoing authorization request sequence is defined by the type of interaction, the following key MUST be present in the response as well:
+
 * `auth_session`: REQUIRED. String containing a value that allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value as an opaque value. The value returned MUST be distinct for each interactive authorization response.
 
 The Wallet MUST include the most recently received `auth_session` in follow-up requests to the Interactive Authorization Endpoint.
@@ -825,6 +829,8 @@ If `type` is set to `openid4vp_presentation`, as shown in the following example,
 
 * The `response_mode` MUST be either `iae_post` for unencrypted responses or `iae_post.jwt` for encrypted responses. These modes are used to indicate to the Wallet to return the response back to the same Interactive Authorization Endpoint.
 * If `expected_origins` is present, it MUST contain only the derived Origin of the Interactive Authorization Endpoint as defined in Section 4 in [@RFC6454]. For example, the derived Origin from `https://example.com/iae` is `https://example.com`.
+
+The response MUST include the key `auth_session` to associate the next request by this Wallet with the ongoing authorization request sequence.
 
 The following is a non-normative example of an unsigned Authorization Request:
 
@@ -941,6 +947,8 @@ The Wallet MUST only use a `request_uri` value once.
 Authorization servers SHOULD treat `request_uri` values as one-time use but MAY allow for duplicate requests due to a user reloading/refreshing their user agent. An expired request_uri MUST be rejected as invalid.
 The Authorization Server MAY include the `expires_in` key as defined in [@!RFC9126].
 
+Since the `request_uri` allows the Authorization Server to associate the Authorization Request with the ongoing authorization request sequence, no `auth_session` is needed.
+
 Non-normative Example:
 
 ```
@@ -977,6 +985,7 @@ It is RECOMMENDED to use this extension point instead of modifying the OAuth pro
 See (#iae-security) for additional security considerations.
 
 In the following non-normative example, this extension point is used to read the Betelgeuse Intergalactic ID card through an NFC interface in the Wallet. A token called `biic_token` is used to start the process.
+It is assumed that the `biic_token` is used by the Authorization Server to associate the next request by this Wallet with the ongoing authorization request sequence, and no `auth_session` is thus needed.
 
 ```
 HTTP/1.1 200 OK
