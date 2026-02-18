@@ -1503,6 +1503,17 @@ An attacker might leverage the Credential issuance process and the End-User's tr
 
 In order to cope with that issue, the Wallet is RECOMMENDED to interact with trusted Credential Issuers only. In that case, the Wallet would not process a Credential Offer with an untrusted issuer URL. The Wallet MAY also show the End-User the endpoint of the Credential Issuer it will be sending the Transaction Code to and ask the End-User for confirmation.
 
+### Transaction Code Guessing
+
+When the Pre-Authorized Code Flow is used together with a Transaction Code (`tx_code`), the Transaction Code is typically short, low-entropy, and intended for one-time use. As a result, it may be susceptible to online guessing or brute-force attacks if an attacker can repeatedly submit Token Requests using the same Pre-Authorized Code.
+
+To mitigate this risk, the Authorization Server SHOULD limit the number of failed Transaction Code verification attempts associated with a Pre-Authorized Code or issuance transaction. Once a configurable maximum number of failed attempts is exceeded, the Authorization Server SHOULD invalidate the Pre-Authorized Code and reject further Token Requests for that transaction.
+
+Transaction Codes SHOULD be short-lived and SHOULD be treated as single-use. Upon successful verification, a Transaction Code SHOULD NOT be accepted again.
+
+When a valid Pre-Authorized Code is presented with an incorrect Transaction Code, the Authorization Server SHOULD return an error indicating that the provided Transaction Code is invalid.
+If the Pre-Authorized Code has expired, has been invalidated (including due to too many failed attempts), or is otherwise no longer valid, the Authorization Server SHOULD return the `invalid_grant` error.
+
 ## Credential Lifecycle Management 
 
 The Credential Issuer is supposed to be responsible for the lifecycle of its Credentials. This means the Credential Issuer will invalidate Credentials when it deems appropriate, e.g., if it detects fraudulent behavior.
@@ -3026,7 +3037,7 @@ The technology described in this specification was made available from contribut
 
 -19
 
-   * TBD 
+   * Add security consideration on transaction code guessing
    
 -final
    
