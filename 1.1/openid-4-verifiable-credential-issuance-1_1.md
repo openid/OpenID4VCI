@@ -1007,7 +1007,7 @@ This may lead to the malicious Authorization Server gaining access to Credential
 
 Custom extensions ((#iae-custom-extensions)) MUST ensure that this attack is prevented by ensuring one or both of the following:
 
- 1. The Wallet is able to detect that a request is not presented by the party that initiated the Interactive Authorization Request. In the case of the (#iae-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_origins` parameter in the request, which contains the derived Origin of the Interactive Authorization Endpoint that initiated the request.
+ 1. The Wallet is able to detect that a request is not presented by the party that initiated the Interactive Authorization Request. In the case of the (#iae-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_url` parameter in the request, which contains the Interactive Authorization Endpoint that initiated the request.
  2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#iae-require-presentation) interaction, this is achieved for both signed and unsigned requests by the binding the Interactive Authorization Endpoint to the Verifiable Presentation (see "Interactive Authorization Endpoint Binding" sections under (#format-profiles)), which is then verified by the Authorization Server.
 
 ### Authorization Code Response {#iae-authorization-code-response}
@@ -2852,7 +2852,7 @@ The following is a non-normative example of a Credential Response containing a C
 
 ### Interactive Authorization Endpoint Binding {#iae-binding-sd-jwt-vc}
 
-To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim in the Key Binding JWT MUST be set to the derived Origin (as defined in (#iae-require-presentation)) of the Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com`).
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim in the Key Binding JWT MUST be set to the  Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com`).
 
 # Claims Description 
 
@@ -3629,7 +3629,6 @@ The technology described in this specification was made available from contribut
    * move IAE binding to dedicated format-specific sections
    * rename `iar:` prefix in `iae:` in IAE flow
    * rename `iar-post` response mode in `iae_post` in IAE flow
-   * use derived origin for `expected_origins` in IAE flow
    * add require_interactive_authorization_request to AS metadata
    * add interactive_authorization_endpoint to AS metadata section
    * use `expected_url` instead of `expected_origins` for IAE flow
