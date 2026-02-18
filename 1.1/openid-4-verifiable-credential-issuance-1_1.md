@@ -1552,7 +1552,7 @@ Content-Type: application/json
     }
   ],
   "notification_id": "3fwe98js",
-  "credential_data_set_id": "Jk0eOt4CXQe1NXK"
+  "credential_dataset_id": "Jk0eOt4CXQe1NXK"
 }
 ```
 
