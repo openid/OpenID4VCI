@@ -73,6 +73,9 @@ This specification also defines the following terms. In the case where a term ha
 Credential Dataset:
 :  A set of one or more claims about a subject, provided by a Credential Issuer.
 
+Credential Dataset Identifier
+:  A unique identifier that refers to a specific version of a Credential Dataset. This identifier remains stable across multiple instances of a Credential that share the same set of claim values, even if they differ in cryptographic proofs. When the claim values in the dataset change, a new Credential Dataset Identifier is assigned. This identifier enables Wallets to detect changes to the underlying data and to distinguish between Credentials issued with different versions of a Credential Dataset under the same Credential Configuration.
+
 Credential (or Verifiable Credential (VC)):
 :  An instance of a Credential Configuration with a particular Credential Dataset, that is signed by an Issuer and can be cryptographically verified. An Issuer may provide multiple Credentials as separate instances of the same Credential Configuration and Credential Dataset but with different cryptographic values. In this specification, the term "Verifiable Credential" is also referred to as "Credential". It's important to note that the use of the term "Credential" here differs from its usage in [@!OpenID.Core] and [@!RFC6749]. In this context, "Credential" specifically does not encompass other meanings such as passwords used for login credentials.
 
@@ -1384,6 +1387,7 @@ The following parameters are used in the JSON-encoded Credential Response body:
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This parameter is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used if the `credentials` parameter is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `interval`: REQUIRED if `transaction_id` is present. Contains a positive number that represents the minimum amount of time in seconds that the Wallet SHOULD wait after receiving the response before sending a new request to the Deferred Credential Endpoint. It MUST NOT be used if the `credentials` parameter is present.
 * `notification_id`: OPTIONAL. String identifying one or more Credentials issued in one Credential Response. It MUST be included in the Notification Request as defined in (#notification). It MUST not be used if the `credentials` parameter is not present.
+* `credential_dataset_id`: OPTIONAL.  An opaque string containing the Credential Dataset Identifier associated with the returned Credential(s). This allows Wallets to detect changes to the underlying Credential Dataset across different Credential Responses. This is useful in situations where claim values change over time, such as an updated address, correction of previously issued personal data, or a change in legal or entitlement status (e.g., reaching the age of majority), enabling the Wallet to distinguish between a cryptographic re-issuance of unchanged data and the issuance of a credential containing modified claim values.
 
 Additional Credential Response parameters MAY be defined and used. The Wallet MUST ignore any unrecognized parameters.
 
@@ -1403,7 +1407,7 @@ Cache-Control: no-store
 }
 ```
 
-Below is a non-normative example of a Credential Response in an immediate issuance flow for multiple Credential instances in JWT VC format (JSON encoded) with an additional `notification_id` parameter:
+Below is a non-normative example of a Credential Response in an immediate issuance flow for multiple Credential instances in JWT VC format (JSON encoded) with additional `notification_id` and `credential_dataset_id` parameters:
 
 ```
 HTTP/1.1 200 OK
@@ -1525,7 +1529,7 @@ A Deferred Credential Response may either contain the requested Credentials or f
 * If the Credential Issuer is able to issue the requested Credentials, the Deferred Credential Response MUST use the `credentials` parameter as defined in (#credential-response) and MUST respond with the HTTP status code 200 (see Section 15.3.3 of [@!RFC9110]).
 * If the Credential Issuer still requires more time, the Deferred Credential Response MUST use the `interval` and `transaction_id` parameters as defined in (#credential-response) and it MUST respond with the HTTP status code 202 (see Section 15.3.3 of [@!RFC9110]). The value of `transaction_id` MUST be same as the value of `transaction_id` in the Deferred Credential Request.
 
-The Deferred Credential Response MAY use the `notification_id` parameter as defined in (#credential-response).
+The Deferred Credential Response MAY use the `notification_id` and the `credential_dataset_id` parameter as defined in (#credential-response).
 
 Additional Deferred Credential Response parameters MAY be defined and used.
 The Wallet MUST ignore any unrecognized parameters.
@@ -1549,7 +1553,8 @@ Content-Type: application/json
       "credential": "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
     }
   ],
-  "notification_id": "3fwe98js"
+  "notification_id": "3fwe98js",
+  "credential_dataset_id": "Jk0eOt4CXQe1NXK"
 }
 ```
 
@@ -3626,3 +3631,4 @@ The technology described in this specification was made available from contribut
    * use derived origin for `expected_origins` in IAE flow
    * add require_interactive_authorization_request to AS metadata
    * add interactive_authorization_endpoint to AS metadata section
+   * add cerdential dataset identifier
