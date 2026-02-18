@@ -825,7 +825,7 @@ If `type` is set to `openid4vp_presentation`, as shown in the following example,
 
 * The `response_mode` MUST be either `iae_post` for unencrypted responses or `iae_post.jwt` for encrypted responses. These modes are used to indicate to the Wallet to return the response back to the same Interactive Authorization Endpoint.
 * The `expected_origins` parameter MUST NOT be present.
-* When signed requests defined in A.3.2 of [@!OpenID4VP] are used, an addtional `expected_url` parameter MUST be present. The `expected_url` parameter is a non-empty string that contains the endpoint of the Verifier that is returning the request.
+* When signed requests defined in A.3.2 of [@!OpenID4VP] are used, an addtional `expected_url` parameter MUST be present. The `expected_url` parameter is a non-empty string that contains the endpoint of the Verifier that is returning the request. In the `openid4vp_presentation` interaction type, `expected_url` MUST be set to the Interactive Authorization Endpoint.
 
 The following is a non-normative example of an unsigned Authorization Request:
 
