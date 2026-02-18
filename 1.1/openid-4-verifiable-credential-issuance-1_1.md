@@ -824,7 +824,8 @@ Additional keys are defined based on the type of interaction, as shown next.
 If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_request` parameter containing an OpenID4VP Authorization Request. The contents of the request is the same as for requests passed to the Digital Credentials API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows:
 
 * The `response_mode` MUST be either `iae_post` for unencrypted responses or `iae_post.jwt` for encrypted responses. These modes are used to indicate to the Wallet to return the response back to the same Interactive Authorization Endpoint.
-* If `expected_origins` is present, it MUST contain only the derived Origin of the Interactive Authorization Endpoint as defined in Section 4 in [@RFC6454]. For example, the derived Origin from `https://example.com/iae` is `https://example.com`.
+* The `expected_origins` parameter MUST NOT be present.
+* When signed requests defined in A.3.2 of [@!OpenID4VP] are used, an addtional `expected_url` parameter MUST be present. The `expected_url` parameter is a non-empty string that contains the endpoint of the Verifier that is returning the request. In the `openid4vp_presentation` interaction type, `expected_url` MUST be set to the Interactive Authorization Endpoint.
 
 The following is a non-normative example of an unsigned Authorization Request:
 
@@ -884,7 +885,7 @@ The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is 
 
 When processing the request the following logic applies:
 
-  1. If `expected_origins` is present, the Wallet MUST ensure that `expected_origins` contains the derived Origin as defined above.
+  1. If `expected_url` is present, the Wallet MUST compare the value in this parameter to the URL of the follow-up request to detect replay of the request from a malicious Verifier. If the URL does not match value of the `expected_url`, the Wallet MUST return an error. This error SHOULD be an `invalid_request` error. This parameter is not for use in unsigned requests and therefore a Wallet MUST ignore this parameter if it is present in an unsigned request.
   2. If the response contains Verifiable Presentations that include Holder Binding, the audience of each of those MUST be properly bound to the Interactive Authorization Endpoint, following the rules defined by their Credential Format. Details on how to do this for each format can be found in the "Interactive Authorization Endpoint Binding" sections under (#format-profiles). Note that the Credential Format here refers to the format of the Verifiable Presentation requested in the OpenID4VP Authorization Request, which may be different from the format used for issuing the Credentials themselves. If any Verifiable Presentation with Holder Binding is not correctly bound to the Interactive Authorization Endpoint, the response MUST be rejected.
 
 The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_response` parameter. The value of the `openid4vp_response` parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iae_post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
@@ -3400,6 +3401,11 @@ established by [@!RFC6749].
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-request) of this specification
 
+* Name: `expected_url`
+* Parameter Usage Location: authorization request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#interactive-authorization-endpoint) this specification
+
 ## OAuth Authorization Server Metadata Registry
 
 This specification registers the following authorization server metadata parameter
@@ -3626,3 +3632,4 @@ The technology described in this specification was made available from contribut
    * use derived origin for `expected_origins` in IAE flow
    * add require_interactive_authorization_request to AS metadata
    * add interactive_authorization_endpoint to AS metadata section
+   * use `expected_url` instead of `expected_origins` for IAE flow
