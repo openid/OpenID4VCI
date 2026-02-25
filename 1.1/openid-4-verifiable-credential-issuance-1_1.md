@@ -710,10 +710,10 @@ The initial request to the Interactive Authorization Endpoint is formed and sent
 
 `interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Wallet supports. The order of the values is not significant. The following values are defined by this specification:
 
-* `openid4vp_presentation`: Indicates that the Wallet supports an OpenID4VP Presentation interaction, as defined in (#iae-require-presentation).
-* `redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#iae-redirect-to-web).
+* `urn:openid:dcp:iae:openid4vp_presentation`: Indicates that the Wallet supports an OpenID4VP Presentation interaction, as defined in (#iae-require-presentation).
+* `urn:openid:dcp:iae:redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#iae-redirect-to-web).
 
-Custom interaction types (see (#iae-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter.
+Custom interaction types (see (#iae-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter. Specifications that extend these predefined types MUST choose collision-resistant values by following a pre-defined schema for URNs: `urn:openid:iae:<organization>:<protocol_identifier>`. Every SDO defining their own interaction types ensures that the `<protocol_identifier>` in their scoped does not have collissions.
 
 When the wallet includes `redirect_to_web` in `interaction_types_supported`, the `code_challenge` and `code_challenge_method` parameters (see (#securitybcp)) are included in the initial request.
 
@@ -3541,6 +3541,52 @@ in the IANA "Uniform Resource Identifier (URI) Schemes" registry [@IANA.URI.Sche
 * Well-Known URI Support: -
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#client-metadata-retrieval) of this specification
+
+## Uniform Resource Names (URN) Namespaces Registry
+
+This document requests the registration of a new URN namespace "openid".
+
+The OpenID Foundation will maintain the permissible values for the elements comprising the Namespace Specific Strings.
+
+### Purpose
+
+The Namespace Identifier (NID) "openid" will be used to identify all types of digital resources defined by the OpenID Foundation. These might include resources defined and used within protocols or standards themselves.
+
+### Syntax
+
+The syntax for the openid URN namestring is defined using the ABNF below:
+
+namestring    = "urn:openid:" NSS
+
+where the syntax of "NSS" is specified in Section 2 of [@RFC8141]. The OpenID Foundation intends for the NSS to have a hierarchical structure defined by the different working groups managing their own Namespace Specific String (NSS). The first intended use would be under `urn:openid:dcp:` managed by the Digital Credentials Protocols (DCP) Working Group.
+
+### Assignment
+
+The individual URNs shall be assigned through the formal process of standardization by the Working Groups of the OpenID Foundation. An overview of Working Groups of the OpenID Foundation can be found at (https://openid.net/wg/).
+
+### Security and Privacy
+
+There are no additional security and privacy considerations other than those associated with the use and resolution of URNs as described in [@RFC1737] and [@RFC8141].
+
+### Interoperability
+
+No known interoperability concerns regarding the requested urn namespace exist.
+
+### Resolution
+
+URNs in this namespace are intended to be non-resolvable, serving as unique identifiers.
+
+### Documentation
+
+None.
+
+### Additional Information
+
+None.
+
+### Revision Information
+
+None.
 
 # Use Cases
 
