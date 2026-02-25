@@ -708,12 +708,12 @@ Note: In case a Wallet Attestation is required by the Authorization Server, it h
 
 The initial request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in Section 2.1 of [@!RFC9126]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request), with the following addition:
 
-`interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Wallet supports. The order of the values is not significant. The following values are defined by this specification:
+`interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Wallet supports. The order of the values is not significant. Values MUST be valid URNs. The following values are defined by this specification:
 
 * `urn:openid:dcp:iae:openid4vp_presentation`: Indicates that the Wallet supports an OpenID4VP Presentation interaction, as defined in (#iae-require-presentation).
 * `urn:openid:dcp:iae:redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#iae-redirect-to-web).
 
-Custom interaction types (see (#iae-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter. Specifications that extend these predefined types MUST choose collision-resistant values by following a pre-defined schema for URNs: `urn:openid:iae:<organization>:<protocol_identifier>`. Every SDO defining their own interaction types ensures that the `<protocol_identifier>` in their scoped does not have collissions.
+Custom interaction types (see (#iae-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter. Specifications that extend these predefined types MUST define their own collision-resistant URNs as type identifiers.
 
 When the wallet includes `urn:openid:dcp:iae:redirect_to_web` in `interaction_types_supported`, the `code_challenge` and `code_challenge_method` parameters (see (#securitybcp)) are included in the initial request.
 
@@ -970,7 +970,7 @@ auth_session=wxroVrBY2MCq4dDNGXACS&code_verifier=avjebhrnqwketh
 
 #### Custom Interaction Extensions {#iae-custom-extensions}
 
-Additional, custom types of interactions MAY be defined by extensions of this specification to enable other types of interactions, for example, by interacting with a smart card.
+Additional, custom types of interactions MAY be defined by extensions of this specification to enable other types of interactions, for example, by interacting with a smart card. Such an extension MUST use a collision-resistant URN for their respective type identifier.
 It is RECOMMENDED to use this extension point instead of modifying the OAuth protocol in order to facilitate interactions that require interactions with native components of the Wallet application.
 See (#iae-security) for additional security considerations.
 
@@ -983,7 +983,7 @@ Cache-Control: no-store
 
 {
   "status": "require_interaction",
-  "type": "betelgeuse_intergalactic_id_card",
+  "type": "urn:galaxysdo:iae:betelgeuse_intergalactic_id_card",
   "biic_token": "73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049"
 }
 ```
@@ -3546,7 +3546,7 @@ in the IANA "Uniform Resource Identifier (URI) Schemes" registry [@IANA.URI.Sche
 
 This document requests the registration of a new URN namespace "openid".
 
-The OpenID Foundation will maintain the permissible values for the elements comprising the Namespace Specific Strings.
+The OpenID Foundation will maintain the permissible values for the elements comprising the Namespace Specific Strings (NSS).
 
 ### Purpose
 
