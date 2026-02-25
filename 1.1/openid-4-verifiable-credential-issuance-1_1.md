@@ -3670,3 +3670,5 @@ The technology described in this specification was made available from contribut
    * use derived origin for `expected_origins` in IAE flow
    * add require_interactive_authorization_request to AS metadata
    * add interactive_authorization_endpoint to AS metadata section
+   * add URNs for IAE type identifiers
+   * add iana registration for an openid foundation urn
