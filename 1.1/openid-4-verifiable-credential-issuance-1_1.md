@@ -2852,7 +2852,7 @@ The following is a non-normative example of a Credential Response containing a C
 
 ### Interactive Authorization Endpoint Binding {#iae-binding-sd-jwt-vc}
 
-To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim in the Key Binding JWT MUST be set to the  Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com`).
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim in the Key Binding JWT MUST be set to the Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com`).
 
 # Claims Description 
 
