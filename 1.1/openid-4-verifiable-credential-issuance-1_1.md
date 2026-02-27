@@ -813,9 +813,14 @@ In this case, the following key MUST be present in the response as well:
 * `type`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST NOT set this to a value that was not included in the `interaction_types_supported` parameter sent by the Wallet.
 
 The Authorization Server MUST provide a mechanism to associate the next request by this Wallet with the ongoing authorization request sequence.
-If no other mechanism to associate the next request by this Wallet with the ongoing authorization request sequence is defined by the type of interaction, the following key MUST be present in the response as well:
+The following key MAY be present in the response to provide such a mechanism:
 
 * `auth_session`: REQUIRED. String containing a value that allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value as an opaque value. The value returned MUST be distinct for each interactive authorization response.
+
+A definition of a custom type of interaction MUST include exactly one of the following:
+
+1. A normative requirement that the `auth_session` key MUST be included in the Interaction Required Response.
+2. A definition of a mechanism to associate the next request by the Wallet with the ongoing authorization request sequence.
 
 The Wallet MUST include the most recently received `auth_session` in follow-up requests to the Interactive Authorization Endpoint.
 
