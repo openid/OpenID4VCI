@@ -945,7 +945,7 @@ In this case, the Authorization server MUST include the key `request_uri` in the
 The Wallet MUST use the `request_uri` value to build an Authorization Request as defined in Section 4 of [@!RFC9126] and complete the rest of the authorization process as defined there.
 The Authorization Server MAY include the `expires_in` key as defined in [@!RFC9126].
 
-Since the `request_uri` allows the Authorization Server to associate the Authorization Request with the ongoing authorization request sequence, no `auth_session` is needed.
+Since the `request_uri` allows the Authorization Server to associate the Authorization Request with the ongoing authorization request sequence, the Authorization Server MUST omit `auth_session` parameter in the response. The `auth_session` will be returned in the redirect back to the Wallet if required.
 
 Non-normative Example:
 
