@@ -928,7 +928,7 @@ The Wallet MUST only use a `request_uri` value once.
 Authorization servers SHOULD treat `request_uri` values as one-time use but MAY allow for duplicate requests due to a user reloading/refreshing their user agent. An expired request_uri MUST be rejected as invalid.
 The Authorization Server MAY include the `expires_in` key as defined in [@!RFC9126].
 
-Since the `request_uri` allows the Authorization Server to associate the Authorization Request with the ongoing authorization request sequence, no `auth_session` is needed.
+Since the `request_uri` allows the Authorization Server to associate the Authorization Request with the ongoing authorization request sequence, the Authorization Server MUST omit `auth_session` parameter in the response. The `auth_session` will be returned in the redirect back to the Wallet if required.
 
 Non-normative Example:
 
