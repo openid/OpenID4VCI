@@ -3556,7 +3556,7 @@ The Namespace Identifier (NID) "openid" will be used to identify all types of di
 
 The syntax for the openid URN namestring is defined using the ABNF below:
 
-namestring    = "urn:openid:" NSS
+namestring = "urn:openid:" NSS
 
 where the syntax of "NSS" is specified in Section 2 of [@RFC8141]. The OpenID Foundation intends for the NSS to have a hierarchical structure defined by the different working groups managing their own Namespace Specific String (NSS). The first intended use would be under `urn:openid:dcp:` managed by the Digital Credentials Protocols (DCP) Working Group.
 
