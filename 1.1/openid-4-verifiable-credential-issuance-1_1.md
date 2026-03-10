@@ -1420,7 +1420,8 @@ Content-Type: application/json
       "credential": "YXNkZnNhZGZkamZqZGFza23....29tZTIzMjMyMzIzMjMy"
     }
   ],
-  "notification_id": "3fwe98js"
+  "notification_id": "3fwe98js",
+  "credential_dataset_id": "Jk0eOt4CXQe1NXK"
 }
 ```
 
