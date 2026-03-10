@@ -795,7 +795,7 @@ The response to an Interactive Authorization Request is an HTTP message with the
  2. a successful completion of the authorization, as defined in (#iae-authorization-code-response), or
  3. an error as defined in Section 2.3 of [@!RFC9126] including the additional error codes defined in (#iae-error-response).
 
-Except in error cases, the following key is required in the JSON document of the response:
+Except in error cases, the Authorization Server MUST respond with an HTTP status code in the 2xx range and the following key is required in the JSON document of the response:
 
 * `status`: REQUIRED. String indicating whether an additional interaction is required or the authorization has been completed.
 
@@ -3626,3 +3626,4 @@ The technology described in this specification was made available from contribut
    * use derived origin for `expected_origins` in IAE flow
    * add require_interactive_authorization_request to AS metadata
    * add interactive_authorization_endpoint to AS metadata section
+   * add requirement on status code for iae http responses
