@@ -1258,9 +1258,10 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 * `credential_configuration_id`: REQUIRED if a `credential_identifiers` parameter was not returned from the Token Response as part of the `authorization_details` parameter. It MUST NOT be used otherwise. String that uniquely identifies one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The corresponding object in the `credential_configurations_supported` map MUST contain one of the value(s) used in the `scope` parameter in the Authorization Request. When this parameter is used, the `credential_identifier` MUST NOT be present.
 * `proofs`: OPTIONAL. Object providing one or more proof of possessions of the cryptographic key material to which the issued Credential instances will be bound to. The `proofs` parameter contains exactly one parameter named as the proof type in (#proof-types), the value set for this parameter is a non-empty array containing parameters as defined by the corresponding proof type.
 * `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If this request element is not present, the corresponding credential response returned is not encrypted.
-    * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
-    * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
-    * `zip`: OPTIONAL. JWE [@!RFC7516] `zip` algorithm [@!RFC7518] for compressing Credential Responses prior to encryption. If absent then compression MUST not be used.
+  * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
+  * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
+  * `zip`: OPTIONAL. JWE [@!RFC7516] `zip` algorithm [@!RFC7518] for compressing Credential Responses prior to encryption. If absent then compression MUST not be used.
+* `only_metadata`: OPTIONAL. Boolean value that if present and set to `true` signals that the Wallet does not expect any credentials in the Credential Response. The Wallet requests only updates to the metadata of previously issued Credentials as identified by the `credential_identifier` or `credential_configuration_id` parameters. If set to `true`, then the `proofs` parameter MUST NOT be present. If the parameter is absent, the value is treated as `false`.
 
 See (#identifying_credential) for the summary of the options how requested Credential(s) are identified throughout the Issuance flow.
 
@@ -1380,12 +1381,17 @@ If the Credential Response is not encrypted, the media type of the response MUST
 The following parameters are used in the JSON-encoded Credential Response body:
 
 * `credentials`: OPTIONAL. Contains an array of one or more issued Credentials. It MUST NOT be used if the `transaction_id` parameter is present. The elements of the array MUST be objects. The number of elements in the `credentials` array matches the number of keys that the Wallet has provided via the `proofs` parameter of the Credential Request, unless the Issuer decides to issue fewer Credentials. Each key provided by the Wallet is used to bind to, at most, one Credential. This specification defines the following parameters to be used inside this object:
-   * `credential`: REQUIRED. Contains one issued Credential. The encoding of the Credential depends on the Credential Format and MAY be a string or an object. Credential Formats expressed as binary data MUST be base64url-encoded and returned as a string. More details are defined in the Credential Format Profiles in (#format-profiles).
+  * `credential`: REQUIRED. Contains one issued Credential. The encoding of the Credential depends on the Credential Format and MAY be a string or an object. Credential Formats expressed as binary data MUST be base64url-encoded and returned as a string. More details are defined in the Credential Format Profiles in (#format-profiles).
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This parameter is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used if the `credentials` parameter is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `interval`: REQUIRED if `transaction_id` is present. Contains a positive number that represents the minimum amount of time in seconds that the Wallet SHOULD wait after receiving the response before sending a new request to the Deferred Credential Endpoint. It MUST NOT be used if the `credentials` parameter is present.
 * `notification_id`: OPTIONAL. String identifying one or more Credentials issued in one Credential Response. It MUST be included in the Notification Request as defined in (#notification). It MUST not be used if the `credentials` parameter is not present.
+* `metadata`: OPTIONAL. Object that contains additional metadata specific to the issued Credential(s).
+  * `display`: OPTIONAL. Object that contains additional display information specific to the issued Credential(s). The definitions and contained parameters for this Object are identical to the `display` parameter as defined under the `credential_metadata` parameter in Credential Issuer Metadata (see (#credential-issuer-metadata)). Any values contained here overwrite existing values for display that were contained in the Credential Issuer Metadata.
+  * `custom`: OPTIONAL. Object that contains additional metadata specific to the issued Credenetial(s). This is an extension point that allows the addition of ecosystem-specific metadata during issuance. Wallets that do not understand the contained parameters MUST ignore them.
 
 Additional Credential Response parameters MAY be defined and used. The Wallet MUST ignore any unrecognized parameters.
+
+If `only_metadata` was present and set to `true` in the Credential Request, then the Credential Response MUST only contain the `metadata` parameter.
 
 Below is a non-normative example of a Credential Response in an immediate issuance flow for a Credential in JWT VC format (JSON encoded):
 
@@ -3674,3 +3680,5 @@ The technology described in this specification was made available from contribut
    * add interactive_authorization_endpoint to AS metadata section
    * add URNs for IAE type identifiers
    * add iana registration for an openid foundation urn
+   * add the `only_metadata` parameter to the credential request
+   * add optional metadata to the credential response
