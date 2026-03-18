@@ -1384,7 +1384,9 @@ The following parameters are used in the JSON-encoded Credential Response body:
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This parameter is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used if the `credentials` parameter is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `interval`: REQUIRED if `transaction_id` is present. Contains a positive number that represents the minimum amount of time in seconds that the Wallet SHOULD wait after receiving the response before sending a new request to the Deferred Credential Endpoint. It MUST NOT be used if the `credentials` parameter is present.
 * `notification_id`: OPTIONAL. String identifying one or more Credentials issued in one Credential Response. It MUST be included in the Notification Request as defined in (#notification). It MUST not be used if the `credentials` parameter is not present.
-* `redirect_uri`: OPTIONAL. String containing a URI. When this parameter is present, the Wallet SHOULD give the user the option to redirect the user agent to this URI once the wallet issuance is completed, been deferred or failed. This allows the Issuer to continue the interaction with the End-User. If the Wallet sends multiple consecutive Credential Requests and receives multiple `redirect_uri` values, the Wallet SHOULD at least provide the option to redirect at the end to one of the received `redirect_uri` addresses at the end. See implementing considerations in (#redirect-uri-ambiguity) to resolve ambiguity.
+* `redirect_uri`: OPTIONAL. String containing a URI. When this parameter is present, the Wallet SHOULD give the user the option to redirect the user agent to this URI once the wallet issuance is completed, been deferred or failed. This allows the Issuer to continue the interaction with the End-User. If the Wallet sends multiple consecutive Credential Requests and receives multiple `redirect_uri` values, the Wallet SHOULD provide the option to redirect to at least one of them after the last response has been processed. See implementing considerations in (#redirect-uri-ambiguity) to resolve ambiguity.
+
+When a wallet receives multiple redirect_uri values, it SHOULD return at least one of them to the Credential Issuer
 
 Additional Credential Response parameters MAY be defined and used. The Wallet MUST ignore any unrecognized parameters.
 
@@ -2034,7 +2036,7 @@ While breaking changes to the specifications referenced in this specification ar
 
 ## Redirect Uri Ambiguity {#redirect-uri-ambiguity}
 
-To resolve redirect_uri ambiguity in multi-credential issuance flows the Credential Issuer should use the same `redirect_uri` for all requests with the same Access Token, or should consider to breaking the flow in several single-credential issuance flows instead. The Credential Issuer should not rely on the user opens `redirect_uri`.
+The `redirect_uri` parameter as defined in (#credential-response) and used in Credential (Error) Response and Deferred Credential (Error) Response enables the Credential Issuer to interact with the End-User after issuance is completed, been deferred or failed. To eliminate the `redirect_uri` ambiguity in multi‑credential issuance flows, the Credential Issuer should either use the same `redirect_uri` for all requests that share the same Access Token, or split the process into several single‑credential issuance flows. In any case, the Credential Issuer must not rely on the End-User to open the `redirect_uri`.
 
 
 # Privacy Considerations
