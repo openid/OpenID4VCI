@@ -1385,9 +1385,7 @@ The following parameters are used in the JSON-encoded Credential Response body:
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This parameter is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used if the `credentials` parameter is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `interval`: REQUIRED if `transaction_id` is present. Contains a positive number that represents the minimum amount of time in seconds that the Wallet SHOULD wait after receiving the response before sending a new request to the Deferred Credential Endpoint. It MUST NOT be used if the `credentials` parameter is present.
 * `notification_id`: OPTIONAL. String identifying one or more Credentials issued in one Credential Response. It MUST be included in the Notification Request as defined in (#notification). It MUST not be used if the `credentials` parameter is not present.
-* `metadata`: OPTIONAL. Object that contains additional metadata specific to the issued Credential(s).
-  * `display`: OPTIONAL. Object that contains additional display information specific to the issued Credential(s). The definitions and contained parameters for this Object are identical to the `display` parameter as defined under the `credential_metadata` parameter in Credential Issuer Metadata (see (#credential-issuer-metadata)). Any values contained here overwrite existing values for display that were contained in the Credential Issuer Metadata.
-  * `custom`: OPTIONAL. Object that contains additional metadata specific to the issued Credenetial(s). This is an extension point that allows the addition of ecosystem-specific metadata during issuance. Wallets that do not understand the contained parameters MUST ignore them.
+* `credential_metadata`: OPTIONAL. Object that contains additional metadata specific to the issued Credential(s). The definitions and contained parameters for this Object are identical to the `credential_metadata` parameter as defined in Credential Issuer Metadata (see (#credential-issuer-metadata)).
 
 Additional Credential Response parameters MAY be defined and used. The Wallet MUST ignore any unrecognized parameters.
 
@@ -1825,17 +1823,17 @@ This specification defines the following Credential Issuer Metadata parameters:
     * `key_attestations_required`: OPTIONAL. Object that describes the requirement for key attestations as described in (#keyattestation), which the Credential Issuer expects the Wallet to send within the proof(s) of the Credential Request. If the Credential Issuer does not require a key attestation, this parameter MUST NOT be present in the metadata. If both `key_storage` and `user_authentication` parameters are absent, the `key_attestations_required` parameter may be empty, indicating a key attestation is needed without additional constraints.
       * `key_storage`: OPTIONAL. A non-empty array defining values specified in (#keyattestation-apr) accepted by the Credential Issuer.
       * `user_authentication`: OPTIONAL. A non-empty array defining values specified in (#keyattestation-apr) accepted by the Credential Issuer.
-  * `credential_metadata`: OPTIONAL. Object containing information relevant to the usage and display of issued Credentials. Credential Format-specific mechanisms can overwrite the information in this object to convey Credential metadata. Format-specific mechanisms, such as SD-JWT VC display metadata are always preferred by the Wallet over the information in this object, which serves as the default fallback. Below is a non-exhaustive list of parameters that MAY be included:
+  * `credential_metadata`: OPTIONAL. Object containing information relevant to the usage and display of issued Credentials. Credential Format-specific mechanisms can overwrite the information in this object to convey Credential metadata. Format-specific mechanisms, such as SD-JWT VC display metadata are always preferred by the Wallet over the information in this object, which serves as the default fallback. The Credential Response can also overwrite the information in this object to convey additional metadata specific to a specific Credential issuance flow. Metadata contained in the Credential Response is always preferred by the Wallet over other information. Default parameters are defined here, but additional ones MAY be added. See (#display-metadata-considerations) for implementation cosinderations on credential metadata. Below is a non-exhaustive list of parameters that MAY be included:
     * `display`: OPTIONAL. A non-empty array of objects, where each object contains the display properties of the supported Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included.
       * `name`: REQUIRED. String value of a display name for the Credential.
       * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. Multiple `display` objects MAY be included for separate languages. There MUST be only one object for each language identifier.
       * `logo`: OPTIONAL. Object with information about the logo of the Credential. The following non-exhaustive set of parameters MAY be included:
-          * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the logo of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
-          * `alt_text`: OPTIONAL. String value of the alternative text for the logo image.
+        * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the logo of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
+        * `alt_text`: OPTIONAL. String value of the alternative text for the logo image.
       * `description`: OPTIONAL. String value of a description of the Credential.
       * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 3 [@!CSS-Color].
       * `background_image`: OPTIONAL. Object with information about the background image of the Credential. At least the following parameter MUST be included:
-          * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the background image of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
+        * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the background image of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
       * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 3 [@!CSS-Color].
     * `claims`: OPTIONAL. A non-empty array of claims description objects as defined in (#claims-description-issuer-metadata).
 
@@ -2021,6 +2019,80 @@ It is up to the Credential Issuer whether to update both the signature and the c
 ## Batch Issuing Credentials
 
 The Credential Issuer determines the number of the Credentials issued in the Credential Response, regardless of number of proofs/keys contained in the `proofs` parameter in the Credential Request.
+
+## Credential Metadata {#display-metadata-considerations}
+
+Credential metadata is provided by the Credential Issuer, but can be conveyed using different mechanisms. Defined mechanisms to provide display metadata are:
+
+* Credentiel Issuer metadata may contain credenetial metadata as defined in (#credential-issuer-parameters)
+* Credential Formats may define their own mechanisms for metadata
+* Credential Response may also contain display metadata as defined in (#credential-response)
+
+Credential metadata provided via the Credential Issuer metadata should be interpreted as the most generic form of metadata and as a general fallback solution. If defined and present, Credential Format specific metadata data overwrites the values from the Credential Issuer metadata. If present, metadata present in the Credential Response overwrites existing values.
+
+(#credential-issuer-parameters) defines a set of default Credential metadata parameters, but additional ones can be defined and added by profiles or extensions. Other standardization organizations or ecosystems defining extensions to the Credential metadata parameters SHOULD do so by defining a collision-resistant parameter that contains an Object with all parameters they are defining.
+
+Below is a non-normative example how credential metadata present in the Credential Issuer metadata and the Credential Response would result would be merged:
+
+Credential Metadata contained in Credential Issuer Metadata:
+
+```json
+{
+  "display": [
+    {
+      "name": "BankCredential",
+      "logo": {
+        "uri": "https://bank.example.net/public/logo.png",
+        "alt_text": "a square logo of a bank"
+      },
+      "locale": "en-US",
+      "background_color": "#12107c",
+      "text_color": "#FFFFFF"
+    }
+  ]
+}
+```
+
+Credential Netadata contained in the Credenteial Response:
+
+```json
+{
+  "display": [
+    {
+      "logo": {
+        "uri": "data:image/png;base64,F00==",
+      },
+      "com.emvco.dpc.v1": {
+        "dpc_specific_data": "something_really_important"
+      }
+    }
+  ]
+}
+```
+
+Resulting (combined) metadata:
+
+```json
+{
+  "display": [
+    {
+      "name": "BankCredential",
+      "logo": {
+        "uri": "data:image/png;base64,F00==",
+        "alt_text": "a square logo of a bank"
+      },
+      "locale": "en-US",
+      "background_color": "#12107c",
+      "text_color": "#FFFFFF",
+      "com.emvco.dpc.v1": {
+        "dpc_specific_data": "something_really_important"
+      }
+    }
+  ]
+}
+```
+
+Note that `com.emvco.dpc.v1` in the above example shows how an extension would be defined and used.
 
 ## Pre-Final Specifications
 
