@@ -815,7 +815,7 @@ In this case, the following key MUST be present in the response as well:
 The Authorization Server MUST provide a mechanism to associate the next request by this Wallet with the ongoing authorization request sequence.
 The following key MAY be present in the response to provide such a mechanism:
 
-* `auth_session`: REQUIRED. String containing a value that allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value as an opaque value. The value returned MUST be distinct for each interactive authorization response.
+* `auth_session`: REQUIRED if specified by the interaction type. String containing a value that allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value as an opaque value. The value returned MUST be distinct for each interactive authorization response.
 
 A definition of a custom type of interaction MUST include exactly one of the following:
 
