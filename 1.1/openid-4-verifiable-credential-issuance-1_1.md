@@ -1386,8 +1386,6 @@ The following parameters are used in the JSON-encoded Credential Response body:
 * `notification_id`: OPTIONAL. String identifying one or more Credentials issued in one Credential Response. It MUST be included in the Notification Request as defined in (#notification). It MUST not be used if the `credentials` parameter is not present.
 * `redirect_uri`: OPTIONAL. String containing a URI. When this parameter is present, the Wallet SHOULD suggest the End-User to redirect the user agent to this URI once the Credential issuance is completed, been deferred or failed. This allows the Issuer to continue the interaction with the End-User. If the Wallet sends multiple consecutive Credential Requests and receives multiple `redirect_uri` values, the Wallet SHOULD provide the option to redirect to at least one of them after the last response has been processed. See implementing considerations in (#redirect-uri-ambiguity) to resolve ambiguity.
 
-When a wallet receives multiple redirect_uri values, it SHOULD return at least one of them to the Credential Issuer
-
 Additional Credential Response parameters MAY be defined and used. The Wallet MUST ignore any unrecognized parameters.
 
 Below is a non-normative example of a Credential Response in an immediate issuance flow for a Credential in JWT VC format (JSON encoded):
