@@ -2036,7 +2036,7 @@ While breaking changes to the specifications referenced in this specification ar
 
 ## Redirect Uri Ambiguity {#redirect-uri-ambiguity}
 
-The `redirect_uri` parameter as defined in (#credential-response) and used in Credential (Error) Response and Deferred Credential (Error) Response enables the Credential Issuer to interact with the End-User after issuance is completed, been deferred or failed. To eliminate the `redirect_uri` ambiguity in multi‑credential issuance flows, the Credential Issuer should either use the same `redirect_uri` for all requests that share the same Access Token, or split the process into several single‑credential issuance flows. In any case, the Credential Issuer must not rely on the End-User to open the `redirect_uri`.
+The `redirect_uri` parameter as defined in (#credential-response) and used in Credential (Error) Response and Deferred Credential (Error) Response enables the Credential Issuer to interact with the End-User after issuance is completed, been deferred or failed. If an access token contains authorization for multiple Credential Configurations or multiple Credential Datasets, the wallet may send multiple Credential Requests. However, the Credential Issuer may not be able to anticipate how many Credential Requests will be received. To eliminate any ambiguity for the wallet about which `redirect_uri` to use in such multi‑credential issuance scenarios, the Credential Issuer should either use the same `redirect_uri` for all requests that share the same Access Token, or split the process into several single‑credential issuance flows. In any case, the Credential Issuer must not rely on the End-User to open the `redirect_uri`.
 
 
 # Privacy Considerations
