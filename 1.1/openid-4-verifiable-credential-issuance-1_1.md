@@ -1823,7 +1823,7 @@ This specification defines the following Credential Issuer Metadata parameters:
     * `key_attestations_required`: OPTIONAL. Object that describes the requirement for key attestations as described in (#keyattestation), which the Credential Issuer expects the Wallet to send within the proof(s) of the Credential Request. If the Credential Issuer does not require a key attestation, this parameter MUST NOT be present in the metadata. If both `key_storage` and `user_authentication` parameters are absent, the `key_attestations_required` parameter may be empty, indicating a key attestation is needed without additional constraints.
       * `key_storage`: OPTIONAL. A non-empty array defining values specified in (#keyattestation-apr) accepted by the Credential Issuer.
       * `user_authentication`: OPTIONAL. A non-empty array defining values specified in (#keyattestation-apr) accepted by the Credential Issuer.
-  * `credential_metadata`: OPTIONAL. Object containing information relevant to the usage and display of issued Credentials. Credential Format-specific mechanisms can overwrite the information in this object to convey Credential metadata. Format-specific mechanisms, such as SD-JWT VC display metadata are always preferred by the Wallet over the information in this object, which serves as the default fallback. The Credential Response can also overwrite the information in this object to convey additional metadata specific to a specific Credential issuance flow. Metadata contained in the Credential Response is always preferred by the Wallet over other information. Default parameters are defined here, but additional ones MAY be added. See (#display-metadata-considerations) for implementation cosinderations on credential metadata. Below is a non-exhaustive list of parameters that MAY be included:
+  * `credential_metadata`: OPTIONAL. Object containing information relevant to the usage and display of issued Credentials. Credential Format-specific mechanisms can overwrite the information in this object to convey Credential metadata. Format-specific mechanisms, such as SD-JWT VC display metadata are always preferred by the Wallet over the information in this object, which serves as the default fallback. The Credential Response can also overwrite the information in this object to convey additional metadata specific to a specific Credential issuance flow. Metadata contained in the Credential Response MUST be preferred by the Wallet over other information. Default parameters are defined here, but additional ones MAY be added. See (#display-metadata-considerations) for implementation considerations on credential metadata. Below is a non-exhaustive list of parameters that MAY be included:
     * `display`: OPTIONAL. A non-empty array of objects, where each object contains the display properties of the supported Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included.
       * `name`: REQUIRED. String value of a display name for the Credential.
       * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. Multiple `display` objects MAY be included for separate languages. There MUST be only one object for each language identifier.
@@ -2024,7 +2024,7 @@ The Credential Issuer determines the number of the Credentials issued in the Cre
 
 Credential metadata is provided by the Credential Issuer, but can be conveyed using different mechanisms. Defined mechanisms to provide display metadata are:
 
-* Credentiel Issuer metadata may contain credenetial metadata as defined in (#credential-issuer-parameters)
+* Credential Issuer metadata may contain credential metadata as defined in (#credential-issuer-parameters)
 * Credential Formats may define their own mechanisms for metadata
 * Credential Response may also contain display metadata as defined in (#credential-response)
 
@@ -2032,7 +2032,7 @@ Credential metadata provided via the Credential Issuer metadata should be interp
 
 (#credential-issuer-parameters) defines a set of default Credential metadata parameters, but additional ones can be defined and added by profiles or extensions. Other standardization organizations or ecosystems defining extensions to the Credential metadata parameters SHOULD do so by defining a collision-resistant parameter that contains an Object with all parameters they are defining.
 
-Below is a non-normative example how credential metadata present in the Credential Issuer metadata and the Credential Response would result would be merged:
+Below is a non-normative example of how credential metadata present in the Credential Issuer metadata and the Credential Response would be merged:
 
 Credential Metadata contained in Credential Issuer Metadata:
 
@@ -2053,7 +2053,7 @@ Credential Metadata contained in Credential Issuer Metadata:
 }
 ```
 
-Credential Netadata contained in the Credenteial Response:
+Credential Metadata contained in the Credential Response:
 
 ```json
 {
