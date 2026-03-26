@@ -1261,7 +1261,6 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
   * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
   * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
   * `zip`: OPTIONAL. JWE [@!RFC7516] `zip` algorithm [@!RFC7518] for compressing Credential Responses prior to encryption. If absent then compression MUST not be used.
-* `only_metadata`: OPTIONAL. Boolean value that if present and set to `true` signals that the Wallet does not expect any credentials in the Credential Response. The Wallet requests only updates to the metadata of previously issued Credentials as identified by the `credential_identifier` or `credential_configuration_id` parameters. If set to `true`, then the `proofs` parameter MUST NOT be present. If the parameter is absent, the value is treated as `false`.
 
 See (#identifying_credential) for the summary of the options how requested Credential(s) are identified throughout the Issuance flow.
 
@@ -1388,8 +1387,6 @@ The following parameters are used in the JSON-encoded Credential Response body:
 * `credential_metadata`: OPTIONAL. Object that contains additional metadata specific to the issued Credential(s). The definitions and contained parameters for this Object are identical to the `credential_metadata` parameter as defined in Credential Issuer Metadata (see (#credential-issuer-metadata)).
 
 Additional Credential Response parameters MAY be defined and used. The Wallet MUST ignore any unrecognized parameters.
-
-If `only_metadata` was present and set to `true` in the Credential Request, then the Credential Response MUST only contain the `metadata` parameter.
 
 Below is a non-normative example of a Credential Response in an immediate issuance flow for a Credential in JWT VC format (JSON encoded):
 
@@ -2062,8 +2059,9 @@ Credential Metadata contained in the Credential Response:
       "logo": {
         "uri": "data:image/png;base64,F00==",
       },
-      "com.emvco.dpc.v1": {
-        "dpc_specific_data": "something_really_important"
+      "com.example.domain": {
+        "some_text": "something_really_important",
+        "more_text": "also_really_important"
       }
     }
   ]
@@ -2084,8 +2082,9 @@ Resulting (combined) metadata:
       "locale": "en-US",
       "background_color": "#12107c",
       "text_color": "#FFFFFF",
-      "com.emvco.dpc.v1": {
-        "dpc_specific_data": "something_really_important"
+      "com.example.domain": {
+        "some_text": "something_really_important",
+        "more_text": "also_really_important"
       }
     }
   ]
@@ -3752,5 +3751,4 @@ The technology described in this specification was made available from contribut
    * add interactive_authorization_endpoint to AS metadata section
    * add URNs for IAE type identifiers
    * add iana registration for an openid foundation urn
-   * add the `only_metadata` parameter to the credential request
    * add optional metadata to the credential response
