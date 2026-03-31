@@ -2023,9 +2023,9 @@ Credential metadata is provided by the Credential Issuer, but can be conveyed us
 
 * Credential Issuer metadata may contain credential metadata as defined in (#credential-issuer-parameters)
 * Credential Formats may define their own mechanisms for metadata
-* Credential Response may also contain display metadata as defined in (#credential-response)
+* Credential Response may also contain metadata as defined in (#credential-response)
 
-Credential metadata provided via the Credential Issuer metadata should be interpreted as the most generic form of metadata and as a general fallback solution. If defined and present, Credential Format specific metadata data overwrites the values from the Credential Issuer metadata. If present, metadata present in the Credential Response overwrites existing values.
+Credential metadata provided via the Credential Issuer metadata should be interpreted as the most generic form of metadata and as a general fallback solution. If defined and present, Credential Format specific metadata overwrites the values from the Credential Issuer metadata. If present, metadata in the Credential Response overwrites existing values.
 
 (#credential-issuer-parameters) defines a set of default Credential metadata parameters, but additional ones can be defined and added by profiles or extensions. Other standardization organizations or ecosystems defining extensions to the Credential metadata parameters SHOULD do so by defining a collision-resistant parameter that contains an Object with all parameters they are defining.
 
@@ -2091,7 +2091,7 @@ Resulting (combined) metadata:
 }
 ```
 
-Note that `com.emvco.dpc.v1` in the above example shows how an extension would be defined and used.
+Note that `com.example.domain` in the above example shows how an extension would be defined and used.
 
 ## Pre-Final Specifications
 
