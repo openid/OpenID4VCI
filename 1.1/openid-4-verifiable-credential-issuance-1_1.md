@@ -2031,7 +2031,7 @@ Credential metadata provided via the Credential Issuer metadata should be interp
 
 Below is a non-normative example of how credential metadata present in the Credential Issuer metadata and the Credential Response would be merged:
 
-Credential Metadata contained in Credential Issuer Metadata:
+Credential metadata contained in Credential Issuer metadata:
 
 ```json
 {
@@ -2050,7 +2050,7 @@ Credential Metadata contained in Credential Issuer Metadata:
 }
 ```
 
-Credential Metadata contained in the Credential Response:
+Credential metadata contained in the Credential Response:
 
 ```json
 {
