@@ -3685,3 +3685,4 @@ The technology described in this specification was made available from contribut
    * add interactive_authorization_endpoint to AS metadata section
    * add URNs for IAE type identifiers
    * add iana registration for an openid foundation urn
+   * add redirect_uri to (Deferred) Credential (Error) Response
