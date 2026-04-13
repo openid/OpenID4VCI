@@ -708,14 +708,14 @@ Note: In case a Wallet Attestation is required by the Authorization Server, it h
 
 The initial request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in Section 2.1 of [@!RFC9126]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request), with the following addition:
 
-`interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Wallet supports. The order of the values is not significant. The following values are defined by this specification:
+`interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Wallet supports. The order of the values is not significant. Values MUST be valid URNs. The following values are defined by this specification:
 
-* `openid4vp_presentation`: Indicates that the Wallet supports an OpenID4VP Presentation interaction, as defined in (#iae-require-presentation).
-* `redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#iae-redirect-to-web).
+* `urn:openid:dcp:iae:openid4vp_presentation`: Indicates that the Wallet supports an OpenID4VP Presentation interaction, as defined in (#iae-require-presentation).
+* `urn:openid:dcp:iae:redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#iae-redirect-to-web).
 
-Custom interaction types (see (#iae-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter.
+Custom interaction types (see (#iae-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter. Specifications that extend these predefined types MUST define their own collision-resistant URNs as type identifiers.
 
-When the wallet includes `redirect_to_web` in `interaction_types_supported`, the `code_challenge` and `code_challenge_method` parameters (see (#securitybcp)) are included in the initial request.
+When the wallet includes `urn:openid:dcp:iae:redirect_to_web` in `interaction_types_supported`, the `code_challenge` and `code_challenge_method` parameters (see (#securitybcp)) are included in the initial request.
 
 The following non-normative example shows an initial request to the Interactive Authorization Endpoint:
 
@@ -732,7 +732,7 @@ response_type=code
 &code_challenge_method=S256
 &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 &authorization_details=...
-&interaction_types_supported=openid4vp_presentation%2Credirect_to_web
+&interaction_types_supported=urn%3Aopenid%3Adcp%3Aiae%3Aopenid4vp_presentation%2Curn%3Aopenid%3Adcp%3Aiae%3Aredirect_to_web
 ```
 
 The following non-normative example shows an initial request to the Interactive Authorization Endpoint with a signed request object:
@@ -764,7 +764,7 @@ The following non-normative example shows a payload of a signed request object:
       "credential_configuration_id": "UniversityDegreeCredential"
     }
   ],
-  "interaction_types_supported": "openid4vp_presentation,redirect_to_web"
+  "interaction_types_supported": "urn:openid:dcp:iae:openid4vp_presentation,urn:openid:dcp:iae:redirect_to_web"
 }
 ```
 
@@ -821,7 +821,7 @@ Additional keys are defined based on the type of interaction, as shown next.
 
 #### Require Presentation {#iae-require-presentation}
 
-If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_request` parameter containing an OpenID4VP Authorization Request. The contents of the request is the same as for requests passed to the Digital Credentials API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows:
+If `type` is set to `urn:openid:dcp:iae:openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_request` parameter containing an OpenID4VP Authorization Request. The contents of the request is the same as for requests passed to the Digital Credentials API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows:
 
 * The `response_mode` MUST be either `iae_post` for unencrypted responses or `iae_post.jwt` for encrypted responses. These modes are used to indicate to the Wallet to return the response back to the same Interactive Authorization Endpoint.
 * If `expected_origins` is present, it MUST contain only the derived Origin of the Interactive Authorization Endpoint as defined in Section 4 in [@RFC6454]. For example, the derived Origin from `https://example.com/iae` is `https://example.com`.
@@ -835,7 +835,7 @@ Cache-Control: no-store
 
 {
   "status": "require_interaction",
-  "type": "openid4vp_presentation",
+  "type": "urn:openid:dcp:iae:openid4vp_presentation",
   "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "openid4vp_request": {
     "response_type": "vp_token",
@@ -869,7 +869,7 @@ Cache-Control: no-store
 
 {
   "status": "require_interaction",
-  "type": "openid4vp_presentation",
+  "type": "urn:openid:dcp:iae:openid4vp_presentation",
   "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "openid4vp_request": {
     "request": "eyJhbGciOiJF..."
@@ -933,7 +933,7 @@ Note: This mechanism can only be used for interactions with the same Wallet that
 
 #### Redirect to Web {#iae-redirect-to-web}
 
-If the type is `redirect_to_web`, the Authorization Server is indicating that the authorization process must continue via interactions with the user in a web browser.
+If the type is `urn:openid:dcp:iae:redirect_to_web`, the Authorization Server is indicating that the authorization process must continue via interactions with the user in a web browser.
 
 In this case, the Authorization server MUST include the key `request_uri` in the response.
 The Wallet MUST use the `request_uri` value to build an Authorization Request as defined in Section 4 of [@!RFC9126] and complete the rest of the authorization process as defined there.
@@ -950,15 +950,15 @@ Cache-Control: no-store
 
 {
   "status": "require_interaction",
-  "type": "redirect_to_web",
+  "type": "urn:openid:dcp:iae:redirect_to_web",
   "request_uri": "urn:ietf:params:oauth:request_uri:6esc_11ACC5bwc014ltc14eY22c",
   "expires_in": 60
 }
 ```
 
-Once this phase of the Authorization process is completed, the Authorization Server MUST redirect back to the Wallet as per [@RFC6749]. If the Authorization process is complete when this redirect occurs, the Authorization Server returns a response with the `code` parameter as per Section 1.3.1 of [@RFC6749]. If the Authorization process is not complete when this redirect occurs, the Authorization Server returns a response with the `auth_session` parameter. In the event a Wallet receives a response from the Authorization Server which features the `auth_session` parameter, the Wallet MUST make a follow-up request as per (#follow-up-request) to continue the Authorization process. In the event that PKCE as defined in [@RFC7636] was used in the initial authorization request to the interactive authorization endpoint, the Authorization Server MUST enforce the correct usage of the `code_verifier` in the follow-up request that follows the completion of the `redirect_to_web` interaction.
+Once this phase of the Authorization process is completed, the Authorization Server MUST redirect back to the Wallet as per [@RFC6749]. If the Authorization process is complete when this redirect occurs, the Authorization Server returns a response with the `code` parameter as per Section 1.3.1 of [@RFC6749]. If the Authorization process is not complete when this redirect occurs, the Authorization Server returns a response with the `auth_session` parameter. In the event a Wallet receives a response from the Authorization Server which features the `auth_session` parameter, the Wallet MUST make a follow-up request as per (#follow-up-request) to continue the Authorization process. In the event that PKCE as defined in [@RFC7636] was used in the initial authorization request to the interactive authorization endpoint, the Authorization Server MUST enforce the correct usage of the `code_verifier` in the follow-up request that follows the completion of the `urn:openid:dcp:iae:redirect_to_web` interaction.
 
-To ensure the security of the `redirect_to_web` flow, the redirect URI MUST be an `https` URL as per Section 7.2 of [@!RFC8252]. The Wallet MUST NOT use an embedded user-agent to perform the `redirect_to_web` flow. The considerations in Section 8.12 of [@!RFC8252] apply. Platform-specific implementation details are provided in Appendix B of the same document.
+To ensure the security of the `urn:openid:dcp:iae:redirect_to_web` flow, the redirect URI MUST be an `https` URL as per Section 7.2 of [@!RFC8252]. The Wallet MUST NOT use an embedded user-agent to perform the `urn:openid:dcp:iae:redirect_to_web` flow. The considerations in Section 8.12 of [@!RFC8252] apply. Platform-specific implementation details are provided in Appendix B of the same document.
 
 A non-normative example of a follow-up request featuring PKCE:
 
@@ -972,7 +972,7 @@ auth_session=wxroVrBY2MCq4dDNGXACS&code_verifier=avjebhrnqwketh
 
 #### Custom Interaction Extensions {#iae-custom-extensions}
 
-Additional, custom types of interactions MAY be defined by extensions of this specification to enable other types of interactions, for example, by interacting with a smart card.
+Additional, custom types of interactions MAY be defined by extensions of this specification to enable other types of interactions, for example, by interacting with a smart card. Such an extension MUST use a collision-resistant URN for their respective type identifier.
 It is RECOMMENDED to use this extension point instead of modifying the OAuth protocol in order to facilitate interactions that require interactions with native components of the Wallet application.
 See (#iae-security) for additional security considerations.
 
@@ -985,7 +985,7 @@ Cache-Control: no-store
 
 {
   "status": "require_interaction",
-  "type": "betelgeuse_intergalactic_id_card",
+  "type": "urn:galaxysdo:iae:betelgeuse_intergalactic_id_card",
   "biic_token": "73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049"
 }
 ```
@@ -1043,7 +1043,7 @@ Cache-Control: no-cache, no-store
 {
   "error": "missing_interaction_type",
   "error_description":
-    "interaction_types_supported in the request is missing the required interaction type 'openid4vp_presentation'"
+    "interaction_types_supported in the request is missing the required interaction type 'urn:openid:dcp:iae:openid4vp_presentation'"
 }
 ```
 
@@ -2691,7 +2691,7 @@ The following is a non-normative example of a Credential Response containing a C
 
 ### Interactive Authorization Endpoint Binding {#iae-binding-mso-mdoc}
 
-To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `SessionTranscript` CBOR structured as defined in Section 9.1.5.1 in [@ISO.18013-5] MUST be used in Verifiable Presentations submitted in a response to Interactive Authorization Requests using the `openid4vp_presentation` interaction type, with the following modifications. This `SessionTranscript` differs from those defined in Section B.5.6 in [@OpenID4VP] and is defined as follows:
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `SessionTranscript` CBOR structured as defined in Section 9.1.5.1 in [@ISO.18013-5] MUST be used in Verifiable Presentations submitted in a response to Interactive Authorization Requests using the `urn:openid:dcp:iae:openid4vp_presentation` interaction type, with the following modifications. This `SessionTranscript` differs from those defined in Section B.5.6 in [@OpenID4VP] and is defined as follows:
 
 * `DeviceEngagementBytes` MUST be `null`.
 * `EReaderKeyBytes` MUST be `null`.
@@ -3544,6 +3544,52 @@ in the IANA "Uniform Resource Identifier (URI) Schemes" registry [@IANA.URI.Sche
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#client-metadata-retrieval) of this specification
 
+## Uniform Resource Names (URN) Namespaces Registry
+
+This document requests the registration of a new URN namespace "openid".
+
+The OpenID Foundation will maintain the permissible values for the elements comprising the Namespace Specific Strings (NSS).
+
+### Purpose
+
+The Namespace Identifier (NID) "openid" will be used to identify all types of digital resources defined by the OpenID Foundation. These might include resources defined and used within protocols or standards themselves.
+
+### Syntax
+
+The syntax for the openid URN namestring is defined using the ABNF below:
+
+namestring = "urn:openid:" NSS
+
+where the syntax of "NSS" is specified in Section 2 of [@RFC8141]. The OpenID Foundation intends for the NSS to have a hierarchical structure defined by the different working groups managing their own Namespace Specific String (NSS). The first intended use would be under `urn:openid:dcp:` managed by the Digital Credentials Protocols (DCP) Working Group.
+
+### Assignment
+
+The individual URNs shall be assigned through the formal process of standardization by the Working Groups of the OpenID Foundation. An overview of Working Groups of the OpenID Foundation can be found at (https://openid.net/wg/).
+
+### Security and Privacy
+
+There are no additional security and privacy considerations other than those associated with the use and resolution of URNs as described in [@RFC1737] and [@RFC8141].
+
+### Interoperability
+
+No known interoperability concerns regarding the requested urn namespace exist.
+
+### Resolution
+
+URNs in this namespace are intended to be non-resolvable, serving as unique identifiers.
+
+### Documentation
+
+None.
+
+### Additional Information
+
+None.
+
+### Revision Information
+
+None.
+
 # Use Cases
 
 This is a non-exhaustive list of sample use cases.
@@ -3627,3 +3673,5 @@ The technology described in this specification was made available from contribut
    * add require_interactive_authorization_request to AS metadata
    * add interactive_authorization_endpoint to AS metadata section
    * add requirement on status code for iae http responses
+   * add URNs for IAE type identifiers
+   * add iana registration for an openid foundation urn
