@@ -2021,11 +2021,11 @@ The Credential Issuer determines the number of the Credentials issued in the Cre
 
 Credential metadata is provided by the Credential Issuer, but can be conveyed using different mechanisms. Defined mechanisms to provide display metadata are:
 
-* Credential Issuer metadata may contain credential metadata as defined in (#credential-issuer-parameters)
-* Credential Formats may define their own mechanisms for metadata
-* Credential Response may also contain metadata as defined in (#credential-response)
+* Credential Issuer metadata MAY contain credential metadata as defined in (#credential-issuer-parameters)
+* Credential Formats MAY define their own mechanisms for metadata
+* Credential Response MAY also contain metadata as defined in (#credential-response)
 
-Credential metadata provided via the Credential Issuer metadata should be interpreted as the most generic form of metadata and as a general fallback solution. If defined and present, Credential Format specific metadata overwrites the values from the Credential Issuer metadata. If present, metadata in the Credential Response overwrites existing values.
+Credential metadata provided via the Credential Issuer metadata SHOULD be interpreted as the most generic form of metadata and as a general fallback solution. If defined and present, Credential Format specific metadata overwrites the values from the Credential Issuer metadata. If present, metadata in the Credential Response overwrites existing values.
 
 (#credential-issuer-parameters) defines a set of default Credential metadata parameters, but additional ones can be defined and added by profiles or extensions. Other standardization organizations or ecosystems defining extensions to the Credential metadata parameters SHOULD do so by defining a collision-resistant parameter that contains an Object with all parameters they are defining.
 
