@@ -1149,7 +1149,7 @@ Content-Type: application/json
 The following is a non-normative example of a Deferred Credential Response, where the Credential Issuer still requires more time:
 
 ```
-HTTP/1.1 202 OK
+HTTP/1.1 202 Accepted
 Content-Type: application/json
 
 {
