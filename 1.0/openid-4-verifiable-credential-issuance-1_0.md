@@ -1554,7 +1554,7 @@ One such use case is low assurance Credentials, such as coupons or tickets.
 
 Another use case is when the Credential Issuer uses cryptographic schemes that can provide binding to the End-User possessing that Credential without explicit cryptographic material being supplied by the application used by that End-User. For example, in the case of the BBS Signature Scheme, the issued Credential itself is a secret and only a derivation from the Credential is presented to the Verifier. Effectively, the Credential is bound to the Credential Issuer's signature on the Credential, which becomes a shared secret transferred from the Credential Issuer to the End-User.
 
-If Cryptographic Key Binding is not required, the Credential Issuer omits the `cryptographic_binding_methods_supported` parameter in the `credential_configurations_supported` object in the Credential Issuer Metadata as defined in (#credential-issuer-parameters).
+If Cryptographic Key Binding is not required, the Credential Issuer omits the `cryptographic_binding_methods_supported` parameter in the `credential_configurations_supported` object in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). As a consequence, the `proof_types_supported` parameter is also absent, indicating to the Wallet to omit the `proofs` parameter in the Credential Request.
 
 ## Multiple Accesses to the Credential Endpoint
 
