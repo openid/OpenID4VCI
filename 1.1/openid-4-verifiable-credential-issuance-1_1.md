@@ -1387,6 +1387,7 @@ The following parameters are used in the JSON-encoded Credential Response body:
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This parameter is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used if the `credentials` parameter is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `interval`: REQUIRED if `transaction_id` is present. Contains a positive number that represents the minimum amount of time in seconds that the Wallet SHOULD wait after receiving the response before sending a new request to the Deferred Credential Endpoint. It MUST NOT be used if the `credentials` parameter is present.
 * `notification_id`: OPTIONAL. String identifying one or more Credentials issued in one Credential Response. It MUST be included in the Notification Request as defined in (#notification). It MUST not be used if the `credentials` parameter is not present.
+* `redirect_uri`: OPTIONAL. String containing a URI using the `https` scheme. When this parameter is present, the Wallet SHOULD suggest the End-User to redirect the user agent to this URI once the Credential issuance is completed, has been deferred or has failed. This allows the Issuer to continue the interaction with the End-User. If the Wallet sends multiple consecutive Credential Requests and receives multiple `redirect_uri` values, the Wallet SHOULD provide the option to redirect to at least one of them after the last response has been processed. See implementing considerations in (#redirect-uri-ambiguity) to resolve ambiguity.
 
 Additional Credential Response parameters MAY be defined and used. The Wallet MUST ignore any unrecognized parameters.
 
@@ -1425,7 +1426,7 @@ Content-Type: application/json
 }
 ```
 
-Below is a non-normative example of a Credential Response in a deferred flow:
+Below is a non-normative example of a Credential Response in a deferred flow with `redirect_uri`:
 
 ```
 HTTP/1.1 202 Accepted
@@ -1434,7 +1435,8 @@ Cache-Control: no-store
 
 {
   "transaction_id": "8xLOxBtZp8",
-  "interval" : 3600
+  "interval" : 3600,
+  "redirect_uri" : "https://server.example.com/deferred-landing?id=a2e1bda3-cf2a-4e3e"
 }
 ```
 
@@ -1461,6 +1463,7 @@ If the Wallet is requesting the issuance of a Credential that is not supported b
   * `invalid_encryption_parameters`: This error occurs when the encryption parameters in the Credential Request are either invalid or missing. In the latter case, it indicates that the Credential Issuer requires the Credential Response to be sent encrypted, but the Credential Request does not contain the necessary encryption parameters.
   * `credential_request_denied`: The Credential Request has not been accepted by the Credential Issuer. The Wallet SHOULD treat this error as unrecoverable, meaning if received from a Credential Issuer the Credential cannot be issued. 
 * `error_description`: OPTIONAL. The `error_description` parameter MUST be a human-readable ASCII [@!USASCII] text, providing any additional information used to assist the Client implementers in understanding the occurred error. The values for the `error_description` parameter MUST NOT include characters outside the set `%x20-21 / %x23-5B / %x5D-7E`.
+* `redirect_uri`: OPTIONAL. As defined in (#credential-response).
 
 The usage of these parameters takes precedence over the `invalid_request` parameter defined in (#authorization-errors), since they provide more details about the errors.
 
@@ -1528,7 +1531,7 @@ A Deferred Credential Response may either contain the requested Credentials or f
 * If the Credential Issuer is able to issue the requested Credentials, the Deferred Credential Response MUST use the `credentials` parameter as defined in (#credential-response) and MUST respond with the HTTP status code 200 (see Section 15.3.3 of [@!RFC9110]).
 * If the Credential Issuer still requires more time, the Deferred Credential Response MUST use the `interval` and `transaction_id` parameters as defined in (#credential-response) and it MUST respond with the HTTP status code 202 (see Section 15.3.3 of [@!RFC9110]). The value of `transaction_id` MUST be same as the value of `transaction_id` in the Deferred Credential Request.
 
-The Deferred Credential Response MAY use the `notification_id` parameter as defined in (#credential-response).
+The Deferred Credential Response MAY use the parameters `notification_id` and `redirect_uri` as defined in (#credential-response).
 
 Additional Deferred Credential Response parameters MAY be defined and used.
 The Wallet MUST ignore any unrecognized parameters.
@@ -1575,6 +1578,8 @@ When the Deferred Credential Request is invalid, the Credential Issuer construct
 The following additional error code is specified in addition to those already defined in (#credential-request-errors):
 
 * `invalid_transaction_id`: The Deferred Credential Request contains an invalid `transaction_id`. This error occurs when the `transaction_id` was not issued by the respective Credential Issuer or it was already used to obtain a Credential.
+
+The Deferred Credential Error Response MAY use the parameter `redirect_uri` as defined in (#credential-response).
 
 This is a non-normative example of a Deferred Credential Error Response:
 
@@ -2041,6 +2046,12 @@ Implementers should be aware that this specification uses several specifications
 * Token Status List draft -12 [@!I-D.ietf-oauth-status-list]
 
 While breaking changes to the specifications referenced in this specification are not expected, should they occur, OpenID4VCI implementations should continue to use the specifically referenced versions above in preference to the final versions, unless updated by a profile or new version of this specification.
+
+## Redirect URI Ambiguity {#redirect-uri-ambiguity}
+
+The `redirect_uri` parameter as defined in (#credential-response) and used in Credential (Error) Response and Deferred Credential (Error) Response enables the Credential Issuer to interact with the End-User after issuance is completed, has been deferred or has failed. If an access token contains authorization for multiple Credential Configurations or multiple Credential Datasets, the wallet may send multiple Credential Requests.
+However, the Credential Issuer may not be able to anticipate how many Credential Requests will be received. To eliminate any ambiguity for the wallet about which `redirect_uri` to use in such multi‑credential issuance scenarios, the Credential Issuer should either use the same `redirect_uri` for all requests that share the same Access Token, or split the process into several single‑credential issuance flows. In any case, the Credential Issuer must not rely on the End-User opening the `redirect_uri`, since the End-User may choose not to do so.
+
 
 # Privacy Considerations
 
@@ -3663,7 +3674,7 @@ The following is a non-normative example of a signed Wallet Attestation:
 
 # Acknowledgements {#Acknowledgements}
 
-We would like to thank Patrick Amrein, Masayoshi Arakawa, Richard Barnes, Paul Bastian, Vittorio Bertocci, Christian Bormann, John Bradley, Brian Campbell, Lee Campbell, Tim Cappalli, Lenah Chacha, David Chadwick, Stefan Charsley, Gabe Cohen, Thomas Darimont, Andrii Deinega, Giuseppe De Marco, Rajvardhan Deshmukh, Mark Dobrinic, Daniel Fett, Pedro Felix, George Fletcher, Christian Fries, Timo Glasta, Mark Haine, Martijn Haring, Fabian Hauck, Roland Hedberg, Joseph Heenan, Bjorn Hjelm, Alen Horvat, Andrew Hughes, Jacob Ideskog, Lukasz Jaromin, Edmund Jay, Michael B. Jones, Tom Jones, Judith Kahrer, Micha Kraus, Takahiko Kawasaki, Niels Klomp, Ronald Koenig, Micha Kraus, Markus Kreusch, Philipp Lehwalder, Adam Lemmon, Dave Longley, Hicham Lozi, David Luna, Daniel McGrogan, Jeremie Miller, Mirko Mollik, Kenichi Nakamura, Andres Olave, Gareth Oliver, Nemanja Patrnogic, Dima Postnikov, Rolson Quadras, Helen Quinn, Sami Rosendahl, Babis Routis, Nat Sakimura, Sudesh Shetty, Peter Sorotokin, Oliver Terbu, Dimitri James Tsiflitzis, Mike Varley, Niels van Dijk, Arjen van Veen, Jan Vereecken, David Waite, Jacob Ward, David Zeuthen for their valuable feedback and contributions to this specification.
+We would like to thank Patrick Amrein, Masayoshi Arakawa, Richard Barnes, Paul Bastian, Vittorio Bertocci, Christian Bormann, John Bradley, Brian Campbell, Lee Campbell, Tim Cappalli, Lenah Chacha, David Chadwick, Stefan Charsley, Gabe Cohen, Thomas Darimont, Andrii Deinega, Giuseppe De Marco, Rajvardhan Deshmukh, Mark Dobrinic, Daniel Fett, Pedro Felix, George Fletcher, Christian Fries, Timo Glasta, Mark Haine, Martijn Haring, Fabian Hauck, Roland Hedberg, Joseph Heenan, Bjorn Hjelm, Alen Horvat, Andrew Hughes, Jacob Ideskog, Lukasz Jaromin, Edmund Jay, Michael B. Jones, Tom Jones, Judith Kahrer, Takahiko Kawasaki, Niels Klomp, Ronald Koenig, Micha Kraus, Markus Kreusch, Philipp Lehwalder, Adam Lemmon, Dave Longley, Hicham Lozi, David Luna, Daniel McGrogan, Jeremie Miller, Mirko Mollik, Kenichi Nakamura, Andres Olave, Gareth Oliver, Nemanja Patrnogic, Dima Postnikov, Rolson Quadras, Helen Quinn, Sami Rosendahl, Babis Routis, Nat Sakimura, Sudesh Shetty, Peter Sorotokin, Oliver Terbu, Dimitri James Tsiflitzis, Mike Varley, Niels van Dijk, Arjen van Veen, Jan Vereecken, David Waite, Jacob Ward, David Zeuthen for their valuable feedback and contributions to this specification.
 
 # Notices
 
@@ -3690,3 +3701,4 @@ The technology described in this specification was made available from contribut
    * add invalid_tx_code to Pre-Authz Code Flow
    * add URNs for IAE type identifiers
    * add iana registration for an openid foundation urn
+   * add redirect_uri to (Deferred) Credential (Error) Response
