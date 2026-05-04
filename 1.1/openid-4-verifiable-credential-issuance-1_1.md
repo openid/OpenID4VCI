@@ -277,7 +277,7 @@ Figure: Issuance using Authorization Code Flow
 
 (4) The Authorization Endpoint returns the Authorization Response with the Authorization Code upon successfully processing the Authorization Request.
 
-Note: Steps (3) and (4) may happen in the front channel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization-endpoint). The Authorization Server and the User Agent may exchange any further messages between the steps if required by the Authorization Server to authenticate the End-User. The Authorization Server may request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as described in (#use-case-5), by using the mechanism defined in (#interactive-authorization-endpoint).
+Note: Steps (3) and (4) may happen in the front channel, by redirecting the End-User via the User Agent. Those steps are defined in (#authorization-endpoint). The Authorization Server and the User Agent may exchange any further messages between the steps if required by the Authorization Server to authenticate the End-User. The Authorization Server may request Credential presentation as a means to authenticate or identify the End-User during the issuance flow, as described in (#use-case-5), by using the mechanism defined in (#interactive-authorization).
 
 (5) The Wallet sends a Token Request to the Token Endpoint with the Authorization Code obtained in Step (4). The Token Endpoint returns an Access Token in the Token Response upon successfully validating the Authorization Code. This step happens in the back-channel communication (direct communication between two systems using HTTP requests and responses without using redirects through an intermediary such as a browser). This step is defined in (#token-endpoint).
 
@@ -466,7 +466,7 @@ The Wallet does not create a response. UX control stays with the Wallet after co
 
 # Authorization Endpoint {#authorization-endpoint}
 
-Authorization is obtained using the `authorization_code` grant type defined in [@!RFC6749], optionally with either PAR ((#pushed-authorization-request)) or the Interactive Authorization Endpoint (#interactive-authorization-endpoint). Implementers SHOULD follow the best current practices for OAuth 2.0 Security given in [@!BCP240], see (#securitybcp). This includes the use of mechanisms like PKCE to prevent authorization code interception attacks and Pushed (or Interactive) Authorization Requests to ensure the integrity and authenticity of the authorization request.
+Authorization is obtained using the `authorization_code` grant type defined in [@!RFC6749], optionally with either PAR ((#pushed-authorization-request)) or the Interactive Authorization (#interactive-authorization). Implementers SHOULD follow the best current practices for OAuth 2.0 Security given in [@!BCP240], see (#securitybcp). This includes the use of mechanisms like PKCE to prevent authorization code interception attacks and Pushed (or Interactive) Authorization Requests to ensure the integrity and authenticity of the authorization request.
 
 ## Authorization Request {#credential-authz-request}
 
@@ -569,7 +569,7 @@ The Authorization Server MUST ignore any unrecognized parameters.
 
 ### Pushed Authorization Request {#pushed-authorization-request}
 
-Use of Pushed Authorization Requests or the Interactive Authorization Endpoint (see (#interactive-authorization-endpoint) is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues caused by large requests sizes.
+Use of Pushed Authorization Requests or the Interactive Authorization (see (#interactive-authorization) is RECOMMENDED to ensure confidentiality, integrity, and authenticity of the request data and to avoid issues caused by large requests sizes.
 
 Below is a non-normative example of a Pushed Authorization Request:
 
@@ -634,15 +634,15 @@ Location: https://wallet.example.org/cb?
   &error_description=Unsupported%20response_type%20value
 ```
 
-# Interactive Authorization Endpoint {#interactive-authorization-endpoint}
+# Interactive Authorization {#interactive-authorization}
 
-This is an extension of the traditional Authorization Endpoint defined in [@!RFC6749], enabling complex authentication and authorization flows where interaction occurs directly with the Wallet rather than being intermediated by a browser.
+This section defines a profile for the OAuth 2.0 for First-Party Applications specification [@!I-D.ietf-oauth-first-party-apps], enabling complex authentication and authorization flows where interaction occurs directly with the Wallet rather than being intermediated by a browser.
 A primary use case is requiring the Presentation of a Credential as a prerequisite for issuing a new Credential.
-Support for the Interactive Authorization Endpoint is OPTIONAL.
+Support for this profile is OPTIONAL.
 
-The Authorization Server indicates support for interactive authorization by publishing the `interactive_authorization_endpoint` parameter in its Authorization Server Metadata as defined in (#as-metadata).
+The Authorization Server indicates support for interactive authorization by publishing the `authorization_challenge_endpoint` parameter in its Authorization Server Metadata as defined in (#as-metadata).
 
-The following figure illustrates a flow using the Interactive Authorization Endpoint, where the Authorization Server requests a Presentation (of another Credential) from the Wallet as part of the authorization process to issue a Credential to that Wallet. The exact deployment model of the OpenID4VP Verifier in relation to the Authorization Server is out of scope of this specification. It can be integrated into the Authorization Server or a separate component, in which case backchannel communication between the Verifier and Authorization Server would need to happen (not shown here).
+The following figure illustrates a flow using the Interactive Authorization, where the Authorization Server requests a Presentation (of another Credential) from the Wallet as part of the authorization process to issue a Credential to that Wallet. The exact deployment model of the OpenID4VP Verifier in relation to the Authorization Server is out of scope of this specification. It can be integrated into the Authorization Server or a separate component, in which case backchannel communication between the Verifier and Authorization Server would need to happen (not shown here).
 
 
 !---
@@ -653,28 +653,29 @@ The following figure illustrates a flow using the Interactive Authorization Endp
  +-----------+            +----------------------+     +--------------------+
        |                              |                        |
        |                              |                        |
-       |----------------------------->|  (1) Interactive       |
-       |                              |      Authorization     |
+       |----------------------------->|  (1) Authorization     |
+       |                              |      Challenge         |
        |                              |      Request           |
        |                              |                        |
        |                              |                        |
-       |<-----------------------------|  (2) Interactive       |
-       |                              |      Authorization     |
-       |                              |      Response          |
-       |                              |      (presentation     |
+       |<-----------------------------|  (2) Authorization     |
+       |                              |      Challenge         |
+       |                              |      Error Response   |
+       |                              |      (insufficient_authorization
+       |                              |      presentation      |
        |                              |      request,          |
        |                              |      auth_session)     |
        |                              |                        |
        |                              |                        |
-       |----------------------------->|  (3) Interactive       |
-       |                              |      Authorization     |
+       |----------------------------->|  (3) Authorization     |
+       |                              |      Challenge         |
        |                              |      Request           |
        |                              |      (auth_session,    |
        |                              |      presentation      |
        |                              |      response)         |
        |                              |                        |
-       |<-----------------------------|  (4) Interactive       |
-       |                              |      Authorization     |
+       |<-----------------------------|  (4) Authorization     |
+       |                              |      Challenge         |
        |                              |      Response (code)   |
        |                              |                        |
        |----------------------------->|  (5) Token Request     |
@@ -694,33 +695,32 @@ The following figure illustrates a flow using the Interactive Authorization Endp
        |<------------------------------------------------------|
 ~~~
 !---
-Figure: Issuance using the Interactive Authorization Endpoint
+Figure: Issuance with Interactive Authorization using the Authorization Challenge Endpoint
 
-## Interactive Authorization Request {#interactive-authorization-request}
+## Authorization Challenge Request {#authorization-challenge-request}
 
-All communication with the Interactive Authorization Endpoint MUST utilize TLS.
-
-The rules for client authentication as defined in [@!RFC9126] and [@!RFC6749] for pushed authorization requests, including the applicable authentication methods, apply for all requests to the Interactive Authorization Endpoint as well.
+The Interactive Authorization process is initiated by the client sending an Initial Request, as defined in (#initial-request), to the Authorization Server, which specifies the supported interactive types.
+The client subsequently sends intermediate requests, as defined in (#intermediate-request), to provide additional data to the Authorization Server.
 
 Note: In case a Wallet Attestation is required by the Authorization Server, it has to be included in this request.
 
-### Initial Request
+### Initial Request {#initial-request}
 
-The initial request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in Section 2.1 of [@!RFC9126]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request), with the following addition:
+In addition to the request parameters defined in Section 5.1 of [@!I-D.ietf-oauth-first-party-apps], the Authorization Server defines the additional parameters below.
 
 `interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Wallet supports. The order of the values is not significant. Values MUST be valid URNs. The following values are defined by this specification:
 
-* `urn:openid:dcp:iae:openid4vp_presentation`: Indicates that the Wallet supports an OpenID4VP Presentation interaction, as defined in (#iae-require-presentation).
-* `urn:openid:dcp:iae:redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#iae-redirect-to-web).
+* `urn:openid:dcp:ia:openid4vp_presentation`: Indicates that the Wallet supports an OpenID4VP Presentation interaction, as defined in (#ia-require-presentation).
+* `urn:openid:dcp:ia:redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#ia-redirect-to-web).
 
-Custom interaction types (see (#iae-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter. Specifications that extend these predefined types MUST define their own collision-resistant URNs as type identifiers.
+Custom interaction types (see (#ia-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter. Specifications that extend these predefined types MUST define their own collision-resistant URNs as type identifiers.
 
-When the wallet includes `urn:openid:dcp:iae:redirect_to_web` in `interaction_types_supported`, the `code_challenge` and `code_challenge_method` parameters (see (#securitybcp)) are included in the initial request.
+When the wallet includes `urn:openid:dcp:ia:redirect_to_web` in `interaction_types_supported`, the `code_challenge` and `code_challenge_method` parameters (see (#securitybcp)) are included in the initial request.
 
-The following non-normative example shows an initial request to the Interactive Authorization Endpoint:
+The following non-normative example shows an initial request to the Authorization Challenge Endpoint:
 
 ```http
-POST /iae HTTP/1.1
+POST /ace HTTP/1.1
 Host: server.example.com
 OAuth-Client-Attestation: eyJ...
 OAuth-Client-Attestation-PoP: eyJ...
@@ -735,10 +735,10 @@ response_type=code
 &interaction_types_supported=urn%3Aopenid%3Adcp%3Aiae%3Aopenid4vp_presentation%2Curn%3Aopenid%3Adcp%3Aiae%3Aredirect_to_web
 ```
 
-The following non-normative example shows an initial request to the Interactive Authorization Endpoint with a signed request object:
+The following non-normative example shows an initial request to the Authorization Challenge Endpoint with a signed request object:
 
 ```http
-POST /iae HTTP/1.1
+POST /ace HTTP/1.1
 Host: server.example.com
 OAuth-Client-Attestation: eyJ...
 OAuth-Client-Attestation-PoP: eyJ...
@@ -764,82 +764,54 @@ The following non-normative example shows a payload of a signed request object:
       "credential_configuration_id": "UniversityDegreeCredential"
     }
   ],
-  "interaction_types_supported": "urn:openid:dcp:iae:openid4vp_presentation,urn:openid:dcp:iae:redirect_to_web"
+  "interaction_types_supported": "urn:openid:dcp:ia:openid4vp_presentation,urn:openid:dcp:ia:redirect_to_web"
 }
 ```
 
-### Follow-up Request {#follow-up-request}
+### Intermediate Request {#intermediate-request}
 
-Follow-up requests to the Interactive Authorization Endpoint MUST include the `auth_session` value received most recently from the Authorization Server as part of the ongoing authorization request sequence (see (#iae-interaction-required-response)).
+In addition to the request parameters defined in Section 5.3 of [@!I-D.ietf-oauth-first-party-apps], the client adds parameters that are in response to the interaction type the Authorization Server requested in the most recent response. The specific parameters are defined by each interaction type.
 
-Besides `auth_session`, follow-up requests only include the parameters that are in response to the interaction type the Authorization Server requested in the most recent response. The specific parameters are defined by each interaction type.
+## Authorization Challenge Response
+Upon receiving an Authorization Challenge Request, the Authorization Server determines whether the Authorization Request is syntactically and semantically correct and whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance.
+The response to an Authorization Challenge Request is an HTTP message with the content type `application/json` and a JSON document in the body that indicates either
 
-The following non-normative example shows a follow-up request to the Interactive Authorization Endpoint where the Wallet has already received an `auth_session`:
+ 1. that user interaction is required, either a Presentation or a custom interaction, as defined in (#ia-interaction-required-response), or
+ 2. a successful completion of the authorization, as defined in Section 5.2.1 of [@!I-D.ietf-oauth-first-party-apps], or
+ 3. an error as defined in Section 5.2.2 of [@!I-D.ietf-oauth-first-party-apps], including the additional error codes defined in (#ia-error-response).
 
-```http
-POST /iae HTTP/1.1
-Host: server.example.com
-OAuth-Client-Attestation: eyJ...
-OAuth-Client-Attestation-PoP: eyJ...
-Content-Type: application/x-www-form-urlencoded
+### Interaction Required Response {#ia-interaction-required-response}
 
-auth_session=wxroVrBY2MCq4dDNGXACS
-```
-
-## Interactive Authorization Response
-
-Upon receiving an Interactive Authorization Request, the Authorization Server determines whether the Authorization Request is syntactically and semantically correct and whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance.
-The response to an Interactive Authorization Request is an HTTP message with the content type `application/json` and a JSON document in the body that indicates either
-
- 1. that user interaction is required, either a Presentation or a custom interaction, as defined in (#iae-interaction-required-response), or
- 2. a successful completion of the authorization, as defined in (#iae-authorization-code-response), or
- 3. an error as defined in Section 2.3 of [@!RFC9126] including the additional error codes defined in (#iae-error-response).
-
-Except in error cases, the following key is required in the JSON document of the response:
-
-* `status`: REQUIRED. String indicating whether an additional interaction is required or the authorization has been completed.
-
-Depending on this assessment, the response from the Interactive Authorization Endpoint can take one of the following forms:
-
-* Interaction Required Response as defined in (#iae-interaction-required-response)
-* Authorization Code Response as defined in (#iae-authorization-code-response)
-* Interactive Authorization Error Response as defined in (#iae-error-response)
-
-### Interaction Required Response {#iae-interaction-required-response}
-
-By setting `status` to `require_interaction` in the response, the Authorization Server requests an additional user interaction.
+By setting `error_code` to `insufficient_authorization` in the response with HTTP response code 401 `Unauthorized`, the Authorization Server requests an additional user interaction.
 In this case, the following keys MUST be present in the response as well:
 
-* `type`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST NOT set this to a value that was not included in the `interaction_types_supported` parameter sent by the Wallet.
-* `auth_session`: REQUIRED. String containing a value that allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value as an opaque value. The value returned MUST be distinct for each interactive authorization response.
+* `interaction_type_required`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST NOT set this to a value that was not included in the `interaction_types_supported` parameter sent by the Wallet.
+* `auth_session`: REQUIRED. As defined in Section 5.2.2 of [@!I-D.ietf-oauth-first-party-apps]
 
-The Wallet MUST include the most recently received `auth_session` in follow-up requests to the Interactive Authorization Endpoint.
-
-If a Wallet receives a `type` value that it does not recognize, it MUST abort the issuance process.
+If a Wallet receives a `interaction_type_required` value that it does not recognize, it MUST abort the issuance process.
 
 Additional keys are defined based on the type of interaction, as shown next.
 
-#### Require Presentation {#iae-require-presentation}
+#### Require Presentation {#ia-require-presentation}
 
-If `type` is set to `urn:openid:dcp:iae:openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_request` parameter containing an OpenID4VP Authorization Request. The contents of the request is the same as for requests passed to the Digital Credentials API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows:
+If `interaction_type_required` is set to `urn:openid:dcp:ia:openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_request` parameter containing an OpenID4VP Authorization Request. The contents of the request is the same as for requests passed to the Digital Credentials API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows:
 
-* The `response_mode` MUST be either `iae_post` for unencrypted responses or `iae_post.jwt` for encrypted responses. These modes are used to indicate to the Wallet to return the response back to the same Interactive Authorization Endpoint.
-* If `expected_origins` is present, it MUST contain only the derived Origin of the Interactive Authorization Endpoint as defined in Section 4 in [@RFC6454]. For example, the derived Origin from `https://example.com/iae` is `https://example.com`.
+* The `response_mode` MUST be either `ia_post` for unencrypted responses or `ia_post.jwt` for encrypted responses. These modes are used to indicate to the Wallet to return the response back to the same Authorization Challenge Endpoint.
+* If `expected_origins` is present, it MUST contain only the derived Origin of the Authorization Challenge Endpoint as defined in Section 4 in [@RFC6454]. For example, the derived Origin from `https://example.com/ace` is `https://example.com`.
 
 The following is a non-normative example of an unsigned Authorization Request:
 
 ```
-HTTP/1.1 200 OK
+HTTP/1.1 401 Unauthorized
 Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "status": "require_interaction",
-  "type": "urn:openid:dcp:iae:openid4vp_presentation",
+  "interaction_type_required": "urn:openid:dcp:ia:openid4vp_presentation",
   "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "openid4vp_request": {
     "response_type": "vp_token",
-    "response_mode": "iae_post",
+    "response_mode": "ia_post",
     "dcql_query": {
       "credentials": [
         {
@@ -863,13 +835,12 @@ Cache-Control: no-store
 The following is a non-normative example of a signed Authorization Request:
 
 ```
-HTTP/1.1 200 OK
+HTTP/1.1 401 Unauthorized
 Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "status": "require_interaction",
-  "type": "urn:openid:dcp:iae:openid4vp_presentation",
+  "interaction_type_required": "urn:openid:dcp:ia:openid4vp_presentation",
   "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "openid4vp_request": {
     "request": "eyJhbGciOiJF..."
@@ -885,14 +856,14 @@ The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is 
 When processing the request the following logic applies:
 
   1. If `expected_origins` is present, the Wallet MUST ensure that `expected_origins` contains the derived Origin as defined above.
-  2. If the response contains Verifiable Presentations that include Holder Binding, the audience of each of those MUST be properly bound to the Interactive Authorization Endpoint, following the rules defined by their Credential Format. Details on how to do this for each format can be found in the "Interactive Authorization Endpoint Binding" sections under (#format-profiles). Note that the Credential Format here refers to the format of the Verifiable Presentation requested in the OpenID4VP Authorization Request, which may be different from the format used for issuing the Credentials themselves. If any Verifiable Presentation with Holder Binding is not correctly bound to the Interactive Authorization Endpoint, the response MUST be rejected.
+  2. If the response contains Verifiable Presentations that include Holder Binding, the audience of each of those MUST be properly bound to the Authorization Challenge Endpoint, following the rules defined by their Credential Format. Details on how to do this for each format can be found in the "Authorization Challenge Endpoint Binding" sections under (#format-profiles). Note that the Credential Format here refers to the format of the Verifiable Presentation requested in the OpenID4VP Authorization Request, which may be different from the format used for issuing the Credentials themselves. If any Verifiable Presentation with Holder Binding is not correctly bound to the Authorization Challenge Endpoint, the response MUST be rejected.
 
-The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_response` parameter. The value of the `openid4vp_response` parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iae_post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
+The Authorization Challenge Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#intermediate-request). In addition to these requirements, the request MUST also contain the `openid4vp_response` parameter. The value of the `openid4vp_response` parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `ia_post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
 
-The following us an example non-normative example of a Interactive Authorization Request containing an OpenID4VP Authorization Response:
+The following us an example non-normative example of a Authorization Challenge Request containing an OpenID4VP Authorization Response:
 
 ```http
-POST /iae HTTP/1.1
+POST /ace HTTP/1.1
 Host: server.example.com
 OAuth-Client-Attestation: eyJ...
 OAuth-Client-Attestation-PoP: eyJ...
@@ -931,9 +902,9 @@ The following is a non-normative example of the `openid4vp_response` JSON object
 
 Note: This mechanism can only be used for interactions with the same Wallet that started the issuance process.
 
-#### Redirect to Web {#iae-redirect-to-web}
+#### Redirect to Web {#ia-redirect-to-web}
 
-If the type is `urn:openid:dcp:iae:redirect_to_web`, the Authorization Server is indicating that the authorization process must continue via interactions with the user in a web browser.
+If the type is `urn:openid:dcp:ia:redirect_to_web`, the Authorization Server is indicating that the authorization process must continue via interactions with the user in a web browser. This interaction type differs from what is defined in Section 5.2.2.1.1 of [@!I-D.ietf-oauth-first-party-apps] in the way that this step can be used multiple times in any place in the authorization process.
 
 In this case, the Authorization server MUST include the key `request_uri` in the response.
 The Wallet MUST use the `request_uri` value to build an Authorization Request as defined in Section 4 of [@!RFC9126] and complete the rest of the authorization process as defined there.
@@ -944,96 +915,76 @@ The Authorization Server MAY include the `expires_in` key as defined in [@!RFC91
 Non-normative Example:
 
 ```
-HTTP/1.1 200 OK
+HTTP/1.1 403 Unauthorized
 Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "status": "require_interaction",
-  "type": "urn:openid:dcp:iae:redirect_to_web",
+  "interaction_type_required": "urn:openid:dcp:ia:redirect_to_web",
   "request_uri": "urn:ietf:params:oauth:request_uri:6esc_11ACC5bwc014ltc14eY22c",
   "expires_in": 60
 }
 ```
 
-Once this phase of the Authorization process is completed, the Authorization Server MUST redirect back to the Wallet as per [@RFC6749]. If the Authorization process is complete when this redirect occurs, the Authorization Server returns a response with the `code` parameter as per Section 1.3.1 of [@RFC6749]. If the Authorization process is not complete when this redirect occurs, the Authorization Server returns a response with the `auth_session` parameter. In the event a Wallet receives a response from the Authorization Server which features the `auth_session` parameter, the Wallet MUST make a follow-up request as per (#follow-up-request) to continue the Authorization process. In the event that PKCE as defined in [@RFC7636] was used in the initial authorization request to the interactive authorization endpoint, the Authorization Server MUST enforce the correct usage of the `code_verifier` in the follow-up request that follows the completion of the `urn:openid:dcp:iae:redirect_to_web` interaction.
+Once this phase of the Authorization process is completed, the Authorization Server MUST redirect back to the Wallet as per [@RFC6749]. If the Authorization process is complete when this redirect occurs, the Authorization Server returns a response with the `code` parameter as per Section 1.3.1 of [@RFC6749]. If the Authorization process is not complete when this redirect occurs, the Authorization Server returns a response with the `auth_session` parameter. In the event a Wallet receives a response from the Authorization Server which features the `auth_session` parameter, the Wallet MUST make a intermediate request as per (#intermediate-request) to continue the Authorization process. In the event that PKCE as defined in [@RFC7636] was used in the initial authorization challenge request, the Authorization Server MUST enforce the correct usage of the `code_verifier` in the intermediate request that follows the completion of the `urn:openid:dcp:ia:redirect_to_web` interaction.
 
-To ensure the security of the `urn:openid:dcp:iae:redirect_to_web` flow, the redirect URI MUST be an `https` URL as per Section 7.2 of [@!RFC8252]. The Wallet MUST NOT use an embedded user-agent to perform the `urn:openid:dcp:iae:redirect_to_web` flow. The considerations in Section 8.12 of [@!RFC8252] apply. Platform-specific implementation details are provided in Appendix B of the same document.
+To ensure the security of the `urn:openid:dcp:ia:redirect_to_web` flow, the redirect URI MUST be an `https` URL as per Section 7.2 of [@!RFC8252]. The Wallet MUST NOT use an embedded user-agent to perform the `urn:openid:dcp:ia:redirect_to_web` flow. The considerations in Section 8.12 of [@!RFC8252] apply. Platform-specific implementation details are provided in Appendix B of the same document.
 
 A non-normative example of a follow-up request featuring PKCE:
 
 ```
-POST /iae HTTP/1.1
+POST /ace HTTP/1.1
 Host: server.example.com
 Content-Type: application/x-www-form-urlencoded
 
 auth_session=wxroVrBY2MCq4dDNGXACS&code_verifier=avjebhrnqwketh
 ```
 
-#### Custom Interaction Extensions {#iae-custom-extensions}
+#### Custom Interaction Extensions {#ia-custom-extensions}
 
 Additional, custom types of interactions MAY be defined by extensions of this specification to enable other types of interactions, for example, by interacting with a smart card. Such an extension MUST use a collision-resistant URN for their respective type identifier.
 It is RECOMMENDED to use this extension point instead of modifying the OAuth protocol in order to facilitate interactions that require interactions with native components of the Wallet application.
-See (#iae-security) for additional security considerations.
+See (#ia-security) for additional security considerations.
 
 In the following non-normative example, this extension point is used to read the Betelgeuse Intergalactic ID card through an NFC interface in the Wallet. A token called `biic_token` is used to start the process.
 
 ```
-HTTP/1.1 200 OK
+HTTP/1.1 403 Unauthorized
 Content-Type: application/json
 Cache-Control: no-store
 
 {
-  "status": "require_interaction",
-  "type": "urn:galaxysdo:iae:betelgeuse_intergalactic_id_card",
+  "interaction_type_required": "urn:galaxysdo:ia:betelgeuse_intergalactic_id_card",
   "biic_token": "73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049"
 }
 ```
 
-#### Preventing Session Fixation Attacks {#iae-security}
+#### Preventing Session Fixation Attacks {#ia-security}
 
 Authorization Servers MUST ensure that the user interaction (OpenID4VP presentation, redirect to web, or a custom interaction) is securely bound to the authorization process in order avoid Session Fixation Attacks as described in Section 14.2 of [@!OpenID4VP].
-This can be achieved by securely linking all requests following the initial Interactive Authorization Request.
+This can be achieved by securely linking all requests following the initial Authorization Challenge Request.
 For OpenID4VP presentations, the Authorization Server MUST associate the `nonce` value used in the Presentation with the `auth_session` value and verify that the Presentation delivered from the Wallet to the Verifier uses the same nonce.
 
-Custom extensions ((#iae-custom-extensions)) MUST ensure an equivalent binding.
-Authorization Servers can usually achieve this by providing a nonce for use in the custom process (`biic_token` in the example above) and either only responding to the Interactive Authorization Request Endpoint (as done by (#iae-require-presentation)) or returning a non-predictable value from the process to the Interactive Authorization Request Endpoint that can be verified.
+Custom extensions ((#ia-custom-extensions)) MUST ensure an equivalent binding.
+Authorization Servers can usually achieve this by providing a nonce for use in the custom process (`biic_token` in the example above) and either only responding to the Authorization Challenge Request Endpoint (as done by (#ia-require-presentation)) or returning a non-predictable value from the process to the  Authorization Challenge Endpoint that can be verified.
 
-#### Preventing Forwarding of Interactive Authorization Endpoint Presentation Requests
+#### Preventing Forwarding of Interactive Authorization Presentation Requests
 
-In ecosystems with multiple Authorization Servers that may potentially use the Interactive Authorization Endpoint, there is a risk that a malicious (or compromised) Authorization Server forwards an Interactive Authorization Response containing a Interaction Required Response that it itself has acquired from another Authorization Server.
+In ecosystems with multiple Authorization Servers that may potentially use the Interactive Authorization, there is a risk that a malicious (or compromised) Authorization Server forwards an Authorization Challenge Response containing a Interaction Required Response that it itself has acquired from another Authorization Server.
 This may lead to the malicious Authorization Server gaining access to Credentials issued by the other Authorization Server without the End-User's consent.
 
-Custom extensions ((#iae-custom-extensions)) MUST ensure that this attack is prevented by ensuring one or both of the following:
+Custom extensions ((#ia-custom-extensions)) MUST ensure that this attack is prevented by ensuring one or both of the following:
 
- 1. The Wallet is able to detect that a request is not presented by the party that initiated the Interactive Authorization Request. In the case of the (#iae-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_origins` parameter in the request, which contains the derived Origin of the Interactive Authorization Endpoint that initiated the request.
- 2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#iae-require-presentation) interaction, this is achieved for both signed and unsigned requests by the binding the Interactive Authorization Endpoint to the Verifiable Presentation (see "Interactive Authorization Endpoint Binding" sections under (#format-profiles)), which is then verified by the Authorization Server.
+ 1. The Wallet is able to detect that a request is not presented by the party that initiated the Authorization Challenge Request. In the case of the (#ia-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_origins` parameter in the request, which contains the derived Origin of the Authorization Challenge Endpoint that initiated the request.
+ 2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#ia-require-presentation) interaction, this is achieved for both signed and unsigned requests by the binding the Authorization Challenge Endpoint to the Verifiable Presentation (see "Interactive Authorization Binding" sections under (#format-profiles)), which is then verified by the Authorization Server.
 
-### Authorization Code Response {#iae-authorization-code-response}
+### Authorization Challenge Error Response {#ia-error-response}
 
-Once the Authorization Server has successfully processed the Interactive Authorization Request, it MUST respond with a 200 OK response using the `application/json` media type containing a `code` parameter, carrying the Authorization Code as defined in [@!RFC6749].
-The `status` key MUST be set to `ok` in this case.
+In addition to the error processing rules defined in Section 5.2.2.1 of [@!I-D.ietf-oauth-first-party-apps] and Section 2.3 of [@RFC9126], this specification defines the following error codes:
 
-```
-HTTP/1.1 200 OK
-Content-Type: application/json
-Cache-Control: no-store
+* `missing_interaction_type`: The `interaction_types_supported` parameter in the Authorization Challenge Request does not include all interaction types required to complete all phases of the authorization process.
 
-{
-  "code": "uY29tL2F1dGhlbnRpY",
-  "status": "ok"
-}
-```
-
-The Wallet MUST use this authorization code in the subsequent Token Request to the Token Endpoint.
-
-### Interactive Authorization Error Response {#iae-error-response}
-
-In addition to the error processing rules defined in Section 2.3 of [@RFC9126], this specification defines the following error codes for the Interactive Authorization Endpoint:
-
-* `missing_interaction_type`: The `interaction_types_supported` parameter in the Interactive Authorization Request does not include all interaction types required to complete all phases of the authorization process.
-
-The following is an example of an error response from the Interactive Authorization Endpoint:
+The following is an example of an error response from the Authorization Challenge Endpoint:
 
 ```
 HTTP/1.1 400 Bad Request
@@ -1043,7 +994,7 @@ Cache-Control: no-cache, no-store
 {
   "error": "missing_interaction_type",
   "error_description":
-    "interaction_types_supported in the request is missing the required interaction type 'urn:openid:dcp:iae:openid4vp_presentation'"
+    "interaction_types_supported in the request is missing the required interaction type 'urn:openid:dcp:ia:openid4vp_presentation'"
 }
 ```
 
@@ -1860,11 +1811,10 @@ See (#additional-issuer-metadata-examples) for additional examples of Credential
 This specification also defines a new OAuth 2.0 Authorization Server metadata [@!RFC8414] parameter to publish whether the Authorization Server that the Credential Issuer relies on for authorization supports anonymous Token Requests with the Pre-Authorized Grant Type. It is defined as follows:
 
 * `pre-authorized_grant_anonymous_access_supported`: OPTIONAL. A boolean indicating whether the Credential Issuer accepts a Token Request with a Pre-Authorized Code but without a `client_id`. The default is `false`.
-* `interactive_authorization_endpoint`: OPTIONAL. URL of the Authorization Server's Interactive Authorization Endpoint. This URL MUST use the https scheme and MAY contain port, path, and query parameter components. If omitted, the Authorization Server does not support the Interactive Authorization Endpoint. If present, the Wallet SHOULD use this endpoint to obtain authorization as defined in (#interactive-authorization-endpoint).
-* `require_interactive_authorization_request`: OPTIONAL. A boolean indicating whether the Authorization Server only accepts an Authorization Request for Credential issuance via the Interactive Authorization Endpoint defined in [#interactive-authorization-endpoint]. If omitted, the default value is `false`. This parameter MUST NOT be present if `interactive_authorization_endpoint` is omitted. Note that the presence of `interactive_authorization_endpoint` is sufficient for a Wallet to determine that it can use the Interactive Authorization Endpoint.
+* `require_interactive_authorization`: OPTIONAL. A boolean indicating whether the Authorization Server only accepts Interactive Authorization for Credential issuance as defined in [#interactive-authorization]. If omitted, the default value is `false`. This parameter MUST NOT be present if `authorization_challenge_endpoint` ([@!I-D.ietf-oauth-first-party-apps]) is omitted. Note that the presence of `authorization_challenge_endpoint` is sufficient for a Wallet to determine that it can use Interactive Authorization.
 
 Additional Authorization Server metadata parameters MAY be defined and used,
-as described in [@!RFC8414].
+as described in [@!RFC8414] and [@!I-D.ietf-oauth-first-party-apps].
 The Wallet MUST ignore any unrecognized parameters.
 
 # Security Considerations {#security-considerations}
@@ -1881,7 +1831,7 @@ The parts of [@!FAPI2_Security_Profile] that may not be applicable when using th
 
 1. Client authentication: The private_key_jwt and MTLS client authentication methods may not be practical to implement in a secure way for native app Wallets. The use of Wallet Attestations as defined in (#walletattestation) is RECOMMENDED instead.
 2. Sender-constrained access tokens: MTLS sender constrained access token may not be practical to implement in a secure way for native app Wallets. The use of DPoP [@!RFC9449] is RECOMMENDED.
-3. Pushed Authorization Requests: The Interactive Authorization Endpoint is permitted as an alternative to Pushed Authorization Requests (PAR), see (#interactive-authorization-endpoint).
+3. Pushed Authorization Requests: Interactive Authorization is permitted as an alternative to Pushed Authorization Requests (PAR), see (#interactive-authorization).
 
 ## Trust between Wallet and Issuer
 
@@ -2039,6 +1989,7 @@ Implementers should be aware that this specification uses several specifications
 * SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -11 [@!I-D.ietf-oauth-sd-jwt-vc]
 * Attestation-Based Client Authentication draft -07 [@!I-D.ietf-oauth-attestation-based-client-auth]
 * Token Status List draft -12 [@!I-D.ietf-oauth-status-list]
+* OAuth 2.0 for First-Party Applications draft -03  [@!I-D.ietf-oauth-first-party-apps]
 
 While breaking changes to the specifications referenced in this specification are not expected, should they occur, OpenID4VCI implementations should continue to use the specifically referenced versions above in preference to the final versions, unless updated by a profile or new version of this specification.
 
@@ -2586,9 +2537,9 @@ The following is the dereferenced document for the Issuer HTTP URL identifier th
 
 <{{examples/issuer_jwks.json}}
 
-#### Interactive Authorization Endpoint Binding {#iae-binding-jwt-vc-json}
+#### Interactive Authorization Binding {#ia-binding-jwt-vc-json}
 
-To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim value MUST be set to the Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com/iae`).
+To bind the Interactive Authorization to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim value MUST be set to the Authorization Challenge Endpoint, prefixed with `ia:` (e.g., `ia:https://example.com/ace`).
 
 ### VC Secured using Data Integrity, using JSON-LD, with a Proof Suite Requiring Linked Data Canonicalization
 
@@ -2630,9 +2581,9 @@ The following is a non-normative example of a Credential Response with Credentia
 
 <{{examples/credential_response_ldp_vc.txt}}
 
-#### Interactive Authorization Endpoint Binding {#iae-binding-ldp-vc}
+#### Interactive Authorization Binding {#ia-binding-ldp-vc}
 
-To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `domain` claim value MUST be set to the Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com/iae`).
+To bind the Interactive Authorization to a Verifiable Presentation using the Credential Format defined in this section, the `domain` claim value MUST be set to the Authorization Challenge Endpoint, prefixed with `ia:` (e.g., `ia:https://example.com/ace`).
 
 ### VC signed as a JWT, Using JSON-LD
 
@@ -2656,9 +2607,9 @@ The definitions in (#authorization-ldp-vc) apply for Credentials of this type as
 
 The definitions in (#credential-response-jwt-vc-json) apply for Credentials of this type as well.
 
-#### Interactive Authorization Endpoint Binding
+#### Interactive Authorization Binding
 
-The definitions in (#iae-binding-jwt-vc-json) apply to the Credentials of this format.
+The definitions in (#ia-binding-jwt-vc-json) apply to the Credentials of this format.
 
 ## Mobile Documents or mdocs (ISO/IEC 18013) {#mdocs}
 
@@ -2704,9 +2655,9 @@ The following is a non-normative example of a Credential Response containing a C
 
 <{{examples/credential_response_mso_mdoc.txt}}
 
-### Interactive Authorization Endpoint Binding {#iae-binding-mso-mdoc}
+### Interactive Authorization Binding {#ia-binding-mso-mdoc}
 
-To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `SessionTranscript` CBOR structured as defined in Section 9.1.5.1 in [@ISO.18013-5] MUST be used in Verifiable Presentations submitted in a response to Interactive Authorization Requests using the `urn:openid:dcp:iae:openid4vp_presentation` interaction type, with the following modifications. This `SessionTranscript` differs from those defined in Section B.5.6 in [@OpenID4VP] and is defined as follows:
+To bind the Interactive Authorization to a Verifiable Presentation using the Credential Format defined in this section, the `SessionTranscript` CBOR structured as defined in Section 9.1.5.1 in [@ISO.18013-5] MUST be used in Verifiable Presentations submitted in a response to Authorization Challenge Requests using the `urn:openid:dcp:ia:openid4vp_presentation` interaction type, with the following modifications. This `SessionTranscript` differs from those defined in Section B.5.6 in [@OpenID4VP] and is defined as follows:
 
 * `DeviceEngagementBytes` MUST be `null`.
 * `EReaderKeyBytes` MUST be `null`.
@@ -2744,9 +2695,9 @@ The `OpenID4VCIIAEHandover` structure has the following elements:
 * The first element MUST be the string `OpenID4VCIIAEHandover`. This serves as a unique identifier for the handover structure to prevent misinterpretation or confusion.
 * The second element MUST be a Byte String which contains the sha-256 hash of the bytes of `OpenID4VCIIAEHandoverInfo` when encoded as CBOR.
 * The `OpenID4VCIIAEHandoverInfo` has the following elements:
-  * The first element MUST be the string representing the Interactive Authorization Endpoint of the request as described in (#interactive-authorization-request). It MUST NOT be prefixed with `iae:`.
+  * The first element MUST be the string representing the Authorization Challenge Endpoint of the request as described in (#authorization-challenge-request). It MUST NOT be prefixed with `ia:`.
   * The second element MUST be the value of the `nonce` request parameter.
-  * For the Response Mode `iae_post.jwt`, the third element MUST be the JWK SHA-256 Thumbprint as defined in [@!RFC7638], encoded as a Byte String, of the Verifier's public key used to encrypt the response. If the Response Mode is `iae_post`, the third element MUST be `null`. For unsigned requests, including the JWK Thumbprint in the `SessionTranscript` allows the Verifier to detect whether the response was re-encrypted by a third party, potentially leading to the leakage of sensitive information. While this does not prevent such an attack, it makes it detectable and helps preserve the confidentiality of the response.  
+  * For the Response Mode `ia_post.jwt`, the third element MUST be the JWK SHA-256 Thumbprint as defined in [@!RFC7638], encoded as a Byte String, of the Verifier's public key used to encrypt the response. If the Response Mode is `ia_post`, the third element MUST be `null`. For unsigned requests, including the JWK Thumbprint in the `SessionTranscript` allows the Verifier to detect whether the response was re-encrypted by a third party, potentially leading to the leakage of sensitive information. While this does not prevent such an attack, it makes it detectable and helps preserve the confidentiality of the response.  
 
 The following is a non-normative example of the input JWK for calculating the JWK Thumbprint in the context of `OpenID4VCIIAEHandoverInfo`:
 
@@ -2864,9 +2815,9 @@ The following is a non-normative example of a Credential Response containing a C
 
 <{{examples/credential_response_sd_jwt_vc.txt}}
 
-### Interactive Authorization Endpoint Binding {#iae-binding-sd-jwt-vc}
+### Interactive Authorization Binding {#ia-binding-sd-jwt-vc}
 
-To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim in the Key Binding JWT MUST be set to the derived Origin (as defined in (#iae-require-presentation)) of the Interactive Authorization Endpoint, prefixed with `iae:` (e.g., `iae:https://example.com`).
+To bind the Interactive Authorization to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim in the Key Binding JWT MUST be set to the derived Origin (as defined in (#ia-require-presentation)) of the Authorization Challenge Endpoint, prefixed with `ia:` (e.g., `ia:https://example.com/ace`).
 
 # Claims Description 
 
@@ -3392,7 +3343,7 @@ established by [@!RFC6749].
 * Name: `interaction_types_supported`
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#interactive-authorization-request) of this specification
+* Reference: (#authorization-challenge-request) of this specification
 
 ### issuer_state
 
@@ -3428,12 +3379,6 @@ established by [@!RFC8414].
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#as-metadata) of this specification
 
-### interactive_authorization_endpoint
-
-* Metadata Name: `interactive_authorization_endpoint`
-* Metadata Description: URL of the Authorization Server's Interactive Authorization Endpoint. This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Authorization Server does not support the Interactive Authorization Endpoint.
-* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#as-metadata) of this specification
 
 ## OAuth Dynamic Client Registration Metadata Registry
 
@@ -3458,7 +3403,7 @@ This specification registers the following errors in the IANA "OAuth Extensions 
 * Error usage location: Interactive Authorization Error Response
 * Related protocol extension: OpenID for Verifiable Credential Issuance
 * Change controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Specification document: (#iae-error-response) of this specification
+* Specification document: (#ia-error-response) of this specification
 
 ## Well-Known URI Registry
 
