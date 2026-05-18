@@ -660,7 +660,7 @@ The following figure illustrates a flow using Interactive Authorization, where t
        |                              |                        |
        |<-----------------------------|  (2) Authorization     |
        |                              |      Challenge         |
-       |                              |      Error Response   |
+       |                              |      Error Response    |
        |                              |      (insufficient_authorization,
        |                              |      presentation      |
        |                              |      request,          |
@@ -788,7 +788,7 @@ In this case, the following keys MUST be present in the response as well:
 * `interaction_type_required`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST NOT set this to a value that was not included in the `interaction_types_supported` parameter sent by the Wallet.
 * `auth_session`: REQUIRED. As defined in Section 5.2.2 of [@!I-D.ietf-oauth-first-party-apps]
 
-If a Wallet receives an `interaction_type_required` value that it does not recognize, it MUST abort the issuance process.
+If a Wallet receives an `interaction_type_required` value that it does not support, it MUST abort the issuance process.
 
 Additional keys are defined based on the type of interaction, as shown next.
 
