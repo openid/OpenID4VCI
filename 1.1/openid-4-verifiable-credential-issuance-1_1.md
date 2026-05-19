@@ -73,7 +73,7 @@ This specification also defines the following terms. In the case where a term ha
 Credential Dataset:
 :  A set of one or more claims about a subject, provided by a Credential Issuer.
 
-Credential Dataset Identifier
+Credential Dataset Version
 :  A unique identifier that refers to a specific version of a Credential Dataset. This identifier remains stable across multiple instances of a Credential that share the same set of claim values, even if they differ in cryptographic proofs. When the claim values in the dataset change, a new Credential Dataset Identifier is assigned. This identifier enables Wallets to detect changes to the underlying data and to distinguish between Credentials issued with different versions of a Credential Dataset under the same Credential Configuration. Note that a Credential Dataset Identifier is bound to a specific Credential Format.
 
 Credential (or Verifiable Credential (VC)):
