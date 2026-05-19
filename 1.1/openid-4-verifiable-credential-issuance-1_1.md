@@ -3615,4 +3615,4 @@ The technology described in this specification was made available from contribut
    * use derived origin for `expected_origins` in IAE flow
    * add require_interactive_authorization_request to AS metadata
    * add interactive_authorization_endpoint to AS metadata section
-   * add credential dataset identifier
+   * add credential dataset version
