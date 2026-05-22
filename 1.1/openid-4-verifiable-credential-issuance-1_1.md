@@ -904,7 +904,7 @@ Note: This mechanism can only be used for interactions with the same Wallet that
 
 #### Redirect to Web {#ia-redirect-to-web}
 
-If the type is `urn:openid:dcp:ia:redirect_to_web`, the Authorization Server is indicating that the authorization process must continue via interactions with the user in a web browser. This interaction type differs from what is defined in Section 5.2.2.1.1 of [@!I-D.ietf-oauth-first-party-apps] in the way that this step can be used multiple times in any place in the authorization process.
+If the type is `urn:openid:dcp:ia:redirect_to_web`, the Authorization Server is indicating that the authorization process must continue via interactions with the user in a web browser. This is used as a step in the interactive authorization process, while Section 5.2.2.1.1 of [@!I-D.ietf-oauth-first-party-apps] is a fallback to traditional authorization that replaces the entirety of the Interactive Authorization process.
 
 In this case, the Authorization server MUST include the key `request_uri` in the response.
 The Wallet MUST use the `request_uri` value to build an Authorization Request as defined in Section 4 of [@!RFC9126] and complete the rest of the authorization process as defined there.
