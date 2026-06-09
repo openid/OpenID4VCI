@@ -638,7 +638,7 @@ Location: https://wallet.example.org/cb?
 
 This section defines a profile for the OAuth 2.0 for First-Party Applications specification [@!I-D.ietf-oauth-first-party-apps], enabling complex authentication and authorization flows where interaction occurs directly with the Wallet rather than being intermediated by a browser.
 A primary use case is requiring the Presentation of a Credential as a prerequisite for issuing a new Credential.
-Support for this profile is OPTIONAL.
+Support for Interactive Authorization is OPTIONAL.
 
 The Authorization Server indicates support for Interactive Authorization by publishing the `authorization_challenge_endpoint` parameter in its Authorization Server Metadata as defined in (#as-metadata).
 
@@ -706,7 +706,7 @@ Note: In case a Wallet Attestation is required by the Authorization Server, it h
 
 ### Initial Request {#initial-request}
 
-In addition to the request parameters defined in Section 5.1 of [@!I-D.ietf-oauth-first-party-apps], the Authorization Server sends the additional parameter below.
+In addition to the request parameters defined in Section 5.1 of [@!I-D.ietf-oauth-first-party-apps], this profile defines the following request parameter for the initial Authorization Challenge Request.
 
 `interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Wallet supports. The order of the values is not significant. Values MUST be valid URNs. The following values are defined by this specification:
 
@@ -807,6 +807,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
+  "error": "insufficient_authorization",
   "interaction_type_required": "urn:openid:dcp:ia:openid4vp_presentation",
   "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "openid4vp_request": {
@@ -840,6 +841,7 @@ Content-Type: application/json
 Cache-Control: no-store
 
 {
+  "error": "insufficient_authorization",
   "interaction_type_required": "urn:openid:dcp:ia:openid4vp_presentation",
   "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "openid4vp_request": {
@@ -915,11 +917,12 @@ The Authorization Server MAY include the `expires_in` key as defined in [@!RFC91
 Non-normative Example:
 
 ```
-HTTP/1.1 403 Unauthorized
+HTTP/1.1 401 Unauthorized
 Content-Type: application/json
 Cache-Control: no-store
 
 {
+  "error": "insufficient_authorization",
   "interaction_type_required": "urn:openid:dcp:ia:redirect_to_web",
   "request_uri": "urn:ietf:params:oauth:request_uri:6esc_11ACC5bwc014ltc14eY22c",
   "expires_in": 60
@@ -949,11 +952,12 @@ See (#ia-security) for additional security considerations.
 In the following non-normative example, this extension point is used to read the Betelgeuse Intergalactic ID card through an NFC interface in the Wallet. A token called `biic_token` is used to start the process.
 
 ```
-HTTP/1.1 403 Unauthorized
+HTTP/1.1 401 Unauthorized
 Content-Type: application/json
 Cache-Control: no-store
 
 {
+  "error": "insufficient_authorization",
   "interaction_type_required": "urn:galaxysdo:ia:betelgeuse_intergalactic_id_card",
   "biic_token": "73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049"
 }
