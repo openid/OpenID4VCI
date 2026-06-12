@@ -1109,7 +1109,7 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 }
 ```
 
-The Credential Issuer indicates support for encrypted responses by including the `credential_response_encryption` parameter in the Credential Issuer Metadata. The Client MAY request encrypted responses by providing its encryption parameters in the Deferred Credential Request when `encryption_required` is `false` and MUST do so when `encryption_required` is `true`. Note that this object will be used for encrypting the response, regardless of what was sent in the initial Credential Request. If it is not included encryption will not be performed. Deferred Credential Request encryption MUST but used if the `credential_response_encryption` parameter is included, to prevent it being substituted by an attacker.
+The Credential Issuer indicates support for encrypted responses by including the `credential_response_encryption` parameter in the Credential Issuer Metadata. The Client MAY request encrypted responses by providing its encryption parameters in the Deferred Credential Request when `encryption_required` is `false` and MUST do so when `encryption_required` is `true`. Note that this object will be used for encrypting the response, regardless of what was sent in the initial Credential Request. If it is not included encryption will not be performed. Deferred Credential Request encryption MUST be used if the `credential_response_encryption` parameter is included, to prevent it being substituted by an attacker.
 
 ## Deferred Credential Response {#deferred-credential-response}
 
@@ -1149,7 +1149,7 @@ Content-Type: application/json
 The following is a non-normative example of a Deferred Credential Response, where the Credential Issuer still requires more time:
 
 ```
-HTTP/1.1 202 OK
+HTTP/1.1 202 Accepted
 Content-Type: application/json
 
 {
@@ -1503,6 +1503,17 @@ An attacker might leverage the Credential issuance process and the End-User's tr
 
 In order to cope with that issue, the Wallet is RECOMMENDED to interact with trusted Credential Issuers only. In that case, the Wallet would not process a Credential Offer with an untrusted issuer URL. The Wallet MAY also show the End-User the endpoint of the Credential Issuer it will be sending the Transaction Code to and ask the End-User for confirmation.
 
+### Transaction Code Guessing
+
+When the Pre-Authorized Code Flow is used together with a Transaction Code (`tx_code`), the Transaction Code is typically short, low-entropy, and intended for one-time use. As a result, it may be susceptible to online guessing or brute-force attacks if an attacker can repeatedly submit Token Requests using the same Pre-Authorized Code.
+
+To mitigate this risk, the Authorization Server SHOULD limit the number of failed Transaction Code verification attempts associated with a Pre-Authorized Code or issuance transaction. Once a configurable maximum number of failed attempts is exceeded, the Authorization Server SHOULD invalidate the Pre-Authorized Code and reject further Token Requests for that transaction.
+
+Transaction Codes SHOULD be short-lived and SHOULD be treated as single-use. Upon successful verification, a Transaction Code SHOULD NOT be accepted again.
+
+When a valid Pre-Authorized Code is presented with an incorrect Transaction Code, the Authorization Server SHOULD return an error indicating that the provided Transaction Code is invalid.
+If the Pre-Authorized Code has expired, has been invalidated (including due to too many failed attempts), or is otherwise no longer valid, the Authorization Server SHOULD return the `invalid_grant` error.
+
 ## Credential Lifecycle Management 
 
 The Credential Issuer is supposed to be responsible for the lifecycle of its Credentials. This means the Credential Issuer will invalidate Credentials when it deems appropriate, e.g., if it detects fraudulent behavior.
@@ -1553,6 +1564,8 @@ Some Credential Issuers might choose to issue bearer Credentials without either 
 One such use case is low assurance Credentials, such as coupons or tickets.
 
 Another use case is when the Credential Issuer uses cryptographic schemes that can provide binding to the End-User possessing that Credential without explicit cryptographic material being supplied by the application used by that End-User. For example, in the case of the BBS Signature Scheme, the issued Credential itself is a secret and only a derivation from the Credential is presented to the Verifier. Effectively, the Credential is bound to the Credential Issuer's signature on the Credential, which becomes a shared secret transferred from the Credential Issuer to the End-User.
+
+If Cryptographic Key Binding is not required, the Credential Issuer omits the `cryptographic_binding_methods_supported` parameter in the `credential_configurations_supported` object in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). As a consequence, the `proof_types_supported` parameter is also absent, indicating to the Wallet to omit the `proofs` parameter in the Credential Request.
 
 ## Multiple Accesses to the Credential Endpoint
 
@@ -3026,7 +3039,7 @@ The technology described in this specification was made available from contribut
 
 -19
 
-   * TBD 
+   * Add security consideration on transaction code guessing
    
 -final
    

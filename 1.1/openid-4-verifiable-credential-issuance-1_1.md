@@ -703,22 +703,22 @@ Figure: Issuance using the Interactive Authorization Endpoint
 
 All communication with the Interactive Authorization Endpoint MUST utilize TLS.
 
+The rules for client authentication as defined in [@!RFC9126] and [@!RFC6749] for pushed authorization requests, including the applicable authentication methods, apply for all requests to the Interactive Authorization Endpoint as well.
+
 Note: In case a Wallet Attestation is required by the Authorization Server, it has to be included in this request.
 
 ### Initial Request
 
 The initial request to the Interactive Authorization Endpoint is formed and sent in the same way as PAR request as defined in Section 2.1 of [@!RFC9126]. The contents of the request are the same as in a regular Authorization Request as defined in (#credential-authz-request), with the following addition:
 
-`interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Wallet supports. The order of the values is not significant. The following values are defined by this specification:
+`interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Wallet supports. The order of the values is not significant. Values MUST be valid URNs. The following values are defined by this specification:
 
-* `openid4vp_presentation`: Indicates that the Wallet supports an OpenID4VP Presentation interaction, as defined in (#iae-require-presentation).
-* `redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#iae-redirect-to-web).
+* `urn:openid:dcp:iae:openid4vp_presentation`: Indicates that the Wallet supports an OpenID4VP Presentation interaction, as defined in (#iae-require-presentation).
+* `urn:openid:dcp:iae:redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#iae-redirect-to-web).
 
-Custom interaction types (see (#iae-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter.
+Custom interaction types (see (#iae-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter. Specifications that extend these predefined types MUST define their own collision-resistant URNs as type identifiers.
 
-The rules for client authentication as defined in [@!RFC9126] and [@!RFC6749] for pushed authorization requests, including the applicable authentication methods, apply for all requests to the Interactive Authorization Endpoint as well.
-
-When the wallet includes `redirect_to_web` in `interaction_types_supported`, the `code_challenge` and `code_challenge_method` parameters (see (#securitybcp)) are included in the initial request.
+When the wallet includes `urn:openid:dcp:iae:redirect_to_web` in `interaction_types_supported`, the `code_challenge` and `code_challenge_method` parameters (see (#securitybcp)) are included in the initial request.
 
 The following non-normative example shows an initial request to the Interactive Authorization Endpoint:
 
@@ -735,7 +735,7 @@ response_type=code
 &code_challenge_method=S256
 &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 &authorization_details=...
-&interaction_types_supported=openid4vp_presentation%2Credirect_to_web
+&interaction_types_supported=urn%3Aopenid%3Adcp%3Aiae%3Aopenid4vp_presentation%2Curn%3Aopenid%3Adcp%3Aiae%3Aredirect_to_web
 ```
 
 The following non-normative example shows an initial request to the Interactive Authorization Endpoint with a signed request object:
@@ -767,13 +767,13 @@ The following non-normative example shows a payload of a signed request object:
       "credential_configuration_id": "UniversityDegreeCredential"
     }
   ],
-  "interaction_types_supported": "openid4vp_presentation,redirect_to_web"
+  "interaction_types_supported": "urn:openid:dcp:iae:openid4vp_presentation,urn:openid:dcp:iae:redirect_to_web"
 }
 ```
 
 ### Follow-up Request {#follow-up-request}
 
-Follow-up requests to the Interactive Authorization Endpoint MUST include the `auth_session` value received most recently from the Authorization Server (see (#iae-interaction-required-response)).
+Follow-up requests to the Interactive Authorization Endpoint MUST include the `auth_session` value received most recently from the Authorization Server as part of the ongoing authorization request sequence (see (#iae-interaction-required-response)).
 
 Besides `auth_session`, follow-up requests only include the parameters that are in response to the interaction type the Authorization Server requested in the most recent response. The specific parameters are defined by each interaction type.
 
@@ -824,9 +824,9 @@ Additional keys are defined based on the type of interaction, as shown next.
 
 #### Require Presentation {#iae-require-presentation}
 
-If `type` is set to `openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_request` parameter containing an OpenID4VP Authorization Request. The contents of the request is the same as for requests passed to the Digital Credentials API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows:
+If `type` is set to `urn:openid:dcp:iae:openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_request` parameter containing an OpenID4VP Authorization Request. The contents of the request is the same as for requests passed to the Digital Credentials API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows:
 
-* The `response_mode` MUST be either `iae-post` for unencrypted responses or `iae-post.jwt` for encrypted responses. These modes are used to indicate to the Wallet to return the response back to the same Interactive Authorization Endpoint.
+* The `response_mode` MUST be either `iae_post` for unencrypted responses or `iae_post.jwt` for encrypted responses. These modes are used to indicate to the Wallet to return the response back to the same Interactive Authorization Endpoint.
 * If `expected_origins` is present, it MUST contain only the derived Origin of the Interactive Authorization Endpoint as defined in Section 4 in [@RFC6454]. For example, the derived Origin from `https://example.com/iae` is `https://example.com`.
 
 The following is a non-normative example of an unsigned Authorization Request:
@@ -838,7 +838,7 @@ Cache-Control: no-store
 
 {
   "status": "require_interaction",
-  "type": "openid4vp_presentation",
+  "type": "urn:openid:dcp:iae:openid4vp_presentation",
   "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "openid4vp_request": {
     "response_type": "vp_token",
@@ -872,7 +872,7 @@ Cache-Control: no-store
 
 {
   "status": "require_interaction",
-  "type": "openid4vp_presentation",
+  "type": "urn:openid:dcp:iae:openid4vp_presentation",
   "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "openid4vp_request": {
     "request": "eyJhbGciOiJF..."
@@ -890,7 +890,7 @@ When processing the request the following logic applies:
   1. If `expected_origins` is present, the Wallet MUST ensure that `expected_origins` contains the derived Origin as defined above.
   2. If the response contains Verifiable Presentations that include Holder Binding, the audience of each of those MUST be properly bound to the Interactive Authorization Endpoint, following the rules defined by their Credential Format. Details on how to do this for each format can be found in the "Interactive Authorization Endpoint Binding" sections under (#format-profiles). Note that the Credential Format here refers to the format of the Verifiable Presentation requested in the OpenID4VP Authorization Request, which may be different from the format used for issuing the Credentials themselves. If any Verifiable Presentation with Holder Binding is not correctly bound to the Interactive Authorization Endpoint, the response MUST be rejected.
 
-The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_response` parameter. The value of the `openid4vp_response` parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iae-post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
+The Interactive Authorization Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#follow-up-request). In addition to these requirements, the request MUST also contain the `openid4vp_response` parameter. The value of the `openid4vp_response` parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `iae_post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
 
 The following us an example non-normative example of a Interactive Authorization Request containing an OpenID4VP Authorization Response:
 
@@ -936,10 +936,12 @@ Note: This mechanism can only be used for interactions with the same Wallet that
 
 #### Redirect to Web {#iae-redirect-to-web}
 
-If the type is `redirect_to_web`, the Authorization Server is indicating that the authorization process must continue via interactions with the user in a web browser.
+If the type is `urn:openid:dcp:iae:redirect_to_web`, the Authorization Server is indicating that the authorization process must continue via interactions with the user in a web browser.
 
 In this case, the Authorization server MUST include the key `request_uri` in the response.
 The Wallet MUST use the `request_uri` value to build an Authorization Request as defined in Section 4 of [@!RFC9126] and complete the rest of the authorization process as defined there.
+The Wallet MUST only use a `request_uri` value once.
+Authorization servers SHOULD treat `request_uri` values as one-time use but MAY allow for duplicate requests due to a user reloading/refreshing their user agent. An expired request_uri MUST be rejected as invalid.
 The Authorization Server MAY include the `expires_in` key as defined in [@!RFC9126].
 
 Non-normative Example:
@@ -951,15 +953,15 @@ Cache-Control: no-store
 
 {
   "status": "require_interaction",
-  "type": "redirect_to_web",
+  "type": "urn:openid:dcp:iae:redirect_to_web",
   "request_uri": "urn:ietf:params:oauth:request_uri:6esc_11ACC5bwc014ltc14eY22c",
   "expires_in": 60
 }
 ```
 
-Once this phase of the Authorization process is completed, the Authorization Server MUST redirect back to the Wallet as per [@RFC6749]. If the Authorization process is complete when this redirect occurs, the Authorization Server returns a response with the `code` parameter as per Section 1.3.1 of [@RFC6749]. If the Authorization process is not complete when this redirect occurs, the Authorization Server returns a response with the `auth_session` parameter. In the event a Wallet receives a response from the Authorization Server which features the `auth_session` parameter, the Wallet MUST make a follow-up request as per (#follow-up-request) to continue the Authorization process. In the event that PKCE as defined in [@RFC7636] was used in the initial authorization request to the interactive authorization endpoint, the Authorization Server MUST enforce the correct usage of the `code_verifier` in the follow-up request that follows the completion of the `redirect_to_web` interaction.
+Once this phase of the Authorization process is completed, the Authorization Server MUST redirect back to the Wallet as per [@RFC6749]. If the Authorization process is complete when this redirect occurs, the Authorization Server returns a response with the `code` parameter as per Section 1.3.1 of [@RFC6749]. If the Authorization process is not complete when this redirect occurs, the Authorization Server returns a response with the `auth_session` parameter. In the event a Wallet receives a response from the Authorization Server which features the `auth_session` parameter, the Wallet MUST make a follow-up request as per (#follow-up-request) to continue the Authorization process. In the event that PKCE as defined in [@RFC7636] was used in the initial authorization request to the interactive authorization endpoint, the Authorization Server MUST enforce the correct usage of the `code_verifier` in the follow-up request that follows the completion of the `urn:openid:dcp:iae:redirect_to_web` interaction.
 
-To ensure the security of the `redirect_to_web` flow, the redirect URI MUST be an `https` URL as per Section 7.2 of [@!RFC8252]. The Wallet MUST NOT use an embedded user-agent to perform the `redirect_to_web` flow. The considerations in Section 8.12 of [@!RFC8252] apply. Platform-specific implementation details are provided in Appendix B of the same document.
+To ensure the security of the `urn:openid:dcp:iae:redirect_to_web` flow, the redirect URI MUST be an `https` URL as per Section 7.2 of [@!RFC8252]. The Wallet MUST NOT use an embedded user-agent to perform the `urn:openid:dcp:iae:redirect_to_web` flow. The considerations in Section 8.12 of [@!RFC8252] apply. Platform-specific implementation details are provided in Appendix B of the same document.
 
 A non-normative example of a follow-up request featuring PKCE:
 
@@ -973,7 +975,7 @@ auth_session=wxroVrBY2MCq4dDNGXACS&code_verifier=avjebhrnqwketh
 
 #### Custom Interaction Extensions {#iae-custom-extensions}
 
-Additional, custom types of interactions MAY be defined by extensions of this specification to enable other types of interactions, for example, by interacting with a smart card.
+Additional, custom types of interactions MAY be defined by extensions of this specification to enable other types of interactions, for example, by interacting with a smart card. Such an extension MUST use a collision-resistant URN for their respective type identifier.
 It is RECOMMENDED to use this extension point instead of modifying the OAuth protocol in order to facilitate interactions that require interactions with native components of the Wallet application.
 See (#iae-security) for additional security considerations.
 
@@ -986,7 +988,7 @@ Cache-Control: no-store
 
 {
   "status": "require_interaction",
-  "type": "betelgeuse_intergalactic_id_card",
+  "type": "urn:galaxysdo:iae:betelgeuse_intergalactic_id_card",
   "biic_token": "73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049"
 }
 ```
@@ -1044,7 +1046,7 @@ Cache-Control: no-cache, no-store
 {
   "error": "missing_interaction_type",
   "error_description":
-    "interaction_types_supported in the request is missing the required interaction type 'openid4vp_presentation'"
+    "interaction_types_supported in the request is missing the required interaction type 'urn:openid:dcp:iae:openid4vp_presentation'"
 }
 ```
 
@@ -1168,12 +1170,15 @@ The following additional clarifications are provided for some of the error codes
 
 `invalid_grant`:
 
-- The Authorization Server expects a Transaction Code in the Pre-Authorized Code Flow but the Client provides the wrong Transaction Code.
-- The End-User provides the wrong Pre-Authorized Code or the Pre-Authorized Code has expired.
+- The End-User provides the wrong Pre-Authorized Code or the Pre-Authorized Code has expired or is no longer valid.
 
 `invalid_client`:
 
 - The Client tried to send a Token Request with a Pre-Authorized Code without a Client ID but the Authorization Server does not support anonymous access.
+
+`invalid_tx_code`:
+
+- The Authorization Server expects a Transaction Code in the Pre-Authorized Code Flow but the Client provides the wrong Transaction Code.
 
 Below is a non-normative example of a Token Error Response:
 
@@ -1259,9 +1264,9 @@ A Client makes a Credential Request to the Credential Endpoint by sending the fo
 * `credential_configuration_id`: REQUIRED if a `credential_identifiers` parameter was not returned from the Token Response as part of the `authorization_details` parameter. It MUST NOT be used otherwise. String that uniquely identifies one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The corresponding object in the `credential_configurations_supported` map MUST contain one of the value(s) used in the `scope` parameter in the Authorization Request. When this parameter is used, the `credential_identifier` MUST NOT be present.
 * `proofs`: OPTIONAL. Object providing one or more proof of possessions of the cryptographic key material to which the issued Credential instances will be bound to. The `proofs` parameter contains exactly one parameter named as the proof type in (#proof-types), the value set for this parameter is a non-empty array containing parameters as defined by the corresponding proof type.
 * `credential_response_encryption`: OPTIONAL. Object containing information for encrypting the Credential Response. If this request element is not present, the corresponding credential response returned is not encrypted.
-    * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
-    * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
-    * `zip`: OPTIONAL. JWE [@!RFC7516] `zip` algorithm [@!RFC7518] for compressing Credential Responses prior to encryption. If absent then compression MUST not be used.
+  * `jwk`: REQUIRED. Object containing a single public key as a JWK used for encrypting the Credential Response.
+  * `enc`: REQUIRED. JWE [@!RFC7516] `enc` algorithm [@!RFC7518] for encrypting Credential Responses.
+  * `zip`: OPTIONAL. JWE [@!RFC7516] `zip` algorithm [@!RFC7518] for compressing Credential Responses prior to encryption. If absent then compression MUST not be used.
 
 See (#identifying_credential) for the summary of the options how requested Credential(s) are identified throughout the Issuance flow.
 
@@ -1381,13 +1386,12 @@ If the Credential Response is not encrypted, the media type of the response MUST
 The following parameters are used in the JSON-encoded Credential Response body:
 
 * `credentials`: OPTIONAL. Contains an array of one or more issued Credentials. It MUST NOT be used if the `transaction_id` parameter is present. The elements of the array MUST be objects. The number of elements in the `credentials` array matches the number of keys that the Wallet has provided via the `proofs` parameter of the Credential Request, unless the Issuer decides to issue fewer Credentials. Each key provided by the Wallet is used to bind to, at most, one Credential. This specification defines the following parameters to be used inside this object:
-   * `credential`: REQUIRED. Contains one issued Credential. The encoding of the Credential depends on the Credential Format and MAY be a string or an object. Credential Formats expressed as binary data MUST be base64url-encoded and returned as a string. More details are defined in the Credential Format Profiles in (#format-profiles).
+  * `credential`: REQUIRED. Contains one issued Credential. The encoding of the Credential depends on the Credential Format and MAY be a string or an object. Credential Formats expressed as binary data MUST be base64url-encoded and returned as a string. More details are defined in the Credential Format Profiles in (#format-profiles).
 * `transaction_id`: OPTIONAL. String identifying a Deferred Issuance transaction. This parameter is contained in the response if the Credential Issuer cannot immediately issue the Credential. The value is subsequently used to obtain the respective Credential with the Deferred Credential Endpoint (see (#deferred-credential-issuance)). It MUST not be used if the `credentials` parameter is present. It MUST be invalidated after the Credential for which it was meant has been obtained by the Wallet.
 * `interval`: REQUIRED if `transaction_id` is present. Contains a positive number that represents the minimum amount of time in seconds that the Wallet SHOULD wait after receiving the response before sending a new request to the Deferred Credential Endpoint. It MUST NOT be used if the `credentials` parameter is present.
 * `notification_id`: OPTIONAL. String identifying one or more Credentials issued in one Credential Response. It MUST be included in the Notification Request as defined in (#notification). It MUST not be used if the `credentials` parameter is not present.
-* `credential_dataset_version`: REQUIRED for the Issuer to return. A string containing the Credential Dataset Version associated with the returned Credential(s). This allows Wallets to detect changes to the underlying Credential Dataset across different Credential Responses. The Wallet MUST NOT expect the `credential_dataset_version` parameter to always be present in the Credential Response for backward compatibility with Issuers conforming to earlier versions of this specification. See (#credential-dataset-version-implementation) for implementation considerations.
-
-If the Credential Issuer includes the `credential_dataset_version` parameter, the following requirements apply. For a given Credential Dataset within the scope of a concrete Credential Format, if the Credential Dataset has not changed, the Credential Issuer MUST return the same Credential Dataset Version, even when issuing a new Credential instance with different cryptographic data, e.g., an Issuer signature. If any claim value in the Credential Dataset changes, the Credential Issuer MUST assign a new Credential Dataset Version. Wallets MUST compare Credential Dataset Version values for equality using simple string comparison with no normalization. Wallets MUST NOT infer ordering from Credential Dataset Version values.
+* `credential_metadata`: OPTIONAL. Object that contains additional metadata specific to the issued Credential(s). The definitions and contained parameters for this Object are identical to the `credential_metadata` parameter as defined in Credential Issuer Metadata (see (#credential-issuer-metadata)) See (#display-metadata-considerations) for implementation considerations on credential metadata.
+* `credential_dataset_version`: REQUIRED for the Issuer to return. A string containing the Credential Dataset Version associated with the returned Credential(s). This allows Wallets to detect changes to the underlying Credential Dataset across different Credential Responses. The Wallet MUST NOT expect the `credential_dataset_version` parameter to always be present in the Credential Response for backward compatibility with Issuers conforming to earlier versions of this specification. See (#credential-dataset-version-implementation) for implementation considerations. If the Credential Issuer includes the `credential_dataset_version` parameter, the following requirements apply. For a given Credential Dataset within the scope of a concrete Credential Format, if the Credential Dataset has not changed, the Credential Issuer MUST return the same Credential Dataset Version, even when issuing a new Credential instance with different cryptographic data, e.g., an Issuer signature. If any claim value in the Credential Dataset changes, the Credential Issuer MUST assign a new Credential Dataset Version. Wallets MUST compare Credential Dataset Version values for equality using simple string comparison with no normalization. Wallets MUST NOT infer ordering from Credential Dataset Version values.
 
 Additional Credential Response parameters MAY be defined and used. The Wallet MUST ignore any unrecognized parameters.
 
@@ -1521,7 +1525,7 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 }
 ```
 
-The Credential Issuer indicates support for encrypted responses by including the `credential_response_encryption` parameter in the Credential Issuer Metadata. The Client MAY request encrypted responses by providing its encryption parameters in the Deferred Credential Request when `encryption_required` is `false` and MUST do so when `encryption_required` is `true`. Note that this object will be used for encrypting the response, regardless of what was sent in the initial Credential Request. If it is not included encryption will not be performed. Deferred Credential Request encryption MUST but used if the `credential_response_encryption` parameter is included, to prevent it being substituted by an attacker.
+The Credential Issuer indicates support for encrypted responses by including the `credential_response_encryption` parameter in the Credential Issuer Metadata. The Client MAY request encrypted responses by providing its encryption parameters in the Deferred Credential Request when `encryption_required` is `false` and MUST do so when `encryption_required` is `true`. Note that this object will be used for encrypting the response, regardless of what was sent in the initial Credential Request. If it is not included encryption will not be performed. Deferred Credential Request encryption MUST be used if the `credential_response_encryption` parameter is included, to prevent it being substituted by an attacker.
 
 ## Deferred Credential Response {#deferred-credential-response}
 
@@ -1530,7 +1534,7 @@ A Deferred Credential Response may either contain the requested Credentials or f
 * If the Credential Issuer is able to issue the requested Credentials, the Deferred Credential Response MUST use the `credentials` parameter as defined in (#credential-response) and MUST respond with the HTTP status code 200 (see Section 15.3.3 of [@!RFC9110]).
 * If the Credential Issuer still requires more time, the Deferred Credential Response MUST use the `interval` and `transaction_id` parameters as defined in (#credential-response) and it MUST respond with the HTTP status code 202 (see Section 15.3.3 of [@!RFC9110]). The value of `transaction_id` MUST be same as the value of `transaction_id` in the Deferred Credential Request.
 
-The Deferred Credential Response MAY use the `notification_id` and the `credential_dataset_version` parameter as defined in (#credential-response).
+The Deferred Credential Response MAY use the `notification_id`, the `credential_metadata` and the `credential_dataset_version` parameters as defined in (#credential-response).
 
 Additional Deferred Credential Response parameters MAY be defined and used.
 The Wallet MUST ignore any unrecognized parameters.
@@ -1562,7 +1566,7 @@ Content-Type: application/json
 The following is a non-normative example of a Deferred Credential Response, where the Credential Issuer still requires more time:
 
 ```
-HTTP/1.1 202 OK
+HTTP/1.1 202 Accepted
 Content-Type: application/json
 
 {
@@ -1643,7 +1647,22 @@ Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
 }
 ```
 
-Below is a non-normative example of a Notification Request when a Credential was deleted by the End-User:
+Below is a non-normative example of a Notification Request when a Credential was rejected by the End-User:
+
+```
+POST /notification HTTP/1.1
+Host: server.example.com
+Content-Type: application/json
+Authorization: Bearer czZCaGRSa3F0MzpnWDFmQmF0M2JW
+
+{
+  "notification_id": "3fwe98js",
+  "event": "credential_deleted",
+  "event_description": "User rejected the issued Credential."
+}
+```
+
+Below is a non-normative example of a Notification Request when a Credential could not be stored in the Wallet:
 
 ```
 POST /notification HTTP/1.1
@@ -1810,17 +1829,17 @@ This specification defines the following Credential Issuer Metadata parameters:
     * `key_attestations_required`: OPTIONAL. Object that describes the requirement for key attestations as described in (#keyattestation), which the Credential Issuer expects the Wallet to send within the proof(s) of the Credential Request. If the Credential Issuer does not require a key attestation, this parameter MUST NOT be present in the metadata. If both `key_storage` and `user_authentication` parameters are absent, the `key_attestations_required` parameter may be empty, indicating a key attestation is needed without additional constraints.
       * `key_storage`: OPTIONAL. A non-empty array defining values specified in (#keyattestation-apr) accepted by the Credential Issuer.
       * `user_authentication`: OPTIONAL. A non-empty array defining values specified in (#keyattestation-apr) accepted by the Credential Issuer.
-  * `credential_metadata`: OPTIONAL. Object containing information relevant to the usage and display of issued Credentials. Credential Format-specific mechanisms can overwrite the information in this object to convey Credential metadata. Format-specific mechanisms, such as SD-JWT VC display metadata are always preferred by the Wallet over the information in this object, which serves as the default fallback. Below is a non-exhaustive list of parameters that MAY be included:
+  * `credential_metadata`: OPTIONAL. Object containing information relevant to the usage and display of issued Credentials. Credential Format-specific mechanisms can overwrite the information in this object to convey Credential metadata and is preferred by the Wallet over the information in this object, which serves as the default fallback. Additionally, the Credential Response MUST be preferred by the Wallet over any other information, effectively overwriting the information in this object and any Credential Format-specific mechanisms. See (#display-metadata-considerations) for implementation considerations on credential metadata. Below is a default, non-exhaustive, extensible list of parameters that MAY be included:
     * `display`: OPTIONAL. A non-empty array of objects, where each object contains the display properties of the supported Credential for a certain language. Below is a non-exhaustive list of parameters that MAY be included.
       * `name`: REQUIRED. String value of a display name for the Credential.
       * `locale`: OPTIONAL. String value that identifies the language of this object represented as a language tag taken from values defined in BCP47 [@!RFC5646]. Multiple `display` objects MAY be included for separate languages. There MUST be only one object for each language identifier.
       * `logo`: OPTIONAL. Object with information about the logo of the Credential. The following non-exhaustive set of parameters MAY be included:
-          * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the logo of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
-          * `alt_text`: OPTIONAL. String value of the alternative text for the logo image.
+        * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the logo of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
+        * `alt_text`: OPTIONAL. String value of the alternative text for the logo image.
       * `description`: OPTIONAL. String value of a description of the Credential.
       * `background_color`: OPTIONAL. String value of a background color of the Credential represented as numerical color values defined in CSS Color Module Level 3 [@!CSS-Color].
       * `background_image`: OPTIONAL. Object with information about the background image of the Credential. At least the following parameter MUST be included:
-          * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the background image of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
+        * `uri`: REQUIRED. String value that contains a URI where the Wallet can obtain the background image of the Credential from the Credential Issuer. The Wallet needs to determine the scheme, since the URI value could use the `https:` scheme, the `data:` scheme, etc.
       * `text_color`: OPTIONAL. String value of a text color of the Credential represented as numerical color values defined in CSS Color Module Level 3 [@!CSS-Color].
     * `claims`: OPTIONAL. A non-empty array of claims description objects as defined in (#claims-description-issuer-metadata).
 
@@ -1919,6 +1938,16 @@ An attacker might leverage the Credential issuance process and the End-User's tr
 
 In order to cope with that issue, the Wallet is RECOMMENDED to interact with trusted Credential Issuers only. In that case, the Wallet would not process a Credential Offer with an untrusted issuer URL. The Wallet MAY also show the End-User the endpoint of the Credential Issuer it will be sending the Transaction Code to and ask the End-User for confirmation.
 
+### Transaction Code Guessing
+
+When the Pre-Authorized Code Flow is used together with a Transaction Code (`tx_code`), the Transaction Code is typically short, low-entropy, and intended for one-time use. As a result, it may be susceptible to online guessing or brute-force attacks if an attacker can repeatedly submit Token Requests using the same Pre-Authorized Code.
+
+To mitigate this risk, the Authorization Server SHOULD limit the number of failed Transaction Code verification attempts associated with a Pre-Authorized Code or issuance transaction. Once a configurable maximum number of failed attempts is exceeded, the Authorization Server SHOULD invalidate the Pre-Authorized Code and reject further Token Requests for that transaction.
+
+Transaction Codes SHOULD be short-lived and SHOULD be treated as single-use. Upon successful verification, a Transaction Code SHOULD NOT be accepted again.
+
+When a valid Pre-Authorized Code is presented with an incorrect Transaction Code, the Authorization Server SHOULD return the `invalid_tx_code` error. If the Pre-Authorized Code has expired, has been invalidated (including due to too many failed attempts), or is otherwise no longer valid, the Authorization Server SHOULD return the `invalid_grant` error.
+
 ## Credential Lifecycle Management 
 
 The Credential Issuer is supposed to be responsible for the lifecycle of its Credentials. This means the Credential Issuer will invalidate Credentials when it deems appropriate, e.g., if it detects fraudulent behavior.
@@ -1970,6 +1999,8 @@ One such use case is low assurance Credentials, such as coupons or tickets.
 
 Another use case is when the Credential Issuer uses cryptographic schemes that can provide binding to the End-User possessing that Credential without explicit cryptographic material being supplied by the application used by that End-User. For example, in the case of the BBS Signature Scheme, the issued Credential itself is a secret and only a derivation from the Credential is presented to the Verifier. Effectively, the Credential is bound to the Credential Issuer's signature on the Credential, which becomes a shared secret transferred from the Credential Issuer to the End-User.
 
+If Cryptographic Key Binding is not required, the Credential Issuer omits the `cryptographic_binding_methods_supported` parameter in the `credential_configurations_supported` object in the Credential Issuer Metadata as defined in (#credential-issuer-parameters). As a consequence, the `proof_types_supported` parameter is also absent, indicating to the Wallet to omit the `proofs` parameter in the Credential Request.
+
 ## Multiple Accesses to the Credential Endpoint
 
 The Credential Endpoint can be accessed multiple times by a Wallet using the same Access Token, even for the same Credential. The Credential Issuer determines if the subsequent successful requests will return the same or an updated Credential, such as having a new expiration time or using the most current End-User claims.
@@ -2016,6 +2047,82 @@ It is up to the Credential Issuer whether to update both the signature and the c
 ## Batch Issuing Credentials
 
 The Credential Issuer determines the number of the Credentials issued in the Credential Response, regardless of number of proofs/keys contained in the `proofs` parameter in the Credential Request.
+
+## Credential Metadata {#display-metadata-considerations}
+
+Credential metadata is provided by the Credential Issuer, but can be conveyed using different mechanisms. Defined mechanisms to provide display metadata are:
+
+* Credential Issuer metadata MAY contain credential metadata as defined in (#credential-issuer-parameters)
+* Credential Formats MAY define their own mechanisms for metadata
+* Credential Response MAY also contain metadata as defined in (#credential-response)
+
+Credential metadata provided via the Credential Issuer metadata SHOULD be interpreted as the most generic form of metadata and as a general fallback solution. If defined and present, Credential Format specific metadata overwrites the values from the Credential Issuer metadata. If present, metadata in the Credential Response overwrites existing values.
+
+(#credential-issuer-parameters) defines a set of default Credential metadata parameters, but additional ones can be defined and added by profiles or extensions. Other standardization organizations or ecosystems defining extensions to the Credential metadata parameters SHOULD do so by defining a collision-resistant parameter that contains an Object with all parameters they are defining.
+
+Below is a non-normative example of how credential metadata from the Credential Issuer metadata and the Credential Response would be merged:
+
+Credential metadata contained in Credential Issuer metadata:
+
+```json
+{
+  "display": [
+    {
+      "name": "BankCredential",
+      "logo": {
+        "uri": "https://bank.example.net/public/logo.png",
+        "alt_text": "a square logo of a bank"
+      },
+      "locale": "en-US",
+      "background_color": "#12107c",
+      "text_color": "#FFFFFF"
+    }
+  ]
+}
+```
+
+Credential metadata contained in the Credential Response:
+
+```json
+{
+  "display": [
+    {
+      "logo": {
+        "uri": "data:image/png;base64,F00==",
+      },
+      "com.example.domain": {
+        "some_text": "something_really_important",
+        "more_text": "also_really_important"
+      }
+    }
+  ]
+}
+```
+
+Resulting (combined) metadata:
+
+```json
+{
+  "display": [
+    {
+      "name": "BankCredential",
+      "logo": {
+        "uri": "data:image/png;base64,F00==",
+        "alt_text": "a square logo of a bank"
+      },
+      "locale": "en-US",
+      "background_color": "#12107c",
+      "text_color": "#FFFFFF",
+      "com.example.domain": {
+        "some_text": "something_really_important",
+        "more_text": "also_really_important"
+      }
+    }
+  ]
+}
+```
+
+Note that `com.example.domain` in the above example shows how an extension would be defined and used.
 
 ## Pre-Final Specifications
 
@@ -2692,7 +2799,7 @@ The following is a non-normative example of a Credential Response containing a C
 
 ### Interactive Authorization Endpoint Binding {#iae-binding-mso-mdoc}
 
-To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `SessionTranscript` CBOR structured as defined in Section 9.1.5.1 in [@ISO.18013-5] MUST be used in Verifiable Presentations submitted in a response to Interactive Authorization Requests using the `openid4vp_presentation` interaction type, with the following modifications. This `SessionTranscript` differs from those defined in Section B.5.6 in [@OpenID4VP] and is defined as follows:
+To bind the Interactive Authorization Endpoint to a Verifiable Presentation using the Credential Format defined in this section, the `SessionTranscript` CBOR structured as defined in Section 9.1.5.1 in [@ISO.18013-5] MUST be used in Verifiable Presentations submitted in a response to Interactive Authorization Requests using the `urn:openid:dcp:iae:openid4vp_presentation` interaction type, with the following modifications. This `SessionTranscript` differs from those defined in Section B.5.6 in [@OpenID4VP] and is defined as follows:
 
 * `DeviceEngagementBytes` MUST be `null`.
 * `EReaderKeyBytes` MUST be `null`.
@@ -3545,6 +3652,52 @@ in the IANA "Uniform Resource Identifier (URI) Schemes" registry [@IANA.URI.Sche
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#client-metadata-retrieval) of this specification
 
+## Uniform Resource Names (URN) Namespaces Registry
+
+This document requests the registration of a new URN namespace "openid".
+
+The OpenID Foundation will maintain the permissible values for the elements comprising the Namespace Specific Strings (NSS).
+
+### Purpose
+
+The Namespace Identifier (NID) "openid" will be used to identify all types of digital resources defined by the OpenID Foundation. These might include resources defined and used within protocols or standards themselves.
+
+### Syntax
+
+The syntax for the openid URN namestring is defined using the ABNF below:
+
+namestring = "urn:openid:" NSS
+
+where the syntax of "NSS" is specified in Section 2 of [@RFC8141]. The OpenID Foundation intends for the NSS to have a hierarchical structure defined by the different working groups managing their own Namespace Specific String (NSS). The first intended use would be under `urn:openid:dcp:` managed by the Digital Credentials Protocols (DCP) Working Group.
+
+### Assignment
+
+The individual URNs shall be assigned through the formal process of standardization by the Working Groups of the OpenID Foundation. An overview of Working Groups of the OpenID Foundation can be found at (https://openid.net/wg/).
+
+### Security and Privacy
+
+There are no additional security and privacy considerations other than those associated with the use and resolution of URNs as described in [@RFC1737] and [@RFC8141].
+
+### Interoperability
+
+No known interoperability concerns regarding the requested urn namespace exist.
+
+### Resolution
+
+URNs in this namespace are intended to be non-resolvable, serving as unique identifiers.
+
+### Documentation
+
+None.
+
+### Additional Information
+
+None.
+
+### Revision Information
+
+None.
+
 # Use Cases
 
 This is a non-exhaustive list of sample use cases.
@@ -3627,4 +3780,8 @@ The technology described in this specification was made available from contribut
    * use derived origin for `expected_origins` in IAE flow
    * add require_interactive_authorization_request to AS metadata
    * add interactive_authorization_endpoint to AS metadata section
+   * add invalid_tx_code to Pre-Authz Code Flow
+   * add URNs for IAE type identifiers
+   * add iana registration for an openid foundation urn
+   * add optional metadata to the credential response
    * add credential dataset version
