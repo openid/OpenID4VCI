@@ -74,7 +74,7 @@ Credential Dataset:
 :  A set of one or more claims about a subject, provided by a Credential Issuer.
 
 Credential Dataset Version
-:  A String that refers to a specific version of a Credential Dataset. This version is identical for multiple instances of a Credential that share the same Credential Dataset, even when the Credential instances differ in cryptographic data, e.g., an Issuer signature. When any of the claim values in the Credential Dataset change, a new Credential Dataset Version is assigned. Note that a Credential Dataset Version is bound to a specific Credential Format.
+:  A String that refers to a specific version of a Credential Dataset. This version is identical for multiple instances of a Credential that share the same Credential Dataset, even when the Credential instances differ in data that is not part of the Credential Dataset, such as cryptographic data (e.g., an Issuer signature) or timestamps. When any of the claim values in the Credential Dataset change, a new Credential Dataset Version is assigned. Note that a Credential Dataset Version is bound to a specific Credential Format.
 
 Credential (or Verifiable Credential (VC)):
 :  An instance of a Credential Configuration with a particular Credential Dataset, that is signed by an Issuer and can be cryptographically verified. An Issuer may provide multiple Credentials as separate instances of the same Credential Configuration and Credential Dataset but with different cryptographic values. In this specification, the term "Verifiable Credential" is also referred to as "Credential". It's important to note that the use of the term "Credential" here differs from its usage in [@!OpenID.Core] and [@!RFC6749]. In this context, "Credential" specifically does not encompass other meanings such as passwords used for login credentials.
@@ -2025,7 +2025,7 @@ The `credential_dataset_version` parameter enables Wallets to distinguish betwee
 
 Using a stable Credential Dataset Version for unchanged Credential Datasets prevents unnecessary churn for Wallets that use the Credential Dataset Version to replace or discard old Credential Datasets.
 
-For example, a Credential Issuer can derive the Credential Dataset Version by computing a hash over a stable representation of only the Credential Dataset, rather than over the full Credential payload, so that cryptographic data, e.g., an Issuer signature, does not affect the result.
+For example, a Credential Issuer can derive the Credential Dataset Version by computing a hash over a stable representation of only the Credential Dataset, rather than over the full Credential payload, so that data outside the Credential Dataset, such as cryptographic data (e.g., an Issuer signature) or timestamps, does not affect the result.
 
 The Credential Dataset Version value is intended only for equality checks and does not convey ordering; for example, a lexically greater value is not necessarily newer. Credential Dataset Version values are not comparable across different Credential Formats.
 
