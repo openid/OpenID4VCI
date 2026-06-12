@@ -1398,7 +1398,7 @@ The following parameters are used in the JSON-encoded Credential Response body:
     * For a given Credential Dataset within the scope of a concrete Credential Format, if the Credential Dataset has not changed, the Credential Issuer MUST return the same Credential Dataset Version, even when issuing a new Credential instance with different cryptographic data, e.g., an Issuer signature.
     * If any claim value in the Credential Dataset changes, the Credential Issuer MUST assign a new Credential Dataset Version.
     * Wallets MUST compare Credential Dataset Version values for equality using simple string comparison with no normalization.
-    * Wallets MUST NOT infer ordering from Credential Dataset Version values.
+    * Wallets MUST NOT infer ordering, such as whether one value is newer or older than another, from Credential Dataset Version values.
 
 Additional Credential Response parameters MAY be defined and used. The Wallet MUST ignore any unrecognized parameters.
 
