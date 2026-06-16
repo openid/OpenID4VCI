@@ -711,11 +711,11 @@ In addition to the request parameters defined in Section 5.1 of [@!I-D.ietf-oaut
 `interaction_types_supported`: REQUIRED. Comma-separated list of strings indicating the types of interactions that the Wallet supports. The order of the values is not significant. Values MUST be valid URNs. The following values are defined by this specification:
 
 * `urn:openid:dcp:ia:openid4vp_presentation`: Indicates that the Wallet supports an OpenID4VP Presentation interaction, as defined in (#ia-require-presentation).
-* `urn:openid:dcp:ia:redirect_to_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#ia-redirect-to-web).
+* `urn:openid:dcp:ia:auth_via_web`: Indicates that the Wallet supports a redirect to a web-based interaction, as defined in (#ia-auth-via-web).
 
 Custom interaction types (see (#ia-custom-extensions)) MAY be defined by the Authorization Server and used in the `interaction_types_supported` parameter. Specifications that extend these predefined types MUST define their own collision-resistant URNs as type identifiers.
 
-When the wallet includes `urn:openid:dcp:ia:redirect_to_web` in `interaction_types_supported`, the `code_challenge` and `code_challenge_method` parameters (see (#securitybcp)) are included in the initial request.
+When the wallet includes `urn:openid:dcp:ia:auth_via_web` in `interaction_types_supported`, the `code_challenge` and `code_challenge_method` parameters (see (#securitybcp)) are included in the initial request.
 
 The following non-normative example shows an initial request to the Authorization Challenge Endpoint:
 
@@ -732,7 +732,7 @@ response_type=code
 &code_challenge_method=S256
 &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
 &authorization_details=...
-&interaction_types_supported=urn%3Aopenid%3Adcp%3Aiae%3Aopenid4vp_presentation%2Curn%3Aopenid%3Adcp%3Aiae%3Aredirect_to_web
+&interaction_types_supported=urn%3Aopenid%3Adcp%3Aia%3Aopenid4vp_presentation%2Curn%3Aopenid%3Adcp%3Aia%3Aauth_via_web
 ```
 
 The following non-normative example shows an initial request to the Authorization Challenge Endpoint with a signed request object:
@@ -764,7 +764,7 @@ The following non-normative example shows a payload of a signed request object:
       "credential_configuration_id": "UniversityDegreeCredential"
     }
   ],
-  "interaction_types_supported": "urn:openid:dcp:ia:openid4vp_presentation,urn:openid:dcp:ia:redirect_to_web"
+  "interaction_types_supported": "urn:openid:dcp:ia:openid4vp_presentation,urn:openid:dcp:ia:auth_via_web"
 }
 ```
 
@@ -904,9 +904,9 @@ The following is a non-normative example of the `openid4vp_response` JSON object
 
 Note: This mechanism can only be used for interactions with the same Wallet that started the issuance process.
 
-#### Redirect to Web {#ia-redirect-to-web}
+#### Auth via Web {#ia-auth-via-web}
 
-If the type is `urn:openid:dcp:ia:redirect_to_web`, the Authorization Server is indicating that the authorization process must continue via interactions with the user in a web browser. This is used as a step in the interactive authorization process, while Section 5.2.2.1.1 of [@!I-D.ietf-oauth-first-party-apps] is a fallback to traditional authorization that replaces the entirety of the Interactive Authorization process.
+If the type is `urn:openid:dcp:ia:auth_via_web`, the Authorization Server is indicating that the authorization process must continue via interactions with the user in a web browser. This is used as a step in the interactive authorization process, while Section 5.2.2.1.1 of [@!I-D.ietf-oauth-first-party-apps] is a fallback to traditional authorization that replaces the entirety of the Interactive Authorization process.
 
 In this case, the Authorization server MUST include the key `request_uri` in the response.
 The Wallet MUST use the `request_uri` value to build an Authorization Request as defined in Section 4 of [@!RFC9126] and complete the rest of the authorization process as defined there.
@@ -923,15 +923,15 @@ Cache-Control: no-store
 
 {
   "error": "insufficient_authorization",
-  "interaction_type_required": "urn:openid:dcp:ia:redirect_to_web",
+  "interaction_type_required": "urn:openid:dcp:ia:auth_via_web",
   "request_uri": "urn:ietf:params:oauth:request_uri:6esc_11ACC5bwc014ltc14eY22c",
   "expires_in": 60
 }
 ```
 
-Once this phase of the Authorization process is completed, the Authorization Server MUST redirect back to the Wallet as per [@RFC6749]. If the Authorization process is complete when this redirect occurs, the Authorization Server returns a response with the `code` parameter as per Section 1.3.1 of [@RFC6749]. If the Authorization process is not complete when this redirect occurs, the Authorization Server returns a response with the `auth_session` parameter. In the event a Wallet receives a response from the Authorization Server which features the `auth_session` parameter, the Wallet MUST make a intermediate request as per (#intermediate-request) to continue the Authorization process. In the event that PKCE as defined in [@RFC7636] was used in the initial authorization challenge request, the Authorization Server MUST enforce the correct usage of the `code_verifier` in the intermediate request that follows the completion of the `urn:openid:dcp:ia:redirect_to_web` interaction.
+Once this phase of the Authorization process is completed, the Authorization Server MUST redirect back to the Wallet as per [@RFC6749]. If the Authorization process is complete when this redirect occurs, the Authorization Server returns a response with the `code` parameter as per Section 1.3.1 of [@RFC6749]. If the Authorization process is not complete when this redirect occurs, the Authorization Server returns a response with the `auth_session` parameter. In the event a Wallet receives a response from the Authorization Server which features the `auth_session` parameter, the Wallet MUST make a intermediate request as per (#intermediate-request) to continue the Authorization process. In the event that PKCE as defined in [@RFC7636] was used in the initial authorization challenge request, the Authorization Server MUST enforce the correct usage of the `code_verifier` in the intermediate request that follows the completion of the `urn:openid:dcp:ia:auth_via_web` interaction.
 
-To ensure the security of the `urn:openid:dcp:ia:redirect_to_web` flow, the redirect URI MUST be an `https` URL as per Section 7.2 of [@!RFC8252]. The Wallet MUST NOT use an embedded user-agent to perform the `urn:openid:dcp:ia:redirect_to_web` flow. The considerations in Section 8.12 of [@!RFC8252] apply. Platform-specific implementation details are provided in Appendix B of the same document.
+To ensure the security of the `urn:openid:dcp:ia:auth_via_web` flow, the redirect URI MUST be an `https` URL as per Section 7.2 of [@!RFC8252]. The Wallet MUST NOT use an embedded user-agent to perform the `urn:openid:dcp:ia:auth_via_web` flow. The considerations in Section 8.12 of [@!RFC8252] apply. Platform-specific implementation details are provided in Appendix B of the same document.
 
 A non-normative example of a follow-up request featuring PKCE:
 
