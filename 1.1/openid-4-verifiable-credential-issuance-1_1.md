@@ -638,6 +638,8 @@ Location: https://wallet.example.org/cb?
 
 This section defines a profile for the OAuth 2.0 for First-Party Applications specification [@!I-D.ietf-oauth-first-party-apps], enabling complex authentication and authorization flows where interaction occurs directly with the Wallet rather than being intermediated by a browser.
 A primary use case is requiring the Presentation of a Credential as a prerequisite for issuing a new Credential.
+This profile introduces an interaction type negotiation mechanism and registers two initial interaction types: one enabling credential presentation, and another allowing the authorization flow to continue within a browser. This profile is also extensible, permitting the introduction of custom interaction types.
+Interactive Authorization typically involves a third-party scenario where the Wallet Provider and the Authorization Server are distinct entities. Consequently, the trust mechanisms specified in this specification and in [@!OpenID4VP] SHOULD be established to mitigate security and privacy risks.
 Support for Interactive Authorization is OPTIONAL.
 
 The Authorization Server indicates support for Interactive Authorization by publishing the `authorization_challenge_endpoint` parameter in its Authorization Server Metadata as defined in (#as-metadata).
@@ -785,7 +787,7 @@ The response to an Authorization Challenge Request is an HTTP message with the c
 By setting `error_code` to `insufficient_authorization` in the response with HTTP response code 401 `Unauthorized`, the Authorization Server requests an additional user interaction.
 In this case, the following keys MUST be present in the response as well:
 
-* `interaction_type_required`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST NOT set this to a value that was not included in the `interaction_types_supported` parameter sent by the Wallet.
+* `interaction_type_required`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST set this to a value that was included in the `interaction_types_supported` parameter sent by the Wallet. If the Authorization Server cannot fulfill the request using any of the supported types, it MUST reject the request with an Authorization Challenge Error Response, as defined in (#ia-error-response).
 * `auth_session`: REQUIRED. As defined in Section 5.2.2 of [@!I-D.ietf-oauth-first-party-apps]
 
 If a Wallet receives an `interaction_type_required` value that it does not support, it MUST abort the issuance process.
