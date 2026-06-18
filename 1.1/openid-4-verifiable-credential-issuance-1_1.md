@@ -263,6 +263,10 @@ Please note that the diagram does not illustrate all the optional features defin
       |               |      with Credential(s)   |                        |
       |               |      OR Transaction ID    |                        |
       |               |<---------------------------------------------------|
+      |               |                           |                        |
+      |               |  (7) optionally redirect  |                        |
+      |               |      back to the Credential Issuer                 |
+      |               |--------------------------------------------------->|
 ~~~
 !---
 Figure: Issuance using Authorization Code Flow 
@@ -284,6 +288,8 @@ Note: Steps (3) and (4) may happen in the front channel, by redirecting the End-
 (6) The Wallet sends a Credential Request to the Credential Issuer's Credential Endpoint with the Access Token and (optionally) the proof(s) of possession of the private key of a key pair to which the Credential Issuer should bind the issued Credential to. Upon successfully validating Access Token and proof(s), the Credential Issuer returns a Credential in the Credential Response. This step is defined in (#credential-endpoint).
 
 If the Credential Issuer requires more time to issue a Credential, the Credential Issuer may return a Transaction ID and a time interval in the Credential Response. The Wallet may send a Deferred Credential Request with the Transaction ID to obtain a Credential after the specified time interval has passed, as defined in (#deferred-credential-issuance).
+
+(7) If the Credential Offer contained a `redirect_uri` parameter (#credential-offer-parameters), the Wallet should offer the End-User to navigate the User Agent back to the Credential Issuer, for example, to return to the Credential Issuer's website. This redirect is OPTIONAL, is performed only upon explicit End-User interaction, and happens regardless of whether the issuance succeeded or failed.
 
 Note: This flow is based on OAuth 2.0 and the Authorization Code Grant type, but this specification can be used with other OAuth 2.0 grant types as well.
 
@@ -333,6 +339,10 @@ The following diagram is based on the Credential Issuer-initiated flow, as descr
       |              |      Credential Response     |                       |
       |              |      (Credential(s))         |                       |
       |              |<-----------------------------------------------------|
+      |              |                              |                       |
+      |              |  (6) optionally redirect     |                       |
+      |              |      back to the Credential Issuer                   |
+      |              |----------------------------------------------------->|
 ~~~
 !---
 Figure: Issuance using Pre-Authorized Code Flow 
@@ -346,6 +356,8 @@ Figure: Issuance using Pre-Authorized Code Flow
 (4) The Wallet sends the Pre-Authorized Code obtained in Step (2) in the Token Request to the Token Endpoint. The Wallet will additionally send a Transaction Code provided by the End-User, if it was required by the Credential Issuer. This step is defined in (#token-endpoint).
 
 (5) This step is the same as Step (6) in the Authorization Code Flow.
+
+(6) This step is the same as Step (7) in the Authorization Code Flow.
 
 It is important to note that anyone who possesses a valid Pre-Authorized Code, without further security measures, would be able to receive a VC from the Credential Issuer. Implementers MUST implement mitigations most suitable to the use case.
 
@@ -379,23 +391,21 @@ This specification defines the following parameters for the JSON-encoded Credent
 * `credential_issuer`: REQUIRED. The URL of the Credential Issuer, as defined in (#credential-issuer-identifier), from which the Wallet is requested to obtain one or more Credentials. The Wallet uses it to obtain the Credential Issuer's Metadata following the steps defined in (#credential-issuer-wellknown).
 * `credential_configuration_ids`: REQUIRED. A non-empty array of unique strings that each identify one of the keys in the name/value pairs stored in the `credential_configurations_supported` Credential Issuer metadata. The Wallet uses these string values to obtain the respective object that contains information about the Credential being offered as defined in (#credential-issuer-parameters). For example, these string values can be used to obtain `scope` values to be used in the Authorization Request.
 * `grants`: OPTIONAL. Object indicating to the Wallet the Grant Types the Credential Issuer's Authorization Server is prepared to process for this Credential Offer. Every grant is represented by a name/value pair. The name is the Grant Type identifier; the value is an object that contains parameters either determining the way the Wallet MUST use the particular grant and/or parameters the Wallet MUST send with the respective request(s). If `grants` is not present or is empty, the Wallet MUST determine the Grant Types the Credential Issuer's Authorization Server supports using the respective metadata. When multiple grants are present, it is at the Wallet's discretion which one to use.
+  * `authorization_code`: OPTIONAL. Object for the Authorization Code Grant type.
+    * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the subsequent Authorization Request with a context set up during previous process steps. If the Wallet decides to use the Authorization Code Flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Authorization Server as the `issuer_state` parameter value.
+    * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. It MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
+  * `urn:ietf:params:oauth:grant-type:pre-authorized_code`: OPTIONAL. Object for the Pre-authorized Code Grant type.
+    * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single use. If the Wallet decides to use the Pre-Authorized Code Flow, this parameter value MUST be included in the subsequent Token Request with the Pre-Authorized Code Flow.
+    * `tx_code`: OPTIONAL. Object indicating that a Transaction Code is required if present, even if empty. It describes the requirements for a Transaction Code, which the Authorization Server expects the End-User to present along with the Token Request in a Pre-Authorized Code Flow. If the Authorization Server does not expect a Transaction Code, this object is absent; this is the default. The Transaction Code is intended to bind the Pre-Authorized Code to a certain transaction to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate End-User. It is RECOMMENDED to send the Transaction Code via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, the Transaction Code value MUST be sent in the `tx_code` parameter with the respective Token Request as defined in (#token-request). If no `length`, `description`, or `input_mode` is given, this object MAY be empty.
+      * `input_mode` : OPTIONAL. String specifying the input character set. Possible values are `numeric` (only digits) and `text` (any characters). The default is `numeric`.
+      * `length`: OPTIONAL. Integer specifying the length of the Transaction Code. This helps the Wallet to render the input screen and improve the user experience.
+      * `description`: OPTIONAL. String containing guidance for the Holder of the Wallet on how to obtain the Transaction Code, e.g., describing over which communication channel it is delivered. The Wallet is RECOMMENDED to display this description next to the Transaction Code input screen to improve the user experience. The length of the string MUST NOT exceed 300 characters. The `description` does not support internationalization, however the Issuer MAY detect the Holder's language by previous communication or an HTTP Accept-Language header within an HTTP GET request for a Credential Offer URI.
+    * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. It MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
+* `redirect_uri`: OPTIONAL. String that is a URL using the `https` scheme. If present, the Wallet SHOULD offer the End-User the option to navigate the User Agent to this URL after it has finished processing the Credential Offer, e.g. to return to the Credential Issuer's website. The Wallet SHOULD offer this option regardless of whether the issuance succeeded or failed. The Wallet SHOULD NOT navigate to this URL without explicit End-User consent. Because the Credential Offer is not authenticated (see (#credential-offer-security)), the Wallet MUST validate this value against the `expected_redirect_origin` Credential Issuer metadata parameter as defined in (#credential-issuer-parameters) and MUST ignore the `redirect_uri` if the validation fails.
 
 Additional Credential Offer parameters MAY be defined and used.
 The Wallet MUST ignore any unrecognized parameters.
 
-The following values are defined by this specification: 
-
-* Grant Type `authorization_code`:
-  * `issuer_state`: OPTIONAL. String value created by the Credential Issuer and opaque to the Wallet that is used to bind the subsequent Authorization Request with a context set up during previous process steps. If the Wallet decides to use the Authorization Code Flow and received a value for this parameter, it MUST include it in the subsequent Authorization Request to the Authorization Server as the `issuer_state` parameter value.
-  * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. It MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
-* Grant Type `urn:ietf:params:oauth:grant-type:pre-authorized_code`:
-  * `pre-authorized_code`: REQUIRED. The code representing the Credential Issuer's authorization for the Wallet to obtain Credentials of a certain type. This code MUST be short lived and single use. If the Wallet decides to use the Pre-Authorized Code Flow, this parameter value MUST be included in the subsequent Token Request with the Pre-Authorized Code Flow.
-  * `tx_code`: OPTIONAL. Object indicating that a Transaction Code is required if present, even if empty. It describes the requirements for a Transaction Code, which the Authorization Server expects the End-User to present along with the Token Request in a Pre-Authorized Code Flow. If the Authorization Server does not expect a Transaction Code, this object is absent; this is the default. The Transaction Code is intended to bind the Pre-Authorized Code to a certain transaction to prevent replay of this code by an attacker that, for example, scanned the QR code while standing behind the legitimate End-User. It is RECOMMENDED to send the Transaction Code via a separate channel. If the Wallet decides to use the Pre-Authorized Code Flow, the Transaction Code value MUST be sent in the `tx_code` parameter with the respective Token Request as defined in (#token-request). If no `length`, `description`, or `input_mode` is given, this object MAY be empty.
-    * `input_mode` : OPTIONAL. String specifying the input character set. Possible values are `numeric` (only digits) and `text` (any characters). The default is `numeric`.
-    * `length`: OPTIONAL. Integer specifying the length of the Transaction Code. This helps the Wallet to render the input screen and improve the user experience.
-    * `description`: OPTIONAL. String containing guidance for the Holder of the Wallet on how to obtain the Transaction Code, e.g., describing over which communication channel it is delivered. The Wallet is RECOMMENDED to display this description next to the Transaction Code input screen to improve the user experience. The length of the string MUST NOT exceed 300 characters. The `description` does not support internationalization, however the Issuer MAY detect the Holder's language by previous communication or an HTTP Accept-Language header within an HTTP GET request for a Credential Offer URI.
-  * `authorization_server`: OPTIONAL string that the Wallet can use to identify the Authorization Server to use with this grant type when `authorization_servers` parameter in the Credential Issuer metadata has multiple entries. It MUST NOT be used otherwise. The value of this parameter MUST match with one of the values in the `authorization_servers` array obtained from the Credential Issuer metadata.
-  
 The following non-normative example shows a Credential Offer object where the Credential Issuer can offer the issuance of two different Credentials (which may even be of different formats):
 
 <{{examples/credential_offer_multiple_credentials.json}}
@@ -1795,6 +1805,7 @@ This specification defines the following Credential Issuer Metadata parameters:
 * `nonce_endpoint`: OPTIONAL. URL of the Credential Issuer's Nonce Endpoint, as defined in (#nonce-endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not require the use of `c_nonce`.
 * `deferred_credential_endpoint`: OPTIONAL. URL of the Credential Issuer's Deferred Credential Endpoint, as defined in (#deferred-credential-issuance). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Deferred Credential Endpoint.
 * `notification_endpoint`: OPTIONAL. URL of the Credential Issuer's Notification Endpoint, as defined in (#notification-endpoint). This URL MUST use the `https` scheme and MAY contain port, path, and query parameter components. If omitted, the Credential Issuer does not support the Notification Endpoint.
+* `expected_redirect_origin`: REQUIRED if the Credential Issuer uses the `redirect_uri` Credential Offer parameter (#credential-offer-parameters), and otherwise omitted. A non-empty array of strings, where each string is an origin, as defined in [@RFC6454], that the Credential Issuer may use in the `redirect_uri` of the Credential Offer. If a Credential Offer contains a `redirect_uri`, the Wallet MUST NOT utilize it unless the origin of the `redirect_uri` matches one of the values in this array. If this parameter is omitted, the Wallet MUST ignore any `redirect_uri` present in a Credential Offer from this Credential Issuer.
 * `credential_request_encryption`: OPTIONAL. Object containing information about whether the Credential Issuer supports encryption of the Credential Request on top of TLS.
   * `jwks`: REQUIRED. A JSON Web Key Set, as defined in [@!RFC7591], that contains one or more public keys, to be used by the Wallet as an input to a key agreement for encryption of the Credential Request. Each JWK in the set MUST have a kid (Key ID) parameter that uniquely identifies the key.
   * `enc_values_supported`: REQUIRED. A non-empty array containing a list of the JWE [@!RFC7516] encryption algorithms (`enc` values) [@!RFC7518] supported by the Credential Endpoint to decode the Credential Request from a JWT [@!RFC7519].
@@ -1917,6 +1928,14 @@ The Wallet MUST consider the parameter values in the Credential Offer as not tru
 The Wallet MUST NOT accept Credentials just because this mechanism was used. All protocol steps defined in this specification MUST be performed in the same way as if the Wallet would have started the flow. 
 
 The Credential Issuer MUST ensure the release of any privacy-sensitive data in Credential Offer is legal.
+
+### Redirect to the Credential Issuer
+
+Because the Credential Offer is not signed and its origin is not authenticated, an attacker could inject or manipulate the `redirect_uri` Credential Offer parameter (#credential-offer-parameters) to direct the End-User to an attacker-controlled website, for example, to conduct a phishing attack while leveraging the End-User's trust that they are returning to the Credential Issuer.
+
+To mitigate this, the Wallet relies on the `expected_redirect_origin` Credential Issuer metadata parameter (#credential-issuer-parameters). Unlike the Credential Offer, the Credential Issuer metadata is retrieved by the Wallet directly from the Credential Issuer over a TLS-protected connection (#credential-issuer-wellknown) and is therefore authenticated. Before offering the End-User the option to follow the `redirect_uri`, the Wallet MUST verify that the origin of the `redirect_uri` matches one of the origins listed in `expected_redirect_origin`, and MUST discard the `redirect_uri` otherwise, including when `expected_redirect_origin` is absent.
+
+The Wallet MUST NOT navigate to the `redirect_uri` automatically; the redirect MUST be performed only upon explicit End-User interaction. The Wallet SHOULD NOT include any information about the issued Credentials or the outcome of the issuance in the request to the `redirect_uri` beyond what the Credential Issuer encoded in the URL itself.
 
 ## Pre-Authorized Code Flow {#security-considerations-pre-authz-code}
 
@@ -3768,3 +3787,6 @@ The technology described in this specification was made available from contribut
    * add URNs for IAE type identifiers
    * add iana registration for an openid foundation urn
    * add optional metadata to the credential response
+   * add `redirect_uri` to Credential Offer
+   * add `expected_redirect_origin` to Credential Issuer metadata
+   * add security consideration: Redirect to the Credential Issuer
