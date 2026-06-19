@@ -798,8 +798,8 @@ Additional keys are defined based on the type of interaction, as shown next.
 
 If `interaction_type_required` is set to `urn:openid:dcp:ia:openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_request` parameter containing an OpenID4VP Authorization Request. The contents of the request is the same as for requests passed to the Digital Credentials API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows:
 
-* The `response_mode` MUST be either `ia_post` for unencrypted responses or `ia_post.jwt` for encrypted responses. These modes are used to indicate to the Wallet to return the response back to the same Authorization Challenge Endpoint.
-* If `expected_origins` is present, it MUST contain only the derived Origin of the Authorization Challenge Endpoint as defined in Section 4 in [@RFC6454]. For example, the derived Origin from `https://example.com/authorize-challenge` is `https://example.com`.
+* The `response_mode` MUST be either `ia_post` for unencrypted responses or `ia_post.jwt` for encrypted responses. When the Wallet receives one of these response modes, it MUST send its response to the same Authorization Challenge Endpoint.
+* If `expected_origins` is present, it MUST contain only the derived Origin of the Authorization Challenge Endpoint as defined in Section 4 of [@RFC6454]. For example, the derived Origin from `https://example.com/authorize-challenge` is `https://example.com`.
 
 The following is a non-normative example of an unsigned Authorization Request:
 
@@ -906,9 +906,9 @@ The following is a non-normative example of the `openid4vp_response` JSON object
 
 Note: This mechanism can only be used for interactions with the same Wallet that started the issuance process.
 
-#### Auth via Web {#ia-auth-via-web}
+#### Authorization via Web {#ia-auth-via-web}
 
-If the type is `urn:openid:dcp:ia:auth_via_web`, the Authorization Server is indicating that the authorization process must continue via interactions with the user in a web browser. This is used as a step in the interactive authorization process, while Section 5.2.2.1.1 of [@!I-D.ietf-oauth-first-party-apps] is a fallback to traditional authorization that replaces the entirety of the Interactive Authorization process.
+If the type is `urn:openid:dcp:ia:auth_via_web`, the Authorization Server is indicating that the authorization process must continue via interactions with the user in a web browser. This is used as a step in the interactive authorization process, while Section 5.2.2.1.1 of [@!I-D.ietf-oauth-first-party-apps] defines a fallback to traditional authorization that replaces the entirety of the Interactive Authorization process.
 
 In this case, the Authorization server MUST include the key `request_uri` in the response.
 The Wallet MUST use the `request_uri` value to build an Authorization Request as defined in Section 4 of [@!RFC9126] and complete the rest of the authorization process as defined there.
@@ -976,17 +976,17 @@ Authorization Servers can usually achieve this by providing a nonce for use in t
 
 #### Preventing Forwarding of Interactive Authorization Presentation Requests
 
-In ecosystems with multiple Authorization Servers that may potentially use the Interactive Authorization, there is a risk that a malicious (or compromised) Authorization Server forwards an Authorization Challenge Response containing a Interaction Required Response that it itself has acquired from another Authorization Server.
+In ecosystems with multiple Authorization Servers that may potentially use Interactive Authorization, there is a risk that a malicious (or compromised) Authorization Server forwards an Authorization Challenge Response containing a Interaction Required Response that it itself has acquired from another Authorization Server.
 This may lead to the malicious Authorization Server gaining access to Credentials issued by the other Authorization Server without the End-User's consent.
 
 Custom extensions ((#ia-custom-extensions)) MUST ensure that this attack is prevented by ensuring one or both of the following:
 
  1. The Wallet is able to detect that a request is not presented by the party that initiated the Authorization Challenge Request. In the case of the (#ia-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_origins` parameter in the request, which contains the derived Origin of the Authorization Challenge Endpoint that initiated the request.
- 2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#ia-require-presentation) interaction, this is achieved for both signed and unsigned requests by the binding the Authorization Challenge Endpoint to the Verifiable Presentation (see "Interactive Authorization Binding" sections under (#format-profiles)), which is then verified by the Authorization Server.
+ 2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#ia-require-presentation) interaction, this is achieved for both signed and unsigned requests by binding the Authorization Challenge Endpoint to the Verifiable Presentation (see "Interactive Authorization Binding" sections under (#format-profiles)), which is then verified by the Authorization Server.
 
 ### Authorization Challenge Error Response {#ia-error-response}
 
-In addition to the error processing rules defined in Section 5.2.2.1 of [@!I-D.ietf-oauth-first-party-apps] and Section 2.3 of [@RFC9126], this specification defines the following error codes:
+In addition to the error processing rules defined in Section 5.2.2.1 of [@!I-D.ietf-oauth-first-party-apps] and Section 2.3 of [@RFC9126], this specification defines the following error code:
 
 * `missing_interaction_type`: The `interaction_types_supported` parameter in the Authorization Challenge Request does not include all interaction types required to complete all phases of the authorization process.
 
