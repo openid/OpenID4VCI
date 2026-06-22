@@ -831,59 +831,257 @@ The API in this specification defines extension points throughout the protocol, 
 
 A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 
+```text
+  Holder     Wallet Client      Wallet Server      Issuer Server
+    |              |                  |                  |
+    | 1. Selects a Credential to Issue|                  |
+    |------------->|                  |                  |
+    |              | Generates WSK    |                  |
+    |              |                  |                  |
+    |              | 2. Sends Signed/Encrypted VerificationData + verificationNonce
+    |              |----------------->|                  |
+    |              |                  | Adds additional VerificationData
+    |              |                  |                  |
+    |              |                  | 3. Calls 'verification/initiate'
+    |              |                  |----------------->|
+    |              |                  |                  | Validates verificationNonce & encryptedClientPayload
+    |              |                  |                  |
+    |              |                  | 4. status: PENDING
+    |              |                  |<-----------------|
+    |              |                  |                  | Asynchronously verifies VerificationData
+    |              |                  |                  |
+    |              |        [Opt 4.1 Additional Verification]
+    |              |                  | 'verification/notify': ADDITIONAL_INFO_REQUIRED
+    |              |                  |<-----------------|
+    |              |                  |                  |
+    |              | Sends additional Signed/Encrypted VerificationData
+    |              |----------------->|                  |
+    |              |                  | 'verification/supplement': additional VerificationData
+    |              |                  |----------------->|
+    |              |                  |                  |
+    |              |                  |                  | Updates Verification Status
+    |              |                  |                  |
+    |              |                  | 5. 'verification/notify': APPROVED/DENIED
+    |              |                  |<-----------------|
+```
+
 1. Holder, in the Wallet Client Instance selects a Credential to Issue.
-1. The Wallet Client generates a WSK and collects the relevant VerificationData.
-1. The Wallet Client signs-then-encrypts the VerificationData and sends it, along with the verificationNonce to the Wallet Server.
-1. The Wallet Server adds any additional necessary VerificationData and calls `verification/initiate` on the Issuer Server
-1. The Issuer validates the verificationNonce and the encryptedClientPayload.
-1. The Issuer returns the PENDING status and asynchronously verifies the VerificationData
-  1. Optionally: uses ADDITIONAL_INFO_REQUIRED to obtain more information.
-1. The Issuer updates the Verification Status based on the outcome and sends a notification to the Wallet Server.
+2. The Wallet Client generates a WSK and sends the Signed/Encrypted VerificationData, along with the verificationNonce to the Wallet Server.
+3. The Wallet Server adds any additional necessary VerificationData and calls `verification/initiate` on the Issuer Server.
+4. The Issuer validates the verificationNonce and the encryptedClientPayload, and returns the PENDING status. The Issuer asynchronously verifies the VerificationData.
+  1. Optionally: uses ADDITIONAL_INFO_REQUIRED via `verification/notify` to obtain more information, which the Wallet Client provides via `verification/supplement`.
+5. The Issuer updates the Verification Status based on the outcome and sends a notification to the Wallet Server with APPROVED/DENIED.
 
 ## Wallet Initiated (Negotiated Verification) {#wallet-initiated}
 
+```text
+  Holder     Wallet Client      Wallet Server      Issuer Server
+    |              |                  |                  |
+    | 1. Selects Credential to Issue  |                  |
+    |------------->|                  |                  |
+    |              | Generates WSK    |                  |
+    |              |                  |                  |
+    |              | 2. Initiates session                |
+    |              |----------------->|                  |
+    |              |                  | 3. Calls 'verification/initiate'
+    |              |                  |----------------->|
+    |              |                  |                  | Validates verificationNonce
+    |              |                  |                  |
+    |              |                  | 4. status: ADDITIONAL_INFO_REQUIRED + VerificationDataRequest
+    |              |                  |<-----------------|
+    |              |                  |                  |
+    |              | 5. Forwards ADDITIONAL_INFO_REQUIRED|
+    |              |<-----------------|                  |
+    |              |                  |                  |
+    | 6. Requests VerificationData    |                  |
+    |<-------------|                  |                  |
+    |              |                  |                  |
+    | 7. Provides VerificationData    |                  |
+    |------------->|                  |                  |
+    |              | Signs-then-encrypts VerificationData|
+    |              |                  |                  |
+    |              | 8. Sends Signed/Encrypted VerificationData
+    |              |----------------->|                  |
+    |              |                  | 9. Calls 'verification/supplement'
+    |              |                  |----------------->|
+    |              |                  |                  | Decrypts and verifies WSK signature
+    |              |                  |                  |
+    |              |                  | 10. status: PENDING
+    |              |                  |<-----------------|
+    |              |                  |                  | Asynchronously verifies VerificationData
+    |              |                  |                  |
+    |              |        [Opt 10.1 Additional Verification]
+    |              |                  | 'verification/notify': ADDITIONAL_INFO_REQUIRED
+    |              |                  |<-----------------|
+    |              |                  |                  |
+    |              | Sends additional Signed/Encrypted VerificationData
+    |              |----------------->|                  |
+    |              |                  | 'verification/supplement': additional VerificationData
+    |              |                  |----------------->|
+    |              |                  |                  |
+    |              |                  |                  | Updates Verification Status
+    |              |                  |                  |
+    |              |                  | 11. 'verification/notify': APPROVED/DENIED
+    |              |                  |<-----------------|
+```
+
 1. Holder, in the Wallet Client Instance, selects a Credential to Issue where the required VerificationData is unknown.
-1. The Wallet Client generates a WSK and calls `verification/initiate` on the Issuer Server via the Wallet Server.
-1. The Issuer validates the verificationNonce and returns a status of `ADDITIONAL_INFO_REQUIRED` along with a VerificationDataRequest.
-1. The Wallet Client collects the requested VerificationData from the Holder.
-1. The Wallet Client signs-then-encrypts the VerificationData and sends it to the Wallet Server, which calls `verification/supplement` on the Issuer Server.
-1. The Issuer decrypts the clientEncryptedData and verifies it is signed by the previously established WSK
-1. The Issuer returns the PENDING status and asynchronously verifies the VerificationData
+2. The Wallet Client generates a WSK and initiates a session via the Wallet Server.
+3. The Wallet Server calls `verification/initiate` on the Issuer Server.
+4. The Issuer validates the verificationNonce and returns a status of `ADDITIONAL_INFO_REQUIRED` along with a VerificationDataRequest.
+5. The Wallet Server forwards the `ADDITIONAL_INFO_REQUIRED` status to the Wallet Client.
+6. The Wallet Client requests the VerificationData from the Holder.
+7. The Holder provides the VerificationData.
+8. The Wallet Client sends the Signed/Encrypted VerificationData to the Wallet Server.
+9. The Wallet Server calls `verification/supplement` on the Issuer Server.
+10. The Issuer decrypts and verifies the WSK signature, returns the PENDING status, and asynchronously verifies the VerificationData.
   1. Optionally: uses ADDITIONAL_INFO_REQUIRED to obtain more information.
-1. The Issuer updates the Verification Status based on the outcome and sends a notification to the Wallet Server.
+11. The Issuer updates the Verification Status based on the outcome and sends a notification to the Wallet Server.
 
 ## Issuer Initiated (Authed Holder) {#issuer-initiated}
 
-1. Holder is authenticated on an Issuer Surface and elects to push credentials to a Wallet.
-1. The Issuer generates a Credential Offer payload containing a `pre-authorized_code` or similar `Pre-auth` bearer token.
-1. The Wallet Client receives the offer via front-channel (e.g., deep-link), generates a WSK and signs-then-encrypts the pre-authorized_code as VerificationData and sends it, along with the verificationNonce to the Wallet Server.
-1. The Wallet Server adds any additional necessary VerificationData and calls `verification/initiate` on the Issuer Server
-1. The Issuer validates the verificationNonce and the encryptedClientPayload.
-1. The Issuer verifies the pre-auth code in the VerificationData.
-  1. Optionally: uses ADDITIONAL_INFO_REQUIRED to obtain more information (e.g. an OTP).
-1. The Issuer updates the Verification Status based on the outcome and sends a notification to the Wallet Server.
+```text
+  Holder   Issuer App/Website   Wallet Client      Wallet Server      Issuer Server
+    |              |                  |                  |                  |
+    | 1. Authenticates & elects to push credentials      |                  |
+    |------------->|                  |                  |                  |
+    |              | 2. push: credential_offer (w/ pre-auth code)           |
+    |              |----------------->|                  |                  |
+    |              |                  | Generates WSK    |                  |
+    |              |                  |                  |                  |
+    |              |                  | 3. Sends Signed/Encrypted VerificationData + verificationNonce
+    |              |                  |----------------->|                  |
+    |              |                  |                  | Adds additional VerificationData
+    |              |                  |                  |                  |
+    |              |                  |                  | 4. Calls 'verification/initiate'
+    |              |                  |                  |----------------->|
+    |              |                  |                  |                  | Validates verificationNonce & payload
+    |              |                  |                  |                  | Verifies pre-auth code
+    |              |                  |                  |                  |
+    |              |                  |        [Opt 4.1 Additional Verification]
+    |              |                  |                  | 'verification/notify': ADDITIONAL_INFO_REQUIRED
+    |              |                  |                  |<-----------------|
+    |              |                  |                  |                  |
+    |              |                  | Sends additional Signed/Encrypted VerificationData
+    |              |                  |----------------->|                  |
+    |              |                  |                  | 'verification/supplement': additional VerificationData
+    |              |                  |                  |----------------->|
+    |              |                  |                  |                  |
+    |              |                  |                  |                  | Updates Verification Status
+    |              |                  |                  |                  |
+    |              |                  |                  | 5. 'verification/notify': APPROVED/DENIED
+    |              |                  |                  |<-----------------|
+```
+
+1. Holder is authenticated on an Issuer App/Website and elects to push credentials to a Wallet.
+2. The Issuer App/Website pushes the Credential Offer payload containing a `pre-authorized_code` or similar `Pre-auth` bearer token to the Wallet Client.
+3. The Wallet Client generates a WSK and sends the Signed/Encrypted VerificationData (including the pre-auth code), along with the verificationNonce to the Wallet Server.
+4. The Wallet Server adds any additional necessary VerificationData and calls `verification/initiate` on the Issuer Server. The Issuer validates the verificationNonce, payload, and verifies the pre-auth code.
+  1. Optionally: uses ADDITIONAL_INFO_REQUIRED via `verification/notify` to obtain more information (e.g. an OTP).
+5. The Issuer updates the Verification Status based on the outcome and sends an APPROVED/DENIED notification to the Wallet Server.
 
 ## Issuer Initiated (Unauthed Holder) {#issuer-initiated}
 
-1. Holder interacts with an Issuer Surface but is not authenticated.
-1. The Issuer generates a Credential Offer payload containing only configuration_ids.
-1. The Wallet Client initiates the session and receives an `ADDITIONAL_INFO_REQUIRED` status with the proofing requirements.
-1. The Wallet Client receives the offer via front-channel (e.g., deep-link), generates a WSK and calls `verification/initiate` on the Issuer Server via the Wallet Server.
-1. The Issuer validates the verificationNonce and returns a status of `ADDITIONAL_INFO_REQUIRED` along with a VerificationDataRequest.
-1. The Wallet Client collects the requested VerificationData from the Holder.
-1. The Wallet Client signs-then-encrypts the VerificationData and sends it to the Wallet Server, which calls `verification/supplement` on the Issuer Server.
-1. The Issuer decrypts the clientEncryptedData and verifies it is signed by the previously established WSK
-1. The Issuer returns the PENDING status and asynchronously verifies the VerificationData
+```text
+  Holder   Issuer App/Website   Wallet Client      Wallet Server      Issuer Server
+    |              |                  |                  |                  |
+    | 1. Interacts unauthenticated    |                  |                  |
+    |------------->|                  |                  |                  |
+    |              | 2. push: credential_offer           |                  |
+    |              |----------------->|                  |                  |
+    |              |                  | Generates WSK    |                  |
+    |              |                  |                  |                  |
+    |              |                  | 3. Initiates session                |
+    |              |                  |----------------->|                  |
+    |              |                  |                  | 4. Calls 'verification/initiate'
+    |              |                  |                  |----------------->|
+    |              |                  |                  |                  | Validates verificationNonce
+    |              |                  |                  |                  |
+    |              |                  |                  | 5. status: ADDITIONAL_INFO_REQUIRED + VerificationDataRequest
+    |              |                  |                  |<-----------------|
+    |              |                  |                  |                  |
+    |              |                  | 6. Forwards ADDITIONAL_INFO_REQUIRED (proofing requirements)
+    |              |                  |<-----------------|                  |
+    |              |                  |                  |                  |
+    | 7. Requests VerificationData    |                  |                  |
+    |<--------------------------------|                  |                  |
+    |              |                  |                  |                  |
+    | 8. Provides VerificationData    |                  |                  |
+    |-------------------------------->|                  |                  |
+    |              |                  | Signs-then-encrypts VerificationData|
+    |              |                  |                  |                  |
+    |              |                  | 9. Sends Signed/Encrypted VerificationData
+    |              |                  |----------------->|                  |
+    |              |                  |                  | 10. Calls 'verification/supplement'
+    |              |                  |                  |----------------->|
+    |              |                  |                  |                  | Decrypts and verifies WSK signature
+    |              |                  |                  |                  |
+    |              |                  |                  | 11. status: PENDING
+    |              |                  |                  |<-----------------|
+    |              |                  |                  |                  | Asynchronously verifies VerificationData
+    |              |                  |                  |                  |
+    |              |                  |        [Opt 11.1 Additional Verification]
+    |              |                  |                  | 'verification/notify': ADDITIONAL_INFO_REQUIRED
+    |              |                  |                  |<-----------------|
+    |              |                  |                  |                  |
+    |              |                  | Sends additional Signed/Encrypted VerificationData
+    |              |                  |----------------->|                  |
+    |              |                  |                  | 'verification/supplement': additional VerificationData
+    |              |                  |                  |----------------->|
+    |              |                  |                  |                  |
+    |              |                  |                  |                  | Updates Verification Status
+    |              |                  |                  |                  |
+    |              |                  |                  | 12. 'verification/notify': APPROVED/DENIED
+    |              |                  |                  |<-----------------|
+```
+
+1. Holder interacts with an Issuer App/Website but is not authenticated.
+2. The Issuer App/Website pushes the Credential Offer payload to the Wallet Client.
+3. The Wallet Client generates a WSK and initiates a session via the Wallet Server.
+4. The Wallet Server calls `verification/initiate` on the Issuer Server.
+5. The Issuer validates the verificationNonce and returns a status of `ADDITIONAL_INFO_REQUIRED` along with a VerificationDataRequest.
+6. The Wallet Server forwards the `ADDITIONAL_INFO_REQUIRED` status with the proofing requirements to the Wallet Client.
+7. The Wallet Client requests the VerificationData from the Holder.
+8. The Holder provides the VerificationData.
+9. The Wallet Client sends the Signed/Encrypted VerificationData to the Wallet Server.
+10. The Wallet Server calls `verification/supplement` on the Issuer Server.
+11. The Issuer decrypts and verifies the WSK signature, returns the PENDING status, and asynchronously verifies the VerificationData.
   1. Optionally: uses ADDITIONAL_INFO_REQUIRED to obtain more information.
-1. The Issuer updates the Verification Status based on the outcome and sends a notification to the Wallet Server.
+12. The Issuer updates the Verification Status based on the outcome and sends an APPROVED/DENIED notification to the Wallet Server.
 
 ## Device Migration {#device-migration}
 
-1. Holder sets up a new Wallet Client Instance and wishes to migrate credentials from a previous instance.
-1. The Wallet Server identifies the previous SessionId and provides it as VerificationData in the `initiate` call for the new instance.
-1. The Issuer verifies the relationship between the instances (e.g., via a shared account signal or Wallet Server attestation).
-  1. Optionally: uses ADDITIONAL_INFO_REQUIRED to obtain more information from the Holder..
-1. The Issuer approves the new verification session, allowing the new instance to call `/credential/provision`.
+```text
+  Holder    New Wallet Client     Wallet Server      Issuer Server
+    |              |                  |                  |
+    | 1. Sets up new Wallet Client & migrates            |
+    |------------->|                  |                  |
+    |              | Generates WSK    |                  |
+    |              |                  | Identifies previous SessionId
+    |              |                  |                  |
+    |              |                  | 2. 'verification/initiate': (old SessionId, new SessionId, new WSK)
+    |              |                  |----------------->|
+    |              |                  |                  | Verifies relationship between instances
+    |              |                  |                  |
+    |              |        [Opt 2.1 Additional Verification]
+    |              |                  | 'verification/notify': ADDITIONAL_INFO_REQUIRED
+    |              |                  |<-----------------|
+    |              |                  |                  |
+    |              | Sends additional Signed/Encrypted VerificationData
+    |              |----------------->|                  |
+    |              |                  | 'verification/supplement': additional VerificationData
+    |              |                  |----------------->|
+    |              |                  |                  |
+    |              |                  |                  | Approves new verification session
+    |              |                  |                  |
+    |              |                  | 3. 'verification/notify': APPROVED
+    |              |                  |<-----------------|
+```
+
+1. Holder sets up a new Wallet Client Instance and wishes to migrate credentials from a previous instance. The Wallet Client generates a new WSK.
+2. The Wallet Server identifies the previous SessionId and calls `'verification/initiate'` with the old SessionId, new SessionId, and new WSK. The Issuer verifies the relationship between the instances.
+  1. Optionally: uses ADDITIONAL_INFO_REQUIRED to obtain more information from the Holder.
+3. The Issuer approves the new verification session and sends a notification with APPROVED.
 
 # Acknowledgements {#Acknowledgements}
 
