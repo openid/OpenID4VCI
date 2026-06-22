@@ -77,7 +77,7 @@ Presentation:
 :  Data that is presented to a specific Verifier, derived from one or more Verifiable Credentials that can be from the same or different Credential Issuers. It can be of any Credential Format.
 
 SessionId:
-:  A globally unique identifier associated with a particular Wallet Instance, persistent throughout the issuance process.
+:  A globally unique identifier associated with a particular Wallet Client Instance, persistent throughout the issuance process.
 
 Verification:
 :  Verification in this specification refers to the process by which an Issuer determines that a Wallet Client Instance is authorized to have particular Credentials issued to it.
@@ -286,9 +286,9 @@ Clients receiving HTTP 429 MUST honor the `Retry-After` header. Exponential back
 
 The API uses the following identifiers:
 
-- SessionId: An identifier associated with a particular Wallet Instance, persistent throughout the process.
+- SessionId: An identifier associated with a particular Wallet Client Instance, persistent throughout the process.
 - VerificationId: An identifier for a particular verification session. A SessionId may have multiple VerificationIds associated with it over the course of it's lifetime (due to re-verification).
-- CredentialInstanceId: An identifier for a particular credential Data Set, on a particular Wallet Instance. A single SessionId and VerificationId may result in multiple CredentialInstanceIds being issued associated with that SessionId (e.g. multiple digital payment credentials all issued for a single bank account).
+- CredentialInstanceId: An identifier for a particular credential Data Set, on a particular Wallet Client Instance. A single SessionId and VerificationId may result in multiple CredentialInstanceIds being issued associated with that SessionId (e.g. multiple digital payment credentials all issued for a single bank account).
 - CredentialConfigurationId: An identifier for a particular type/configuration of a credential at an issuer. A single Verification Session can be used to issue multiple different Credential Configurations.
 
 All identifiers are opaque strings assigned by the issuer unless otherwise noted. No format, prefix, or structure is enforced by this specification. Implementations may define conventions (e.g., prefixed UUIDs) but interoperability does not depend on identifier structure.
@@ -301,7 +301,7 @@ This specification defines a series of endpoints on both the Wallet Server and t
 
 | **Endpoint**              | **Path**                 | **Implemented By** | **Description**                                                                                          |
 |---------------------------|--------------------------|--------------------|----------------------------------------------------------------------------------------------------------|
-| Verification Initiate     | /verification/initiate   | Issuer             | Starts the verification process for a Wallet Instance for a particular set of credential configurations. |
+| Verification Initiate     | /verification/initiate   | Issuer             | Starts the verification process for a Wallet Client Instance for a particular set of credential configurations. |
 | Verification Supplement   | /verification/supplement | Issuer             | Provides additional verification data for an ongoing verification session.                               |
 | Get Verification Status   | /verification/status     | Issuer             | Queries the current status of a verification session.                                                    |
 | Verification Notification | /verification/notify     | Wallet             | Allows the Issuer to notify the Wallet of a verification status change.                                  |
@@ -315,17 +315,17 @@ This specification defines a series of endpoints on both the Wallet Server and t
 
 ## Verification Endpoints {#verification-endpoints}
 
-The Verification endpoints are used to determine that a particular Wallet Instance authorized to have a Credential. This encompasses Identity Proofing, (e.g., document authentication, liveness detection, facial matching for government IDs), eligibility verification (e.g., fraud scoring, account standing checks for payment cards, access badges) as well as transferring Verification from another context (pre-auth code, device migration).
+The Verification endpoints are used to determine that a particular Wallet Client Instance authorized to have a Credential. This encompasses Identity Proofing, (e.g., document authentication, liveness detection, facial matching for government IDs), eligibility verification (e.g., fraud scoring, account standing checks for payment cards, access badges) as well as transferring Verification from another context (pre-auth code, device migration).
 
 ### Engagement
 
 There are five different flows we are considering here:
 
-1. **Wallet Initiated (Preknown Verification)**: Holder in a Wallet Instance, where the Issuer's required VerificationData is known in advance.
-1. **Wallet Initiated (Negotiated Verification)**: Holder in a Wallet Instance, where the Issuer's required Verification Data is unknown
-1. **Issuer Initiated (Authed Holder)**: Holder is in an Issuer Surface (e.g. Issuer App) where the holder is already authenticated. The Holder wishes to `push` one or more credentials to a Wallet Instance of their choosing.
-1. **Issuer Initiate (Unauthed Holder)**: Holder is in an Issuer Surface (e.g. Issuer Website) but are not currently (sufficiently) authenticated. The Holder wishes to initiate a Wallet Instance and begin Issuance of some Credentials.
-1. **Device Migration**: Holder in a new Wallet Instance, but has previously performed Verification in another Wallet Instance.
+1. **Wallet Initiated (Preknown Verification)**: Holder in a Wallet Client Instance, where the Issuer's required VerificationData is known in advance.
+1. **Wallet Initiated (Negotiated Verification)**: Holder in a Wallet Client Instance, where the Issuer's required Verification Data is unknown
+1. **Issuer Initiated (Authed Holder)**: Holder is in an Issuer Surface (e.g. Issuer App) where the holder is already authenticated. The Holder wishes to `push` one or more credentials to a Wallet Client Instance of their choosing.
+1. **Issuer Initiate (Unauthed Holder)**: Holder is in an Issuer Surface (e.g. Issuer Website) but are not currently (sufficiently) authenticated. The Holder wishes to initiate a Wallet Client Instance and begin Issuance of some Credentials.
+1. **Device Migration**: Holder in a new Wallet Client Instance, but has previously performed Verification in another Wallet Client Instance.
 
 All engagement is modeled as the Wallet receiving a `Credential Offer` payload from the Issuer.
 
@@ -343,7 +343,7 @@ This could be obtained:
 
 The path MUST be `/verification/initiate`. This endpoint is hosted by the Issuer Server only.
 
-The Verification Initiate endpoint is the first endpoint called by the Wallet Server, and starts the verification process for a Wallet Instance.
+The Verification Initiate endpoint is the first endpoint called by the Wallet Server, and starts the verification process for a Wallet Client Instance.
 
 #### Session Establishment
 
@@ -372,9 +372,9 @@ Because each sessionId is a unique UUID generated per verification session, a re
 | walletSigningKeyData       | object (KeyData)                  | **REQUIRED**: Key Data belong to the Public Key for the Wallet Client Instance that is initiating this verification.Must be stored against this sessionId and used to verify this and subsequent requests originate from the same authenticated client instance. |
 | verificationNonce          | string(bytes)                     | **REQUIRED**: Signature over sessionId, providing replay protection and cryptographic binding to the session.                                                                                                                                                    |
 | verificationData           | Object (VerificationDataResponse) | **OPTIONAL**: VerificationDataResponse to allow for Wallets to combine providing evidence when it is known in advance.                                                                                                                                           |
-| supportedVerificationTypes | Array(String)                     | **OPTIONAL**: List of verificationTypes this WalletInstance supports, that can be used with `ADDITIONAL_INFO_REQUIRED`                                                                                                                                           |
+| supportedVerificationTypes | Array(String)                     | **OPTIONAL**: List of verificationTypes this Wallet Client Instance supports, that can be used with `ADDITIONAL_INFO_REQUIRED`                                                                                                                                   |
 | requestedDeviceCount       | integer >=1 (default 1)           | **OPTIONAL**: Number of devices the Wallet Server intends to provision for this verification session. The issuer uses this as input when determining `authorizedDeviceCount` in the approval response. If omitted, defaults to 1.                                |
-| locale                     | string                            | **OPTIONAL**: Local of the Wallet Instance to use for localization. When absent, the Issuer chooses the locale.                                                                                                                                                  |
+| locale                     | string                            | **OPTIONAL**: Local of the Wallet Client Instance to use for localization. When absent, the Issuer chooses the locale.                                                                                                                                          |
 | extensions                 | object                            | **OPTIONAL**: Implementation-specific extension fields. Reserved for proprietary data elements needed by specific deployments.                                                                                                                                   |
 
 #### Response Body Schema:
@@ -512,13 +512,13 @@ The following fields are present based on type:
 
 ### Verification Data
 
-Verification Data is an extensible mechanism for a Wallet to provide the Issuer with Data used to determine that a Credential can be issued to the Wallet Instance. This can include information both originating from the Wallet Client and the Wallet Server. Examples include:
+Verification Data is an extensible mechanism for a Wallet to provide the Issuer with Data used to determine that a Credential can be issued to the Wallet Client Instance. This can include information both originating from the Wallet Client and the Wallet Server. Examples include:
 
 - Verifiable Digital Credential presentations
 - Wallet-collected documents
 - Auth via a redirect to web or other issuer surface
 - `Pre-auth` bearer token binding this session to another
-- Previous SessionId/VerificationIds to associate this Wallet Instance with a previous one
+- Previous SessionId/VerificationIds to associate this Wallet Client Instance with a previous one
 - Risk or other attestation signals from the Wallet Server
 
 The flow is as follows:
