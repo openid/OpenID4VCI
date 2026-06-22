@@ -3641,3 +3641,4 @@ The technology described in this specification was made available from contribut
    * add invalid_tx_code to Pre-Authz Code Flow
    * add URNs for IAE type identifiers
    * add iana registration for an openid foundation urn
+   * use OAuth 2.0 for First-Party Applications as basis for Interactive Authorization
