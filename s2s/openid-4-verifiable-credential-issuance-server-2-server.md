@@ -836,7 +836,7 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 1. The Wallet Client signs-then-encrypts the VerificationData and sends it, along with the verificationNonce to the Wallet Server.
 1. The Wallet Server adds any additional necessary VerificationData and calls `verification/initiate` on the Issuer Server
 1. The Issuer validates the verificationNonce and the encryptedClientPayload.
-1. The Issuer asynchronously verifies the VerificationData
+1. The Issuer returns the PENDING status and asynchronously verifies the VerificationData
   1. Optionally: uses ADDITIONAL_INFO_REQUIRED to obtain more information.
 1. The Issuer updates the Verification Status based on the outcome and sends a notification to the Wallet Server.
 
@@ -848,7 +848,7 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 1. The Wallet Client collects the requested VerificationData from the Holder.
 1. The Wallet Client signs-then-encrypts the VerificationData and sends it to the Wallet Server, which calls `verification/supplement` on the Issuer Server.
 1. The Issuer decrypts the clientEncryptedData and verifies it is signed by the previously established WSK
-1. The Issuer asynchronously verifies the VerificationData
+1. The Issuer returns the PENDING status and asynchronously verifies the VerificationData
   1. Optionally: uses ADDITIONAL_INFO_REQUIRED to obtain more information.
 1. The Issuer updates the Verification Status based on the outcome and sends a notification to the Wallet Server.
 
@@ -873,7 +873,7 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 1. The Wallet Client collects the requested VerificationData from the Holder.
 1. The Wallet Client signs-then-encrypts the VerificationData and sends it to the Wallet Server, which calls `verification/supplement` on the Issuer Server.
 1. The Issuer decrypts the clientEncryptedData and verifies it is signed by the previously established WSK
-1. The Issuer asynchronously verifies the VerificationData
+1. The Issuer returns the PENDING status and asynchronously verifies the VerificationData
   1. Optionally: uses ADDITIONAL_INFO_REQUIRED to obtain more information.
 1. The Issuer updates the Verification Status based on the outcome and sends a notification to the Wallet Server.
 
