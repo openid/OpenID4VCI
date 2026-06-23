@@ -51,18 +51,9 @@ when, and only when, they appear in all capitals, as shown here.
 
 # Terminology {#terminology}
 
+This specification uses the terms "Credential", "Credential Configuration", "Credential Format", "Holder", "Presentation",  "Verifiable Credential" and "Verifiable Presentation" as defined in OpenID4VCI. 
 
 This specification defines the following terms. In the case where a term has a definition that differs, the definition below is authoritative for this specification.
-
-
-Credential (or Verifiable Digital Credential (VDC)):
-:  An instance of a Credential Configuration with a particular Credential Dataset, that is signed by an Issuer and can be cryptographically verified. An Issuer may provide multiple Credentials as separate instances of the same Credential Configuration and Credential Dataset but with different cryptographic values. In this specification, the term "Verifiable Digital Credential" is also referred to as "Credential".
-
-Credential Configuration:
-:  Credential Issuer's description of a particular kind of Credential that the Credential Issuer is offering to issue. A Credential Configuration is identified by a Credential Configuration Identifier string that is unique to an Issuer.
-
-Credential Format:
-:  Data Model used to create and represent Credential information. This format defines how various pieces of data within a Verifiable Digital Credential are organized and encoded, ensuring that the Verifiable Digital Credential can be consistently understood, processed, and verified by different systems.
 
 Credential Issuer (or Issuer):
 :  An entity that issues Verifiable Credentials. In the context of this specification, the Credential Issuer implements the Issuer Endpoints.
@@ -70,14 +61,15 @@ Credential Issuer (or Issuer):
 CredentialInstanceId:
 :  A unique identifier at an Issuer for a particular Credential Dataset on a particular Wallet Client Instance.
 
-Holder:
-:  An entity that receives Verifiable Credentials and has control over them to present them to the Verifiers as Presentations.
-
-Presentation:
-:  Data that is presented to a specific Verifier, derived from one or more Verifiable Credentials that can be from the same or different Credential Issuers. It can be of any Credential Format.
+Issue Server:
+: The server component used by an Issuer to implement the Issuer Endpoints as defined in this specification. It
+performs the verification, issuance and lifecycle management of credentials.
 
 SessionId:
 :  A globally unique identifier associated with a particular Wallet Client Instance, persistent throughout the issuance process.
+
+Verifiable Digital Credential (VDC):
+: Synonymous with Credential or Verifiable Credential.
 
 Verification:
 :  Verification in this specification refers to the process by which an Issuer determines that a Wallet Client Instance is authorized to have particular Credentials issued to it.
