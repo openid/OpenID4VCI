@@ -831,38 +831,88 @@ The API in this specification defines extension points throughout the protocol, 
 
 A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 
-```text
-  Holder     Wallet Client      Wallet Server      Issuer Server
-    |              |                  |                  |
-    | 1. Selects a Credential to Issue|                  |
-    |------------->|                  |                  |
-    |              | Generates WSK    |                  |
-    |              |                  |                  |
-    |              | 2. Sends Signed/Encrypted VerificationData + verificationNonce
-    |              |----------------->|                  |
-    |              |                  | Adds additional VerificationData
-    |              |                  |                  |
-    |              |                  | 3. Calls 'verification/initiate'
-    |              |                  |----------------->|
-    |              |                  |                  | Validates verificationNonce & encryptedClientPayload
-    |              |                  |                  |
-    |              |                  | 4. status: PENDING
-    |              |                  |<-----------------|
-    |              |                  |                  | Asynchronously verifies VerificationData
-    |              |                  |                  |
-    |              |        [Opt 4.1 Additional Verification]
-    |              |                  | 'verification/notify': ADDITIONAL_INFO_REQUIRED
-    |              |                  |<-----------------|
-    |              |                  |                  |
-    |              | Sends additional Signed/Encrypted VerificationData
-    |              |----------------->|                  |
-    |              |                  | 'verification/supplement': additional VerificationData
-    |              |                  |----------------->|
-    |              |                  |                  |
-    |              |                  |                  | Updates Verification Status
-    |              |                  |                  |
-    |              |                  | 5. 'verification/notify': APPROVED/DENIED
-    |              |                  |<-----------------|
+```ascii-art
+┌────────┐            ┌───────────────┐       ┌───────────────┐               ┌───────────────┐                                                     
+│ Holder │            │ Wallet Client │       │ Wallet Server │               │ Issuer Server │                                                     
+└────┬───┘            └───────┬───────┘       └───────┬───────┘               └───────┬───────┘                                                     
+     │                        │                       │                               │                                                             
+     │     1. Selects a       │                       │                               │                                                             
+     │  Credential to Issue   │                       │                               │                                                             
+     │────────────────────────▶                       │                               │                                                             
+     │                        │                       │                               │                                                             
+     │                        ├───┐                   │                               │                                                             
+     │                        │   │ Generates WSK &   │                               │                                                             
+     │                        │   │ collects          │                               │                                                             
+     │                        │   │ VerificationData  │                               │                                                             
+     │                        ◀───┘                   │                               │                                                             
+     │                        │                       │                               │                                                             
+     │                        │                       │                               │                                                             
+     │                        │                       │                               │                                                             
+     │                        │       2. Sends        │                               │                                                             
+     │                        │   Signed/Encrypted    │                               │                                                             
+     │                        │  VerificationData +   │                               │                                                             
+     │                        │   verificationNonce   │                               │                                                             
+     │                        │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▶                               │                                                             
+     │                        │                       │                               │                                                             
+     │                        │                       ├───┐                           │                                                             
+     │                        │                       │   │ Adds additional           │                                                             
+     │                        │                       │   │ VerificationData          │                                                             
+     │                        │                       ◀───┘                           │                                                             
+     │                        │                       │                               │                                                             
+     │                        │                       │                               │                                                             
+     │                        │                       │           3. Calls            │                                                             
+     │                        │                       │    'verification/initiate'    │                                                             
+     │                        │                       │───────────────────────────────▶                                                             
+     │                        │                       │                               │                                                             
+     │                        │                       │                               ├───┐                                                         
+     │                        │                       │                               │   │ Validates                                               
+     │                        │                       │                               │   │ verificationNonce &                                     
+     │                        │                       │                               │   │ encryptedClientPayload                                  
+     │                        │                       │                               ◀───┘                                                         
+     │                        │                       │                               │                                                             
+     │                        │                       │                               │                                                             
+     │                        │                       │                               │                                                             
+     │                        │                       │      4. status: PENDING       │                                                             
+     │                        │                       ◀╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌│                                                             
+     │                        │                       │                               │                                                             
+     │                        │                       │                               ├───┐                                                         
+     │                        │                       │                               │   │ Asynchronously                                  
+     │                        │                       │                               │   │ evaluates                                        
+     │                        │                       │                               ◀───┘ VerificationData                                                        
+     │                        │                       │                               │                                                             
+     │                        │                       │                               │                                                             
+     │                        │                       │                               │                                                             
+     │                    ┌opt [4.1. Additional Verification]─────────────────────────────┐                                                         
+     │                    │   |                       │                               │   │                                                         
+     │                    │   │                       │    'verification/notify':     │   │                                                         
+     │                    │   │                       │   ADDITIONAL_INFO_REQUIRED    │   │                                                         
+     │                    │   │                       ◀───────────────────────────────│   │                                                         
+     │                    │   │                       │                               │   │                                                         
+     │                    │   │   Sends additional    │                               │   │                                                         
+     │                    │   │   Signed/Encrypted    │                               │   │                                                         
+     │                    │   │   VerificationData    │                               │   │                                                         
+     │                    │   │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▶                               │   │                                                         
+     │                    │   │                       │                               │   │                                                         
+     │                    │   │                       │  'verification/supplement':   │   │                                                         
+     │                    │   │                       │          additional           │   │                                                         
+     │                    │   │                       │       VerificationData        │   │                                                         
+     │                    │   │                       │───────────────────────────────▶   │                                                         
+     │                    │   │                       │                               │   │                                                         
+     │                    └───────────────────────────────────────────────────────────────┘                                                         
+     │                        │                       │                               │                                                             
+     │                        │                       │                               ├───┐ Updates                                                         
+     │                        │                       │                               │   │ Verification                             
+     │                        │                       │                               ◀───┘ Status                                                         
+     │                        │                       │                               │                                                             
+     │                        │                       │                               │                                                             
+     │                        │                       │              5.               │                                                             
+     │                        │                       │    'verification/notify':     │                                                             
+     │                        │                       │        APPROVED/DENIED        │                                                             
+     │                        │                       ◀───────────────────────────────│                                                             
+     │                        │                       │                               │                                                             
+┌────┴───┐            ┌───────┴───────┐       ┌───────┴───────┐               ┌───────┴───────┐                                                     
+│ Holder │            │ Wallet Client │       │ Wallet Server │               │ Issuer Server │                                                     
+└────────┘            └───────────────┘       └───────────────┘               └───────────────┘                                                     
 ```
 
 1. Holder, in the Wallet Client Instance selects a Credential to Issue.
@@ -874,55 +924,105 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 
 ## Wallet Initiated (Negotiated Verification) {#wallet-initiated}
 
-```text
-  Holder     Wallet Client      Wallet Server      Issuer Server
-    |              |                  |                  |
-    | 1. Selects Credential to Issue  |                  |
-    |------------->|                  |                  |
-    |              | Generates WSK    |                  |
-    |              |                  |                  |
-    |              | 2. Initiates session                |
-    |              |----------------->|                  |
-    |              |                  | 3. Calls 'verification/initiate'
-    |              |                  |----------------->|
-    |              |                  |                  | Validates verificationNonce
-    |              |                  |                  |
-    |              |                  | 4. status: ADDITIONAL_INFO_REQUIRED + VerificationDataRequest
-    |              |                  |<-----------------|
-    |              |                  |                  |
-    |              | 5. Forwards ADDITIONAL_INFO_REQUIRED|
-    |              |<-----------------|                  |
-    |              |                  |                  |
-    | 6. Requests VerificationData    |                  |
-    |<-------------|                  |                  |
-    |              |                  |                  |
-    | 7. Provides VerificationData    |                  |
-    |------------->|                  |                  |
-    |              | Signs-then-encrypts VerificationData|
-    |              |                  |                  |
-    |              | 8. Sends Signed/Encrypted VerificationData
-    |              |----------------->|                  |
-    |              |                  | 9. Calls 'verification/supplement'
-    |              |                  |----------------->|
-    |              |                  |                  | Decrypts and verifies WSK signature
-    |              |                  |                  |
-    |              |                  | 10. status: PENDING
-    |              |                  |<-----------------|
-    |              |                  |                  | Asynchronously verifies VerificationData
-    |              |                  |                  |
-    |              |        [Opt 10.1 Additional Verification]
-    |              |                  | 'verification/notify': ADDITIONAL_INFO_REQUIRED
-    |              |                  |<-----------------|
-    |              |                  |                  |
-    |              | Sends additional Signed/Encrypted VerificationData
-    |              |----------------->|                  |
-    |              |                  | 'verification/supplement': additional VerificationData
-    |              |                  |----------------->|
-    |              |                  |                  |
-    |              |                  |                  | Updates Verification Status
-    |              |                  |                  |
-    |              |                  | 11. 'verification/notify': APPROVED/DENIED
-    |              |                  |<-----------------|
+```ascii-art
+┌────────┐            ┌───────────────┐             ┌───────────────┐               ┌───────────────┐                                         
+│ Holder │            │ Wallet Client │             │ Wallet Server │               │ Issuer Server │                                         
+└────┬───┘            └───────┬───────┘             └───────┬───────┘               └───────┬───────┘                                         
+     │                        │                             │                               │                                                 
+     │      1. Selects        │                             │                               │                                                 
+     │  Credential to Issue   │                             │                               │                                                 
+     │────────────────────────▶                             │                               │                                                 
+     │                        │                             │                               │                                                 
+     │                        ├───┐                         │                               │                                                 
+     │                        │   │ Generates WSK           │                               │                                                 
+     │                        ◀───┘                         │                               │                                                 
+     │                        │                             │                               │                                                 
+     │                        │    2. Initiates session     │                               │                                                 
+     │                        │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▶                               │                                                 
+     │                        │                             │                               │                                                 
+     │                        │                             │           3. Calls            │                                                 
+     │                        │                             │    'verification/initiate'    │                                                 
+     │                        │                             │───────────────────────────────▶                                                 
+     │                        │                             │                               │                                                 
+     │                        │                             │                               ├───┐                                             
+     │                        │                             │                               │   │ verifies                  
+     │                        │                             │                               ◀───┘ verificationNonce                                   
+     │                        │                             │                               │                                                 
+     │                        │                             │                               │                                                 
+     │                        │                             │          4. status:           │                                                 
+     │                        │                             │   ADDITIONAL_INFO_REQUIRED    │                                                 
+     │                        │                             │   + VerificationDataRequest   │                                                 
+     │                        │                             ◀╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌│                                                 
+     │                        │                             │                               │                                                 
+     │                        │         5. Forwards         │                               │                                                 
+     │                        │  ADDITIONAL_INFO_REQUIRED   │                               │                                                 
+     │                        ◀╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌│                               │                                                 
+     │                        │                             │                               │                                                 
+     │      6. Request        │                             │                               │                                                 
+     │   VerificationData     │                             │                               │                                                 
+     ◀────────────────────────│                             │                               │                                                 
+     │                        │                             │                               │                                                 
+     │      7. Provides       │                             │                               │                                                 
+     │   VerificationData     │                             │                               │                                                 
+     │────────────────────────▶                             │                               │                                                 
+     │                        │                             │                               │                                                 
+     │                        │          8. Sends           │                               │                                                 
+     │                        │      Signed/Encrypted       │                               │                                                 
+     │                        │      VerificationData       │                               │                                                 
+     │                        │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▶                               │                                                 
+     │                        │                             │                               │                                                 
+     │                        │                             │           9. Calls            │                                                 
+     │                        │                             │   'verification/supplement'   │                                                 
+     │                        │                             │───────────────────────────────▶                                                 
+     │                        │                             │                               │                                                 
+     │                        │                             │                               ├───┐                                             
+     │                        │                             │                               │   │ Decrypts and verifies                   
+     │                        │                             │                               │   │ WSK signature                                   
+     │                        │                             │                               ◀───┘                                             
+     │                        │                             │                               │                                                 
+     │                        │                             │                               │                                                 
+     │                        │                             │                               │                                                 
+     │                        │                             │      10. status: PENDING      │                                                 
+     │                        │                             ◀╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌│                                                 
+     │                        │                             │                               │                                                 
+     │                        │                             │                               ├───┐                                             
+     │                        │                             │                               │   │ Asynchronously verifies                     
+     │                        │                             │                               │   │ VerificationData                            
+     │                        │                             │                               ◀───┘                                             
+     │                        │                             │                               │                                                 
+     │                        │                             │                               │                                                 
+     │                        │                             │                               │                                                 
+     │                    ┌opt [10.1. Additional Verification]──────────────────────────────────┐                                             
+     │                    │   |                             │                               │   │                                             
+     │                    │   │                             │    'verification/notify':     │   │                                             
+     │                    │   │                             │   ADDITIONAL_INFO_REQUIRED    │   │                                             
+     │                    │   │                             ◀───────────────────────────────│   │                                             
+     │                    │   │                             │                               │   │                                             
+     │                    │   │      Sends additional       │                               │   │                                             
+     │                    │   │      Signed/Encrypted       │                               │   │                                             
+     │                    │   │      VerificationData       │                               │   │                                             
+     │                    │   │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▶                               │   │                                             
+     │                    │   │                             │                               │   │                                             
+     │                    │   │                             │  'verification/supplement':   │   │                                             
+     │                    │   │                             │          additional           │   │                                             
+     │                    │   │                             │       VerificationData        │   │                                             
+     │                    │   │                             │───────────────────────────────▶   │                                             
+     │                    │   │                             │                               │   │                                             
+     │                    └─────────────────────────────────────────────────────────────────────┘                                             
+     │                        │                             │                               │                                                 
+     │                        │                             │                               ├───┐ Updates                                             
+     │                        │                             │                               │   │ Verification                   
+     │                        │                             │                               ◀───┘ Status
+     │                        │                             │                               │                                                 
+     │                        │                             │                               │                                                 
+     │                        │                             │              11.              │                                                 
+     │                        │                             │    'verification/notify':     │                                                 
+     │                        │                             │        APPROVED/DENIED        │                                                 
+     │                        │                             ◀───────────────────────────────│                                                 
+     │                        │                             │                               │                                                 
+┌────┴───┐            ┌───────┴───────┐             ┌───────┴───────┐               ┌───────┴───────┐                                         
+│ Holder │            │ Wallet Client │             │ Wallet Server │               │ Issuer Server │                                         
+└────────┘            └───────────────┘             └───────────────┘               └───────────────┘                                         
 ```
 
 1. Holder, in the Wallet Client Instance, selects a Credential to Issue where the required VerificationData is unknown.
@@ -940,37 +1040,87 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 
 ## Issuer Initiated (Authed Holder) {#issuer-initiated}
 
-```text
-  Holder   Issuer App/Website   Wallet Client      Wallet Server      Issuer Server
-    |              |                  |                  |                  |
-    | 1. Authenticates & elects to push credentials      |                  |
-    |------------->|                  |                  |                  |
-    |              | 2. push: credential_offer (w/ pre-auth code)           |
-    |              |----------------->|                  |                  |
-    |              |                  | Generates WSK    |                  |
-    |              |                  |                  |                  |
-    |              |                  | 3. Sends Signed/Encrypted VerificationData + verificationNonce
-    |              |                  |----------------->|                  |
-    |              |                  |                  | Adds additional VerificationData
-    |              |                  |                  |                  |
-    |              |                  |                  | 4. Calls 'verification/initiate'
-    |              |                  |                  |----------------->|
-    |              |                  |                  |                  | Validates verificationNonce & payload
-    |              |                  |                  |                  | Verifies pre-auth code
-    |              |                  |                  |                  |
-    |              |                  |        [Opt 4.1 Additional Verification]
-    |              |                  |                  | 'verification/notify': ADDITIONAL_INFO_REQUIRED
-    |              |                  |                  |<-----------------|
-    |              |                  |                  |                  |
-    |              |                  | Sends additional Signed/Encrypted VerificationData
-    |              |                  |----------------->|                  |
-    |              |                  |                  | 'verification/supplement': additional VerificationData
-    |              |                  |                  |----------------->|
-    |              |                  |                  |                  |
-    |              |                  |                  |                  | Updates Verification Status
-    |              |                  |                  |                  |
-    |              |                  |                  | 5. 'verification/notify': APPROVED/DENIED
-    |              |                  |                  |<-----------------|
+```ascii-art
+┌────────┐        ┌────────────────────┐       ┌───────────────┐       ┌───────────────┐               ┌───────────────┐                                      
+│ Holder │        │ Issuer App/Website │       │ Wallet Client │       │ Wallet Server │               │ Issuer Server │                                      
+└────┬───┘        └──────────┬─────────┘       └───────┬───────┘       └───────┬───────┘               └───────┬───────┘                                      
+     │                       │                         │                       │                               │                                              
+     │  1. Authenticates &   │                         │                       │                               │                                              
+     │    elects to push     │                         │                       │                               │                                              
+     │      credentials      │                         │                       │                               │                                              
+     │───────────────────────▶                         │                       │                               │                                              
+     │                       │                         │                       │                               │                                              
+     │                       │        2. push:         │                       │                               │                                              
+     │                       │  credential_offer (w/   │                       │                               │                                              
+     │                       │     pre-auth code)      │                       │                               │                                              
+     │                       │─────────────────────────▶                       │                               │                                              
+     │                       │                         │                       │                               │                                              
+     │                       │                         ├───┐                   │                               │                                              
+     │                       │                         │   │ Generates WSK     │                               │                                              
+     │                       │                         ◀───┘                   │                               │                                              
+     │                       │                         │                       │                               │                                              
+     │                       │                         │       3. Sends        │                               │                                              
+     │                       │                         │   Signed/Encrypted    │                               │                                              
+     │                       │                         │  VerificationData +   │                               │                                              
+     │                       │                         │   verificationNonce   │                               │                                              
+     │                       │                         │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▶                               │                                              
+     │                       │                         │                       │                               │                                              
+     │                       │                         │                       ├───┐                           │                                              
+     │                       │                         │                       │   │ Adds additional           │                                              
+     │                       │                         │                       │   │ VerificationData          │                                              
+     │                       │                         │                       ◀───┘                           │                                              
+     │                       │                         │                       │                               │                                              
+     │                       │                         │                       │                               │                                              
+     │                       │                         │                       │           4. Calls            │                                              
+     │                       │                         │                       │    'verification/initiate'    │                                              
+     │                       │                         │                       │───────────────────────────────▶                                              
+     │                       │                         │                       │                               │                                              
+     │                       │                         │                       │                               ├───┐                                          
+     │                       │                         │                       │                               │   │ Validates                                
+     │                       │                         │                       │                               │   │ verificationNonce &                      
+     │                       │                         │                       │                               │   │ payload                                  
+     │                       │                         │                       │                               ◀───┘                                          
+     │                       │                         │                       │                               │                                              
+     │                       │                         │                       │                               │                                              
+     │                       │                         │                       │                               │                                              
+     │                       │                         │                       │                               ├───┐                                          
+     │                       │                         │                       │                               │   │ Verifies pre-auth                        
+     │                       │                         │                       │                               │   │ code                                     
+     │                       │                         │                       │                               ◀───┘                                          
+     │                       │                         │                       │                               │                                              
+     │                       │                         │                       │                               │                                              
+     │                       │                     ┌opt [4.1. Additional Verification]─────────────────────────────┐                                          
+     │                       │                     │   |                       │                               │   │                                          
+     │                       │                     │   │                       │    'verification/notify':     │   │                                          
+     │                       │                     │   │                       │   ADDITIONAL_INFO_REQUIRED    │   │                                          
+     │                       │                     │   │                       ◀───────────────────────────────│   │                                          
+     │                       │                     │   │                       │                               │   │                                          
+     │                       │                     │   │   Sends additional    │                               │   │                                          
+     │                       │                     │   │   Signed/Encrypted    │                               │   │                                          
+     │                       │                     │   │   VerificationData    │                               │   │                                          
+     │                       │                     │   │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▶                               │   │                                          
+     │                       │                     │   │                       │                               │   │                                          
+     │                       │                     │   │                       │  'verification/supplement':   │   │                                          
+     │                       │                     │   │                       │          additional           │   │                                          
+     │                       │                     │   │                       │       VerificationData        │   │                                          
+     │                       │                     │   │                       │───────────────────────────────▶   │                                          
+     │                       │                     │   │                       │                               │   │                                          
+     │                       │                     └───────────────────────────────────────────────────────────────┘                                          
+     │                       │                         │                       │                               │                                              
+     │                       │                         │                       │                               ├───┐                                          
+     │                       │                         │                       │                               │   │ Updates Verification                     
+     │                       │                         │                       │                               │   │ Status                                   
+     │                       │                         │                       │                               ◀───┘                                          
+     │                       │                         │                       │                               │                                              
+     │                       │                         │                       │                               │                                              
+     │                       │                         │                       │              5.               │                                              
+     │                       │                         │                       │    'verification/notify':     │                                              
+     │                       │                         │                       │        APPROVED/DENIED        │                                              
+     │                       │                         │                       ◀───────────────────────────────│                                              
+     │                       │                         │                       │                               │                                              
+┌────┴───┐        ┌──────────┴─────────┐       ┌───────┴───────┐       ┌───────┴───────┐               ┌───────┴───────┐                                      
+│ Holder │        │ Issuer App/Website │       │ Wallet Client │       │ Wallet Server │               │ Issuer Server │                                      
+└────────┘        └────────────────────┘       └───────────────┘       └───────────────┘               └───────────────┘                                      
 ```
 
 1. Holder is authenticated on an Issuer App/Website and elects to push credentials to a Wallet.
@@ -982,57 +1132,109 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 
 ## Issuer Initiated (Unauthed Holder) {#issuer-initiated}
 
-```text
-  Holder   Issuer App/Website   Wallet Client      Wallet Server      Issuer Server
-    |              |                  |                  |                  |
-    | 1. Interacts unauthenticated    |                  |                  |
-    |------------->|                  |                  |                  |
-    |              | 2. push: credential_offer           |                  |
-    |              |----------------->|                  |                  |
-    |              |                  | Generates WSK    |                  |
-    |              |                  |                  |                  |
-    |              |                  | 3. Initiates session                |
-    |              |                  |----------------->|                  |
-    |              |                  |                  | 4. Calls 'verification/initiate'
-    |              |                  |                  |----------------->|
-    |              |                  |                  |                  | Validates verificationNonce
-    |              |                  |                  |                  |
-    |              |                  |                  | 5. status: ADDITIONAL_INFO_REQUIRED + VerificationDataRequest
-    |              |                  |                  |<-----------------|
-    |              |                  |                  |                  |
-    |              |                  | 6. Forwards ADDITIONAL_INFO_REQUIRED (proofing requirements)
-    |              |                  |<-----------------|                  |
-    |              |                  |                  |                  |
-    | 7. Requests VerificationData    |                  |                  |
-    |<--------------------------------|                  |                  |
-    |              |                  |                  |                  |
-    | 8. Provides VerificationData    |                  |                  |
-    |-------------------------------->|                  |                  |
-    |              |                  | Signs-then-encrypts VerificationData|
-    |              |                  |                  |                  |
-    |              |                  | 9. Sends Signed/Encrypted VerificationData
-    |              |                  |----------------->|                  |
-    |              |                  |                  | 10. Calls 'verification/supplement'
-    |              |                  |                  |----------------->|
-    |              |                  |                  |                  | Decrypts and verifies WSK signature
-    |              |                  |                  |                  |
-    |              |                  |                  | 11. status: PENDING
-    |              |                  |                  |<-----------------|
-    |              |                  |                  |                  | Asynchronously verifies VerificationData
-    |              |                  |                  |                  |
-    |              |                  |        [Opt 11.1 Additional Verification]
-    |              |                  |                  | 'verification/notify': ADDITIONAL_INFO_REQUIRED
-    |              |                  |                  |<-----------------|
-    |              |                  |                  |                  |
-    |              |                  | Sends additional Signed/Encrypted VerificationData
-    |              |                  |----------------->|                  |
-    |              |                  |                  | 'verification/supplement': additional VerificationData
-    |              |                  |                  |----------------->|
-    |              |                  |                  |                  |
-    |              |                  |                  |                  | Updates Verification Status
-    |              |                  |                  |                  |
-    |              |                  |                  | 12. 'verification/notify': APPROVED/DENIED
-    |              |                  |                  |<-----------------|
+```ascii-art
+┌────────┐     ┌────────────────────┐   ┌───────────────┐             ┌───────────────┐               ┌───────────────┐                                         
+│ Holder │     │ Issuer App/Website │   │ Wallet Client │             │ Wallet Server │               │ Issuer Server │                                         
+└────┬───┘     └──────────┬─────────┘   └───────┬───────┘             └───────┬───────┘               └───────┬───────┘                                         
+     │                    │                     │                             │                               │                                                 
+     │   1. Interacts     │                     │                             │                               │                                                 
+     │  unauthenticated   │                     │                             │                               │                                                 
+     │────────────────────▶                     │                             │                               │                                                 
+     │                    │                     │                             │                               │                                                 
+     │                    │      2. push:       │                             │                               │                                                 
+     │                    │  credential_offer   │                             │                               │                                                 
+     │                    │─────────────────────▶                             │                               │                                                 
+     │                    │                     │                             │                               │                                                 
+     │                    │                     ├───┐                         │                               │                                                 
+     │                    │                     │   │ Generates WSK           │                               │                                                 
+     │                    │                     ◀───┘                         │                               │                                                 
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │    3. Initiates session     │                               │                                                 
+     │                    │                     │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▶                               │                                                 
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │                             │           4. Calls            │                                                 
+     │                    │                     │                             │    'verification/initiate'    │                                                 
+     │                    │                     │                             │───────────────────────────────▶                                                 
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │                             │                               ├───┐                                             
+     │                    │                     │                             │                               │   │ Validates                 
+     │                    │                     │                             │                               ◀───┘                                   
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │                             │          5. status:           │                                                 
+     │                    │                     │                             │   ADDITIONAL_INFO_REQUIRED    │                                                 
+     │                    │                     │                             │   + VerificationDataRequest   │                                                 
+     │                    │                     │                             ◀╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌│                                                 
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │         6. Forwards         │                               │                                                 
+     │                    │                     │  ADDITIONAL_INFO_REQUIRED   │                               │                                                 
+     │                    │                     │          (proofing          │                               │                                                 
+     │                    │                     │        requirements)        │                               │                                                 
+     │                    │                     ◀╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌│                               │                                                 
+     │                    │                     │                             │                               │                                                 
+     │               7. Requests                │                             │                               │                                                 
+     │            VerificationData              │                             │                               │                                                 
+     ◀──────────────────────────────────────────│                             │                               │                                                 
+     │                    │                     │                             │                               │                                                 
+     │               8. Provides                │                             │                               │                                                 
+     │            VerificationData              │                             │                               │                                                 
+     │──────────────────────────────────────────▶                             │                               │                                                 
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │          9. Sends           │                               │                                                 
+     │                    │                     │      Signed/Encrypted       │                               │                                                 
+     │                    │                     │      VerificationData       │                               │                                                 
+     │                    │                     │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▶                               │                                                 
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │                             │           10. Calls           │                                                 
+     │                    │                     │                             │   'verification/supplement'   │                                                 
+     │                    │                     │                             │───────────────────────────────▶                                                 
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │                             │                               ├───┐                                             
+     │                    │                     │                             │                               │   │ Decrypts and
+     │                    │                     │                             │                               ◀───┘ verifies WSK                                             
+     │                    │                     │                             │                               │     signature
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │                             │      11. status: PENDING      │                                                 
+     │                    │                     │                             ◀╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌│                                                 
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │                             │                               ├───┐                                             
+     │                    │                     │                             │                               │   │ Asynchronously
+     │                    │                     │                             │                               ◀───┘ evaluates 
+     │                    │                     │                             │                               │     VerificationData                                  
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │                             │                               │                                                 
+     │                    │                 ┌opt [11.1. Additional Verification]──────────────────────────────────┐                                             
+     │                    │                 │   |                             │                               │   │                                             
+     │                    │                 │   │                             │    'verification/notify':     │   │                                             
+     │                    │                 │   │                             │   ADDITIONAL_INFO_REQUIRED    │   │                                             
+     │                    │                 │   │                             ◀───────────────────────────────│   │                                             
+     │                    │                 │   │                             │                               │   │                                             
+     │                    │                 │   │      Sends additional       │                               │   │                                             
+     │                    │                 │   │      Signed/Encrypted       │                               │   │                                             
+     │                    │                 │   │      VerificationData       │                               │   │                                             
+     │                    │                 │   │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▶                               │   │                                             
+     │                    │                 │   │                             │                               │   │                                             
+     │                    │                 │   │                             │  'verification/supplement':   │   │                                             
+     │                    │                 │   │                             │          additional           │   │                                             
+     │                    │                 │   │                             │       VerificationData        │   │                                             
+     │                    │                 │   │                             │───────────────────────────────▶   │                                             
+     │                    │                 │   │                             │                               │   │                                             
+     │                    │                 └─────────────────────────────────────────────────────────────────────┘                                             
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │                             │                               ├───┐                                             
+     │                    │                     │                             │                               │   │ Updates                        
+     │                    │                     │                             │                               │   │ Verification                                    
+     │                    │                     │                             │                               ◀───┘ Status
+     │                    │                     │                             │                               │                                                 
+     │                    │                     │                             │              12.              │                                                 
+     │                    │                     │                             │    'verification/notify':     │                                                 
+     │                    │                     │                             │        APPROVED/DENIED        │                                                 
+     │                    │                     │                             ◀───────────────────────────────│                                                 
+     │                    │                     │                             │                               │                                                 
+┌────┴───┐     ┌──────────┴─────────┐   ┌───────┴───────┐             ┌───────┴───────┐               ┌───────┴───────┐                                         
+│ Holder │     │ Issuer App/Website │   │ Wallet Client │             │ Wallet Server │               │ Issuer Server │                                         
+└────────┘     └────────────────────┘   └───────────────┘             └───────────────┘               └───────────────┘                                         
 ```
 
 1. Holder interacts with an Issuer App/Website but is not authenticated.
@@ -1051,31 +1253,68 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 
 ## Device Migration {#device-migration}
 
-```text
-  Holder    New Wallet Client     Wallet Server      Issuer Server
-    |              |                  |                  |
-    | 1. Sets up new Wallet Client & migrates            |
-    |------------->|                  |                  |
-    |              | Generates WSK    |                  |
-    |              |                  | Identifies previous SessionId
-    |              |                  |                  |
-    |              |                  | 2. 'verification/initiate': (old SessionId, new SessionId, new WSK)
-    |              |                  |----------------->|
-    |              |                  |                  | Verifies relationship between instances
-    |              |                  |                  |
-    |              |        [Opt 2.1 Additional Verification]
-    |              |                  | 'verification/notify': ADDITIONAL_INFO_REQUIRED
-    |              |                  |<-----------------|
-    |              |                  |                  |
-    |              | Sends additional Signed/Encrypted VerificationData
-    |              |----------------->|                  |
-    |              |                  | 'verification/supplement': additional VerificationData
-    |              |                  |----------------->|
-    |              |                  |                  |
-    |              |                  |                  | Approves new verification session
-    |              |                  |                  |
-    |              |                  | 3. 'verification/notify': APPROVED
-    |              |                  |<-----------------|
+```ascii-art
+┌────────┐      ┌───────────────────┐   ┌───────────────┐               ┌───────────────┐                                        
+│ Holder │      │ New Wallet Client │   │ Wallet Server │               │ Issuer Server │                                        
+└────┬───┘      └─────────┬─────────┘   └───────┬───────┘               └───────┬───────┘                                        
+     │                    │                     │                               │                                                
+     │  1. Sets up new    │                     │                               │                                                
+     │  Wallet Client &   │                     │                               │                                                
+     │     migrates       │                     │                               │                                                
+     │────────────────────▶                     │                               │                                                
+     │                    │                     │                               │                                                
+     │                    ├───┐                 │                               │                                                
+     │                    │   │ Generates WSK   │                               │                                                
+     │                    ◀───┘                 │                               │                                                
+     │                    │                     │                               │                                                
+     │                    │                     ├───┐                           │                                                
+     │                    │                     │   │ Identifies previous SessionId
+     │                    │                     ◀───┘                           │                                                
+     │                    │                     │                               │                                                
+     │                    │                     │                               │                                                
+     │                    │                     │              2.               │                                                
+     │                    │                     │   'verification/initiate':    │                                                
+     │                    │                     │      (old SessionId, new      │                                                
+     │                    │                     │      SessionId, new WSK)      │                                                
+     │                    │                     │───────────────────────────────▶                                                
+     │                    │                     │                               │                                                
+     │                    │                     │                               ├───┐                                            
+     │                    │                     │                               │   │ Verifies relationship    
+     │                    │                     │                               ◀───┘  between instances                                           
+     │                    │                     │                               │                                                
+     │                    │                     │                               │                                                
+     │                    │                     │                               │                                                
+     │                ┌opt [2.1. Additional─────────────────────────────────────────┐                                            
+     │                │Verification]            │                               │   │                                            
+     │                │   │                     │    'verification/notify':     │   │                                            
+     │                │   │                     │   ADDITIONAL_INFO_REQUIRED    │   │                                            
+     │                │   │                     ◀───────────────────────────────│   │                                            
+     │                │   │                     │                               │   │                                            
+     │                │   │  Sends additional   │                               │   │                                            
+     │                │   │  Signed/Encrypted   │                               │   │                                            
+     │                │   │  VerificationData   │                               │   │                                            
+     │                │   │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▶                               │   │                                            
+     │                │   │                     │                               │   │                                            
+     │                │   │                     │  'verification/supplement':   │   │                                            
+     │                │   │                     │          additional           │   │                                            
+     │                │   │                     │       VerificationData        │   │                                            
+     │                │   │                     │───────────────────────────────▶   │                                            
+     │                │   │                     │                               │   │                                            
+     │                └─────────────────────────────────────────────────────────────┘                                            
+     │                    │                     │                               │                                                
+     │                    │                     │                               ├───┐                                            
+     │                    │                     │                               │   │ Approves new          
+     │                    │                     │                               ◀───┘ verification                                            
+     │                    │                     │                               │                                                
+     │                    │                     │                               │                                                
+     │                    │                     │              3.               │                                                
+     │                    │                     │    'verification/notify':     │                                                
+     │                    │                     │           APPROVED            │                                                
+     │                    │                     ◀╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌│                                                
+     │                    │                     │                               │                                                
+┌────┴───┐      ┌─────────┴─────────┐   ┌───────┴───────┐               ┌───────┴───────┐                                        
+│ Holder │      │ New Wallet Client │   │ Wallet Server │               │ Issuer Server │                                        
+└────────┘      └───────────────────┘   └───────────────┘               └───────────────┘                                        
 ```
 
 1. Holder sets up a new Wallet Client Instance and wishes to migrate credentials from a previous instance. The Wallet Client generates a new WSK.
