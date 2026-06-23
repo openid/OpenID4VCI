@@ -51,7 +51,7 @@ when, and only when, they appear in all capitals, as shown here.
 
 # Terminology {#terminology}
 
-This specification uses the terms "Credential", "Credential Configuration", "Credential Format", "Holder", "Presentation",  "Verifiable Credential" and "Verifiable Presentation" as defined in OpenID4VCI. 
+This specification uses the terms "Credential", "Credential Configuration", "Credential Dataset", "Credential Format", "Holder", "Presentation",  "Verifiable Credential" and "Verifiable Presentation" as defined in OpenID4VCI. 
 
 This specification defines the following terms. In the case where a term has a definition that differs, the definition below is authoritative for this specification.
 
@@ -124,31 +124,65 @@ specification is designed for use with an architecture involving 3 components:
 ~~~
 {: #architecture-diagram title="Architecture Overview"}
 
-The goal of this protocol is to enable a Wallet Server to improve the reliability, security and management of Credentials issued to the Holder while using application-layer encryption and wallet client authentication to minimize the sensitive user data unnecessarily exposed to the Wallet Server. Due to their distributed nature, Client applications are notoriously difficult to update, have poor connectivity, slower analytics and are a less trusted environment. An Issuer Server could work around these issues, as the provider of both the Client and the Server, the Wallet Provider can be in a better position to alleviate these problems.
+The goal of this protocol is to enable a Wallet Server to improve the reliability, security and management of Credentials issued to the Holder while using application-layer encryption and wallet client authentication to minimize the sensitive user data unnecessarily exposed to the Wallet Server. Due to their distributed nature, Client applications are notoriously difficult to update, have poor connectivity, slower analytics and are a less trusted environment. An Issuer Server could work around these issues, but as the provider of both the Client and the Server, the Wallet Provider can be in a better position to alleviate these problems.
 
-At a high level the protocol works in two phases; Verification and Credential Management.
+At a high level the protocol works as follows: 
 
-Verification is as follows:
+In advance of any communication, the Wallet Server and Issuer Server authenticate via mTLS, which is used at all endpoints. The Wallet Server is responsible for authenticating the Wallet Client and ensuring it is in a good state before communicating with the Issuer Server. 
 
-- The Wallet Server and Issuer Server mutually authenticate with each other using mTLS, prior to any endpoint interaction.
-- As part of initiating verification of the Wallet Client Instance, the Wallet Client establishes an attested public key (WSK) which is used to authenticate payloads originating on Wallet Client.
-- VerificationData is collected on the Wallet Client and encrypted to the Issuer Server to demonstrate the
-  - The Wallet Server MAY also contribute additional VerificationData
-  - This process is potentially asynchronous, while the Issuer evaluates the outcome.
+Issuance begins with a Verification phase. This phase serves two purposes: 
 
-After the Wallet Client Instance has been authenticated and is determined as authorized to have the particular Credential Instance. This works as follows:
+ - Establishing a Wallet Signing Key (WSK) with the Issuer that is under control of the Holder of the Wallet Client Instance.
+ - Authenticate the Holder of the Wallet Client Instance to the Issuer, and determine what Credential Datasets it is authorized to have issued to it.
 
-- The authorized CredentialInstanceIds per Credential DataSet are retrieved from the Provision Credential endpoint. Each Credential Instance MAY be managed independently.
-- The Credentials for a particular CredentialInstanceId is retrieved from the Get Credential Endpoint.
-  - Application-Layer encryption is used to ensure the confidentiality of the PresentationKeys and Credentials.
-  - Credential Metadata MAY also be returned to define how the Credential is displayed.
-- The Credential Status Endpoints are used to both monitor for changes to the Credential, and to reconcile the difference in state between the Wallet and the Issuer.
-- The Get Credential Endpoint is used to refresh and update Credential over the
-- The Credential Management Endpoint MAY be used to suspend, resume and unlink the Credential Instance.
+This is done as follows: 
 
-Additionally a bi-directional event notification endpoint is used for events not tied to any particular credential endpoint.
+1. The Wallet Client Instance generates a WSK, and the Wallet Server initiates the Verification on the Issuer Server.
+  1. The Wallet provides a stable unique Session Id associated with the WSK and the Issuer provides a stable Verification Id to reference this session.
+1. The Wallet Client Instance collects Verification Data and signs-then-encrypts it using the WSK and the Issuer Encryption Key.
+  1. Examples include digital credential presentations, auth on web, wallet collected documents and liveness/selfie checks. 
+1. The Wallet Server optionally provides additional Verification Data and calls the Issuer Server.
+  1. As an optimization, Verification Data can be provided in the initial call.
+  1. Examples include risk and fraud signals or server collected verification data and evaluations. 
+1. The Issuer Server decrypts and verifies the Verification Data using the WSK, and evaluates it along with any Wallet Server provided Verification Data. 
+  1. The Issuer can perform the evaluation asynchronously to support evaluations that are not immediate (such as human reviews). 
+  1. The Issuer Server can optionally repeat this process to trigger the collection of additional Verification.
+1. After reaching a verdict the Issuer Server updates the verification status and notifies the Wallet Server of the change.
 
-# Common  {#common}
+On successful completion the Issuer Server now has a WSK that can be used to authenticate payloads as originating on a particular Wallet Client Instance, and have established which Credentials can be issued. 
+
+The Wallet retrieves the credentials as follows:
+
+1. The Wallet Server retrieves the Credential Instance Identifiers from the Wallet Server using the Session Id and Verification Id. 
+1. The Wallet Client generates proofs for Presentation Keys and signs-then-encrypts them using the WSK. The Wallet Client also creates an encryption key and signs it with the WSK. 
+1. The Wallet Server retrieves a batch of Credentials using the Credential Instance Identifiers and the client payload. 
+  1. The Credentials can be retrieved asynchronously by the Issuer Server returning a PENDING state. 
+1. The Issuer verifies the keys originated on the correct client using the WSK, validates the proofs and creates the Credentials. The Credentials are encrypted using the Wallet Encryption Key before being sent back to the Wallet.
+  1. Credential Metadata, such as display can optionally be returned as well.
+
+This process is repeated to refresh the Credentials and to update them. Credentials can be managed through the following processes:
+
+- The Issuer Server and the Wallet Server can initiate changes to the state of the Credential Instance by suspending, resuming or unlinking it. 
+- The current Credential Status can be bi-directionally queried from the Wallet  and Issuer Servers, to allow reconciliation of diverging states.
+- The Issuer Server and Wallet Server support bi-directional notification channels to prompt actions such as updates and retrievals. 
+
+# Endpoints {#endpoints}
+
+This specification defines a series of endpoints on both the Wallet Server and the Issuer Server. Endpoints.
+
+| **Endpoint**              | **Path**                 | **Implemented By** | **Description**                                                                                          |
+|---------------------------|--------------------------|--------------------|----------------------------------------------------------------------------------------------------------|
+| Verification Initiate     | /verification/initiate   | Issuer             | Starts the verification process for a Wallet Client Instance for a particular set of credential configurations. |
+| Verification Supplement   | /verification/supplement | Issuer             | Provides additional verification data for an ongoing verification session.                               |
+| Get Verification Status   | /verification/status     | Issuer             | Queries the current status of a verification session.                                                    |
+| Verification Notification | /verification/notify     | Wallet             | Allows the Issuer to notify the Wallet of a verification status change.                                  |
+| Verification Cancellation | /verification/cancel     | Issuer             | Cancels an ongoing verification session.                                                                 |
+| Provision Credentials     | /credential/provision    | Issuer             | Fetches credential instance IDs after verification approval.                                             |
+| Get Credential            | /credential/get          | Issuer             | Retrieves the verifiable credentials for a particular credential instance.                               |
+| Get Credential Metadata   | /credential/metadata     | Issuer             | Retrieves metadata for a specific credential configuration.                                              |
+| Get Credential Status     | /credential/status       | Both               | Bidirectional endpoint to query the current status of a credential instance.                             |
+| Credential Management     | /credential/manage       | Both               | Handles ongoing management and lifecycle operations for a Credential Instance.                           |
+| Event Notification        | /event/notify            | Both               | Bidirectional `poke` channel for action-based notifications.                                             |
 
 The following requirements apply to all endpoints.
 
@@ -286,24 +320,6 @@ The API uses the following identifiers:
 All identifiers are opaque strings assigned by the issuer unless otherwise noted. No format, prefix, or structure is enforced by this specification. Implementations may define conventions (e.g., prefixed UUIDs) but interoperability does not depend on identifier structure.
 
 SessionId MUST be globally unique. CredentialInstanceId MUST be unique for an Issuer. VerificationId and CredentialInstanceIds MUST be unique for a given SessionId.
-
-# Endpoints {#endpoints}
-
-This specification defines a series of endpoints on both the Wallet Server and the Issuer Server. Endpoints.
-
-| **Endpoint**              | **Path**                 | **Implemented By** | **Description**                                                                                          |
-|---------------------------|--------------------------|--------------------|----------------------------------------------------------------------------------------------------------|
-| Verification Initiate     | /verification/initiate   | Issuer             | Starts the verification process for a Wallet Client Instance for a particular set of credential configurations. |
-| Verification Supplement   | /verification/supplement | Issuer             | Provides additional verification data for an ongoing verification session.                               |
-| Get Verification Status   | /verification/status     | Issuer             | Queries the current status of a verification session.                                                    |
-| Verification Notification | /verification/notify     | Wallet             | Allows the Issuer to notify the Wallet of a verification status change.                                  |
-| Verification Cancellation | /verification/cancel     | Issuer             | Cancels an ongoing verification session.                                                                 |
-| Provision Credentials     | /credential/provision    | Issuer             | Fetches credential instance IDs after verification approval.                                             |
-| Get Credential            | /credential/get          | Issuer             | Retrieves the verifiable credentials for a particular credential instance.                               |
-| Get Credential Metadata   | /credential/metadata     | Issuer             | Retrieves metadata for a specific credential configuration.                                              |
-| Get Credential Status     | /credential/status       | Both               | Bidirectional endpoint to query the current status of a credential instance.                             |
-| Credential Management     | /credential/manage       | Both               | Handles ongoing management and lifecycle operations for a Credential Instance.                           |
-| Event Notification        | /event/notify            | Both               | Bidirectional `poke` channel for action-based notifications.                                             |
 
 ## Verification Endpoints {#verification-endpoints}
 
