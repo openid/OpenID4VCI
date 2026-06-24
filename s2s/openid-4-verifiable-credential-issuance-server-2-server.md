@@ -61,7 +61,7 @@ Credential Issuer (or Issuer):
 CredentialInstanceId:
 :  A unique identifier at an Issuer for a particular Credential Dataset on a particular Wallet Client Instance.
 
-Issue Server:
+Issuer Server:
 : The server component used by an Issuer to implement the Issuer Endpoints as defined in this specification. It
 performs the verification, issuance and lifecycle management of credentials.
 
