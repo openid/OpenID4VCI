@@ -925,6 +925,7 @@ Cache-Control: no-store
 
 {
   "error": "insufficient_authorization",
+  "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "interaction_type_required": "urn:openid:dcp:ia:auth_via_web",
   "request_uri": "urn:ietf:params:oauth:request_uri:6esc_11ACC5bwc014ltc14eY22c",
   "expires_in": 60
@@ -960,6 +961,7 @@ Cache-Control: no-store
 
 {
   "error": "insufficient_authorization",
+  "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "interaction_type_required": "urn:galaxysdo:ia:betelgeuse_intergalactic_id_card",
   "biic_token": "73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049"
 }
