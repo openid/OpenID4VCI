@@ -800,14 +800,7 @@ A definition of a custom type of interaction MUST include exactly one of the fol
 1. A normative requirement that the `auth_session` key MUST be included in the Interaction Required Response.
 2. A definition of a mechanism to associate the next request by the Wallet with the ongoing authorization request sequence.
 
-The Wallet MUST include the most recently received `auth_session` in follow-up requests to the Interactive Authorization Endpoint.
-
-A definition of a custom type of interaction MUST include exactly one of the following:
-
-1. A normative requirement that the `auth_session` key MUST be included in the Interaction Required Response.
-2. A definition of a mechanism to associate the next request by the Wallet with the ongoing authorization request sequence.
-
-The Wallet MUST include the most recently received `auth_session` in follow-up requests to the Interactive Authorization Endpoint.
+The Wallet MUST include the most recently received `auth_session` in follow-up requests to the Authorization Challenge Endpoint.
 
 Additional keys are defined based on the type of interaction, as shown next.
 
