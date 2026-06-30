@@ -784,6 +784,10 @@ The response body schema optionally contains an `acknowledged` boolean to indica
 
 This specification makes use of a Wallet Signing Key to authenticate payloads originating from the Wallet Client. As part of Verification, the Wallet Signing Key signs-and-encrypts Verification Data, demonstrating to the Issuer that the Verification Data was collected in the presence of the Wallet Signing Key. How strongly that Data types the Wallet Signing Key depends on the specifics of the issuance process and is outside the scope of this specification.
 
+## Wallet Client and Wallet Client Instance Trust {#wallet-client-trust}
+
+This specification delegates the decision about whether a Wallet Client, or a specific instance of it, can be trusted, and to what extent, to the Wallet Server. For example, the Wallet Server can securely verify the Wallet Client's integrity using platform-level hardware checks before executing any lifecycle actions. The exact mechanism for determining Wallet Client trust is out of scope for this specification, but must be considered by implementers.
+
 # Privacy Considerations {#privacy-considerations}
 
 ## Data Minimization {#data-minimization}
