@@ -138,6 +138,7 @@ Issuance begins with a Verification phase. This phase serves two purposes:
 This is done as follows: 
 
 1. The Wallet Client Instance generates a WSK, and the Wallet Server initiates the Verification on the Issuer Server.
+  1. The Wallet provides Credential Configuration(s) to identify the type of credentials they wish issued.
   1. The Wallet provides a stable unique Session Id associated with the WSK and the Issuer provides a stable Verification Id to reference this session.
 1. The Wallet Client Instance collects Verification Data and signs-then-encrypts it using the WSK and the Issuer Encryption Key.
   1. Examples include digital credential presentations, auth on web, wallet collected documents and liveness/selfie checks. 
