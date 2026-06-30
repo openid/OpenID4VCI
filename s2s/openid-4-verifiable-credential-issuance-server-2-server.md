@@ -794,7 +794,7 @@ By design, the Wallet Server is always aware of what types of Credentials and th
 
 ## Asynchronous Endpoints {#asynchronous-endpoints}
 
-The API is designed for the Verification and Credential endpoints to operate asynchronously. Wallet Servers MUST support responses being returned both as immediate responses, as well as asynchronously in the future. As notifications are unreliable, it's RECOMMENDED for Wallet Servers to use both notifications and polling-with-backoff to receive the results from these endpoints as quickly and reliably as possible.
+The APIs are designed so that the Verification and Credential endpoints operate asynchronously. Wallet Servers MUST support returning responses both immediately and asynchronously in the future. As notifications are unreliable, it's RECOMMENDED that Wallet Servers use both notifications and polling-with-backoff to receive results from these endpoints as quickly and reliably as possible.
 
 Because these endpoints are asynchronous, Wallet Clients need to be able to handle receiving the results asynchronously as well. The API between the Wallet Client and Server is outside the scope of this specification, but it would be advisable to adopt a similar approach between the Wallet Client and Server.
 
