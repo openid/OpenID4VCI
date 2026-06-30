@@ -160,7 +160,7 @@ The Wallet retrieves the credentials as follows:
 1. The Issuer verifies the keys originated on the correct client using the WSK, validates the proofs and creates the Credentials. The Credentials are encrypted using the Wallet Encryption Key before being sent back to the Wallet.
   1. Credential Metadata, such as display can optionally be returned as well.
 
-This process is repeated to refresh the Credentials and to update them. Credentials can be managed through the following processes:
+This process is repeated to refresh the Credentials and to update them. Post initial issuance, Credentials lifecycle can be managed through the following processes:
 
 - The Issuer Server and the Wallet Server can initiate changes to the state of the Credential Instance by suspending, resuming or unlinking it. 
 - The current Credential Status can be bi-directionally queried from the Wallet  and Issuer Servers, to allow reconciliation of diverging states.
