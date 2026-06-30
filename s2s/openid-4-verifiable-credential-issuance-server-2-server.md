@@ -141,7 +141,7 @@ This is done as follows:
   1. The Wallet provides a stable unique Session Id associated with the WSK and the Issuer provides a stable Verification Id to reference this session.
 1. The Wallet Client Instance collects Verification Data and signs-then-encrypts it using the WSK and the Issuer Encryption Key.
   1. Examples include digital credential presentations, auth on web, wallet collected documents and liveness/selfie checks. 
-1. The Wallet Server optionally provides additional Verification Data and calls the Issuer Server.
+1. The Wallet Server calls The Issuer Server, passing Wallet Client-supplied Verification Data and, optionally, providing additional Wallet Server-supplied Verification Data.
   1. As an optimization, Verification Data can be provided in the initial call.
   1. Examples include risk and fraud signals or server collected verification data and evaluations. 
 1. The Issuer Server decrypts and verifies the Verification Data using the WSK, and evaluates it along with any Wallet Server provided Verification Data. 
