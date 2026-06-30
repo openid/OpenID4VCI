@@ -149,7 +149,7 @@ This is done as follows:
   1. The Issuer Server can optionally repeat this process to trigger the collection of additional Verification.
 1. After reaching a verdict the Issuer Server updates the verification status and notifies the Wallet Server of the change.
 
-On successful completion the Issuer Server now has a WSK that can be used to authenticate payloads as originating on a particular Wallet Client Instance, and have established which Credentials can be issued. 
+On successful completion the Issuer Server now has a WSK that can be used to authenticate payloads as originating on a particular Wallet Client Instance, and have authenticated the Holder. 
 
 The Wallet retrieves the credentials as follows:
 
