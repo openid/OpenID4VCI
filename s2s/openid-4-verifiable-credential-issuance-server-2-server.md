@@ -328,7 +328,7 @@ The Verification endpoints are used to determine that a particular Wallet Client
 
 ### Engagement
 
-There are five different flows we are considering here:
+There are five different flows we are considering in this specification:
 
 1. **Wallet Initiated (Preknown Verification)**: Holder in a Wallet Client Instance, where the Issuer's required VerificationData is known in advance.
 1. **Wallet Initiated (Negotiated Verification)**: Holder in a Wallet Client Instance, where the Issuer's required Verification Data is unknown
