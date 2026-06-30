@@ -58,7 +58,7 @@ This specification defines the following terms. In the case where a term has a d
 Credential Issuer (or Issuer):
 :  An entity that issues Verifiable Credentials. In the context of this specification, the Credential Issuer implements the Issuer Endpoints.
 
-CredentialInstanceId:
+Credential Instance Identifier:
 :  A unique identifier at an Issuer for a particular Credential Dataset on a particular Wallet Client Instance.
 
 Issuer Server:
