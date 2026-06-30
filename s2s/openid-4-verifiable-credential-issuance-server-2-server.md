@@ -22,7 +22,7 @@ organization="Google"
 
 .# Abstract
 
-This specification defines an API for the issuance and management of Verifiable Digital Credentials between a Wallet Server and Issuer Server, while enabling sensitive user data to remain confidential between a Wallet Client Instance and the Issuer.
+This specification defines an API for the issuance and management of Verifiable Digital Credentials between a Wallet Server and Issuer Server, while keeping sensitive user data confidential between a Wallet Client Instance and the Issuer (i.e., not revealing it to the Wallet Server).
 
 {mainmatter}
 
