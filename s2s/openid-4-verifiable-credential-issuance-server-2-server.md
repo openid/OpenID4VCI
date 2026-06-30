@@ -388,7 +388,7 @@ Because each sessionId is a unique UUID generated per verification session, a re
 
 #### Response Body Schema:
 
-The Response Body schema contains AllOf the fields in the VerificationStatus schema.
+The Response Body schema contains all of the fields in the VerificationStatus schema.
 
 ### Supplement
 
