@@ -154,7 +154,7 @@ On successful completion the Issuer Server now has a WSK that can be used to aut
 The Wallet retrieves the credentials as follows:
 
 1. The Wallet Server retrieves the Credential Instance Identifiers from the Wallet Server using the Session Id and Verification Id. 
-1. The Wallet Client generates proofs for Presentation Keys and signs-then-encrypts them using the WSK. The Wallet Client also creates an encryption key and signs it with the WSK. 
+1. The Wallet Client generates proofs for Presentation Keys and signs-then-encrypts them using the WSK and the Issuer encryption key. The Wallet Client also creates an encryption key and signs it with the WSK. 
 1. The Wallet Server retrieves a batch of Credentials using the Credential Instance Identifiers and the client payload. 
   1. The Credentials can be retrieved asynchronously by the Issuer Server returning a PENDING state. 
 1. The Issuer verifies the keys originated on the correct client using the WSK, validates the proofs and creates the Credentials. The Credentials are encrypted using the Wallet Encryption Key before being sent back to the Wallet.
