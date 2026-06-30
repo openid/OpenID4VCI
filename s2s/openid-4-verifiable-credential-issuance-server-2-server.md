@@ -336,7 +336,7 @@ There are five different flows we are considering here:
 1. **Issuer Initiate (Unauthed Holder)**: Holder is in an Issuer Surface (e.g. Issuer Website) but are not currently (sufficiently) authenticated. The Holder wishes to initiate a Wallet Client Instance and begin Issuance of some Credentials.
 1. **Device Migration**: Holder in a new Wallet Client Instance, but has previously performed Verification in another Wallet Client Instance.
 
-All engagement is modeled as the Wallet receiving a `Credential Offer` payload from the Issuer.
+All engagement is modeled as the Wallet receiving a Credential Offer payload from the Issuer.
 
 This could be obtained:
 
