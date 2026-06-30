@@ -291,7 +291,7 @@ Implementations MAY define their own key types. It is RECOMMENDED that collision
 
 ## Content Reference {#content-reference}
 
-This section details how large content can be passed `by-reference` to a downloadable URL, rather than in-band.
+This section details how large content can be passed by-reference to a downloadable URL, rather than in-band.
 
 | **Field**     | **Type**           | **Description**                                            |
 | ------------- | ------------------ | ---------------------------------------------------------- |
