@@ -1935,7 +1935,6 @@ Because the parameter values in the Credential Offer are not trustworthy, an att
 
 To mitigate this, the Wallet relies on the `expected_redirect_origin` Credential Issuer metadata parameter (#credential-issuer-parameters). Unlike the Credential Offer, the Credential Issuer metadata is retrieved by the Wallet directly from the Credential Issuer over a TLS-protected connection (#credential-issuer-wellknown) and is therefore authenticated. Before offering the End-User the option to follow the `redirect_uri`, the Wallet MUST verify that the origin of the `redirect_uri` matches one of the origins listed in `expected_redirect_origin`, and MUST discard the `redirect_uri` otherwise, including when `expected_redirect_origin` is absent.
 
-The Wallet MUST NOT navigate to the `redirect_uri` automatically; the redirect MUST be performed only upon explicit End-User interaction. The Wallet SHOULD NOT include any information about the issued Credentials or the outcome of the issuance in the request to the `redirect_uri` beyond what the Credential Issuer encoded in the URL itself.
 
 ## Pre-Authorized Code Flow {#security-considerations-pre-authz-code}
 
