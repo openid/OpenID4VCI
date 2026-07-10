@@ -1688,15 +1688,15 @@ The Credential Issuer Metadata contains information on the Credential Issuer's t
 
 ### Credential Issuer Identifier {#credential-issuer-identifier}
 
-A Credential Issuer is identified by a case sensitive URL using the `https` scheme that contains scheme, host and, optionally, port number and path components, but no query or fragment components. 
+A Credential Issuer is identified by a case sensitive URL using the `https` scheme that contains scheme, host and, optionally, port number and path components, but no query or fragment components.
 
 ### Credential Issuer Metadata Retrieval {#credential-issuer-wellknown}
 
 The Credential Issuer's configuration can be retrieved using the Credential Issuer Identifier.
 
-Credential Issuers publishing metadata MUST make a JSON document available at the path formed by inserting the string `/.well-known/openid-credential-issuer` into the Credential Issuer Identifier between the host component and the path component, if any.
+Credential Issuers publishing metadata MUST make a JSON document available at the path formed by inserting the string `/.well-known/openid-credential-issuer` into the Credential Issuer Identifier between the host component and the path component, if any. If the Credential Issuer Identifier contains a path component, any terminating `/` MUST be removed before inserting `/.well-known/openid-credential-issuer`.
 
-For example, the metadata for the Credential Issuer Identifier `https://issuer.example.com/tenant` would be retrieved from `https://issuer.example.com/.well-known/openid-credential-issuer/tenant`. The metadata for the Credential Issuer Identifier `https://tenant.issuer.example.com` would be retrieved from `https://tenant.issuer.example.com/.well-known/openid-credential-issuer`.
+For example, the metadata for the Credential Issuer Identifier `https://issuer.example.com/tenant` would be retrieved from `https://issuer.example.com/.well-known/openid-credential-issuer/tenant`. The metadata for the Credential Issuer Identifier `https://issuer.example.com/tenant/` would also be retrieved from `https://issuer.example.com/.well-known/openid-credential-issuer/tenant`. The metadata for the Credential Issuer Identifier `https://tenant.issuer.example.com` would be retrieved from `https://tenant.issuer.example.com/.well-known/openid-credential-issuer`.
 
 Communication with the Credential Issuer Metadata Endpoint MUST utilize TLS.
 
@@ -3722,3 +3722,4 @@ The technology described in this specification was made available from contribut
    * add iana registration for an openid foundation urn
    * add optional metadata to the credential response
    * use OAuth 2.0 for First-Party Applications as basis for Interactive Authorization
+   * add back removal of any terminating `/` from the Credential Issuer Identifier when forming the Credential Issuer Metadata URL
