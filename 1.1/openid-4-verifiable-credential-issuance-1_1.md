@@ -273,7 +273,7 @@ Figure: Issuance using Authorization Code Flow
 
 (1a) The Wallet-initiated flow begins as the End-User requests a Credential via the Wallet from the Credential Issuer. The End-User either selects a Credential from a pre-configured list of Credentials ready to be issued, or alternatively, the Wallet gives guidance to the End-User to select a Credential from a Credential Issuer based on the information it received in the presentation request from a Verifier.
 
-(1b) The Issuer-initiated flow begins as the Credential Issuer generates a Credential Offer for certain Credential(s) that it communicates to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL and the information about the Credential(s) being offered. This step is defined in (#credential-offer).
+(1b) The Issuer-initiated flow begins as the Credential Issuer generates a Credential Offer for certain Credential(s) that it communicates to the Wallet, for example, as a QR code or as a URI. The Credential Offer contains the Credential Issuer's URL, information about the Credential(s) being offered and an optional Redirect URL. This step is defined in (#credential-offer).
 
 (2) The Wallet uses the Credential Issuer's URL to fetch the Credential Issuer metadata, as described in (#credential-issuer-metadata). The Wallet needs the metadata to learn the Credential types and formats that the Credential Issuer supports and to determine the Authorization Endpoint (OAuth 2.0 Authorization Server) as well as Credential Endpoint required to start the request. This specification supports configurations where the Credential Endpoint and the Authorization Endpoint are managed by either separate entities or a single entity.
 
@@ -289,7 +289,7 @@ Note: Steps (3) and (4) may happen in the front channel, by redirecting the End-
 
 If the Credential Issuer requires more time to issue a Credential, the Credential Issuer may return a Transaction ID and a time interval in the Credential Response. The Wallet may send a Deferred Credential Request with the Transaction ID to obtain a Credential after the specified time interval has passed, as defined in (#deferred-credential-issuance).
 
-(7) If the Credential Offer contained a `redirect_uri` parameter (#credential-offer-parameters), the Wallet SHOULD navigate the User Agent to this URL after it has finished processing the Credential Offer, e.g. to return to the Credential Issuer's website. The Wallet SHOULD do this regardless of whether the issuance succeeded, failed, was cancelled or entered a pending state. The Issuer MUST NOT rely on the redirect occurring for successful issuance. 
+(7) The Wallet may navigate the User Agent to the Credential Issuer's Redirect URL if it was contained in the Credential Offer.
 
 Note: This flow is based on OAuth 2.0 and the Authorization Code Grant type, but this specification can be used with other OAuth 2.0 grant types as well.
 
