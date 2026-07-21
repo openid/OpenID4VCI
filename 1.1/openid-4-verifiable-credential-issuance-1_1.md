@@ -1887,13 +1887,6 @@ The Wallet MUST NOT accept Credentials just because this mechanism was used. All
 
 The Credential Issuer MUST ensure the release of any privacy-sensitive data in Credential Offer is legal.
 
-### Redirect to the Credential Issuer
-
-Because the parameter values in the Credential Offer are not trustworthy, an attacker could inject or manipulate the `redirect_uri` Credential Offer parameter (#credential-offer-parameters) to direct the End-User to an attacker-controlled website, for example, to conduct a phishing attack while leveraging the End-User's trust that they are returning to the Credential Issuer.
-
-To mitigate this, the Wallet relies on the `expected_redirect_origin` Credential Issuer metadata parameter (#credential-issuer-parameters). Unlike the Credential Offer, the Credential Issuer metadata is retrieved by the Wallet directly from the Credential Issuer over a TLS-protected connection (#credential-issuer-wellknown) and is therefore authenticated. Before offering the End-User the option to follow the `redirect_uri`, the Wallet MUST verify that the origin of the `redirect_uri` matches one of the origins listed in `expected_redirect_origin`, and MUST discard the `redirect_uri` otherwise, including when `expected_redirect_origin` is absent.
-
-
 ## Pre-Authorized Code Flow {#security-considerations-pre-authz-code}
 
 ### Replay Prevention
