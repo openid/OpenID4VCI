@@ -775,6 +775,7 @@ The following non-normative example shows a payload of a signed request object:
 In addition to the request parameters defined in Section 5.3 of [@!I-D.ietf-oauth-first-party-apps], the Wallet adds parameters that are in response to the interaction type the Authorization Server requested in the most recent response. The specific parameters are defined by each interaction type.
 
 ## Authorization Challenge Response
+
 Upon receiving an Authorization Challenge Request, the Authorization Server determines whether the Authorization Request is syntactically and semantically correct and whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance.
 The response to an Authorization Challenge Request is an HTTP message with the content type `application/json` and a JSON document in the body that indicates either
 
@@ -783,6 +784,7 @@ The response to an Authorization Challenge Request is an HTTP message with the c
  3. an error as defined in Section 5.2.2 of [@!I-D.ietf-oauth-first-party-apps], including the additional error codes defined in (#ia-error-response).
 
 ### Interaction Required Response {#ia-interaction-required-response}
+
 By setting `error_code` to `insufficient_authorization` in the response with HTTP response code 401 `Unauthorized`, the Authorization Server requests an additional user interaction.
 In this case, the following keys MUST be present in the response as well:
 
@@ -939,7 +941,6 @@ Cache-Control: no-store
 
 {
   "error": "insufficient_authorization",
-  "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "interaction_type_required": "urn:openid:dcp:ia:auth_via_web",
   "request_uri": "urn:ietf:params:oauth:request_uri:6esc_11ACC5bwc014ltc14eY22c",
   "expires_in": 60
@@ -976,7 +977,6 @@ Cache-Control: no-store
 
 {
   "error": "insufficient_authorization",
-  "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "interaction_type_required": "urn:galaxysdo:ia:betelgeuse_intergalactic_id_card",
   "biic_token": "73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049"
 }
