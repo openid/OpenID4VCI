@@ -3455,7 +3455,7 @@ established by [@!RFC6749].
 * Name: `expected_url`
 * Parameter Usage Location: authorization request
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
-* Reference: (#interactive-authorization-endpoint) this specification
+* Reference: (#interactive-authorization) this specification
 
 ## OAuth Authorization Server Metadata Registry
 
