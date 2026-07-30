@@ -73,8 +73,8 @@ This specification also defines the following terms. In the case where a term ha
 Credential Dataset:
 :  A set of one or more claims about a subject, provided by a Credential Issuer.
 
-Credential Dataset Version
-:  A String that refers to a specific version of a Credential Dataset. This version is identical for multiple instances of a Credential that share the same Credential Dataset, even when the Credential instances differ in data that is not part of the Credential Dataset, such as cryptographic data (e.g., an Issuer signature) or timestamps. When any of the claim values in the Credential Dataset change, a new Credential Dataset Version is assigned. Note that a Credential Dataset Version is bound to a specific Credential Format.
+Credential Dataset Version:
+:  A String that refers to a specific version of a Credential Dataset. This version is identical for multiple instances of a Credential that share the same Credential Dataset, even when the Credential instances differ in data that is not part of the Credential Dataset, such as cryptographic data (e.g., an Issuer signature) or timestamps. When any of the claim values in the Credential Dataset change or claims are added or removed, a new Credential Dataset Version is assigned. Note that a Credential Dataset Version is bound to a specific Credential Format.
 
 Credential (or Verifiable Credential (VC)):
 :  An instance of a Credential Configuration with a particular Credential Dataset, that is signed by an Issuer and can be cryptographically verified. An Issuer may provide multiple Credentials as separate instances of the same Credential Configuration and Credential Dataset but with different cryptographic values. In this specification, the term "Verifiable Credential" is also referred to as "Credential". It's important to note that the use of the term "Credential" here differs from its usage in [@!OpenID.Core] and [@!RFC6749]. In this context, "Credential" specifically does not encompass other meanings such as passwords used for login credentials.
@@ -1396,10 +1396,10 @@ The following parameters are used in the JSON-encoded Credential Response body:
     If the Credential Issuer includes the `credential_dataset_version` parameter, the following requirements apply:
 
     * For a given Credential Dataset within the scope of a concrete Credential Format, if the Credential Dataset has not changed, the Credential Issuer MUST return the same Credential Dataset Version, even when issuing a new Credential instance with different cryptographic data, e.g., an Issuer signature.
-    * If any claim value in the Credential Dataset changes, the Credential Issuer MUST assign a new Credential Dataset Version.
+    * If any claim value in the Credential Dataset changes, or a claim is added or removed, the Credential Issuer MUST assign a new Credential Dataset Version.
     * Wallets MUST compare Credential Dataset Version values for equality using simple string comparison with no normalization.
     * Wallets MUST NOT infer ordering, such as whether one value is newer or older than another, from Credential Dataset Version values.
-    * Wallets SHOULD maintain active Credentials only from the latest received version of a Credential Dataset. If the Wallet is unable to determine the latest received version, it is RECOMMENDED that it make a new Credential Request.
+    * Wallets SHOULD delete Credentials that do not match the most recently received Credential Dataset Version of a specific credential_identifier.
 
 Additional Credential Response parameters MAY be defined and used. The Wallet MUST ignore any unrecognized parameters.
 
