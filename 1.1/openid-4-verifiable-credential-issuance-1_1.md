@@ -784,7 +784,7 @@ The response to an Authorization Challenge Request is an HTTP message with the c
 
 ### Interaction Required Response {#ia-interaction-required-response}
 
-By setting `error_code` to `insufficient_authorization` in the response with HTTP response code 401 `Unauthorized`, the Authorization Server requests an additional user interaction.
+By setting `error_code` to `insufficient_authorization` in the response with HTTP response code 403 `Forbidden`, the Authorization Server requests an additional user interaction.
 In this case, the following keys MUST be present in the response as well:
 
 * `interaction_type_required`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST set this to a value that was included in the `interaction_types_supported` parameter sent by the Wallet. If the Authorization Server cannot fulfill the request using any of the supported types, it MUST reject the request with an Authorization Challenge Error Response, as defined in (#ia-error-response).
@@ -804,7 +804,7 @@ If `interaction_type_required` is set to `urn:openid:dcp:ia:openid4vp_presentati
 The following is a non-normative example of an unsigned Authorization Request:
 
 ```
-HTTP/1.1 401 Unauthorized
+HTTP/1.1 403 Forbidden
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -838,7 +838,7 @@ Cache-Control: no-store
 The following is a non-normative example of a signed Authorization Request:
 
 ```
-HTTP/1.1 401 Unauthorized
+HTTP/1.1 403 Forbidden
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -919,7 +919,7 @@ The Authorization Server MAY include the `expires_in` key as defined in [@!RFC91
 Non-normative Example:
 
 ```
-HTTP/1.1 401 Unauthorized
+HTTP/1.1 403 Forbidden
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -955,7 +955,7 @@ See (#ia-security) for additional security considerations.
 In the following non-normative example, this extension point is used to read the Betelgeuse Intergalactic ID card through an NFC interface in the Wallet. A token called `biic_token` is used to start the process.
 
 ```
-HTTP/1.1 401 Unauthorized
+HTTP/1.1 403 Forbidden
 Content-Type: application/json
 Cache-Control: no-store
 
@@ -2074,7 +2074,7 @@ Implementers should be aware that this specification uses several specifications
 * SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -11 [@!I-D.ietf-oauth-sd-jwt-vc]
 * Attestation-Based Client Authentication draft -07 [@!I-D.ietf-oauth-attestation-based-client-auth]
 * Token Status List draft -12 [@!I-D.ietf-oauth-status-list]
-* OAuth 2.0 for First-Party Applications draft -03  [@!I-D.ietf-oauth-first-party-apps]
+* OAuth 2.0 for First-Party Applications draft -04  [@!I-D.ietf-oauth-first-party-apps]
 
 While breaking changes to the specifications referenced in this specification are not expected, should they occur, OpenID4VCI implementations should continue to use the specifically referenced versions above in preference to the final versions, unless updated by a profile or new version of this specification.
 
@@ -3723,3 +3723,4 @@ The technology described in this specification was made available from contribut
    * add optional metadata to the credential response
    * use OAuth 2.0 for First-Party Applications as basis for Interactive Authorization
    * add back removal of any terminating `/` from the Credential Issuer Identifier when forming the Credential Issuer Metadata URL
+   * update IA HTTP response codes for consistency with First-Party Application draft-4
