@@ -28,9 +28,8 @@ This specification defines an API for the issuance and management of Verifiable 
 
 # Introduction {#introduction}
 
-This specification defines the contract between a Wallet Server and one or more
-Credential Issuer Servers for credential issuance and lifecycle management. It
-is credential format agnostic so Credentials can be of any format, including,
+This specification defines a set of APIs and a protocol for credential issuance and lifecycle management. It
+is credential format agnostic so Credentials can be of any format. Credentials can be of any format including,
 but not limited to, IETF SD-JWT VC [@I-D.ietf-oauth-sd-jwt-vc], ISO mdoc
 [@ISO.18013-5], and W3C VCDM [@VC_DATA_2.0].
 
