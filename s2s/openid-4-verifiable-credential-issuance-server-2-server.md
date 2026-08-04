@@ -190,6 +190,8 @@ The following requirements apply to all endpoints.
 
 All endpoints MUST use mutual TLS (mTLS) as the authentication method between the Wallet and Issuer Servers, as described by [@!RFC8705]. Both servers present X.509 client certificates during the TLS handshake. Certificate management is outside of scope of this specification.
 
+Issuers MUST associate a SessionId with the mTLS client identity that created it and reject requests for that SessionId from any other identity.
+
 ## Transport {#transport}
 
 All requests to endpoints MUST use HTTPS (TLS 1.2+) with mutual authentication. All requests and response bodies are JSON and MUST use the media type `application/json`.
