@@ -65,7 +65,7 @@ Issuer Server:
 performs the verification, issuance and lifecycle management of credentials.
 
 SessionId:
-:  A globally unique identifier associated with a particular Wallet Client Instance, persistent throughout the issuance process.
+:  A globally unique identifier associated with a particular Issuance process between a Wallet Client Instance and an Issuer, persistent throughout the issuance process.
 
 Verifiable Digital Credential (VDC):
 : Synonymous with Credential or Verifiable Credential.
