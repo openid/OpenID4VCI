@@ -1051,7 +1051,7 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 5. The Wallet Server forwards the `ADDITIONAL_INFO_REQUIRED` status to the Wallet Client.
 6. The Wallet Client requests the VerificationData from the Holder.
 7. The Holder provides the VerificationData.
-8. The Wallet Client sends the Signed/Encrypted VerificationData to the Wallet Server.
+8. The Wallet Client sends the Signed and Encrypted VerificationData to the Wallet Server.
 9. The Wallet Server calls `verification/supplement` on the Issuer Server.
 10. The Issuer decrypts and verifies the WSK signature, returns the PENDING status, and asynchronously verifies the VerificationData.
   1. Optionally: uses ADDITIONAL_INFO_REQUIRED to obtain more information.
