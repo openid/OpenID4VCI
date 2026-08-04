@@ -1343,6 +1343,8 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 
 # Acknowledgements {#Acknowledgements}
 
+We would like to thank Christian Bormann, George Fletcher, Martijn Haring, Hicham Lozi, Dima Postnikov, Kristina Yasuda, Rajvardhan S Deshmukh, David Zeuthen for their valuable feedback and contributions to this specification.
+
 # Notices
 
 Copyright (c) 2026 The OpenID Foundation.
