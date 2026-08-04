@@ -789,6 +789,11 @@ This specification makes use of a Wallet Signing Key to authenticate payloads or
 
 This specification delegates the decision about whether a Wallet Client, or a specific instance of it, can be trusted, and to what extent, to the Wallet Server. For example, the Wallet Server can securely verify the Wallet Client's integrity using platform-level hardware checks before executing any lifecycle actions. The exact mechanism for determining Wallet Client trust is out of scope for this specification, but must be considered by implementers.
 
+
+## Pre-authorization Code security measures  {#preauth-security}
+
+It is important to note that anyone with a valid Pre-Authorized Code, without additional security measures, can receive a Credential from the Credential Issuer. Implementers MUST implement the mitigations most suitable to the use case.
+
 # Privacy Considerations {#privacy-considerations}
 
 ## Data Minimization {#data-minimization}
