@@ -202,12 +202,19 @@ All requests to endpoints MUST use HTTPS (TLS 1.2+) with mutual authentication. 
 
 The API uses header-based semantic versioning. The Client MUST include the desired API version in the `Api-Version` request header using the semantic version (e.g. `1.0.0`).
 
-| **Header**             | **Direction** | **Type**                          | **Description**                                                                       |
-|------------------------|---------------|-----------------------------------|---------------------------------------------------------------------------------------|
-| Api-Version            | Request       | String (semantic version)         | Required. Semantic version requested by the client (e.g., 1.0.0)                      |
-| Api-Version            | Response      | String (semantic version)         | Required. The version used to process the request                                     |
-| Api-Supported-Versions | Response      | String (comma-separated versions) | Comma-separated list of versions the server supports                                  |
-| Sunset                 | Response      | String (HTTP-date)                | HTTP-date as defined in [@!RFC8594] after which the requested version will be removed |
+The following headers are used in requests to specify the desired API version:
+
+| **Header**             | **Type**                          | **Description**                                                                       |
+|------------------------|-----------------------------------|---------------------------------------------------------------------------------------|
+| Api-Version            | String (semantic version)         | Required. Semantic version requested by the client (e.g., 1.0.0)                      |
+
+The following headers are used in responses to convey information about the API version used or supported by the server:
+
+| **Header**             | **Type**                          | **Description**                                                                       |
+|------------------------|-----------------------------------|---------------------------------------------------------------------------------------|
+| Api-Version            | String (semantic version)         | Required. The version used to process the request                                     |
+| Api-Supported-Versions | String (comma-separated versions) | Comma-separated list of versions the server supports                                  |
+| Sunset                 | String (HTTP-date)                | HTTP-date as defined in [@!RFC8594] after which the requested version will be removed |
 
 Server MUST reject requests with an unsupported `Api-Version` with HTTP 400 and a Problem Details response, indicating the supported versions in the header.
 
