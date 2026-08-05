@@ -2027,6 +2027,9 @@ Using a stable Credential Dataset Version for unchanged Credential Datasets prev
 
 For example, a Credential Issuer can derive the Credential Dataset Version by computing a hash over a stable representation of only the Credential Dataset, rather than over the full Credential payload, so that data outside the Credential Dataset, such as cryptographic data (e.g., an Issuer signature) or timestamps, does not affect the result.
 
+The Wallet MUST NOT share the Credential Dataset Version with Verifiers or any other Issuers.
+
+
 The Credential Dataset Version value is intended only for equality checks and does not convey ordering; for example, a lexically greater value is not necessarily newer. Credential Dataset Version values are not comparable across different Credential Formats.
 
 ## Relationship between the Credential Issuer Identifier in the Metadata and the Issuer Identifier in the Issued Credential
