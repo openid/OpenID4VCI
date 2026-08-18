@@ -202,7 +202,7 @@ All requests to endpoints MUST use HTTPS (TLS 1.2+) with mutual authentication. 
 
 The API uses header-based semantic versioning. The Client MUST include the desired API version in the `Api-Version` request header using the semantic version (e.g. `1.0.0`).
 
-The following headers are used in requests to specify the desired API version:
+The following header is used in requests to specify the desired API version:
 
 | **Header**             | **Type**                          | **Description**                                                                       |
 |------------------------|-----------------------------------|---------------------------------------------------------------------------------------|
