@@ -803,6 +803,7 @@ A definition of a custom type of interaction MUST include exactly one of the fol
 2. A definition of a mechanism to associate the next request by the Wallet with the ongoing authorization request sequence.
 
 The Wallet MUST include the most recently received `auth_session` in follow-up requests to the Authorization Challenge Endpoint.
+The Wallet MUST ignore the `auth_session` key when processing Interaction Required Responses for interaction types that do not specify a requirement to include the `auth_session` key.
 
 Additional keys are defined based on the type of interaction, as shown next.
 
