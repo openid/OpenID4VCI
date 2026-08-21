@@ -214,7 +214,7 @@ Below is the summary of how Credential(s) that are being issued are identified t
   `credential_identifiers` parameter in the Token Response, the Wallet uses `credential_configuration_id` parameter
   in the Credential Request.
 - the Credential Issuer identifies the Credential Dataset for the issued Credential(s) using the `credential_dataset_id` and `credential_dataset_version` parameter
-in the Credential Response, enabling the Wallet to relate them to previously received Credentials
+in the Credential Response, enabling the Wallet to relate them to previously received Credentials.
 
 
 ## Authorization Code Flow {#authorization-code-flow}
@@ -1980,13 +1980,13 @@ The action leading to the Wallet performing another Credential Request can also 
 ## Credential Dataset Identifier and Credential Dataset Version {#credential-dataset-identifier-implementation}
 
 The Credential Dataset Identifier (`credential_dataset_id`) allows Credential Issuers to communicate whether a newly issued Credential has the same Credential Dataset of a previously issued Credential.
-This allows Wallets to differentiate scenarios whether a Credential is an update or replacement of an existing Credential, e.g. a mobile driving license with updated priveleges, or a new Credential that is supposed to exist parallel to existing credentials, e.g. vehicle registration card for multiple cars.
+This allows Wallets to differentiate scenarios whether a Credential is an update or replacement of an existing Credential, e.g. a mobile driving license with updated privileges, or a new Credential that is supposed to exist parallel to existing credentials, e.g. vehicle registration card for multiple cars.
 
 The Credential Dataset Version (`credential_dataset_version`) allows Credential Issuers to communicate whether a newly issued Credential for a particular Credential Dataset Identifier differs from previously issued Credentials for this Credential Dataset Identifier.
 This allows Wallets to distinguish between a re-issuance of unchanged data with different cryptographic key material and issuance of a Credential containing updated or modified claim values.
 This is useful in batch issuance scenarios where claim values may change over time, such as an updated address, correction of previously issued personal data, or a change in legal or entitlement status (e.g., reaching the age of majority) and allows Wallets to decide whether to drop previously issued Credentials to maintain a uniform Credential Dataset:
 
-* Credentials received with the same Credential Dataset Identifier and the same Credential Dataset Version are additional instances of Credentials the Wallet already holds, usually for batch-issued Credentials. The Wallet can retain them alongside the Credentials it already has.
+* Credentials received with the same Credential Configuration, same Credential Dataset Identifier and the same Credential Dataset Version are additional instances of Credentials the Wallet already holds, usually for batch-issued Credentials. The Wallet can retain them alongside the Credentials it already has.
 * Credentials received with the same Credential Dataset Identifier but a different Credential Dataset Version supersede the previously issued Credentials the Wallet already holds for that Credential Dataset.
 
 The following requirements apply to a Credential Issuer that includes these parameters:
@@ -1996,16 +1996,17 @@ The following requirements apply to a Credential Issuer that includes these para
 * Credential Issuers SHOULD NOT use the same Credential Dataset Identifier for a different Credential Dataset of the same Credential Configuration.
 * If the Credential Dataset has not changed, Credential Issuers SHOULD return the same Credential Dataset Version, even when issuing a new Credential instance that differs in data that is not part of the Credential Dataset, such as cryptographic data (e.g., an Issuer signature) or timestamps.
 * If any claim value in the Credential Dataset changes, or a claim is added or removed, Credential Issuers SHOULD assign a new Credential Dataset Version.
+* Credential Issuers MUST NOT return a response with an old Credential Dataset Version after it has started returning a newer Credential Dataset Version, unless the Credential has been reverted to an old version.
 
 The following requirements apply to Wallets:
 
-* Wallets SHOULD treat both `credential_dataset_identifier` and `credential_dataset_version` as opaque strings and compare them using simple string comparison.
+* Wallets SHOULD treat both `credential_dataset_id` and `credential_dataset_version` as opaque strings and compare them using simple string comparison.
 * Wallets SHOULD NOT disclose the Credential Dataset Identifier or the Credential Dataset Version to Verifiers or to any other Credential Issuer.
 * Wallets SHOULD NOT infer ordering, such as whether one value is newer or older than another, from Credential Dataset Version values.
-* Wallets SHOULD delete previously received Credentials that have the same Credential Dataset Identifier but a different Credential Dataset Version.
+* Wallets SHOULD delete previously received Credentials that have the same Credential Configuration and Credential Dataset Identifier but a different Credential Dataset Version.
 * Wallets MUST NOT use a Credential Dataset Identifier as a `credential_identifier` in a Credential Request. A Credential Issuer MAY use the same value for both, but the two identifiers are distinct and a Wallet MUST NOT assume that they are equal.
 
-Both parameters are RECOMMENDED rather than REQUIRED, so a Wallet cannot rely on receiving them (especiallyin regard to Credential Issuers implementing OpenID4VCI 1.0). A Wallet that does not receive these parameters cannot distinguish a re-issuance of unchanged data from an issuance of changed data, and applies its own policy for retaining or discarding previously issued Credentials. Similarly, a Credential Issuer that does not return these parameters cannot rely on Wallets either retaining or discarding previously issued Credentials, and, where the Credential Issuer requires that superseded Credentials are no longer accepted, it needs to use a Credential status mechanism instead.
+Both parameters are RECOMMENDED rather than REQUIRED, so a Wallet cannot rely on receiving them (especially in regard to Credential Issuers implementing OpenID4VCI 1.0). A Wallet that does not receive these parameters cannot distinguish a re-issuance of unchanged data from an issuance of changed data, and applies its own policy for retaining or discarding previously issued Credentials. Similarly, a Credential Issuer that does not return these parameters cannot rely on Wallets either retaining or discarding previously issued Credentials, and, where the Credential Issuer requires that superseded Credentials are no longer accepted, it needs to use a Credential status mechanism instead.
 
 ## Relationship between the Credential Issuer Identifier in the Metadata and the Issuer Identifier in the Issued Credential
 
