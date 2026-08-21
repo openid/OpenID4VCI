@@ -1688,7 +1688,7 @@ The Credential Issuer Metadata contains information on the Credential Issuer's t
 
 ### Credential Issuer Identifier {#credential-issuer-identifier}
 
-A Credential Issuer is identified by a case sensitive URL using the `https` scheme that contains scheme, host and, optionally, port number and path components, but no query or fragment components. The Credential Issuer Identifier SHOULD NOT contain a terminating `/`.
+A Credential Issuer is identified by a case sensitive URL using the `https` scheme that contains scheme, host and, optionally, port number and path components, but no query or fragment components.
 
 ### Credential Issuer Metadata Retrieval {#credential-issuer-wellknown}
 
@@ -3722,6 +3722,5 @@ The technology described in this specification was made available from contribut
    * add iana registration for an openid foundation urn
    * add optional metadata to the credential response
    * use OAuth 2.0 for First-Party Applications as basis for Interactive Authorization
-   * add recommendation that Credential Issuer Identifier should not terminate with `/`
    * add back removal of any terminating `/` from the Credential Issuer Identifier when forming the Credential Issuer Metadata URL
    * update IA HTTP response codes for consistency with First-Party Application draft-4
