@@ -775,6 +775,7 @@ The following non-normative example shows a payload of a signed request object:
 In addition to the request parameters defined in Section 5.3 of [@!I-D.ietf-oauth-first-party-apps], the Wallet adds parameters that are in response to the interaction type the Authorization Server requested in the most recent response. The specific parameters are defined by each interaction type.
 
 ## Authorization Challenge Response
+
 Upon receiving an Authorization Challenge Request, the Authorization Server determines whether the Authorization Request is syntactically and semantically correct and whether the information provided by the Wallet so far is sufficient to grant authorization for the Credential issuance.
 The response to an Authorization Challenge Request is an HTTP message with the content type `application/json` and a JSON document in the body that indicates either
 
@@ -788,9 +789,21 @@ By setting `error_code` to `insufficient_authorization` in the response with HTT
 In this case, the following keys MUST be present in the response as well:
 
 * `interaction_type_required`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST set this to a value that was included in the `interaction_types_supported` parameter sent by the Wallet. If the Authorization Server cannot fulfill the request using any of the supported types, it MUST reject the request with an Authorization Challenge Error Response, as defined in (#ia-error-response).
-* `auth_session`: REQUIRED. As defined in Section 5.2.2 of [@!I-D.ietf-oauth-first-party-apps]
 
 If a Wallet receives an `interaction_type_required` value that it does not support, it MUST abort the issuance process.
+
+The Authorization Server MUST provide a mechanism to associate the next request by this Wallet with the ongoing authorization request sequence.
+The following key MAY be present in the response to provide such a mechanism:
+
+* `auth_session`: REQUIRED if specified by the interaction type. String containing a value that allows the Authorization Server to associate subsequent requests by this Wallet with the ongoing authorization request sequence. Wallets SHOULD treat this value as an opaque value. The value returned MUST be distinct for each authorization challenge response.
+
+A definition of a custom type of interaction MUST include exactly one of the following:
+
+1. A normative requirement that the `auth_session` key MUST be included in the Interaction Required Response.
+2. A definition of a mechanism to associate the next request by the Wallet with the ongoing authorization request sequence.
+
+The Wallet MUST include the most recently received `auth_session` in follow-up requests to the Authorization Challenge Endpoint.
+The Wallet MUST ignore the `auth_session` key when processing Interaction Required Responses for interaction types that do not specify a requirement to include the `auth_session` key.
 
 Additional keys are defined based on the type of interaction, as shown next.
 
@@ -800,6 +813,8 @@ If `interaction_type_required` is set to `urn:openid:dcp:ia:openid4vp_presentati
 
 * The `response_mode` MUST be either `ia_post` for unencrypted responses or `ia_post.jwt` for encrypted responses. When the Wallet receives one of these response modes, it MUST send its response to the same Authorization Challenge Endpoint.
 * If `expected_origins` is present, it MUST contain only the derived Origin of the Authorization Challenge Endpoint as defined in Section 4 of [@RFC6454]. For example, the derived Origin from `https://example.com/authorize-challenge` is `https://example.com`.
+
+The response MUST include the key `auth_session` to associate the next request by this Wallet with the ongoing authorization request sequence.
 
 The following is a non-normative example of an unsigned Authorization Request:
 
@@ -916,6 +931,8 @@ The Wallet MUST only use a `request_uri` value once.
 Authorization servers SHOULD treat `request_uri` values as one-time use but MAY allow for duplicate requests due to a user reloading/refreshing their user agent. An expired request_uri MUST be rejected as invalid.
 The Authorization Server MAY include the `expires_in` key as defined in [@!RFC9126].
 
+Since the `request_uri` allows the Authorization Server to associate the Authorization Request with the ongoing authorization request sequence, the Authorization Server MUST omit `auth_session` parameter in the response. The `auth_session` will be returned in the redirect back to the Wallet if required.
+
 Non-normative Example:
 
 ```
@@ -925,7 +942,6 @@ Cache-Control: no-store
 
 {
   "error": "insufficient_authorization",
-  "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "interaction_type_required": "urn:openid:dcp:ia:auth_via_web",
   "request_uri": "urn:ietf:params:oauth:request_uri:6esc_11ACC5bwc014ltc14eY22c",
   "expires_in": 60
@@ -953,6 +969,7 @@ It is RECOMMENDED to use this extension point instead of modifying the OAuth pro
 See (#ia-security) for additional security considerations.
 
 In the following non-normative example, this extension point is used to read the Betelgeuse Intergalactic ID card through an NFC interface in the Wallet. A token called `biic_token` is used to start the process.
+It is assumed that the `biic_token` is used by the Authorization Server to associate the next request by this Wallet with the ongoing authorization request sequence, and no `auth_session` is thus needed.
 
 ```
 HTTP/1.1 403 Forbidden
@@ -961,7 +978,6 @@ Cache-Control: no-store
 
 {
   "error": "insufficient_authorization",
-  "auth_session": "wxroVrBY2MCq4dDNGXACS",
   "interaction_type_required": "urn:galaxysdo:ia:betelgeuse_intergalactic_id_card",
   "biic_token": "73475cb40a568e8da8a045ced110137e159f890ac4da883b6b17dc651b3a8049"
 }
