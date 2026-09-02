@@ -7,6 +7,7 @@ The current WG-Draft version is built automatically from the master branch and c
 
 * 1.0: https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-1_0-wg-draft.html
 * 1.1: https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-1_1-wg-draft.html
+* Server to Server (s2s): https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-server-2-server-wg-draft.html
 
 Other versions of the spec can be accessed at: https://openid.net/sg/openid4vc/specifications/
 
