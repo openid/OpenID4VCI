@@ -812,7 +812,8 @@ Additional keys are defined based on the type of interaction, as shown next.
 If `interaction_type_required` is set to `urn:openid:dcp:ia:openid4vp_presentation`, as shown in the following example, the response MUST further include an `openid4vp_request` parameter containing an OpenID4VP Authorization Request. The contents of the request is the same as for requests passed to the Digital Credentials API (see Appendix A.2 and Appendix A.3 of [@!OpenID4VP]), except as follows:
 
 * The `response_mode` MUST be either `ia_post` for unencrypted responses or `ia_post.jwt` for encrypted responses. When the Wallet receives one of these response modes, it MUST send its response to the same Authorization Challenge Endpoint.
-* If `expected_origins` is present, it MUST contain only the derived Origin of the Authorization Challenge Endpoint as defined in Section 4 of [@RFC6454]. For example, the derived Origin from `https://example.com/authorize-challenge` is `https://example.com`.
+* The `expected_origins` parameter MUST NOT be present.
+* When signed requests defined in A.3.2 of [@!OpenID4VP] are used, an additional `expected_url` parameter MUST be present. The `expected_url` parameter is a non-empty string that contains the endpoint of the Authorization Server that is returning the Interaction Required Response. In the `urn:openid:dcp:ia:openid4vp_presentation` interaction type, `expected_url` MUST be set to the Authorization Challenge Endpoint.
 
 The response MUST include the key `auth_session` to associate the next request by this Wallet with the ongoing authorization request sequence.
 
@@ -874,7 +875,7 @@ The exact architecture and the deployment of the Issuer's OpenID4VP Verifier is 
 
 When processing the request the following logic applies:
 
-  1. If `expected_origins` is present, the Wallet MUST ensure that `expected_origins` contains the derived Origin as defined above.
+  1. If `expected_url` is present, the Wallet MUST compare the value in this parameter to the URL of the follow-up Interactive Authorization Request to detect replay of the request from a malicious Authorization Server/Verifier. If the URL does not match the value of the `expected_url`, the Wallet MUST return an error. This error SHOULD be an `invalid_request` error. This parameter is not for use in unsigned requests and therefore a Wallet MUST ignore this parameter if it is present in an unsigned request.
   2. If the response contains Verifiable Presentations that include Holder Binding, the audience of each of those MUST be properly bound to the Authorization Challenge Endpoint, following the rules defined by their Credential Format. Details on how to do this for each format can be found in the "Authorization Challenge Endpoint Binding" sections under (#format-profiles). Note that the Credential Format here refers to the format of the Verifiable Presentation requested in the OpenID4VP Authorization Request, which may be different from the format used for issuing the Credentials themselves. If any Verifiable Presentation with Holder Binding is not correctly bound to the Authorization Challenge Endpoint, the response MUST be rejected.
 
 The Authorization Challenge Request, which is used to submit the OpenID4VP Authorization Response MUST satisfy the requirements set out in (#intermediate-request). In addition to these requirements, the request MUST also contain the `openid4vp_response` parameter. The value of the `openid4vp_response` parameter is a JSON-encoded object that encodes the OpenID4VP Authorization Response parameters. In the case of an error it instead encodes the Authorization Error Response parameters. When the `response_mode` is `ia_post.jwt` the OpenID4VP Authorization Response MUST be encrypted according to Section 8.3 of [@!OpenID4VP].
@@ -999,7 +1000,7 @@ This may lead to the malicious Authorization Server gaining access to Credential
 
 Custom extensions ((#ia-custom-extensions)) MUST ensure that this attack is prevented by ensuring one or both of the following:
 
- 1. The Wallet is able to detect that a request is not presented by the party that initiated the Authorization Challenge Request. In the case of the (#ia-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_origins` parameter in the request, which contains the derived Origin of the Authorization Challenge Endpoint that initiated the request.
+ 1. The Wallet is able to detect that a request is not presented by the party that initiated the Authorization Challenge Request. In the case of the (#ia-require-presentation) interaction with a signed Presentation request, this is achieved by the Wallet verifying the `expected_url` parameter in the request, which contains the Authorization Challenge Endpoint that initiated the request.
  2. The Authorization Server is able to detect that the request was forwarded to a different endpoint. In the case of the (#ia-require-presentation) interaction, this is achieved for both signed and unsigned requests by binding the Authorization Challenge Endpoint to the Verifiable Presentation (see "Interactive Authorization Binding" sections under (#format-profiles)), which is then verified by the Authorization Server.
 
 ### Authorization Challenge Error Response {#ia-error-response}
@@ -2918,7 +2919,7 @@ The following is a non-normative example of a Credential Response containing a C
 
 ### Interactive Authorization Binding {#ia-binding-sd-jwt-vc}
 
-To bind the Interactive Authorization to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim in the Key Binding JWT MUST be set to the derived Origin (as defined in (#ia-require-presentation)) of the Authorization Challenge Endpoint, prefixed with `ia:` (e.g., `ia:https://example.com/authorize-challenge`).
+To bind the Interactive Authorization to a Verifiable Presentation using the Credential Format defined in this section, the `aud` claim in the Key Binding JWT MUST be set to the Authorization Challenge Endpoint, prefixed with `ia:` (e.g., `ia:https://example.com/authorize-challenge`).
 
 # Claims Description 
 
@@ -3467,6 +3468,11 @@ established by [@!RFC6749].
 * Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
 * Reference: (#token-request) of this specification
 
+* Name: `expected_url`
+* Parameter Usage Location: authorization request
+* Change Controller: OpenID Foundation Digital Credentials Protocols Working Group - openid-specs-digital-credentials-protocols@lists.openid.net
+* Reference: (#interactive-authorization) this specification
+
 ## OAuth Authorization Server Metadata Registry
 
 This specification registers the following authorization server metadata parameter
@@ -3730,9 +3736,9 @@ The technology described in this specification was made available from contribut
    * move IAE binding to dedicated format-specific sections
    * rename `iar:` prefix in `iae:` in IAE flow
    * rename `iar-post` response mode in `iae_post` in IAE flow
-   * use derived origin for `expected_origins` in IAE flow
    * add require_interactive_authorization_request to AS metadata
    * add interactive_authorization_endpoint to AS metadata section
+   * use `expected_url` instead of `expected_origins` for IAE flow
    * add invalid_tx_code to Pre-Authz Code Flow
    * add URNs for IAE type identifiers
    * add iana registration for an openid foundation urn
