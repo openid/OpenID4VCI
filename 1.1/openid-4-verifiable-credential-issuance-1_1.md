@@ -213,7 +213,7 @@ Below is the summary of how Credential(s) that are being issued are identified t
   in the Credential Request. If the Authorization Server does not support returning an `authorization_details` parameter containing the
   `credential_identifiers` parameter in the Token Response, the Wallet uses `credential_configuration_id` parameter
   in the Credential Request.
-- the Credential Issuer identifies the Credential Dataset for the issued Credential(s) using the `credential_dataset_id` and `credential_dataset_version` parameter
+- the Credential Issuer identifies the Credential Dataset for the issued Credential(s) using the `credential_dataset_id` and `credential_dataset_version` parameters
 in the Credential Response, enabling the Wallet to relate them to previously received Credentials.
 
 
@@ -1356,7 +1356,7 @@ The following parameters are used in the JSON-encoded Credential Response body:
 * `notification_id`: OPTIONAL. String identifying one or more Credentials issued in one Credential Response. It MUST be included in the Notification Request as defined in (#notification). It MUST not be used if the `credentials` parameter is not present.
 * `credential_metadata`: OPTIONAL. Object that contains additional metadata specific to the issued Credential(s). The definitions and contained parameters for this Object are identical to the `credential_metadata` parameter as defined in Credential Issuer Metadata (see (#credential-issuer-metadata)) See (#display-metadata-considerations) for implementation considerations on credential metadata.
 * `credential_dataset_id`: RECOMMENDED. A string containing the Credential Dataset Identifier of the Credential Dataset from which the returned Credential(s) were issued. Together with the `credential_dataset_version` parameter, it allows Wallets to determine if previously received Credentials may be superseded. See (#credential-dataset-identifier-implementation) for implementation considerations.
-* `credential_dataset_version`: RECOMMENDED. A string containing the Credential Dataset Version associated with the returned Credential(s). This allows Wallets to detect changes to the underlying Credential Dataset across different Credential Responses. It MUST NOT be used unless the `credential_dataset_id` parameter is also present, since a Credential Dataset Version cannot be interpreted without the Credential Dataset Identifier it belongs to. See (#credential-dataset-identifier-implementation) for implementation considerations.
+* `credential_dataset_version`: RECOMMENDED. A string containing the Credential Dataset Version associated with the returned Credential(s). This allows Wallets to detect changes to the underlying Credential Dataset across different Credential Responses. It MUST be present if `credential_dataset_id` is present and not be present otherwise. See (#credential-dataset-identifier-implementation) for implementation considerations.
 
 Additional Credential Response parameters MAY be defined and used. The Wallet MUST ignore any unrecognized parameters.
 
