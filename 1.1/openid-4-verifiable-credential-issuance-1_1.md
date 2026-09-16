@@ -928,6 +928,7 @@ If the type is `urn:openid:dcp:ia:auth_via_web`, the Authorization Server is ind
 In this case, the Authorization server MUST include the key `request_uri` in the response.
 The Wallet MUST use the `request_uri` value to build an Authorization Request as defined in Section 4 of [@!RFC9126] and complete the rest of the authorization process as defined there.
 The Wallet MUST only use a `request_uri` value once.
+If the Wallet supports multiple concurrent sessions, it MUST include the `state` parameter in the Authorization Request so it can identify the session that the redirect from the Authorization Server belongs to.
 Authorization servers SHOULD treat `request_uri` values as one-time use but MAY allow for duplicate requests due to a user reloading/refreshing their user agent. An expired request_uri MUST be rejected as invalid.
 The Authorization Server MAY include the `expires_in` key as defined in [@!RFC9126].
 
@@ -967,6 +968,8 @@ auth_session=wxroVrBY2MCq4dDNGXACS&code_verifier=avjebhrnqwketh
 Additional, custom types of interactions MAY be defined by extensions of this specification to enable other types of interactions, for example, by interacting with a smart card. Such an extension MUST use a collision-resistant URN for their respective type identifier.
 It is RECOMMENDED to use this extension point instead of modifying the OAuth protocol in order to facilitate interactions that require interactions with native components of the Wallet application.
 See (#ia-security) for additional security considerations.
+
+Custom interaction types SHOULD, if relevant, define how a Wallet supporting multiple concurrent sessions binds any external communication to the correct session.
 
 In the following non-normative example, this extension point is used to read the Betelgeuse Intergalactic ID card through an NFC interface in the Wallet. A token called `biic_token` is used to start the process.
 It is assumed that the `biic_token` is used by the Authorization Server to associate the next request by this Wallet with the ongoing authorization request sequence, and no `auth_session` is thus needed.
