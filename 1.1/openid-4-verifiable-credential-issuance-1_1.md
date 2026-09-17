@@ -1991,7 +1991,7 @@ This is useful in batch issuance scenarios where claim values may change over ti
 
 The following requirements apply to a Credential Issuer that includes these parameters:
 
-* Credential Issuers SHOULD NOT disclose the Credential Dataset Identifier or the Credential Dataset Tag to any other parties than the particular Wallet, they are issued to.
+* Credential Issuers SHOULD NOT disclose the Credential Dataset Identifier or the Credential Dataset Tag to any other parties than the particular Wallet they are issued to.
 * Credential Issuers SHOULD return the same Credential Dataset Identifier for every issuance from the same Credential Dataset, including issuances authorized by a different Access Token and issuances obtained through a different authorization flow.
 * Credential Issuers SHOULD NOT use the same Credential Dataset Identifier for a different Credential Dataset of the same Credential Configuration.
 * If the Credential Dataset has not changed, Credential Issuers SHOULD return the same Credential Dataset Tag, even when issuing a new Credential instance that differs in data that is not part of the Credential Dataset, such as cryptographic data (e.g., an Issuer signature) or timestamps.
