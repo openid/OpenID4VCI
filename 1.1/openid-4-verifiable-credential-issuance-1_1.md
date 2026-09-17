@@ -1979,7 +1979,7 @@ The action leading to the Wallet performing another Credential Request can also 
 
 ## Credential Dataset Identifier and Credential Dataset Tag {#credential-dataset-identifier-implementation}
 
-The Credential Dataset Identifier (`credential_dataset_id`) allows Credential Issuers to communicate whether a newly issued Credential has the same Credential Dataset of a previously issued Credential.
+The Credential Dataset Identifier (`credential_dataset_id`) allows Credential Issuers to communicate whether a newly issued Credential has the same Credential Dataset as a previously issued Credential.
 This allows Wallets to differentiate scenarios whether a Credential is an update or replacement of an existing Credential, e.g. a mobile driving license with updated privileges, or a new Credential that is supposed to exist parallel to existing credentials, e.g. vehicle registration card for multiple cars.
 
 The Credential Dataset Tag (`credential_dataset_tag`) allows Credential Issuers to communicate whether a newly issued Credential for a particular Credential Dataset Identifier differs from previously issued Credentials for this Credential Dataset Identifier.
