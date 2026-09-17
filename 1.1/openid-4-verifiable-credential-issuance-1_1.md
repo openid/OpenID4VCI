@@ -1989,6 +1989,8 @@ This is useful in batch issuance scenarios where claim values may change over ti
 * Credentials received with the same Credential Configuration, same Credential Dataset Identifier and the same Credential Dataset Tag are additional instances of Credentials the Wallet already holds, usually for batch-issued Credentials. The Wallet can retain them alongside the Credentials it already has.
 * Credentials received with the same Credential Dataset Identifier but a different Credential Dataset Tag supersede the previously issued Credentials the Wallet already holds for that Credential Dataset.
 
+Both values are opaque and are intended for processing by the Wallet rather than for presentation to the End-User. They convey no ordering and carry no meaning that is useful to the End-User, and presenting them increases the risk of them being disclosed to other parties.
+
 The following requirements apply to a Credential Issuer that includes these parameters:
 
 * Credential Issuers SHOULD NOT disclose the Credential Dataset Identifier or the Credential Dataset Tag to any other parties than the particular Wallet they are issued to.
