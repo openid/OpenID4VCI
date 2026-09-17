@@ -74,7 +74,7 @@ Credential Dataset:
 :  A set of one or more claims about a subject, provided by a Credential Issuer.
 
 Credential Dataset Identifier:
-:  A String assigned by the Credential Issuer that identifies a Credential Dataset within the scope of a Credential Configuration of that Credential Issuer. Credential Issuers using the same Credential Dataset Identifier  across multiple authorizations and issuances, enable Wallets to determine which previously received Credentials relate to the same Credential Dataset.
+:  A String assigned by the Credential Issuer that identifies a Credential Dataset within the scope of a Credential Configuration of that Credential Issuer. Credential Issuers using the same Credential Dataset Identifier across multiple authorizations and issuances enable Wallets to determine which previously received Credentials relate to the same Credential Dataset.
 
 Credential Dataset Tag:
 :  A String that identifies a specific state of a Credential Dataset. This tag is identical for multiple instances of a Credential that share the same Credential Dataset, even when the Credential instances differ in data that is not part of the Credential Dataset, such as cryptographic data (e.g., an Issuer signature) or timestamps. When any of the claim values in the Credential Dataset change or claims are added or removed, a new Credential Dataset Tag is assigned. A Credential Dataset Tag is scoped to a particular Credential Dataset Identifier and its Credential Configuration.
