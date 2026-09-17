@@ -213,7 +213,7 @@ Below is the summary of how Credential(s) that are being issued are identified t
   in the Credential Request. If the Authorization Server does not support returning an `authorization_details` parameter containing the
   `credential_identifiers` parameter in the Token Response, the Wallet uses `credential_configuration_id` parameter
   in the Credential Request.
-- the Credential Issuer identifies the Credential Dataset for the issued Credential(s) using the `credential_dataset_id` and `credential_dataset_tag` parameters
+- The Credential Issuer identifies the Credential Dataset for the issued Credential(s) using the `credential_dataset_id` and `credential_dataset_tag` parameters
 in the Credential Response, enabling the Wallet to relate them to previously received Credentials.
 
 
