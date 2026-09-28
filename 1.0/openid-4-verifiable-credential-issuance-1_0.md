@@ -1309,9 +1309,9 @@ A Credential Issuer is identified by a case sensitive URL using the `https` sche
 
 The Credential Issuer's configuration can be retrieved using the Credential Issuer Identifier.
 
-Credential Issuers publishing metadata MUST make a JSON document available at the path formed by inserting the string `/.well-known/openid-credential-issuer` into the Credential Issuer Identifier between the host component and the path component, if any.
+Credential Issuers publishing metadata MUST make a JSON document available at the path formed by inserting the string `/.well-known/openid-credential-issuer` into the Credential Issuer Identifier between the host component and the path component, if any. If the Credential Issuer Identifier contains a path component, any terminating `/` MUST be removed before inserting `/.well-known/openid-credential-issuer`.
 
-For example, the metadata for the Credential Issuer Identifier `https://issuer.example.com/tenant` would be retrieved from `https://issuer.example.com/.well-known/openid-credential-issuer/tenant`. The metadata for the Credential Issuer Identifier `https://tenant.issuer.example.com` would be retrieved from `https://tenant.issuer.example.com/.well-known/openid-credential-issuer`.
+For example, the metadata for the Credential Issuer Identifier `https://issuer.example.com/tenant` would be retrieved from `https://issuer.example.com/.well-known/openid-credential-issuer/tenant`. The metadata for the Credential Issuer Identifier `https://issuer.example.com/tenant/` would also be retrieved from `https://issuer.example.com/.well-known/openid-credential-issuer/tenant`. The metadata for the Credential Issuer Identifier `https://tenant.issuer.example.com` would be retrieved from `https://tenant.issuer.example.com/.well-known/openid-credential-issuer`.
 
 Communication with the Credential Issuer Metadata Endpoint MUST utilize TLS.
 
@@ -3040,6 +3040,7 @@ The technology described in this specification was made available from contribut
 -19
 
    * Add security consideration on transaction code guessing
+   * add back removal of any terminating `/` from the Credential Issuer Identifier when forming the Credential Issuer Metadata URL
    
 -final
    
