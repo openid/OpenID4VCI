@@ -1889,7 +1889,11 @@ The Credential Issuer MUST ensure the release of any privacy-sensitive data in C
 
 ## Redirect to the Credential Issuer {#redirect-security}
 
-The `expected_redirect_origins` Credential Issuer metadata parameter allows the Wallet to authenticate the origin of the `issuer_redirect_uri`. An attacker that is able to modify a Credential Offer, as described in (#credential-offer-security), can therefore manipulate the path, query, and fragment components under a listed origin. Credential Issuers therefore SHOULD only list origins whose content they fully control. In multi-tenant environments, this is achieved by hosting each tenant on its own subdomain, so that every tenant has a distinct origin, and by listing only that tenant's origin in `expected_redirect_origins`. Credential Issuers that cannot separate origins in this way and that are concerned about phishing attacks SHOULD NOT use the `issuer_redirect_uri` Credential Offer parameter.
+The `expected_redirect_origins` Credential Issuer metadata parameter allows the Wallet to authenticate the origin of the `issuer_redirect_uri`. An attacker that is able to modify a Credential Offer, as described in (#credential-offer-security), can therefore manipulate the path, query, and fragment components under a listed origin.
+
+Credential Issuers MUST NOT rely on data conveyed in the redirect_uri, to identify or authenticate the session in which the Credential Offer was issued.
+
+Credential Issuers SHOULD only list origins whose content they fully control. In multi-tenant environments, this is achieved by hosting each tenant on its own subdomain, so that every tenant has a distinct origin, and by listing only that tenant's origin in `expected_redirect_origins`. Credential Issuers that cannot separate origins in this way and that are concerned about phishing attacks SHOULD NOT use the `issuer_redirect_uri` Credential Offer parameter.
 
 ## Pre-Authorized Code Flow {#security-considerations-pre-authz-code}
 
