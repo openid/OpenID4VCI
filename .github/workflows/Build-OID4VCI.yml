@@ -21,10 +21,16 @@ jobs:
                 docker run \
                 -v /${{ github.workspace }}/1.1:/data danielfett/markdown2rfc \
                 openid-4-verifiable-credential-issuance-1_1.md
+          - name: s2s Run the build process with Docker
+            run: |
+                docker run \
+                -v /${{ github.workspace }}/s2s:/data danielfett/markdown2rfc \
+                openid-4-verifiable-credential-issuance-server-2-server.md
           - name: rename
             run: |
                 mv ./1.0/openid-4-verifiable-credential-issuance-1_0*.html ./openid-4-verifiable-credential-issuance-1_0-wg-draft.html && \
-                mv ./1.1/openid-4-verifiable-credential-issuance-1_1*.html ./openid-4-verifiable-credential-issuance-1_1-wg-draft.html
+                mv ./1.1/openid-4-verifiable-credential-issuance-1_1*.html ./openid-4-verifiable-credential-issuance-1_1-wg-draft.html && \
+                mv ./s2s/openid-4-verifiable-credential-issuance-server-2-server*.html ./openid-4-verifiable-credential-issuance-server-2-server-wg-draft.html
           - uses: actions/upload-artifact@v4
             with:
                 # Artifact name
