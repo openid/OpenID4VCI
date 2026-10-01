@@ -805,6 +805,9 @@ A definition of a custom type of interaction MUST include exactly one of the fol
 The Wallet MUST include the most recently received `auth_session` in follow-up requests to the Authorization Challenge Endpoint.
 The Wallet MUST ignore the `auth_session` key when processing Interaction Required Responses for interaction types that do not specify a requirement to include the `auth_session` key.
 
+If the Client and Authorization Server are using DPoP binding of Access Tokens and/or Authorization Codes, then the `auth_session` value MUST be protected as well.
+The authorization server MUST associate the `auth_session` value with the DPoP public key.
+
 Additional keys are defined based on the type of interaction, as shown next.
 
 #### Require Presentation {#ia-require-presentation}
