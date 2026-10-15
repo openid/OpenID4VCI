@@ -1987,7 +1987,7 @@ This allows Wallets to distinguish between a re-issuance of unchanged data with 
 This is useful in batch issuance scenarios where claim values may change over time, such as an updated address, correction of previously issued personal data, or a change in legal or entitlement status (e.g., reaching the age of majority) and allows Wallets to decide whether to drop previously issued Credentials to maintain a uniform Credential Dataset:
 
 * Credentials received with the same Credential Configuration, same Credential Dataset Identifier and the same Credential Dataset Tag are additional instances of Credentials the Wallet already holds, usually for batch-issued Credentials. The Wallet can retain them alongside the Credentials it already has.
-* Credentials received with the same Credential Dataset Identifier but a different Credential Dataset Tag supersede the previously issued Credentials the Wallet already holds for that Credential Dataset.
+* Credentials received with the same Credential Configuration and same Credential Dataset Identifier but a different Credential Dataset Tag supersede the previously issued Credentials the Wallet already holds for that Credential Dataset.
 
 Both values are opaque and are intended for processing by the Wallet rather than for presentation to the End-User. They convey no ordering and carry no meaning that is useful to the End-User, and presenting them increases the risk of them being disclosed to other parties.
 
