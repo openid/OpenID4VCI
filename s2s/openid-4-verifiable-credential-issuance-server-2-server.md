@@ -232,7 +232,7 @@ Error responses use content type application/problem+json and MAY include:
 | detail    | string   | Human-readable explanation specific to this occurrence                                       |
 | instance  | URI      | URI identifying this specific error occurrence (for support/debugging)                       |
 
-Implementations MAY extend the Problem Details object with additional fields (e.g., errorCode for machine-readable application codes, retryable flag, validationErrors array for field-level issues). See Section 3.1 of [@!RFC9457] for more information.
+Implementations MAY extend the Problem Details object with additional fields (e.g., `error_code` for machine-readable application codes, retryable flag, `validation_errors` array for field-level issues). See Section 3.1 of [@!RFC9457] for more information.
 
 ### Error Types
 
@@ -278,13 +278,13 @@ All keys are communicated between the Wallet and Issuer using this common key st
 
 | **Field**         | **Type**       | **Description**                                                                                              |
 | ----------------- | -------------- | ------------------------------------------------------------------------------------------------------------ |
-| keyType           | string         | **REQUIRED**: Semantic use for the key.                                                                      |
+| key_type           | string         | **REQUIRED**: Semantic use for the key.                                                                      |
 | client_public_key | object (JWK)   | **REQUIRED**: The public key in the JWK format as defined in [@!RFC7517].                                    |
 | attestation       | Object (Proof) | **OPTIONAL**: Attestation about the key. For example a platform-provided x509-chain or a keyattestation-jwt. |
 | purpose           | string         | **OPTIONAL**: Human-readable purpose of the key.                                                             |
 | extensions        | object         | **OPTIONAL**: Implementation-specific extension fields.                                                      |
 
-The publicKey MUST include the `alg` identifier and is RECOMMENDED to include a keyId.
+The `client_public_key` JWK MUST include the `alg` identifier and is RECOMMENDED to include a `kid`.
 
 This specification defines two key types:
 
@@ -303,10 +303,10 @@ This section details how large content can be passed by reference to a downloada
 
 | **Field**     | **Type**           | **Description**                                            |
 | ------------- | ------------------ | ---------------------------------------------------------- |
-| downloadUrl   | string (URI)       | **REQUIRED**: The URL where the content can be downloaded. |
-| contentDigest | string (byte)      | **REQUIRED**: SHA-256 digest of the JWE content.           |
-| contentSize   | integer            | **OPTIONAL**: The size of the content in bytes.            |
-| expiresAt     | string (date-time) | **OPTIONAL**: The timestamp after which the URL expires.   |
+| download_url   | string (URI)       | **REQUIRED**: The URL where the content can be downloaded. |
+| content_digest | string (byte)      | **REQUIRED**: SHA-256 digest of the JWE content.           |
+| content_size   | integer            | **OPTIONAL**: The size of the content in bytes.            |
+| expires_at     | string (date-time) | **OPTIONAL**: The timestamp after which the URL expires.   |
 | extensions    | object             | **OPTIONAL**: Implementation-specific extension fields.    |
 
 ## Idempotency {#idempotency}
@@ -370,27 +370,27 @@ The Wallet Server provides a long-lived SessionId to associate with the WalletSi
 
 #### Replay Protection
 
-This endpoint is protected against replay attacks through a signed nonce mechanism. The wallet produces a digital signature over the sessionId using the walletSigningKey and includes this signature as the verificationNonce field in the request.
+This endpoint is protected against replay attacks through a signed nonce mechanism. The wallet produces a digital signature over the Session Id using the Wallet Signing Key and includes this signature as the `verification_nonce` field in the request.
 
 Issuers MUST perform the following verification steps:
 
-- Verify the verificationNonce signature against the walletSigningKey included in the same request
-- Confirm the signed value matches the sessionId in the request
-- Confirm the sessionId has not been previously consumed
+- Verify the `verification_nonce` signature using the Wallet Signing Key included in the same request
+- Confirm the signed value matches the `session_id` in the request
+- Confirm the `session_id` value has not been previously consumed
 
-Because each sessionId is a unique UUID generated per verification session, a replayed request will be rejected — either the sessionId was already consumed, or a different sessionId will not match the original signature. Replay from a different device is also prevented, as only the holder of the private walletSigningKey can produce a valid signature.
+Because each Session Id is a unique UUID generated per verification session, a replayed request will be rejected — either the Session Id was already consumed, or a different Session Id will not match the original signature. Replay from a different device is also prevented, as only the holder of the private Wallet Signing Key can produce a valid signature.
 
 #### Request Body Schema:
 
 | Field                      | Type                              | Description                                                                                                                                                                                                                                                      |
 | -------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| sessionId                  | string(UUID)                      | **REQUIRED**: Wallet Server-generated UUID for this session. Shared correlation identifier that threads verification and credential issuance.                                                                                                                    |
-| credentialConfigurationIds | Array (string)                    | **REQUIRED**: Identifies the credential types/templates for the credentials being requested.Issuers use this to determine which credential type and configuration apply.                                                                                         |
-| walletSigningKeyData       | object (KeyData)                  | **REQUIRED**: Key Data belong to the Public Key for the Wallet Client Instance that is initiating this verification.Must be stored against this sessionId and used to verify this and subsequent requests originate from the same authenticated client instance. |
-| verificationNonce          | string(bytes)                     | **REQUIRED**: Signature over sessionId, providing replay protection and cryptographic binding to the session.                                                                                                                                                    |
-| verificationData           | Object (VerificationDataResponse) | **OPTIONAL**: VerificationDataResponse to allow for Wallets to combine providing evidence when it is known in advance.                                                                                                                                           |
-| supportedVerificationTypes | Array(String)                     | **OPTIONAL**: List of verificationTypes this Wallet Client Instance supports, that can be used with `ADDITIONAL_INFO_REQUIRED`                                                                                                                                   |
-| requestedDeviceCount       | integer >=1 (default 1)           | **OPTIONAL**: Number of devices the Wallet Server intends to provision for this verification session. The issuer uses this as input when determining `authorizedDeviceCount` in the approval response. If omitted, defaults to 1.                                |
+| session_id                  | string(UUID)                      | **REQUIRED**: Wallet Server-generated UUID for this session. Shared correlation identifier that threads verification and credential issuance.                                                                                                                    |
+| credential_configuration_ids | Array (string)                    | **REQUIRED**: Identifies the credential types/templates for the credentials being requested.Issuers use this to determine which credential type and configuration apply.                                                                                         |
+| wallet_signing_key_data       | object (KeyData)                  | **REQUIRED**: Key Data belong to the Public Key for the Wallet Client Instance that is initiating this verification.Must be stored against this session_id and used to verify this and subsequent requests originate from the same authenticated client instance. |
+| verification_nonce          | string(bytes)                     | **REQUIRED**: Signature over session_id, providing replay protection and cryptographic binding to the session.                                                                                                                                                    |
+| verification_data          | Object (VerificationDataResponse) | **OPTIONAL**: VerificationDataResponse to allow for Wallets to combine providing evidence when it is known in advance.                                                                                                                                           |
+| supported_verification_types | Array(String)                     | **OPTIONAL**: List of verification_types this Wallet Client Instance supports, that can be used with `ADDITIONAL_INFO_REQUIRED`                                                                                                                                   |
+| requested_device_count       | integer >=1 (default 1)           | **OPTIONAL**: Number of devices the Wallet Server intends to provision for this verification session. The issuer uses this as input when determining `authorized_device_count` in the approval response. If omitted, defaults to 1.                                |
 | locale                     | string                            | **OPTIONAL**: Local of the Wallet Client Instance to use for localization. When absent, the Issuer chooses the locale.                                                                                                                                          |
 | extensions                 | object                            | **OPTIONAL**: Implementation-specific extension fields. Reserved for proprietary data elements needed by specific deployments.                                                                                                                                   |
 
@@ -406,12 +406,12 @@ This is used to provide Verification Data for an ongoing Verification.
 
 #### Request Body Schema
 
-| **Field**               | **Type**                          | **Description**                                                           |
-| ----------------------- | --------------------------------- | ------------------------------------------------------------------------- |
-| sessionId               | string(UUID)                      | **REQUIRED**: Wallet-Generated id received in the `initiate` call.        |
-| verificationId          | string(UUID)                      | **REQUIRED**: Issuer-generated id for the current verification session.   |
-| verificationDataPayload | Object (VerificationDataResponse) | **REQUIRED**: Containing verification data for this verification session. |
-| extensions              | Object                            | **OPTIONAL**: Implementation-specific extension fields.                   |
+| **Field**         | **Type**                          | **Description**                                                           |
+| ----------------- | --------------------------------- | ------------------------------------------------------------------------- |
+| session_id        | string(UUID)                      | **REQUIRED**: Wallet-Generated id received in the `initiate` call.        |
+| verification_id   | string(UUID)                      | **REQUIRED**: Issuer-generated id for the current verification session.   |
+| verification_data | Object (VerificationDataResponse) | **REQUIRED**: Containing verification data for this verification session. |
+| extensions        | Object                            | **OPTIONAL**: Implementation-specific extension fields.                   |
 
 #### Response Body Schema
 
@@ -431,8 +431,8 @@ The Request Body contains allOf the fields in the VerificationStatus schema.
 
 | **Field**      | **Type**     | **Description**                                                         |
 | -------------- | ------------ | ----------------------------------------------------------------------- |
-| sessionId      | string(UUID) | **REQUIRED**: Wallet-Generated id received in the `initiate` call.      |
-| verificationId | string(UUID) | **REQUIRED**: Issuer-generated id for the current verification session. |
+| session_id      | string(UUID) | **REQUIRED**: Wallet-Generated id received in the `initiate` call.      |
+| verification_id | string(UUID) | **REQUIRED**: Issuer-generated id for the current verification session. |
 
 ### Get Verification Status
 
@@ -442,8 +442,8 @@ The path MUST be `/verification/status`. This endpoint is hosted by the Issuer S
 
 | **Field**      | **Type**     | **Description**                                                         |
 | -------------- | ------------ | ----------------------------------------------------------------------- |
-| sessionId      | string(UUID) | **REQUIRED**: Wallet-Generated id received in the `initiate` call.      |
-| verificationId | string(UUID) | **REQUIRED**: Issuer-generated id for the current verification session. |
+| session_id      | string(UUID) | **REQUIRED**: Wallet-Generated id received in the `initiate` call.      |
+| verification_id | string(UUID) | **REQUIRED**: Issuer-generated id for the current verification session. |
 | extensions     | Object       | **OPTIONAL**: Implementation-specific extension fields.                 |
 
 #### Response Body Shema
@@ -458,8 +458,8 @@ The path MUST be `/verification/cancel`. This endpoint is hosted by the Issuer S
 
 | **Field**      | **Type**     | **Description**                                                    |
 | -------------- | ------------ | ------------------------------------------------------------------ |
-| sessionId      | string(UUID) | **REQUIRED**: Wallet-Generated id received in the `initiate` call. |
-| verificationId | string(UUID) | **REQUIRED**: Issuer-generated id for the current session.         |
+| session_id      | string(UUID) | **REQUIRED**: Wallet-Generated id received in the `initiate` call. |
+| verification_id | string(UUID) | **REQUIRED**: Issuer-generated id for the current session.         |
 | reason         | string       | **REQUIRED**: Indicates the reason for cancellation.               |
 | extensions     | Object       | **OPTIONAL**: Implementation-specific extension fields.            |
 
@@ -467,8 +467,8 @@ The path MUST be `/verification/cancel`. This endpoint is hosted by the Issuer S
 
 | **Field**      | **Type**     | **Description**                                                    |
 | -------------- | ------------ | ------------------------------------------------------------------ |
-| sessionId      | string(UUID) | **REQUIRED**: Wallet-Generated id received in the `initiate` call. |
-| verificationId | string(UUID) | **REQUIRED**: Issuer-generated id for the current session.         |
+| session_id      | string(UUID) | **REQUIRED**: Wallet-Generated id received in the `initiate` call. |
+| verification_id | string(UUID) | **REQUIRED**: Issuer-generated id for the current session.         |
 
 ### Verification Status
 
@@ -482,8 +482,8 @@ The following JSON Schema is used at all endpoints:
 
 | Field          | Type                       | Description                                                                                                                                                                              |
 | -------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| sessionId      | string(UUID)               | **REQUIRED**: Wallet-Generated id received in the `initiate` call.                                                                                                                       |
-| verificationId | string(UUID)               | **REQUIRED**: Issuer-generated id for the current session. The value MUST NOT change from the one returned in the initial response..                                                     |
+| session_id      | string(UUID)               | **REQUIRED**: Wallet-Generated id received in the `initiate` call.                                                                                                                       |
+| verification_id | string(UUID)               | **REQUIRED**: Issuer-generated id for the current session. The value MUST NOT change from the one returned in the initial response..                                                     |
 | status         | string(VerificationStatus) | **REQUIRED**: Enum identifier for the current verification status.                                                                                                                       |
 | extensions     | Object                     | **OPTIONAL**: Implementation-specific extension fields. Implementations may include proprietary decision details, additional credential metadata, or domain-specific status information. |
 
@@ -491,7 +491,7 @@ Additional fields are specified based on the VerificationStatus. The following V
 
 | Status                     | Description                                 | Next Step                                                                        |
 |----------------------------|---------------------------------------------|----------------------------------------------------------------------------------|
-| "APPROVED"                 | Verification Passed                         | Wallet Server calls `/credential/provision` to fetch the credentialInstanceIds   |
+| "APPROVED"                 | Verification Passed                         | Wallet Server calls `/credential/provision` to fetch the Credential Instance Ids |
 | "REJECTED"                 | Most recent Verification Data was rejected. | Wallet re-collects Verification Data and re-submit or cancel the verification    |
 | "DENIED"                   | Verification Failed                         | Flow ends                                                                        |
 | "ADDITIONAL_INFO_REQUIRED" | Issuer requires more Verification Data      | Wallet Server calls `verification/supplement` with additional Verification Data. |
@@ -504,28 +504,28 @@ The following fields are present based on type:
 
 | Field                      | Type                     | Description                                                                                                                                      |
 | -------------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| credentialConfigurationIds | Array (string)           | **REQUIRED**: Credential Configurations that                                                                                                     |
-| authorizedDeviceCount      | Integer (>=1), default=1 | **OPTIONAL**: Maximum number of devices this SessionId/VerificationId can be used on, after which the Issuer SHOULD reject any further attempts. |
+| credential_configuration_ids | Array (string)           | **REQUIRED**: Credential Configurations that                                                                                                     |
+| authorized_device_count      | Integer (>=1), default=1 | **OPTIONAL**: Maximum number of devices this SessionId/VerificationId can be used on, after which the Issuer SHOULD reject any further attempts. |
 
 ##### REJECTED Status Fields
 
 | Field           | Type   | Description                          |
 | --------------- | ------ | ------------------------------------ |
-| reasonCode      | string | **REQUIRED**: Rejection reason code. |
-| rejectedDetails | string | **OPTIONAL**: Details for logging.   |
+| reason_code      | string | **REQUIRED**: Rejection reason code. |
+| rejected_details | string | **OPTIONAL**: Details for logging.   |
 
 ##### DENIED Status Fields
 
 | Field         | Type   | Description                          |
 | ------------- | ------ | ------------------------------------ |
-| reasonCode    | string | **REQUIRED**: Denial reason code.    |
-| deniedMessage | string | **REQUIRED**: Message for the human. |
+| reason_code    | string | **REQUIRED**: Denial reason code.    |
+| denied_message | string | **REQUIRED**: Message for the human. |
 
 ##### ADDITIONAL_INFO_REQUIRED Status Fields
 
 | Field                   | Type                             | Description                                                           |
 | ----------------------- | -------------------------------- | --------------------------------------------------------------------- |
-| verificationDataRequest | Object (VerificationDataRequest) | **REQUIRED**: Used to collect additional information from the holder. |
+| verification_data_request | Object (VerificationDataRequest) | **REQUIRED**: Used to collect additional information from the holder. |
 
 ### Verification Data
 
@@ -545,16 +545,16 @@ The flow is as follows:
   - This is optional if pre-known by the Wallet
 1. The Wallet Client performs the necessary actions to collect the required Data from the Holder, and passes it, encrypted, to the Wallet Server.
 1. The Wallet Server adds any additional VerificationData and provides a VerificationDataResponse to the Verification Supplement endpoint.
-1. The Issuer decrypts and verifies the clientPayload and then (asynchronously) processes the response.
+1. The Issuer decrypts and verifies the `client_encrypted_payload` and then (asynchronously) processes the response.
 1. The Issuer repeats steps 2-5 until it reaches a final decision.
 
 #### VerificationDataRequest Schema
 
 | **Field**             | **Type**                            | **Description**                                                                                |
 | --------------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------- |
-| verificationDataItems | Array (VerificationDataItemRequest) | **REQUIRED**: Array of items requested                                                         |
+| verification_data_items | Array (VerificationDataItemRequest) | **REQUIRED**: Array of items requested                                                         |
 | deadline              | string (date-time)                  | **OPTIONAL**: deadline for the request, after which the Verification will be DENIED.           |
-| maxAttempts           | integer                             | **OPTIONAL**: Maximum number of attempts allowed, after which the Verification will be DENIED. |
+| max_attempts           | integer                             | **OPTIONAL**: Maximum number of attempts allowed, after which the Verification will be DENIED. |
 | extensions            | object                              | **OPTIONAL**: Implementation-specific extension fields                                         |
 
 #### VerificationDataItemRequest Schema
@@ -574,14 +574,14 @@ Additional type-specific fields MAY be required based on verification `type`. It
 
 | **Field**                  | **Type**                                           | **Description**                                                                                        |
 | -------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| clientEncryptedPayload     | Array (JweEncryptedPayload (VerificationDataItem)) | **OPTIONAL**: Encrypted payload originating from the Wallet Client, containing a VerificationDataItem. |
-| serverVerificationDataItem | Array (VerificationDataItem)                       | **OPTIONAL**: Verification items provided by the Wallet Server.                                        |
-| additionalAssessments      | Array (object)                                     | **OPTIONAL**: Additional risk or eligibility assessments from the Wallet Server.                       |
+| client_encrypted_payload     | Array (JweEncryptedPayload (VerificationDataItem)) | **OPTIONAL**: Encrypted payload originating from the Wallet Client, containing a VerificationDataItem. |
+| server_verification_data_item | Array (VerificationDataItem)                       | **OPTIONAL**: Verification items provided by the Wallet Server.                                        |
+| additional_assessments      | Array (object)                                     | **OPTIONAL**: Additional risk or eligibility assessments from the Wallet Server.                       |
 | extensions                 | object                                             | **OPTIONAL**: Implementation-specific extension fields.                                                |
 
-`clientEncryptedPayload` contains the WALLET_CLIENT originating VerificationDataItem, while `serverVerificationDataItem` contains ones that originate in the WALLET_SERVER backend. A VerificationDataItem MAY be present in both, in the case where part of the data comes from one system and part from another.
+`client_encrypted_payload` contains the WALLET_CLIENT originating VerificationDataItem, while `server_verification_data_item` contains ones that originate in the WALLET_SERVER backend. A VerificationDataItem MAY be present in both, in the case where part of the data comes from one system and part from another.
 
-The Issuer MUST verify the `clientEncryptedPayload` using the WalletSigningKey in the active session before proceeding to evaluate the VerificationDataItem.
+The Issuer MUST verify the `client_encrypted_payload` using the WalletSigningKey in the active session before proceeding to evaluate the VerificationDataItem.
 
 #### VerificationDataItem Schema
 
@@ -607,21 +607,21 @@ This endpoint is used to fetch credential instance IDs after verification approv
 
 | **Field**      | **Type**      | **Description**                                              |
 | -------------- | ------------- | ------------------------------------------------------------ |
-| sessionId      | string (UUID) | **REQUIRED**: Wallet Server-generated UUID for this session. |
-| verificationId | string (UUID) | **REQUIRED**: Issuer-generated id for the current session.   |
+| session_id      | string (UUID) | **REQUIRED**: Wallet Server-generated UUID for this session. |
+| verification_id | string (UUID) | **REQUIRED**: Issuer-generated id for the current session.   |
 | extensions     | object        | **OPTIONAL**: Implementation-specific extension fields.      |
 
 #### Response Body Schema
 
 | **Field**           | **Type**       | **Description**                                                                      |
 | ------------------- | -------------- | ------------------------------------------------------------------------------------ |
-| CredentialInstances | Array (object) | **REQUIRED**: Array of objects containing credential configuration and instance IDs. |
+| credential_instances | Array (object) | **REQUIRED**: Array of objects containing credential configuration and instance IDs. |
 | extensions          | object         | **OPTIONAL**: Implementation-specific extension fields.                              |
 
-Each CredentialInstances object contains:
+Each credential_instances object contains:
 
-- credentialConfigurationId: (string, required)
-- credentialInstanceIds: (Array (string), required)
+- credential_configuration_id: (string, required)
+- credential_instance_ids: (Array (string), required)
 
 ### Get Credential
 
@@ -629,22 +629,22 @@ This endpoint is used to retrieve the verifiable credentials for a specific cred
 
 #### Request Body Schema
 
-| **Field**                        | **Type**                        | **Description**                                                                               |
-| -------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------- |
-| sessionId                        | string                          | **REQUIRED**: Identifier for the overarching Session.                                         |
-| credentialInstanceId             | string                          | **REQUIRED**: Credential Identifier.                                                          |
-| reason                           | string                          | **REQUIRED.**: Reason for the Wallet initiating the credential fetch, for debugging purposes. |
-| walletEncryptionKey              | object (KeyData)                | **REQUIRED**: Key provided for the Issuer to encrypt sensitive data to.                       |
-| clientEncryptedData              | object (ClientEncryptedPayload) | **OPTIONAL**: Payload containing an object containing an array of presentmentKeys.            |
-| currentCredentialMetadataVersion | string                          | **OPTIONAL**: Current Version identifier for the credential metadata.                         |
-| extensions                       | object                          | **OPTIONAL**: Implementation-specific extension fields.                                       |
+| **Field**                           | **Type**                        | **Description**                                                                               |
+| ----------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------- |
+| session_id                          | string                          | **REQUIRED**: Identifier for the overarching Session.                                         |
+| credential_instance_id              | string                          | **REQUIRED**: Credential Identifier.                                                          |
+| reason                              | string                          | **REQUIRED.**: Reason for the Wallet initiating the credential fetch, for debugging purposes. |
+| wallet_encryption_key               | object (KeyData)                | **REQUIRED**: Key provided for the Issuer to encrypt sensitive data to.                       |
+| client_encrypted_payload            | object (ClientEncryptedPayload) | **OPTIONAL**: Payload containing an object containing an array of presentment_keys.           |
+| current_credential_metadata_version | string                          | **OPTIONAL**: Current Version identifier for the credential metadata.                         |
+| extensions                          | object                          | **OPTIONAL**: Implementation-specific extension fields.                                       |
 
 #### Response Body Schema
 
 | **Field**          | **Type**                    | **Description**                                                      |
 | ------------------ | --------------------------- | -------------------------------------------------------------------- |
-| credentialMetadata | object (CredentialMetadata) | **OPTIONAL**: Metadata for the specific credential configuration.    |
-| credentialVersion  | string                      | **REQUIRED**: Unique identifier for the credential data set version. |
+| credential_metadata | object (CredentialMetadata) | **OPTIONAL**: Metadata for the specific credential configuration.    |
+| credential_version  | string                      | **REQUIRED**: Unique identifier for the credential data set version. |
 | credentials        | object (JWE)                | **REQUIRED**: JWE object whose plaintext is an Array of Credentials. |
 | extensions         | object                      | **OPTIONAL**: Implementation-specific extension fields.              |
 
@@ -656,17 +656,17 @@ This endpoint retrieves metadata for a specific credential configuration. The pa
 
 | **Field**                 | **Type**         | **Description**                                                         |
 | ------------------------- | ---------------- | ----------------------------------------------------------------------- |
-| sessionId                 | string           | **REQUIRED**: Identifier for the overarching Session.                   |
-| credentialInstanceId      | string           | **REQUIRED**: Credential Identifier.                                    |
-| walletEncryptionKey       | object (KeyData) | **REQUIRED**: Key provided for the Issuer to encrypt sensitive data to. |
-| credentialMetadataVersion | string           | **OPTIONAL**: Version identifier for the requested metadata.            |
+| session_id                 | string           | **REQUIRED**: Identifier for the overarching Session.                   |
+| credential_instance_id      | string           | **REQUIRED**: Credential Identifier.                                    |
+| wallet_encryption_key       | object (KeyData) | **REQUIRED**: Key provided for the Issuer to encrypt sensitive data to. |
+| credential_metadata_version | string           | **OPTIONAL**: Version identifier for the requested metadata.            |
 | extensions                | object           | **OPTIONAL**: Implementation-specific extension fields.                 |
 
 #### Response Body Schema
 
 | **Field**          | **Type**                    | **Description**                                                                                                       |
 | ------------------ | --------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| credentialMetadata | object (CredentialMetadata) | **OPTIONAL**: Metadata for the specific credential instance. Includes displayData as well as other relevant metadata. |
+| credential_metadata | object (CredentialMetadata) | **OPTIONAL**: Metadata for the specific credential instance. Includes display_data as well as other relevant metadata. |
 | extensions         | object                      | **OPTIONAL**: Implementation-specific extension fields.                                                               |
 
 ### Get Credential Status
@@ -685,18 +685,18 @@ The Wallet Server and the Issuer Server each have their own view on what the sta
 
 | **Field**            | **Type** | **Description**                                                     |
 | -------------------- | -------- | ------------------------------------------------------------------- |
-| sessionId            | string   | **REQUIRED**: Identifier for the overarching Session being queried. |
-| credentialInstanceId | string   | **REQUIRED**: Credential Identifier whose status is being queried.  |
+| session_id            | string   | **REQUIRED**: Identifier for the overarching Session being queried. |
+| credential_instance_id | string   | **REQUIRED**: Credential Identifier whose status is being queried.  |
 | extensions           | object   | **OPTIONAL**: Implementation specific extensions                    |
 
 #### Response Body Schema
 
 | **Field**              | **Type**                  | **Description**                                                      |
 | ---------------------- | ------------------------- | -------------------------------------------------------------------- |
-| currentStatus          | String (CredentialStatus) | **REQUIRED**: The current status of the credential instance          |
-| currentVersion         | String                    | **REQUIRED**: Unique identifier for the credential data set version. |
-| lastStatusChangeTime   | String (HTTP-date)        | **OPTIONAL**: Date and time when the status was last updated         |
-| lastStatusChangeReason | String                    | **OPTIONAL**: Machine-readable reason for the status change          |
+| current_status          | String (CredentialStatus) | **REQUIRED**: The current status of the credential instance          |
+| current_version         | String                    | **REQUIRED**: Unique identifier for the credential data set version. |
+| last_status_change_time   | String (HTTP-date)        | **OPTIONAL**: Date and time when the status was last updated         |
+| last_status_change_reason | String                    | **OPTIONAL**: Machine-readable reason for the status change          |
 | extensions             | Object                    | **OPTIONAL**: Implementation-specific extension fields               |
 
 The following Credential Status states are defined by this specification.
@@ -713,17 +713,17 @@ The following Credential Status states are defined by this specification.
 
 ### Credential Manage
 
-This bi-directrional endpoint instructs the hosting party to perform an `action` for a particular credentialInstanceId. The path MUST be `/credential/manage`.
+This bi-directrional endpoint instructs the hosting party to perform an `action` for a particular `credential_instance_id`. The path MUST be `/credential/manage`.
 
 #### Request Body Schema
 
 | **Field**            | **Type**           | **Description**                                                                        |
 | -------------------- | ------------------ | -------------------------------------------------------------------------------------- |
-| sessionId            | string (UUID)      | **REQUIRED**: Wallet Server-generated UUID for this session.                           |
-| credentialInstanceId | string             | **REQUIRED**: Credential Identifier associated with this management operation.         |
+| session_id            | string (UUID)      | **REQUIRED**: Wallet Server-generated UUID for this session.                           |
+| credential_instance_id | string             | **REQUIRED**: Credential Identifier associated with this management operation.         |
 | action               | string (Enum)      | **REQUIRED**: The management action to perform. One of: `SUSPEND`, `RESUME`, `UNLINK`. |
 | reason               | string             | **OPTIONAL**: Machine-readable reason for the management action.                       |
-| reasonDetail         | string             | **OPTIONAL**: Free-form additional context or details for the action.                  |
+| reason_detail         | string             | **OPTIONAL**: Free-form additional context or details for the action.                  |
 | timestamp            | string (date-time) | **OPTIONAL**: ISO 8601 timestamp of when the request was initiated.                    |
 | extensions           | object             | **OPTIONAL**: Implementation-specific extension fields.                                |
 
@@ -731,12 +731,12 @@ This bi-directrional endpoint instructs the hosting party to perform an `action`
 
 | **Field**            | **Type**                  | **Description**                                                                                      |
 | -------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------- |
-| sessionId            | string (UUID)             | **REQUIRED**: Wallet Server-generated UUID for this session.                                         |
-| credentialInstanceId | string                    | **REQUIRED**: Credential Identifier associated with this management operation.                       |
-| currentStatus        | string (CredentialStatus) | **REQUIRED**: The status of the credential instance after the operation.                             |
-| previousStatus       | string (CredentialStatus) | **OPTIONAL**: The status of the credential instance before the operation was initiated.              |
+| session_id            | string (UUID)             | **REQUIRED**: Wallet Server-generated UUID for this session.                                         |
+| credential_instance_id | string                    | **REQUIRED**: Credential Identifier associated with this management operation.                       |
+| current_status        | string (CredentialStatus) | **REQUIRED**: The status of the credential instance after the operation.                             |
+| previous_status       | string (CredentialStatus) | **OPTIONAL**: The status of the credential instance before the operation was initiated.              |
 | outcome              | string (Enum)             | **REQUIRED**: The outcome of the operation. One of: `COMPLETED`, `SCHEDULED`, `FAILED`, `NO_CHANGE`. |
-| failureReason        | string                    | **OPTIONAL**: Machine-readable reason for failure if the outcome is `failed`.                        |
+| failure_reason        | string                    | **OPTIONAL**: Machine-readable reason for failure if the outcome is `failed`.                        |
 | extensions           | object                    | **OPTIONAL**: Implementation-specific extension fields.                                              |
 
 ## Event Notification Endpoint {#event-notification}
@@ -749,12 +749,12 @@ The path MUST be `/event/notify` and implemented by both the Wallet Server and t
 
 | **Field**            | **Type**           | **Description**                                                                   |
 | -------------------- | ------------------ | --------------------------------------------------------------------------------- |
-| sessionId            | string             | **REQUIRED**: Identifier for the overarching Session.                             |
-| credentialInstanceId | string             | **REQUIRED**: Credential Identifier associated with the event.                    |
-| eventType            | string             | **REQUIRED**: The type of event being notified.                                   |
-| triggeringRequestId  | string (UUID)      | **OPTIONAL**: The x-request-id of the original request that triggered this event. |
-| eventTimestamp       | string (date-time) | **REQUIRED**: The timestamp when the event was created.                           |
-| eventDetails         | object             | **TYPE DEPENDENT**: Implementation-specific details dependent on the eventType.   |
+| session_id            | string             | **REQUIRED**: Identifier for the overarching Session.                             |
+| credential_instance_id | string             | **REQUIRED**: Credential Identifier associated with the event.                    |
+| event_type            | string             | **REQUIRED**: The type of event being notified.                                   |
+| triggering_request_id  | string (UUID)      | **OPTIONAL**: The x-request-id of the original request that triggered this event. |
+| event_timestamp       | string (date-time) | **REQUIRED**: The timestamp when the event was created.                           |
+| event_details         | object             | **TYPE DEPENDENT**: Implementation-specific details dependent on the event_type.   |
 | extensions           | object             | **OPTIONAL**: Implementation-specific extension fields.                           |
 
 ### Event Types
@@ -877,7 +877,7 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
      │                        │       2. Sends        │                               │                                                             
      │                        │   Signed/Encrypted    │                               │                                                             
      │                        │  VerificationData +   │                               │                                                             
-     │                        │   verificationNonce   │                               │                                                             
+     │                        │  verification_nonce   │                               │                                                             
      │                        │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▶                               │                                                             
      │                        │                       │                               │                                                             
      │                        │                       ├───┐                           │                                                             
@@ -892,8 +892,8 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
      │                        │                       │                               │                                                             
      │                        │                       │                               ├───┐                                                         
      │                        │                       │                               │   │ Validates                                               
-     │                        │                       │                               │   │ verificationNonce &                                     
-     │                        │                       │                               │   │ encryptedClientPayload                                  
+     │                        │                       │                               │   │ verification_nonce &                                    
+     │                        │                       │                               │   │ client_encrypted_payload                                
      │                        │                       │                               ◀───┘                                                         
      │                        │                       │                               │                                                             
      │                        │                       │                               │                                                             
@@ -942,9 +942,9 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 ```
 
 1. Holder, in the Wallet Client Instance selects a Credential to Issue.
-2. The Wallet Client generates a WSK and sends the Signed/Encrypted VerificationData, along with the verificationNonce to the Wallet Server.
+2. The Wallet Client generates a WSK and sends the Signed/Encrypted VerificationData, along with the verification_nonce to the Wallet Server.
 3. The Wallet Server adds any additional necessary VerificationData and calls `verification/initiate` on the Issuer Server.
-4. The Issuer validates the verificationNonce and the encryptedClientPayload, and returns the PENDING status. The Issuer asynchronously verifies the VerificationData.
+4. The Issuer validates the verification_nonce and the client_encrypted_payload, and returns the PENDING status. The Issuer asynchronously verifies the VerificationData.
   1. Optionally: uses ADDITIONAL_INFO_REQUIRED via `verification/notify` to obtain more information, which the Wallet Client provides via `verification/supplement`.
 5. The Issuer updates the Verification Status based on the outcome and sends a notification to the Wallet Server with APPROVED/DENIED.
 
@@ -972,7 +972,7 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
      │                        │                             │                               │                                                 
      │                        │                             │                               ├───┐                                             
      │                        │                             │                               │   │ verifies                  
-     │                        │                             │                               ◀───┘ verificationNonce                                   
+     │                        │                             │                               ◀───┘ verification_nonce                                  
      │                        │                             │                               │                                                 
      │                        │                             │                               │                                                 
      │                        │                             │          4. status:           │                                                 
@@ -1054,7 +1054,7 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 1. Holder, in the Wallet Client Instance, selects a Credential to Issue where the required VerificationData is unknown.
 2. The Wallet Client generates a WSK and initiates a session via the Wallet Server.
 3. The Wallet Server calls `verification/initiate` on the Issuer Server.
-4. The Issuer validates the verificationNonce and returns a status of `ADDITIONAL_INFO_REQUIRED` along with a VerificationDataRequest.
+4. The Issuer validates the verification_nonce and returns a status of `ADDITIONAL_INFO_REQUIRED` along with a VerificationDataRequest.
 5. The Wallet Server forwards the `ADDITIONAL_INFO_REQUIRED` status to the Wallet Client.
 6. The Wallet Client requests the VerificationData from the Holder.
 7. The Holder provides the VerificationData.
@@ -1088,7 +1088,7 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
      │                       │                         │       3. Sends        │                               │                                              
      │                       │                         │   Signed/Encrypted    │                               │                                              
      │                       │                         │  VerificationData +   │                               │                                              
-     │                       │                         │   verificationNonce   │                               │                                              
+     │                       │                         │  verification_nonce   │                               │                                              
      │                       │                         │╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌▶                               │                                              
      │                       │                         │                       │                               │                                              
      │                       │                         │                       ├───┐                           │                                              
@@ -1103,7 +1103,7 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
      │                       │                         │                       │                               │                                              
      │                       │                         │                       │                               ├───┐                                          
      │                       │                         │                       │                               │   │ Validates                                
-     │                       │                         │                       │                               │   │ verificationNonce &                      
+     │                       │                         │                       │                               │   │ verification_nonce &                     
      │                       │                         │                       │                               │   │ payload                                  
      │                       │                         │                       │                               ◀───┘                                          
      │                       │                         │                       │                               │                                              
@@ -1151,8 +1151,8 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 
 1. Holder is authenticated on an Issuer App/Website and elects to push credentials to a Wallet.
 2. The Issuer App/Website pushes the Credential Offer payload containing a `pre-authorized_code` or similar `Pre-auth` bearer token to the Wallet Client.
-3. The Wallet Client generates a WSK and sends the Signed/Encrypted VerificationData (including the pre-auth code), along with the verificationNonce to the Wallet Server.
-4. The Wallet Server adds any additional necessary VerificationData and calls `verification/initiate` on the Issuer Server. The Issuer validates the verificationNonce, payload, and verifies the pre-auth code.
+3. The Wallet Client generates a WSK and sends the Signed/Encrypted VerificationData (including the pre-auth code), along with the verification_nonce to the Wallet Server.
+4. The Wallet Server adds any additional necessary VerificationData and calls `verification/initiate` on the Issuer Server. The Issuer validates the verification_nonce, payload, and verifies the pre-auth code.
   1. Optionally: uses ADDITIONAL_INFO_REQUIRED via `verification/notify` to obtain more information (e.g. an OTP).
 5. The Issuer updates the Verification Status based on the outcome and sends an APPROVED/DENIED notification to the Wallet Server.
 
@@ -1267,7 +1267,7 @@ A non-normative example of a Wallet Initiated(Preknown Verification) Flow is:
 2. The Issuer App/Website pushes the Credential Offer payload to the Wallet Client.
 3. The Wallet Client generates a WSK and initiates a session via the Wallet Server.
 4. The Wallet Server calls `verification/initiate` on the Issuer Server.
-5. The Issuer validates the verificationNonce and returns a status of `ADDITIONAL_INFO_REQUIRED` along with a VerificationDataRequest.
+5. The Issuer validates the verification_nonce and returns a status of `ADDITIONAL_INFO_REQUIRED` along with a VerificationDataRequest.
 6. The Wallet Server forwards the `ADDITIONAL_INFO_REQUIRED` status with the proofing requirements to the Wallet Client.
 7. The Wallet Client requests the VerificationData from the Holder.
 8. The Holder provides the VerificationData.
