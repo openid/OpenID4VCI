@@ -793,7 +793,7 @@ The response to an Authorization Challenge Request is an HTTP message with the c
 
 ### Interaction Required Response {#ia-interaction-required-response}
 
-By setting `error_code` to `insufficient_authorization` in the response with HTTP response code 403 `Forbidden`, the Authorization Server requests an additional user interaction.
+By setting `error` to `insufficient_authorization` in the response with HTTP response code 403 `Forbidden`, the Authorization Server requests an additional user interaction.
 In this case, the following keys MUST be present in the response as well:
 
 * `interaction_type_required`: REQUIRED. String indicating which type of interaction is required, as defined below. The Authorization Server MUST set this to a value that was included in the `interaction_types_supported` parameter sent by the Wallet. If the Authorization Server cannot fulfill the request using any of the supported types, it MUST reject the request with an Authorization Challenge Error Response, as defined in (#ia-error-response).
