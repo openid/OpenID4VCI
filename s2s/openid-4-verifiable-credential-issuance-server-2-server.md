@@ -147,6 +147,7 @@ This is done as follows:
 1. The Issuer Server decrypts and verifies the Verification Data using the WSK, and evaluates it along with any Wallet Server provided Verification Data. 
   1. The Issuer can perform the evaluation asynchronously to support evaluations that are not immediate (such as human reviews). 
   1. The Issuer Server can optionally repeat this process to trigger the collection of additional Verification.
+  1. The Wallet Client can provide a Wallet Encryption Key signed by the WSK with these calls, allowing the Issuer Server to return confidential information (such as a request for additional Verification Data) encrypted to the Wallet Client.
 1. After reaching a verdict the Issuer Server updates the verification status and notifies the Wallet Server of the change.
 
 On successful completion the Issuer Server now has a WSK that can be used to authenticate payloads as originating on a particular Wallet Client Instance, and have authenticated the Holder. 
@@ -239,7 +240,8 @@ Implementations MAY extend the Problem Details object with additional fields (e.
 This specification defines the following error types:
 
 - `urn:openid:dcp:s2s:invalid_encryption`: Error type returned when a payload fails to decrypt.
-- `urn:openid:dcp:s2s:invalid_client_authentication`: Error type returned when a Client Encrypted Payload verification fails.
+- `invalid_client_authentication`: Error type returned when Wallet Client authentication fails, such as when verification of a Client Encrypted Payload or a Wallet Encryption Key attestation fails.
+- `encryption_required`: Error type returned when an Issuer requires response encryption and no Wallet Encryption Key was provided in the request. See (#wallet-encryption-key).
 
 ## End to End Encryption {#end-to-end-encryption}
 
@@ -296,6 +298,81 @@ Implementations MAY define their own key types. It is RECOMMENDED that collision
 **TODO**: add post quantum
 
 **TODO**: required curves
+
+### Wallet Encryption Key {#wallet-encryption-key}
+
+A Wallet Encryption Key is provided by the Wallet Client Instance in a request, as `KeyData` with `key_type` set to `WALLET_ENCRYPTION_KEY`, for the Issuer to encrypt confidential parts of the corresponding response to.
+
+To bind the Wallet Encryption Key to the Wallet Client Instance and prevent an intermediary from substituting its own public key, the `KeyData` object MUST include an `attestation` that is a Key Attestation in JWT format (`key-attestation+jwt`) as defined in OpenID4VCI, signed by the Wallet Signing Key (WSK).
+
+In addition to the requirements in OpenID4VCI, the values in the JOSE header MUST be set as follows:
+
+- `alg`: The signing algorithm of the Wallet Signing Key.
+- `kid`: The `kid` of the Wallet Signing Key, if one was included in the Wallet Signing Key JWK.
+
+The values in the payload MUST be set as follows:
+
+- `attested_keys`: Contains `client_public_key` of the enclosing `KeyData` object.
+
+A server-provided `nonce` is OPTIONAL, allowing the Wallet Client Instance to pre-generate and sign Wallet Encryption Keys without an additional round-trip per request. The Wallet Client Instance SHOULD set an `exp` value appropriate to the intended lifetime of the encryption key.
+
+Whenever a Wallet Encryption Key is provided in a request, the Issuer MUST validate it before encrypting any data to it:
+
+- Verify that `key_type` is `WALLET_ENCRYPTION_KEY`.
+- Verify `attestation` as a `key-attestation+jwt` as defined in OpenID4VCI, using the Wallet Signing Key to verify the signature.
+- Verify that `attested_keys` contains `client_public_key`.
+
+If validation fails, the Issuer MUST reject the request with HTTP 400 and the `invalid_client_authentication` error type.
+
+The following is a non-normative example of `KeyData` for a Wallet Encryption Key:
+
+```json
+{
+  "key_type": "WALLET_ENCRYPTION_KEY",
+  "client_public_key": {
+    "kty": "EC",
+    "crv": "P-256",
+    "alg": "HPKE-P256-SHA256-A128GCM",
+    "kid": "wek-1",
+    "x": "TCAER19Zvu3OHF4j4W4vfSVoHIP1ILilDls7vCeGemc",
+    "y": "ZxjiWWbZMQGHVWKVQ4hbSIirsVfuecCE6t4jT9F2HZQ"
+  },
+  "attestation": "<key-attestation+jwt signed by the WSK>"
+}
+```
+
+where the decoded `key-attestation+jwt` is:
+
+```json
+// Header
+{
+  "typ": "key-attestation+jwt",
+  "alg": "ES256",
+  "kid": "wsk-1"
+}
+
+// Payload
+{
+  "iat": 1760363976,
+  "exp": 1760450376,
+  "attested_keys": [
+    {
+      "kty": "EC",
+      "crv": "P-256",
+      "alg": "HPKE-P256-SHA256-A128GCM",
+      "kid": "wek-1",
+      "x": "TCAER19Zvu3OHF4j4W4vfSVoHIP1ILilDls7vCeGemc",
+      "y": "ZxjiWWbZMQGHVWKVQ4hbSIirsVfuecCE6t4jT9F2HZQ"
+    }
+  ]
+}
+```
+
+Wallet Encryption Keys are supplied per request and MAY be ephemeral. The Issuer MUST NOT retain a Wallet Encryption Key beyond the processing of the request in which it was received. In some cases, the processing of a request may be longer than a single response (see (#asynchronous-endpoints)).
+
+Note: Because Wallet Encryption Keys are only provided in Wallet-initiated requests, Issuer-initiated notifications (Verification Notification and Event Notification) cannot include data encrypted to the Wallet Client. Instead, notifications signal that an update is available, and the Wallet Server retrieves any confidential data from the corresponding Issuer endpoint, providing a Wallet Encryption Key.
+
+If an Issuer requires response encryption and no Wallet Encryption Key was provided in the request, the Issuer MUST reject the request with HTTP 400 and the `encryption_required` error type.
 
 ## Content Reference {#content-reference}
 
@@ -389,6 +466,7 @@ Because each Session Id is a unique UUID generated per verification session, a r
 | wallet_signing_key_data       | object (KeyData)                  | **REQUIRED**: Key Data belong to the Public Key for the Wallet Client Instance that is initiating this verification.Must be stored against this session_id and used to verify this and subsequent requests originate from the same authenticated client instance. |
 | verification_nonce          | string(bytes)                     | **REQUIRED**: Signature over session_id, providing replay protection and cryptographic binding to the session.                                                                                                                                                    |
 | verification_data          | Object (VerificationDataResponse) | **OPTIONAL**: VerificationDataResponse to allow for Wallets to combine providing evidence when it is known in advance.                                                                                                                                           |
+| wallet_encryption_key      | object (KeyData)                  | **OPTIONAL**: Key provided for the Issuer to encrypt confidential parts of the response to. See (#wallet-encryption-key). |
 | supported_verification_types | Array(String)                     | **OPTIONAL**: List of verification_types this Wallet Client Instance supports, that can be used with `ADDITIONAL_INFO_REQUIRED`                                                                                                                                   |
 | requested_device_count       | integer >=1 (default 1)           | **OPTIONAL**: Number of devices the Wallet Server intends to provision for this verification session. The issuer uses this as input when determining `authorized_device_count` in the approval response. If omitted, defaults to 1.                                |
 | locale                     | string                            | **OPTIONAL**: Local of the Wallet Client Instance to use for localization. When absent, the Issuer chooses the locale.                                                                                                                                          |
@@ -411,6 +489,7 @@ This is used to provide Verification Data for an ongoing Verification.
 | session_id        | string(UUID)                      | **REQUIRED**: Wallet-Generated id received in the `initiate` call.        |
 | verification_id   | string(UUID)                      | **REQUIRED**: Issuer-generated id for the current verification session.   |
 | verification_data | Object (VerificationDataResponse) | **REQUIRED**: Containing verification data for this verification session. |
+| wallet_encryption_key | object (KeyData)              | **OPTIONAL**: Key provided for the Issuer to encrypt confidential parts of the response to. See (#wallet-encryption-key). |
 | extensions        | Object                            | **OPTIONAL**: Implementation-specific extension fields.                   |
 
 #### Response Body Schema
@@ -422,6 +501,8 @@ The Response Body schema contains all of the fields in the VerificationStatus sc
 The path MUST be `/verification/notify`. This endpoint is hosted by the Wallet Server only.
 
 This is used by the Issuer to notify the Wallet that a Verification has changed status. The information provided here is also available at the Verification Status Endpoint.
+
+As this request is initiated by the Issuer, no Wallet Encryption Key is available and the Issuer MUST NOT include `encrypted_payload`. Where the Issuer requires status-specific fields to be encrypted, it MUST omit them from the notification and set `encryption_to_wallet_required` to `true`. The Wallet Server then retrieves the full status from the Get Verification Status endpoint, providing a Wallet Encryption Key.
 
 #### Request Body Schema
 
@@ -444,6 +525,7 @@ The path MUST be `/verification/status`. This endpoint is hosted by the Issuer S
 | -------------- | ------------ | ----------------------------------------------------------------------- |
 | session_id      | string(UUID) | **REQUIRED**: Wallet-Generated id received in the `initiate` call.      |
 | verification_id | string(UUID) | **REQUIRED**: Issuer-generated id for the current verification session. |
+| wallet_encryption_key | object (KeyData) | **OPTIONAL**: Key provided for the Issuer to encrypt confidential parts of the response to. See (#wallet-encryption-key). |
 | extensions     | Object       | **OPTIONAL**: Implementation-specific extension fields.                 |
 
 #### Response Body Shema
@@ -485,9 +567,13 @@ The following JSON Schema is used at all endpoints:
 | session_id      | string(UUID)               | **REQUIRED**: Wallet-Generated id received in the `initiate` call.                                                                                                                       |
 | verification_id | string(UUID)               | **REQUIRED**: Issuer-generated id for the current session. The value MUST NOT change from the one returned in the initial response..                                                     |
 | status         | string(VerificationStatus) | **REQUIRED**: Enum identifier for the current verification status.                                                                                                                       |
+| encrypted_payload | object (JweEncryptedPayload) | **OPTIONAL**: Status-specific fields that the Issuer requires to be confidential from the Wallet Server, encrypted to the Wallet Encryption Key provided in the request. The plaintext is a JSON object containing status-specific fields. The `origin` is ISSUER. |
+| encryption_to_wallet_required | boolean       | **OPTIONAL**: `true` when status-specific fields have been omitted because they require encryption and no Wallet Encryption Key was available. Only used in the Verification Notification request; see (#wallet-encryption-key). |
 | extensions     | Object                     | **OPTIONAL**: Implementation-specific extension fields. Implementations may include proprietary decision details, additional credential metadata, or domain-specific status information. |
 
-Additional fields are specified based on the VerificationStatus. The following VerificationStatus values are defined by this specification:
+Additional fields are specified based on the VerificationStatus. At the Issuer's discretion, a status-specific field MAY be returned either directly in the VerificationStatus or within `encrypted_payload`; it MUST NOT appear in both. A field returned within `encrypted_payload` is available only to the Wallet Client.
+
+The following VerificationStatus values are defined by this specification:
 
 | Status                     | Description                                 | Next Step                                                                        |
 |----------------------------|---------------------------------------------|----------------------------------------------------------------------------------|
@@ -634,7 +720,7 @@ This endpoint is used to retrieve the verifiable credentials for a specific cred
 | session_id                          | string                          | **REQUIRED**: Identifier for the overarching Session.                                         |
 | credential_instance_id              | string                          | **REQUIRED**: Credential Identifier.                                                          |
 | reason                              | string                          | **REQUIRED.**: Reason for the Wallet initiating the credential fetch, for debugging purposes. |
-| wallet_encryption_key               | object (KeyData)                | **REQUIRED**: Key provided for the Issuer to encrypt sensitive data to.                       |
+| wallet_encryption_key               | object (KeyData)                | **REQUIRED**: Key provided for the Issuer to encrypt sensitive data to. See (#wallet-encryption-key). |
 | client_encrypted_payload            | object (ClientEncryptedPayload) | **OPTIONAL**: Payload containing an object containing an array of presentment_keys.           |
 | current_credential_metadata_version | string                          | **OPTIONAL**: Current Version identifier for the credential metadata.                         |
 | extensions                          | object                          | **OPTIONAL**: Implementation-specific extension fields.                                       |
@@ -658,7 +744,7 @@ This endpoint retrieves metadata for a specific credential configuration. The pa
 | ------------------------- | ---------------- | ----------------------------------------------------------------------- |
 | session_id                 | string           | **REQUIRED**: Identifier for the overarching Session.                   |
 | credential_instance_id      | string           | **REQUIRED**: Credential Identifier.                                    |
-| wallet_encryption_key       | object (KeyData) | **REQUIRED**: Key provided for the Issuer to encrypt sensitive data to. |
+| wallet_encryption_key       | object (KeyData) | **REQUIRED**: Key provided for the Issuer to encrypt sensitive data to. See (#wallet-encryption-key). |
 | credential_metadata_version | string           | **OPTIONAL**: Version identifier for the requested metadata.            |
 | extensions                | object           | **OPTIONAL**: Implementation-specific extension fields.                 |
 
@@ -791,6 +877,8 @@ The response body schema optionally contains an `acknowledged` boolean to indica
 ## Wallet Client Origin {#wallet-client}
 
 This specification makes use of a Wallet Signing Key to authenticate payloads originating from the Wallet Client. As part of Verification, the Wallet Signing Key signs-and-encrypts Verification Data, demonstrating to the Issuer that the Verification Data was collected in the presence of the Wallet Signing Key. How strongly that Data types the Wallet Signing Key depends on the specifics of the issuance process and is outside the scope of this specification.
+
+Similarly, Wallet Encryption Keys are bound to the Wallet Client Instance using a `key-attestation+jwt` signed by the Wallet Signing Key (see (#wallet-encryption-key)), preventing an intermediary Wallet Server from substituting its own encryption key to decrypt confidential responses intended for the Wallet Client Instance.
 
 ## Wallet Client and Wallet Client Instance Trust {#wallet-client-trust}
 
